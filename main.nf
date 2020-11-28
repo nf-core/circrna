@@ -60,7 +60,7 @@ if (params.help) {
             print_purple('Nextflow run BarryDigby/circRNA --profile singularity, standard <options> \n') +
 
             print_yellow('      Mandatory arguments:\n') +
-            print_cyan('      --inputdir <path>            ') + print_green('Path to input data\n') +
+            print_cyan('      --input <path>            ') + print_green('Path to input data\n') +
             print_cyan('      --input_type <str>           ') + print_green('Input data type. Supported: fastq, bam\n') +
             print_cyan('      --fastq_glob <str>           ') + print_green('Glob pattern of fastq files e.g: \'_R{1,2}.fastq.gz\'\n') +
             print_cyan('      --bam_glob <str>             ') + print_green('Glob pattern of bam files. Expected: \'*.bam\'\n') +
@@ -449,7 +449,7 @@ ch_ciriquant_yml = params.ciriquant_yml ? Channel.value(file(params.ciriquant_ym
 */
 
 // stage bam files
-bam_files = params.inputdir + params.bam_glob
+bam_files = params.input + params.bam_glob
 
 if(params.input_type == 'bam'){
    ch_bam = Channel.fromPath( bam_files )
@@ -473,7 +473,7 @@ if(params.input_type == 'bam'){
         """
       }
 }else if(params.input_type == 'fastq'){
-         fastq_build = params.inputdir + params.fastq_glob
+         fastq_build = params.input + params.fastq_glob
          Channel.fromFilePairs( fastq_build )
                 .set{ fastq_built }
 }
