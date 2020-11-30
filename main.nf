@@ -1,4 +1,4 @@
-#!/usr/bin/env nextflow
+ #!/usr/bin/env nextflow
 
 /*
 ================================================================================
@@ -62,14 +62,13 @@ if (params.help) {
             print_yellow('      Mandatory arguments:\n') +
             print_cyan('      --input <path>            ') + print_green('Path to input data\n') +
             print_cyan('      --input_type <str>           ') + print_green('Input data type. Supported: fastq, bam\n') +
-            print_cyan('      --fastq_glob <str>           ') + print_green('Glob pattern of fastq files e.g: \'_R{1,2}.fastq.gz\'\n') +
-            print_cyan('      --bam_glob <str>             ') + print_green('Glob pattern of bam files. Expected: \'*.bam\'\n') +
+            print_cyan('      --input_glob <str>           ') + print_green('Glob pattern of input files e.g: \'_R{1,2}.fastq.gz\'\n') +
             print_cyan('      --tool <str>                 ') + print_green('circRNA tool to use for analysis. \n') +
             print_green('                                   Supported: CIRCexplorer2, CIRIquant, find_circ\n') +
-            print_green('                                   UROBORUS, mapsplice, DCC, circRNA_finder\n') +
-            print_cyan('      --version <str>              ') + print_green('Genome version. Supported: GRCh37, GRCh38\n') +
+            print_green('                                   mapsplice, DCC, circRNA_finder\n') +
+            print_cyan('      --genome_version <str>              ') + print_green('Supported: GRCh37, GRCh38\n') +
             '\n' +
-            print_yellow('    Input Files:            if left empty will be generated\n') +
+            print_yellow('    Input Files:            if left empty these will be generated\n') +
             print_cyan('      --fasta <path>               ') + print_green('Path to genome fasta file\n') +
             print_cyan('      --fasta_fai <path>           ') + print_green('Path to genome fasta fai file\n') +
             print_cyan('      --gencode_gtf <path>         ') + print_green('Path to genocde gtf file\n') +
@@ -80,8 +79,7 @@ if (params.help) {
             print_cyan('      --bowtie2_index <str>        ') + print_green('Path to Bowtie2 index (must include glob for files)\n') +
             print_cyan('      --hisat2_index <str>         ') + print_green('Path to Hisat2 index\n') +
             print_cyan('      --ciriquant_yml <str>        ') + print_green('Path to CIRIquant yml configuration file\n') +
-            print_cyan('      --adapters <path>            ') + print_green('Fasta file containing adapters to trim\n') +
-            print_cyan('      --mirna_database <path>      ') + print_green('Fasta file containing mature miRNA sequences\n') +
+            print_cyan('      --adapters <path>            ') + print_green('Fasta file containing adapters to trim\n')
 
 
             log.info ('------------------------------------------------------------------------')
@@ -449,7 +447,7 @@ ch_ciriquant_yml = params.ciriquant_yml ? Channel.value(file(params.ciriquant_ym
 */
 
 // stage bam files
-bam_files = params.input + params.bam_glob
+bam_files = params.input + params.input_glob
 
 if(params.input_type == 'bam'){
    ch_bam = Channel.fromPath( bam_files )
@@ -473,7 +471,7 @@ if(params.input_type == 'bam'){
         """
       }
 }else if(params.input_type == 'fastq'){
-         fastq_build = params.input + params.fastq_glob
+         fastq_build = params.input + params.input_glob
          Channel.fromFilePairs( fastq_build )
                 .set{ fastq_built }
 }
