@@ -282,6 +282,9 @@
         },
         "phenotype": {
             "type": "string"
+        },
+        "trimming": {
+            "type": "boolean"
         }
     }
 }
