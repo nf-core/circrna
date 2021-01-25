@@ -477,28 +477,28 @@ if(params.input_type == 'bam'){
                 .set{ fastq_built }
 }
 
-// stage three channels with raw reads
+// stage three channels with raw reads:
 (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
 
 // FASTQC on raw data. Mandatory.
 
-// process FastQC {
-//
-//          publishDir "$params.outdir/FastQC/Raw", mode:'copy'
-//
-//          input:
-//              tuple val(base), file(fastq) from fastqc_reads
-//
-//          output:
-//              file("*.{html,zip}") into fastqc_raw
-//
-//          script:
-//          """
-//          fastqc -q $fastq
-//          """
-//}
+process FastQC {
 
-// Test dataset does not like being trimmed, omit for testing.
+          publishDir "$params.outdir/FastQC/Raw", mode:'copy'
+
+          input:
+              tuple val(base), file(fastq) from fastqc_reads
+
+          output:
+              file("*.{html,zip}") into fastqc_raw
+
+          script:
+          """
+          fastqc -q $fastq
+          """
+}
+
+// Set up Trimming logic
 
 if(params.trimming == true){
 
@@ -511,15 +511,15 @@ if(params.trimming == true){
             path adapters from params.adapters
 
         output:
-            tuple val(base), file('*.fastq.gz') into trim_reads_ch
+            tuple val(base), file('*.fq.gz') into trim_reads_ch
 
         script:
         """
         bbduk.sh -Xmx4g \
         in1=${fastq[0]} \
         in2=${fastq[1]} \
-        out1=${base}_1.fastq.gz \
-        out2=${base}_2.fastq.gz \
+        out1=${base}_1.fq.gz \
+        out2=${base}_2.fq.gz \
         ref=$adapters \
         minlen=30 \
         ktrim=r \
@@ -529,7 +529,7 @@ if(params.trimming == true){
         """
         }
 
-        // trimmed reads into 2 channels
+        // trimmed reads into 2 channels:
         (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
         process FastQC_trim {
@@ -540,7 +540,7 @@ if(params.trimming == true){
             tuple val(base), file(fastq) from fastqc_trim_reads
 
         output:
-            file ("*.{html,zip}") into FastQC_trimmed
+            file ("*.{html,zip}") into fastqc_trimmed
 
         script:
         """
@@ -548,16 +548,51 @@ if(params.trimming == true){
         """
         }
 
+	process multiqc_trim {
+
+	publishDir "$params.outdir/MultiQC/Trimmed", mode:'copy'
+
+	label 'multiqc'
+
+	input:
+	file(htmls) from fastqc_trimmed.collect()
+
+	output:
+	file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
+
+	script:
+	"""
+	multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
+	"""
+	}
+
 }else if(params.trimming == false){
         aligner_reads = raw_reads
+}
+
+// MultiQC of the Raw Data, Mandatory.
+
+process multiqc_raw {
+
+	publishDir "$params.outdir/MultiQC/Raw", mode:'copy'
+
+	label 'multiqc'
+
+	input:
+	file(htmls) from fastqc_raw.collect()
+
+	output:
+	file("Raw_Reads_MultiQC.html") into multiqc_raw_out
+
+	script:
+	"""
+	multiqc -i "Raw_Reads_MultiQC" -b "nf-circ pipeline" -n "Raw_Reads_MultiQC.html" .
+	"""
 }
 
 
 // Stage Aligner read channels
 (circexplorer2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, circrna_finder_reads, dcc_reads, dcc_reads_mate1, dcc_reads_mate2, hisat2_reads) = aligner_reads.into(10)
-
-// fastqc , multiqc omitted until I figure out how to incorporate multiQC separately (multiqc is python3, container is python2).
-// perhaps use multiqc container for this.
 
 /*
 ================================================================================
