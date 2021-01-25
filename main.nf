@@ -534,7 +534,7 @@ if(params.trimming == true){
 
         process FastQC_trim {
 
-        publishDir "$params.outDir/FastQC/Trimmed", mode:'copy'
+        publishDir "$params.outdir/FastQC/Trimmed", mode:'copy'
 
         input:
             tuple val(base), file(fastq) from fastqc_trim_reads
