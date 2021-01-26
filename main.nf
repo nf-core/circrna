@@ -1274,7 +1274,7 @@ process remove_unwanted_biotypes{
 
 	script:
 	"""
-	cp "$projectDir"/bin/unwanted_biotypes.txt ./
+	cp ${projectDir}/bin/unwanted_biotypes.txt ./
 
 	grep -vf unwanted_biotypes.txt $gtf > filt.gtf
 	"""
