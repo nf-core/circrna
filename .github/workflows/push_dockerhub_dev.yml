@@ -11,7 +11,8 @@ jobs:
     name: Push new Docker image to Docker Hub (dev)
     runs-on: ubuntu-latest
     # Only run for the nf-core repo, for releases and merged PRs
-    if: ${{ github.repository == 'BarryDigby/test' }}
+    # Docker push is failing, disable for now
+    if: ${{ github.repository == 'fooBAZ/test' }}
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
