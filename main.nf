@@ -1173,10 +1173,10 @@ if('combine' in tool){
                         done
 
 			## Add catch for empty file in tool output
-			bash "$projectDir"/bin/check_empty.sh
+			bash ${projectDir}/bin/check_empty.sh
 
 			## Bring forward circRNAs called by at least 2 tools
-                        Rscript "$projectDir"/bin/consolidate_algorithms.R samples.csv
+                        Rscript ${projectDir}/bin/consolidate_algorithms.R samples.csv
 
                         mv combined_counts.bed ${base}.bed
                         """
@@ -1193,7 +1193,7 @@ if('combine' in tool){
 
 			script:
 			"""
-			python "$projectDir"/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+			python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
 			"""
 			}
 
@@ -1221,7 +1221,7 @@ if('combine' in tool){
 				mv \$b \${bar}.bed
 			done
 
-			python "$projectDir"/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+			python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
                         """
                         }
 }
@@ -1247,7 +1247,7 @@ process diff_exp{
 
 	prepDE.py -i samples.txt
 
-	Rscript "$projectDir"/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+	Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
 	"""
 }
 
@@ -1305,14 +1305,14 @@ process get_mature_seq{
 	awk '{print \$1}' $down_reg | tail -n +2 > down_reg_circ.txt
 
 	# Split ID to BED file
-	bash "$projectDir"/bin/ID_to_BED.sh up_reg_circ.txt
-	bash "$projectDir"/bin/ID_to_BED.sh down_reg_circ.txt
+	bash ${projectDir}/bin/ID_to_BED.sh up_reg_circ.txt
+	bash ${projectDir}/bin/ID_to_BED.sh down_reg_circ.txt
 
 	# Consolidate DEC BED files
 	cat *.bed > de_circ.bed
 
 	# Create BED12 files
-	bash "$projectDir"/bin/get_mature_seq.sh
+	bash ${projectDir}/bin/get_mature_seq.sh
 
 	# Create miRanda inputs
 	bedtools getfasta -fi $fasta -bed de_circ_exon_annotated.bed -s -split -name > de_circ_sequences.fa_tmp
@@ -1386,13 +1386,13 @@ process get_parent_gene{
 	awk '{print \$1}' $down_reg | tail -n +2 > down_reg_circ.txt
 
 	# Split ID to BED file
-	bash "$projectDir"/bin/ID_to_BED.sh up_reg_circ.txt
-	bash "$projectDir"/bin/ID_to_BED.sh down_reg_circ.txt
+	bash ${projectDir}/bin/ID_to_BED.sh up_reg_circ.txt
+	bash ${projectDir}/bin/ID_to_BED.sh down_reg_circ.txt
 
 	# Consolidate DEC BED files
 	cat *.bed > de_circ.bed
 
-	bash "$projectDir"/bin/get_parent_genes.sh
+	bash ${projectDir}/bin/get_parent_genes.sh
 	"""
 }
 
@@ -1436,7 +1436,7 @@ process make_circRNA_plots{
 	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
 	"""
 	# create file for circos plot
-	bash "$projectDir"/bin/prep_circos.sh $bed
+	bash ${projectDir}/bin/prep_circos.sh $bed
 
 	# merge upreg, downreg info
 	cat $up_reg $down_reg > de_circ.txt
@@ -1445,7 +1445,7 @@ process make_circRNA_plots{
 	grep -v "6mer" $targetscan > targetscan_filt.txt
 
 	# Make plots and generate circRNA info
-	Rscript "$projectDir"/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_len $phenotype circlize_exons.txt
+	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_len $phenotype circlize_exons.txt
 	"""
 }
 
@@ -1476,7 +1476,7 @@ process master_report{
 	echo "circRNA_ID Type Mature_Length Parent_Gene Strand Log2FC pvalue Adjusted_pvalue" | tr ' ' '\t' > headers.txt
 	cat headers.txt no_headers.txt > merged_reports.txt
 
-	Rscript "$projectDir"/bin/annotate_report.R
+	Rscript ${projectDir}/bin/annotate_report.R
 	"""
 }
 
@@ -1505,6 +1505,6 @@ def defineToolList() {
         'dcc',
         'mapsplice',
         'uroborus',
-	'combine'
+	      'combine'
         ]
 }
