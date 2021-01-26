@@ -118,6 +118,11 @@ params.bam_glob = null
 params.adapters = null
 params.phenotype = null
 params.trimming = null
+params.k = null
+params.ktrim = null
+params.qtrim = null
+params.trimq = null
+params.minlen = null
 
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
@@ -447,10 +452,8 @@ ch_ciriquant_yml = params.ciriquant_yml ? Channel.value(file(params.ciriquant_ym
 ================================================================================
 */
 
-// stage bam files
-bam_files = params.input + params.input_glob
-
 if(params.input_type == 'bam'){
+   bam_files = params.input + params.input_glob
    ch_bam = Channel.fromPath( bam_files )
                    .map{ file -> [file.baseName, file]}
    process bam_to_fq{

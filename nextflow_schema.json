@@ -285,6 +285,21 @@
         },
         "trimming": {
             "type": "boolean"
+        },
+        "minlen": {
+            "type": "integer"
+        },
+        "ktrim": {
+            "type": "string"
+        },
+        "k": {
+            "type": "string"
+        },
+        "qtrim": {
+          "type": "string"
+        },
+        "trimq": {
+          "type": "integer"
         }
     }
 }
