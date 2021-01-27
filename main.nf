@@ -123,7 +123,7 @@ params.ktrim = null
 params.qtrim = null
 params.trimq = null
 params.minlen = null
-params.testing = null 
+params.testing = null
 
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
@@ -479,6 +479,12 @@ if(params.input_type == 'bam'){
          fastq_build = params.input + params.input_glob
          Channel.fromFilePairs( fastq_build )
                 .set{ fastq_built }
+}else if(params.input_type == 'test'){
+         Channel
+            .fromPath(params.input)
+            .splitCsv(header:true)
+            .map{ row-> tuple(row.sampleID, row.read1, row.read2) }
+            .set{fastq_built}
 }
 
 // stage three channels with raw reads:

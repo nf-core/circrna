@@ -300,9 +300,6 @@
         },
         "trimq": {
           "type": "integer"
-        },
-        "testing": {
-          "type": "boolean"
         }
     }
 }

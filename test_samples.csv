@@ -1,0 +1,7 @@
+sampleID,read1,read2
+normal_rep1,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep1_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep1_2.fq.gz
+normal_rep2,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep2_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep2_2.fq.gz
+normal_rep3,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep3_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/normal_rep3_2.fq.gz
+tumor_rep1,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep1_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep1_2.fq.gz
+tumor_rep2,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep2_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep2_2.fq.gz
+tumor_rep3,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep3_1.fq.gz,https://raw.githubusercontent.com/BarryDigby/test/dev/test-datasets/fastq/tumor_rep3_2.fq.gz
