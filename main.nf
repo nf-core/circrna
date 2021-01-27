@@ -123,7 +123,6 @@ params.ktrim = null
 params.qtrim = null
 params.trimq = null
 params.minlen = null
-params.testing = null
 
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
