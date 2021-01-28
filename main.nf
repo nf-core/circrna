@@ -482,7 +482,7 @@ if(params.input_type == 'bam'){
             .fromPath(params.input)
             .splitCsv(header:true)
             .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
-            .set{fastq_built}
+            .set{ fastq_built }
 }
 
 // stage three channels with raw reads:
