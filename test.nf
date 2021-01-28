@@ -1,15 +1,15 @@
 #!/usr/bin/env nextflow
 
 params.index = 'test_samples.csv'
-params.flow = 'A'
+params.flow = null
 
 Channel
     .fromPath(params.index)
     .splitCsv(header:true)
-    .map{ row-> tuple(row.sampleID, row.read1, row.read2) }
+    .map{ row-> tuple(row.sampleID, file(row.read1), file(row.read2)) }
     .into{ samples_ch1; samples_ch }
 
-// samples_ch1.view()
+samples_ch1.view()
 
 
 if(params.flow == 'A'){
