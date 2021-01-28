@@ -482,7 +482,7 @@ if(params.input_type == 'bam'){
          Channel
             .fromPath(params.input)
             .splitCsv(header:true)
-            .map{ row-> tuple(row.sampleID, file(row.read1), file(row.read2)) }
+            .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
             .set{fastq_built}
 }
 
