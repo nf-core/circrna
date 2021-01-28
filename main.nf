@@ -480,15 +480,15 @@ if(params.input_type == 'bam'){
                 .set{ fastq_built }
 }else if(params.input_type == 'test'){
          Channel
-            .fromPath(file(params.input))
+            .fromPath(params.input)
             .splitCsv(header:true)
             .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
             .set{fastq_built}
 }
 
 // stage three channels with raw reads:
-(fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
-
+(fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
+check_reads.view()
 // FASTQC on raw data. Mandatory.
 
 process FastQC {

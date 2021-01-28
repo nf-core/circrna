@@ -1,7 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.index = 'test_samples.csv'
-params.flow = null
+params.index = 'https://raw.githubusercontent.com/BarryDigby/test/dev/test_samples.csv'
 
 Channel
     .fromPath(params.index)
@@ -11,19 +10,6 @@ Channel
 
 (samples_view, fastqc_reads, raw_reads) = samples_ch.into(3)
 samples_view.view()
-
-if(params.flow == 'A'){
-
-	println "Echo"
-
-}else if(params.flow == 'B'){
-
-	println "Exho"
-
-}else if(params.flow == 'C'){
-
-	println "try"
-}
 
 process fastqc{
 
