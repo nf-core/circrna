@@ -480,7 +480,7 @@ if(params.input_type == 'bam'){
                 .set{ fastq_built }
 }else if(params.input_type == 'test'){
          Channel
-            .fromPath(params.input)
+            .fromPath(file(params.input))
             .splitCsv(header:true)
             .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
             .set{fastq_built}
