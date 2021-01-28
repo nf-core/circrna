@@ -8,19 +8,16 @@ Channel
     .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
     .set{ samples_ch }
 
+
 (samples_view, fastqc_reads, raw_reads) = samples_ch.into(3)
 //samples_view.view()
 
 process foo{
 
 	echo true
-	//publishDir ".", mode:'copy'
 
 	input:
 	tuple val(base), file(reads) from fastqc_reads
-
-	output:
-	//file("*{.html,.zip}") into fastqc_out
 
   shell:
   '''
