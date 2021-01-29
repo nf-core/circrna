@@ -451,72 +451,43 @@ ch_ciriquant_yml = params.ciriquant_yml ? Channel.value(file(params.ciriquant_ym
 ================================================================================
 */
 
-// Check inputs
+if(params.input_type == 'bam'){
+   bam_files = params.input + params.input_glob
+   ch_bam = Channel.fromPath( bam_files )
+                   .map{ file -> [file.baseName, file]}
+   process bam_to_fq{
 
-if(params.input == null){
-  exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
+        input:
+            tuple val(base), file(bam) from ch_bam
+
+        output:
+            tuple val(base), file('*.fastq.gz') into fastq_built
+
+        script:
+        """
+        picard -Xmx8g \
+        SamToFastq \
+        I=$bam \
+        F=${base}_R1.fastq.gz \
+        F2=${base}_R2.fastq.gz \
+        VALIDATION_STRINGENCY=LENIENT
+        """
+      }
+}else if(params.input_type == 'fastq'){
+         fastq_build = params.input + params.input_glob
+         Channel.fromFilePairs( fastq_build )
+                .set{ fastq_built }
+}else if(params.input_type == 'test'){
+         Channel
+            .fromPath(params.input)
+            .splitCsv(header:true)
+            .map{ row-> tuple(row.sampleID, [file(row.read1), file(row.read2)]) }
+            .set{ fastq_built }
 }
 
-csv_path = null
-if(params.input && (has_extension(params.input, "csv"))) csv_path = params.input
-
-ch_input_sample = Channel.empty()
-if( csv_path ){
-
-    csv_file = file(csv_path)
-
-    if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one csv file per run."
-    if(!csv_file.exists()) exit 1, "[nf-core/circrna] error: input CSV file could not be found using the path provided: ${params.input}"
-
-    ch_input_sample = extract_data(csv_path)
-
-}else if (params.input && !has_extension(params.input, "csv")){
-
-    log.info ""
-    log.info "No CSV file provided, reading input files from directory provided"
-    log.info "Reading path: ${params.input}\n"
-    inputSample = retrieve_input_paths(params.input, params.input_glob, params.input_type)
-    ch_input_sample = inputSample
-
-}else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
-
-
-
-// Bam to FASTQ
-
-
-if(params.input_type == 'bam'){
-
-      process bam_to_fq{
-
-            input:
-                tuple val(base), file(bam) from ch_input_sample
-
-            output:
-                tuple val(base), file('*.fq.gz') into fastq_built
-
-            script:
-            """
-            picard -Xmx8g \
-            SamToFastq \
-            I=$bam \
-            F=${base}_R1.fq.gz \
-            F2=${base}_R2.fq.gz \
-            VALIDATION_STRINGENCY=LENIENT
-            """
-   }
-
-   (fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
-
-}else if(params.input_type == 'fastq'){
-
-   (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
-
-}else exit 1, "[nf-core/circrna] error: --input_type not specified!"
-
-
+// stage three channels with raw reads:
+(fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
 check_reads.view()
-
 // FASTQC on raw data. Mandatory.
 
 process FastQC {
@@ -541,29 +512,29 @@ if(params.trimming == true){
 
         process bbduk {
 
-                publishDir "$params.outdir/trimmed_reads", mode:'copy'
+        publishDir "$params.outdir/trimmed_reads", mode:'copy'
 
-                input:
-                    tuple val(base), file(fastq) from trimming_reads
-                    path adapters from params.adapters
+        input:
+            tuple val(base), file(fastq) from trimming_reads
+            path adapters from params.adapters
 
-                output:
-                    tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+        output:
+            tuple val(base), file('*.fq.gz') into trim_reads_ch
 
-                script:
-                """
-                bbduk.sh -Xmx4g \
-                in1=${fastq[0]} \
-                in2=${fastq[1]} \
-                out1=${base}_1.trim.fq.gz \
-                out2=${base}_2.trim.fq.gz \
-                ref=$adapters \
-                minlen=30 \
-                ktrim=r \
-                k=12 \
-                qtrim=r \
-                trimq=20
-                """
+        script:
+        """
+        bbduk.sh -Xmx4g \
+        in1=${fastq[0]} \
+        in2=${fastq[1]} \
+        out1=${base}_1.fq.gz \
+        out2=${base}_2.fq.gz \
+        ref=$adapters \
+        minlen=30 \
+        ktrim=r \
+        k=12 \
+        qtrim=r \
+        trimq=20
+        """
         }
 
         // trimmed reads into 2 channels:
@@ -571,37 +542,37 @@ if(params.trimming == true){
 
         process FastQC_trim {
 
-                publishDir "$params.outdir/FastQC/Trimmed", mode:'copy'
+        publishDir "$params.outdir/FastQC/Trimmed", mode:'copy'
 
-                input:
-                    tuple val(base), file(fastq) from fastqc_trim_reads
+        input:
+            tuple val(base), file(fastq) from fastqc_trim_reads
 
-                output:
-                    file ("*.{html,zip}") into fastqc_trimmed
+        output:
+            file ("*.{html,zip}") into fastqc_trimmed
 
-                script:
-                """
-                fastqc -q $fastq
-                """
-  }
+        script:
+        """
+        fastqc -q $fastq
+        """
+        }
 
-	     process multiqc_trim {
+	process multiqc_trim {
 
-              	publishDir "$params.outdir/MultiQC/Trimmed", mode:'copy'
+	publishDir "$params.outdir/MultiQC/Trimmed", mode:'copy'
 
-              	label 'multiqc'
+	label 'multiqc'
 
-              	input:
-              	file(htmls) from fastqc_trimmed.collect()
+	input:
+	file(htmls) from fastqc_trimmed.collect()
 
-              	output:
-              	file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
+	output:
+	file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
 
-              	script:
-              	"""
-              	multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
-              	"""
- }
+	script:
+	"""
+	multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
+	"""
+	}
 
 }else if(params.trimming == false){
         aligner_reads = raw_reads
