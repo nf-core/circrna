@@ -9,15 +9,15 @@ Channel
     .set{ samples_ch }
 
 
-(samples_view, fastqc_reads, raw_reads) = samples_ch.into(3)
-//samples_view.view()
+( foo_reads, raw_reads ) = samples_ch.into(2)
+
 
 process foo{
 
 	echo true
 
 	input:
-	tuple val(base), file(reads) from fastqc_reads
+	tuple val(base), file(reads) from foo_reads
 
   shell:
   '''
