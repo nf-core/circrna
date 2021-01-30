@@ -1521,6 +1521,33 @@ process master_report{
 ================================================================================
 */
 
+// Check parameter existence
+def checkParameterExistence(it, list) {
+    if (!list.contains(it)) {
+        log.warn "Unknown parameter: ${it}"
+        return false
+    }
+    return true
+}
+
+// Compare each parameter with a list of parameters
+def checkParameterList(list, realList) {
+    return list.every{ checkParameterExistence(it, realList) }
+}
+
+// Define list of available tools
+def defineToolList() {
+    return [
+        'ciriquant',
+        'circexplorer2',
+        'find_circ',
+        'circrna_finder',
+        'dcc',
+        'mapsplice',
+        'uroborus',
+	'combine'
+        ]
+}
 
 // Check if a row has the expected number of item
 def checkNumberOfItem(row, number) {
