@@ -512,7 +512,7 @@ if(params.input_type == 'bam'){
 
    (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
 
-}else exit 1, "[nf-core/circrna] error: --input_type not specified!"
+}else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
 
 check_reads.view()
