@@ -1429,7 +1429,7 @@ process get_mature_seq{
       	while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < de_circ_seq_tab.txt
 
         # Save fasta sequences for users
-        cp miranda/ circrna_fasta/
+        cp -r miranda/ circrna_fasta/
       	"""
 }
 
