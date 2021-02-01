@@ -1383,7 +1383,8 @@ process remove_unwanted_biotypes{
 
 process get_mature_seq{
 
-        publishDir "$params.outdir", mode:'copy', pattern: 'bed12/*.bed'
+        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'bed12/*.bed'
+        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'circrna_fasta/*.fa'
 
 	      input:
 		      file(fasta) from ch_fasta
@@ -1395,6 +1396,7 @@ process get_mature_seq{
 		      file("miranda/*.fa") into miranda_sequences
 		      file("targetscan/*.txt") into targetscan_sequences
 		      file("bed12/*.bed") into bed_files
+          file("circrna_fasta") into circ_seqs
 
 	      script:
 	      up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
@@ -1425,12 +1427,15 @@ process get_mature_seq{
       	awk -v OFS="\t" '{print \$1, 9606, \$2}' de_circ_seq_tab.txt_tmp > de_circ_seq_tab.txt && rm de_circ_seq_tab.txt_tmp
       	mkdir -p targetscan
       	while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < de_circ_seq_tab.txt
+
+        # Save fasta sequences for users
+        cp miranda/ circrna_fasta/
       	"""
 }
 
 process miRanda{
 
-	      publishDir "$params.outdir/miRanda", mode:'copy'
+	      publishDir "$params.outdir/mirna_prediction/miranda", mode:'copy'
 
       	input:
       		file(mirbase) from miranda_miRs
@@ -1452,7 +1457,7 @@ process miRanda{
 
 process targetscan{
 
-    	  publishDir "$params.outdir/TargetScan", mode:'copy'
+    	  publishDir "$params.outdir/mirna_prediction/targetscan", mode:'copy'
 
       	input:
       		file(miR) from targetscan_miRs
