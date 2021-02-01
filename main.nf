@@ -537,11 +537,11 @@ if(params.input_type == 'bam'){
                 """
    }
 
-   (fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
+        (fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
 
 }else if(params.input_type == 'fastq'){
 
-   (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
+        (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
@@ -551,7 +551,7 @@ check_reads.view()
 
 process FastQC {
 
-        publishDir "$params.outdir/FastQC/Raw", mode:'copy'
+        publishDir "$params.outdir/quality_control/fastqc/raw", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from fastqc_reads
@@ -601,7 +601,7 @@ if(params.trimming == true){
 
         process FastQC_trim {
 
-                publishDir "$params.outdir/FastQC/Trimmed", mode:'copy'
+                publishDir "$params.outdir/quality_control/fastqc/trimmed", mode:'copy'
 
                 input:
                   tuple val(base), file(fastq) from fastqc_trim_reads
@@ -617,7 +617,7 @@ if(params.trimming == true){
 
 	     process multiqc_trim {
 
-              	publishDir "$params.outdir/MultiQC/Trimmed", mode:'copy'
+              	publishDir "$params.outdir/quality_control/multiqc/trimmed", mode:'copy'
 
               	label 'multiqc'
 
@@ -641,7 +641,7 @@ if(params.trimming == true){
 
 process multiqc_raw {
 
-	      publishDir "$params.outdir/MultiQC/Raw", mode:'copy'
+	      publishDir "$params.outdir/quality_control/multiqc/raw", mode:'copy'
 
       	label 'multiqc'
 
@@ -1203,7 +1203,7 @@ process Hisat2_align{
 
 process StringTie{
 
-        publishDir "$params.outdir/rna-seq", mode:'copy'
+        publishDir "$params.outdir/differential_expression/stringtie_quantification", mode:'copy'
 
         input:
           tuple val(base), file(bam) from hisat2_bam
@@ -1245,7 +1245,7 @@ if(tools_selected > 1){
   process consolidate_algorithms{
 
           echo true
-          publishDir "$params.outdir/circrna_discovery/matrix", mode:'copy'
+          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
 
           input:
             tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
@@ -1276,7 +1276,7 @@ if(tools_selected > 1){
 
   process get_counts_combined{
 
-          publishDir "$params.outdir/circrna_discovery/matrix", mode:'copy'
+          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
 
 			    input:
 				    file(bed) from sample_counts.collect()
@@ -1299,7 +1299,7 @@ if(tools_selected > 1){
   process get_counts_single{
 
           echo true
-          publishDir "$params.outdir/circrna_discovery/matrix", mode:'copy'
+          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
 
 
           input:
@@ -1328,7 +1328,7 @@ ch_phenotype = file(params.phenotype)
 
 process diff_exp{
 
-        publishDir "$params.outdir/Differential_Expression", mode:'copy'
+        publishDir "$params.outdir/differential_expression", mode:'copy'
 
 	      input:
 		      file(gtf_dir) from stringtie_dir.collect()
@@ -1360,9 +1360,7 @@ process diff_exp{
 ================================================================================
 */
 
-//Create filtered gtf in its own channel so sym link used,
-// saves space in work dir.
-
+//Create filtered gtf in its own channel so sym link used saves space in work dir.
 
 process remove_unwanted_biotypes{
 
