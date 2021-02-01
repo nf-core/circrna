@@ -137,7 +137,7 @@ if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unkno
 // Check Modules
 moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
-if (!checkParamterList(module, ModuleList)) exit 1, "[nf-core/circrna] error: Unknown module, see --help for more information."
+if (!checkParamterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
 // Check Input parameter
 if(params.input == null){
