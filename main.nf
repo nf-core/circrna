@@ -1314,9 +1314,9 @@ if(tools_selected > 1){
           script:
           """
           for b in *.bed; do
-				   foo=\${b%".bed"};
-				   bar=\${foo%"_${tool}"};
-				   mv \$b \${bar}.bed
+				      foo=\${b%".bed"};
+				      bar=\${foo%"_${tool}"};
+				      mv \$b \${bar}.bed
 			    done
 
 			    python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
