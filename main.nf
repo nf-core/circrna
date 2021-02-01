@@ -1321,18 +1321,18 @@ process diff_exp{
 
 process remove_unwanted_biotypes{
 
-	input:
-		file(gtf) from ch_gencode_gtf
+        	input:
+        		file(gtf) from ch_gencode_gtf
 
-	output:
-		file("filt.gtf") into ch_gtf_filtered
+        	output:
+        		file("filt.gtf") into ch_gtf_filtered
 
-	script:
-	"""
-	cp ${projectDir}/bin/unwanted_biotypes.txt ./
+        	script:
+        	"""
+        	cp ${projectDir}/bin/unwanted_biotypes.txt ./
 
-	grep -vf unwanted_biotypes.txt $gtf > filt.gtf
-	"""
+        	grep -vf unwanted_biotypes.txt $gtf > filt.gtf
+        	"""
 }
 
 
@@ -1566,8 +1566,7 @@ def defineToolList() {
         'circrna_finder',
         'dcc',
         'mapsplice',
-        'uroborus',
-	'combine'
+        'uroborus'
         ]
 }
 
