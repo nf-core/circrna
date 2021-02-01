@@ -1394,7 +1394,7 @@ process get_mature_seq{
 		      file("miranda/*.fa") into miranda_sequences
 		      file("targetscan/*.txt") into targetscan_sequences
 		      file("bed12/*.bed") into bed_files
-          file("circrna_fasta") into circ_seqs
+          file("circrna_fasta/*.fa") into circ_seqs
 
 	      script:
 	      up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
