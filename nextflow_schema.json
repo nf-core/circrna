@@ -300,6 +300,9 @@
         },
         "trimq": {
           "type": "integer"
+        },
+        "module": {
+          "type": "string"
         }
     }
 }

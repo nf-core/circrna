@@ -123,10 +123,39 @@ params.qtrim = null
 params.trimq = null
 params.minlen = null
 
+/*
+================================================================================
+                          Check mandatory flags
+================================================================================
+*/
+
+// Check Tools selected
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
-if (!checkParameterList(tool, toolList)) exit 1, 'Unknown tool, see --help for more information'
+if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool, see --help for more information."
 
+// Check Modules
+moduleList = defineModuleList()
+module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
+if (!checkParamterList(module, MolduleList)) exit 1, "[nf-core/circrna] error: Unknown module, see --help for more information."
+
+// Check Input parameter
+if(params.input == null){
+  exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
+}
+
+// Check input type
+if(params.input_type == null){
+  exit 1, "[nf-core/circrna] error: --input_type was not supplied! Please select 'fastq' or 'bam'."
+}
+
+// Check Genome version
+if(params.genome_version == null){
+  exit 1, "[nf-core/circrna] error: --genome_version was not supplied!. Please select 'GRCh37' or 'GRCh37'."
+}
+
+
+// Check
 
 /*
 ================================================================================
@@ -181,42 +210,46 @@ ch_gene_annotation = params.gene_annotation ? Channel.value(file(params.gene_ann
 ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gencode_gtf_downloaded
 
 process download_mirbase{
-	errorStrategy 'retry'
-   	maxRetries 10
+      	errorStrategy 'retry'
+        maxRetries 10
 
-	publishDir "$params.outdir/assets", mode:'copy'
+      	publishDir "$params.outdir/assets", mode:'copy'
 
-	output:
-		file("hsa_mature.fa") into miranda_miRs
+      	output:
+      		file("hsa_mature.fa") into miranda_miRs
 
-	script:
-	"""
-	wget --no-check-certificate ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz
-	gunzip mature.fa.gz
-	grep "sapiens" -A1 mature.fa | awk '!/--/' > hsa_mature.fa
-	"""
+        when: 'mirna_prediction' in module
+
+      	script:
+      	"""
+      	wget --no-check-certificate ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz
+      	gunzip mature.fa.gz
+      	grep "sapiens" -A1 mature.fa | awk '!/--/' > hsa_mature.fa
+      	"""
 }
 
 // TO DO: add a retry attempt for process below (it sometimes fails to resolve the link)
 
 process download_targetscan{
-	errorStrategy 'retry'
-   	maxRetries 10
+      	errorStrategy 'retry'
+        maxRetries 10
 
-	publishDir "$params.outdir/assets", mode:'copy'
+      	publishDir "$params.outdir/assets", mode:'copy'
 
-	output:
-	file("hsa_miR.txt") into targetscan_miRs
-	file("hsa_miR_for_context_scores.txt") into targetscan_miRs_context_scores
+      	output:
+      	file("hsa_miR.txt") into targetscan_miRs
+      	file("hsa_miR_for_context_scores.txt") into targetscan_miRs_context_scores
 
-	script:
-	"""
-	wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/miR_Family_Info.txt.zip
-	jar xvf miR_Family_Info.txt.zip
-	grep 9606 miR_Family_Info.txt > hsa_miR_Family_Info.txt
-	awk -v OFS="\t" '{print \$1, \$2, \$3}' hsa_miR_Family_Info.txt > hsa_miR.txt
-	awk -v OFS="\t" '{print \$1, \$3, \$4, \$5}' hsa_miR.txt > hsa_miR_for_context_scores.txt
-	"""
+        when: 'mirna_prediction' in module
+
+      	script:
+      	"""
+      	wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/miR_Family_Info.txt.zip
+      	jar xvf miR_Family_Info.txt.zip
+      	grep 9606 miR_Family_Info.txt > hsa_miR_Family_Info.txt
+      	awk -v OFS="\t" '{print \$1, \$2, \$3}' hsa_miR_Family_Info.txt > hsa_miR.txt
+      	awk -v OFS="\t" '{print \$1, \$3, \$4, \$5}' hsa_miR.txt > hsa_miR_for_context_scores.txt
+      	"""
 }
 
 
@@ -246,8 +279,6 @@ process samtools_index{
 
 ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_built
 
-
-
 process bwa_index{
 
         publishDir "$params.outdir/index/bwa", mode:'copy'
@@ -259,7 +290,7 @@ process bwa_index{
             file("${fasta.baseName}.*") into bwa_built
             val("$launchDir/index/bwa") into bwa_path
 
-        when: !(params.bwa_index) && ('ciriquant' in tool || 'combine' in tool)
+        when: !(params.bwa_index) && 'ciriquant' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -282,7 +313,7 @@ process hisat2_index{
             file("${fasta.baseName}.*.ht2") into hisat2_built
             val("$launchDir/index/hisat2") into hisat2_path
 
-        when: !(params.hisat2_index) && ('ciriquant' in tool || 'combine' in tool)
+        when: !(params.hisat2_index) && 'ciriquant' in tool && ('circrna_discovery' || 'differential_expression' in module)
 
         script:
         """
@@ -304,7 +335,7 @@ process star_index{
         output:
             file("star_index") into star_built
 
-        when: !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool || 'combine' in tool)
+        when: !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
         script:
         """
@@ -333,7 +364,7 @@ process bowtie_index{
             file ("${fasta.baseName}.*") into bowtie_built
             val("$launchDir/index/bowtie") into bowtie_path
 
-        when: !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool || 'combine' in tool)
+        when: !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
 
         script:
         """
@@ -354,7 +385,7 @@ process bowtie2_index{
         output:
             file ("${fasta.baseName}.*") into bowtie2_built
 
-        when: !(params.bowtie2_index) && ('find_circ' in tool || 'uroborus' in tool || 'combine' in tool)
+        when: !(params.bowtie2_index) && ('find_circ' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
 
         script:
         """
@@ -384,20 +415,20 @@ process split_fasta{
              path("*.fa", includeInputs:true) into split_fasta
              val("$launchDir/index/chromosomes") into split_fasta_path
 
-        when: ('mapsplice' in tool || 'find_circ' in tool || 'combine' in tool)
+        when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
         shell:
         '''
-	## Add catch for test data (uses only 1 chr, no action needed)
-	n_chr=$(grep '>' !{fasta} | wc -l)
-	if [[ $n_chr -gt 1 ]];
-	then
-        	awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
-		rm !{fasta}
-	else
-		:
+      	## Add catch for test data (uses only 1 chr, no action needed)
+      	n_chr=$(grep '>' !{fasta} | wc -l)
 
-	fi
+        if [[ $n_chr -gt 1 ]];
+      	then
+          awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
+      		rm !{fasta}
+      	else
+      		:
+      	fi
         '''
 }
 
@@ -418,7 +449,7 @@ process ciriquant_yml{
         output:
             file("travis.yml") into yml_built
 
-        when: !(params.ciriquant_yml) && ('ciriquant' in tool || 'combine' in tool)
+        when: !(params.ciriquant_yml) && 'ciriquant' in tool && 'circrna_discovery' in tool
 
         script:
         index_prefix = fasta.toString() - ~/.fa/
@@ -513,7 +544,6 @@ if(params.input_type == 'bam'){
    (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
-
 
 check_reads.view()
 
@@ -651,7 +681,7 @@ process star_align{
         output:
             tuple val(base), file("${base}.Chimeric.out.junction") into circexplorer2_input
 
-        when: 'circexplorer2' in tool
+        when: 'circexplorer2' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -703,7 +733,7 @@ process circexplorer2_star{
             tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
             tuple val(base), file("${base}.txt") into circexplorer2_raw_results
 
-        when: 'circexplorer2' in tool
+        when: 'circexplorer2' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -727,7 +757,7 @@ process find_anchors{
         output:
             tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
 
-        when: 'find_circ' in tool
+        when: 'find_circ' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -757,7 +787,7 @@ process find_circ{
             tuple val(base), file("${base}_find_circ.bed") into find_circ_results
             tuple val(base), file("${base}.txt") into find_circ_raw_results
 
-        when: 'find_circ' in tool
+        when: 'find_circ' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -786,7 +816,7 @@ process circrna_finder_star{
         output:
             tuple val(base), file("${base}") into circrna_finder_star
 
-        when: 'circrna_finder'
+        when: 'circrna_finder' && 'circrna_discovery' in module
 
         script:
         """
@@ -819,7 +849,7 @@ process circrna_finder{
             tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
             tuple val(base), file("${base}.filteredJunctions.bed") into circrna_finder_raw_results
 
-        when: 'circrna_finder' in tool
+        when: 'circrna_finder' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -840,7 +870,7 @@ process dcc_pair{
         output:
             tuple val(base), file("samples") into dcc_samples
 
-        when: 'dcc' in tool
+        when: 'dcc' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -875,7 +905,7 @@ process dcc_1{
         output:
             tuple val(base), file("mate1") into dcc_mate1
 
-       when: 'dcc' in tool
+       when: 'dcc' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -911,7 +941,7 @@ process dcc_2{
         output:
             tuple val(base), file("mate2") into dcc_mate2
 
-        when: 'dcc' in tool
+        when: 'dcc' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -955,7 +985,7 @@ process dcc{
             tuple val(base), file("${base}_dcc.bed") into dcc_results
             tuple val(base), file("${base}.Circ*") into dcc_raw_results
 
-        when: 'dcc' in tool
+        when: 'dcc' in tool && 'circrna_discovery' in module
 
         script:
         COJ="Chimeric.out.junction"
@@ -993,7 +1023,7 @@ process ciriquant{
             tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
             tuple val(base), file("${base}.gtf") into ciriquant_raw_results
 
-        when: 'ciriquant' in tool
+        when: 'ciriquant' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -1028,7 +1058,7 @@ process mapsplice_align{
         output:
             tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
 
-        when: 'mapsplice' in tool
+        when: 'mapsplice' in tool && 'circrna_discovery' in module
 
         script:
         prefix = gtf.toString() - ~/.gtf/
@@ -1067,7 +1097,7 @@ process mapsplice_parse{
             tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
             tuple val(base), file("${base}.txt") into mapsplice_raw_results
 
-        when: 'mapsplice' in tool
+        when: 'mapsplice' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -1093,7 +1123,7 @@ process tophat_align{
             tuple val(base), file("unmapped.bam") into tophat_unmapped_bam
             tuple val(base), file("accepted_hits.bam") into tophat_accepted_hits
 
-        when: 'uroborus' in tool
+        when: 'uroborus' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -1119,7 +1149,7 @@ process uroborus{
         output:
             file("${base}.txt") into uroborus_results
 
-        when: 'uroborus' in tool
+        when: 'uroborus' in tool && 'circrna_discovery' in module
 
         script:
         """
@@ -1162,6 +1192,8 @@ process Hisat2_align{
         output:
                 tuple val(base), file("${base}.bam") into hisat2_bam
 
+        when: 'differential_expression' in module
+
         script:
         """
         hisat2 -p 16 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
@@ -1178,6 +1210,8 @@ process StringTie{
                 file(gtf) from ch_gencode_gtf
         output:
                 file("${base}") into stringtie_dir
+
+        when: 'differential_expression' in module
 
         script:
         """
@@ -1217,6 +1251,8 @@ if(tools_selected > 1){
               output:
                   file("${base}.bed") into sample_counts
 
+              when: 'differential_expression' in module
+
               script:
               """
 			        ## make tool output csv file
@@ -1245,10 +1281,12 @@ if(tools_selected > 1){
 			       output:
 				         file("circRNA_matrix.txt") into circRNA_counts
 
-      			script:
-      			"""
-      			python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-      			"""
+             when: 'differential_expression' in module
+
+             script:
+      			 """
+      			 python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+      			 """
 			}
 
 } else{
@@ -1267,6 +1305,8 @@ if(tools_selected > 1){
 
             output:
                 file("circRNA_matrix.txt") into circRNA_counts
+
+            when: 'differential_expression' in module
 
             script:
             """
@@ -1295,6 +1335,8 @@ process diff_exp{
 	      output:
 		      file("RNA-Seq") into rnaseq_dir
 		      file("circRNA") into circrna_dir
+
+        when: 'differential_expression' in module
 
 	      script:
 	      """
@@ -1569,6 +1611,16 @@ def defineToolList() {
         'uroborus'
         ]
 }
+
+// Define module list
+def defineModuleList() {
+    return [
+    'circrna_discovery',
+    'mirna_prediction',
+    'differential_expression'
+    ]
+}
+
 
 // Check if a row has the expected number of item
 def checkNumberOfItem(row, number) {
