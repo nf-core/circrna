@@ -1417,10 +1417,6 @@ ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
 
 ch_report = ch_targetscan.join(ch_miranda).join(ch_bed).join(ch_parent_genes).join(ch_mature_len)
 
-// must combine folders here or else process uses once then exits.
-ch_DESeq2_dirs = circrna_dir_report.combine(rnaseq_dir_report)
-
-
 process circos_plots{
 
         publishDir "$params.outdir/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
