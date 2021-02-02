@@ -1422,14 +1422,12 @@ process miRanda{
 
       	output:
       		file("*.miRanda.txt") into miranda_out
-      		file("*.mature_len.txt") into mature_len
 
         when: 'mirna_prediction' in module
 
         script:
       	prefix = miranda.toString() - ~/.fa/
       	"""
-      	grep -v '>' $miranda | wc -c > ${prefix}.mature_len.txt
       	miranda $mirbase $miranda -strict -out ${prefix}.bindsites.out -quiet
         echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
         grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
