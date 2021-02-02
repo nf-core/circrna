@@ -1332,6 +1332,8 @@ process get_mature_seq{
       	"""
 }
 
+(fasta_mature_len, fasta_miranda) = miranda_sequences.into(2)
+
 process get_parent_gene{
 
     	  input:
@@ -1354,6 +1356,23 @@ process get_parent_gene{
 
       	bash ${projectDir}/bin/get_parent_genes.sh
       	"""
+}
+
+process get_mature_len{
+
+        input:
+          file(miranda) from fasta_mature_len.flatten()
+
+        output:
+          file("*.mature_len.txt") into mature_len
+
+        when: 'circrna_discovery' in module
+
+        script:
+        prefix = miranda.toString() - ~/.fa/
+        """
+        grep -v '>' $miranda | wc -c > ${prefix}.mature_len.txt
+        """
 }
 
 // Create tuples, merge channels by simpleName for annotation.
@@ -1399,7 +1418,7 @@ process miRanda{
 
       	input:
       		file(mirbase) from miranda_miRs
-      		file(miranda) from miranda_sequences.flatten()
+      		file(miranda) from fasta_miranda.flatten()
 
       	output:
       		file("*.miRanda.txt") into miranda_out
@@ -1575,7 +1594,7 @@ process de_plots{
       		file("*.pdf") into de_plots
           file("*DESeq2_stats.txt") into de_stats
 
-        when: 'differential_expression' in module 
+        when: 'differential_expression' in module
 
       	script:
       	up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
