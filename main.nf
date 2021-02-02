@@ -1356,6 +1356,36 @@ process get_parent_gene{
       	"""
 }
 
+// Create tuples, merge channels by simpleName for report.
+ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
+ch_parent_genes_tmp = parent_genes.flatten()
+ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
+ch_bed_tmp = bed_files.flatten()
+ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
+
+ch_annotate = ch_bed.join(ch_mature_len).join(ch_parent_genes)
+
+process annotate_circrnas{
+
+        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*_annotated.txt", mode: 'copy'
+
+        input:
+          tuple val(base), file(bed), file(mature_len), file(parent_gene) from ch_annotate
+
+        output:
+          file("*annotated.txt") into circrna_annotated
+
+        when: 'circrna_discovery' in module
+
+        script:
+        """
+        Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
+        """
+}
+
+
+
+
 /*
 ================================================================================
                          circRNA - miRNA prediction
@@ -1407,31 +1437,22 @@ process targetscan{
 }
 
 // Create tuples, merge channels by simpleName for report.
-ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
-ch_parent_genes_tmp = parent_genes.flatten()
-ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
 ch_targetscan = targetscan_out.map{ file -> [file.simpleName, file]}
 ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
-ch_bed_tmp = bed_files.flatten()
-ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
-
-ch_report = ch_targetscan.join(ch_miranda).join(ch_bed).join(ch_parent_genes).join(ch_mature_len)
 
 process circos_plots{
 
         publishDir "$params.outdir/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
         publishDir "$params.outdir/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
-        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*_annotated.txt", mode: 'copy'
 
         input:
           tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_report
 
         output:
           file("*.pdf") into circos_plots
-          file("*_annotated.txt") into circrna_annotated
           file("*miRNA_targets.txt") into circrna_mirna_targets
 
-        when: ('circrna_discovery' || 'mirna_prediction' in module)
+        when: 'mirna_prediction' in module
 
         script:
         """
