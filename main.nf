@@ -1399,7 +1399,7 @@ process annotate_circrnas{
 
         script:
         """
-        Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
+        Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_len
         """
 }
 
