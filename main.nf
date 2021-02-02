@@ -1435,7 +1435,7 @@ process circos_plots{
           file("*_annotated.txt") into circrna_annotated
           file("*miRNA_targets.txt") into circrna_mirna_targets
 
-        when: 'mirna_prediction' in module
+        when: ('circrna_discovery' || 'mirna_prediction' in module)
 
         script:
         """
