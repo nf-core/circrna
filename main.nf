@@ -1387,8 +1387,6 @@ ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 process annotate_circrnas{
 
-        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*annotated.txt", mode: 'copy'
-
         input:
           tuple val(base), file(bed), file(mature_length), file(parent_gene) from ch_annotate
 
@@ -1400,6 +1398,25 @@ process annotate_circrnas{
         script:
         """
         Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
+        """
+}
+
+process master_annotate{
+
+        publishDir "$params.outdir/circrna_discovery/annotated", mode: 'copy'
+
+        input:
+          file(annotated) from circrna_annotated.collect()
+
+        output:
+          file("circrna_annotated.txt") into annotated_merged
+
+        script:
+        """
+        cat *.txt > merged.txt
+      	grep -v "Type" merged.txt > no_headers.txt
+      	echo "circRNA_ID Type Mature_Length Parent_Gene Strand" | tr ' ' '\t' > headers.txt
+      	cat headers.txt no_headers.txt > circrnas_annotated.txt
         """
 }
 
