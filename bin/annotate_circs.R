@@ -88,5 +88,4 @@ suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
 inputdata <- stage_data(arg$parent_gene, arg$bed, arg$mature_len)
-dir.create(inputdata$bed$name)
 z <- singular_report(inputdata)
