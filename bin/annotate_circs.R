@@ -36,7 +36,7 @@ giveError <- function(message){
     quit()
     }
 
-usage <- function(){giveError("USAGE: circ_report.R bed miranda targetscan mature_len circlize_exons.txt")}
+usage <- function(){giveError("USAGE: annotate_circs.R parent_gene bed mature_length")}
 
 stage_data <- function(parent_gene, bed, mature_len){
 
@@ -99,10 +99,8 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype, arg$circlize_exons)
+inputdata <- stage_data(arg$parent_gene, arg$bed, arg$mature_len)
 dir.create(inputdata$bed$name)
-x <- prep_plots(inputdata)
-y <- miRNAs(inputdata)
 z <- singular_report(inputdata)
 
 #head(inputdata$de)
