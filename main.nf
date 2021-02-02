@@ -1356,16 +1356,16 @@ process get_parent_gene{
       	"""
 }
 
-// Create tuples, merge channels by simpleName for report.
+// Create tuples, merge channels by simpleName for annotation.
 ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
 ch_parent_genes_tmp = parent_genes.flatten()
 ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
 ch_bed_tmp = bed_files.flatten()
 ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
 
-(bed_ann, bed_circos) = ch_bed.into(2)
-(mature_ann, mature_circos) = ch_mature_len.into(2)
-(parent_ann, parent_circos) = ch_parent_genes.into(2)
+(bed_ann, bed_circos, bed_diff_exp) = ch_bed.into(3)
+(mature_ann, mature_circos, mature_diff_exp) = ch_mature_len.into(3)
+(parent_ann, parent_circos, parent_diff_exp) = ch_parent_genes.into(3)
 
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
@@ -1441,7 +1441,10 @@ process targetscan{
 ch_targetscan = targetscan_out.map{ file -> [file.simpleName, file]}
 ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 
-ch_circos_plot = ch_targetscan.join(ch_miranda).join(bed_circos).join(parent_circos).join(mature_circos)
+(targetscan_circos, targetscan_diff_exp) = ch_targetscan.into(2)
+(miranda_circos, miranda_diff_exp) = ch_miranda.into(2)
+
+ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(parent_circos).join(mature_circos)
 
 process circos_plots{
 
@@ -1473,11 +1476,15 @@ process circos_plots{
 
 /*
 ================================================================================
-                        circRNA Differential Expression
+                          Differential Expression
 ================================================================================
 */
 
-// re-jig the above to check for params.hisat2_index if it exists, otherwise use built files.
+/*
+ * RNA-Seq quantification required to estimate RNA size factors
+ * for circRNA library correction
+ */
+
 ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
 
 process Hisat2_align{
@@ -1549,6 +1556,86 @@ process diff_exp{
 	      Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
 	      """
 }
+
+ch_report = targetscan_diff_exp.join(miranda_diff_exp).join(bed_diff_exp).join(parent_diff_exp).join(mature_diff_exp)
+
+// must combine folders here or else process uses once then exits.
+ch_DESeq2_dirs = circrna_dir_report.combine(rnaseq_dir_report)
+
+process de_plots{
+
+        publishDir "$params.outdir/differential_expression/circrna_plots", pattern:"*.pdf", mode:'copy'
+        publishDir "$params.outdir/differential_expression/circrna_stats", pattern:"*DESeq2_stats.txt", mode: 'copy'
+
+      	input:
+      		file(phenotype) from ch_phenotype
+      		tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_len), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
+
+      	output:
+      		file("*.pdf") into de_plots
+          file("*DESeq2_stats.txt") into de_stats
+
+        when: 'differential_expression' in module 
+
+      	script:
+      	up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
+      	down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
+      	circ_counts = "${circRNA}/DESeq2_normalized_counts.txt"
+      	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
+      	"""
+      	# create file for circos plot
+      	bash ${projectDir}/bin/prep_circos.sh $bed
+
+      	# merge upreg, downreg info
+      	cat $up_reg $down_reg > de_circ.txt
+
+      	# remove 6mers from TargetScan
+      	grep -v "6mer" $targetscan > targetscan_filt.txt
+
+      	# Make plots and generate circRNA info
+      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_len $phenotype circlize_exons.txt
+      	"""
+}
+
+// collect all from previous process
+//master_ch = circRNA_plots.collect()
+//(test, test1) = circRNA_plots.into(2)
+//test.view()
+// delete text files in process script, left with only dirs.
+
+
+process master_report{
+
+        publishDir "$params.outdir/circRNA_Report", mode:'copy'
+
+      	input:
+      		file(reports) from de_stats.collect()
+
+      	output:
+      		file("*circRNAs.txt") into final_out
+
+        when: 'differential_expression' in module
+
+      	script:
+      	"""
+      	## extract reports
+      	for dir in '*/'; do cp \$dir/*_Report.txt .; done
+
+      	# remove header, add manually
+      	cat *.txt > merged.txt
+      	grep -v "Log2FC" merged.txt > no_headers.txt
+      	echo "circRNA_ID Type Mature_Length Parent_Gene Strand Log2FC pvalue Adjusted_pvalue" | tr ' ' '\t' > headers.txt
+      	cat headers.txt no_headers.txt > merged_reports.txt
+
+      	Rscript ${projectDir}/bin/annotate_report.R
+      	"""
+}
+
+
+
+
+
+
 
 /*
 ================================================================================
