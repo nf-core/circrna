@@ -1390,7 +1390,7 @@ process annotate_circrnas{
         publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*annotated.txt", mode: 'copy'
 
         input:
-          tuple val(base), file(bed), file(mature_len), file(parent_gene) from ch_annotate
+          tuple val(base), file(bed), file(mature_length), file(parent_gene) from ch_annotate
 
         output:
           file("*annotated.txt") into circrna_annotated
@@ -1399,7 +1399,7 @@ process annotate_circrnas{
 
         script:
         """
-        Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_len
+        Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
         """
 }
 
@@ -1583,7 +1583,7 @@ process de_plots{
 
       	input:
       		file(phenotype) from ch_phenotype
-      		tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_len), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
+      		tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
 
       	output:
       		file("*.pdf") into de_plots
@@ -1607,7 +1607,7 @@ process de_plots{
       	grep -v "6mer" $targetscan > targetscan_filt.txt
 
       	# Make plots and generate circRNA info
-      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_len $phenotype circlize_exons.txt
+      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_length $phenotype circlize_exons.txt
       	"""
 }
 
@@ -1620,7 +1620,7 @@ process de_plots{
 
 process master_report{
 
-        publishDir "$params.outdir/circRNA_Report", mode:'copy'
+        publishDir "$params.outdir/differential_expression/de_circ_annotated", mode:'copy'
 
       	input:
       		file(reports) from de_stats.collect()
