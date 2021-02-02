@@ -1351,9 +1351,6 @@ process get_parent_gene{
         # 'de_circ.bed' hardcoded into bash script, is actually all circrnas.
       	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > de_circ.bed
 
-      	# Consolidate DEC BED files
-      	cat *.bed > de_circ.bed
-
       	bash ${projectDir}/bin/get_parent_genes.sh
       	"""
 }
