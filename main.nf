@@ -1358,7 +1358,7 @@ process get_parent_gene{
 process get_mature_len{
 
         input:
-          file(miranda) from fasta_mature_len.flatten()
+          file(fasta) from fasta_mature_len.flatten()
 
         output:
           file("*.mature_len.txt") into mature_len
@@ -1366,9 +1366,9 @@ process get_mature_len{
         when: 'circrna_discovery' in module
 
         script:
-        prefix = miranda.toString() - ~/.fa/
+        prefix = fasta.toString() - ~/.fa/
         """
-        grep -v '>' $miranda | wc -c > ${prefix}.mature_len.txt
+        grep -v '>' $fasta | wc -c > ${prefix}.mature_len.txt
         """
 }
 

@@ -76,7 +76,7 @@ singular_report <- function(inputdata){
 
 	colnames(out_df) <- c("circRNA_ID", "Type", "Mature_Length", "Parent_Gene", "Strand")
 
-	write.table(out_df, file.path(file_name, paste(file_name, "annotated.txt", sep="_")), quote=F, sep="\t", row.names=F)
+	write.table(out_df, paste(file_name, "annotated.txt", sep="_"), quote=F, sep="\t", row.names=F)
 }
 
 # Packages + Error traceback (really handy for explicit error tracing)
