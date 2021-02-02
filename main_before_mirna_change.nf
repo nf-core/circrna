@@ -1165,20 +1165,77 @@ process uroborus{
         """
 }
 
+
+
 /*
 ================================================================================
-                            Annotate circRNAs
+                                  RNA-Seq
 ================================================================================
 */
 
-/*
- * CONSOLIDATION OF TOOLS
- * Keep circRNAs that have been called by at least 2 tools (if tools_selected > 1)
- * circRNA tool outputs converted to matrix to facilitate filtering
- * (circRNAs with read counts < 1 have already been removed during aligner processes)
- */
+// below relies on providing hisat2 index. need to fix to incorporate built indices.
+//hisat2_files = params.hisat2_index + "/*"
+//ch_hisat2_index_files = Channel.fromPath( hisat2_files )
 
+
+// re-jig the above to check for params.hisat2_index if it exists, otherwise use built files.
+ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
+
+
+process Hisat2_align{
+
+        input:
+          tuple val(base), file(fastq) from hisat2_reads
+          file(hisat2_index) from ch_hisat2_index_files.collect()
+          file(fasta) from ch_fasta
+
+        output:
+          tuple val(base), file("${base}.bam") into hisat2_bam
+
+        when: 'differential_expression' in module
+
+        script:
+        """
+        hisat2 -p 16 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
+        """
+}
+
+
+process StringTie{
+
+        publishDir "$params.outdir/differential_expression/stringtie_quantification", mode:'copy'
+
+        input:
+          tuple val(base), file(bam) from hisat2_bam
+          file(gtf) from ch_gencode_gtf
+
+        output:
+          file("${base}") into stringtie_dir
+
+        when: 'differential_expression' in module
+
+        script:
+        """
+        mkdir ${base}/
+        stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 16 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+        """
+}
+
+/*
+================================================================================
+                         circRNA Differential Expression
+================================================================================
+*/
+
+
+// need to consolidate circRNA results into single channel.
+// apply filtering steps before this step!
+// simple awk|grep one liners will do after tool generates results.
+
+// CONSOLIDATION
+// mix (one tool) or join (multiple tools)
 // check the length of the tool list
+
 tools_selected = tool.size()
 
 if(tools_selected > 1){
@@ -1196,7 +1253,7 @@ if(tools_selected > 1){
           output:
             file("${base}.bed") into sample_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'differential_expression' in module
 
           script:
           """
@@ -1227,7 +1284,7 @@ if(tools_selected > 1){
 			    output:
 				    file("circRNA_matrix.txt") into circRNA_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'differential_expression' in module
 
           script:
       		"""
@@ -1252,7 +1309,7 @@ if(tools_selected > 1){
           output:
             file("circRNA_matrix.txt") into circRNA_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'differential_expression' in module
 
           script:
           """
@@ -1267,7 +1324,43 @@ if(tools_selected > 1){
     }
 }
 
-(circrna_matrix_mature_seq, circrna_matrix_parent_gene, circrna_matrix_diff_exp) = circRNA_counts.into(3)
+ch_phenotype = file(params.phenotype)
+
+process diff_exp{
+
+        publishDir "$params.outdir/differential_expression", mode:'copy'
+
+	      input:
+		      file(gtf_dir) from stringtie_dir.collect()
+		      file(circ_matrix) from circRNA_counts
+		      file(phenotype) from ch_phenotype
+
+	      output:
+		      file("RNA-Seq") into rnaseq_dir
+		      file("circRNA") into circrna_dir
+
+        when: 'differential_expression' in module
+
+	      script:
+	      """
+	      for i in \$(ls -d */); do sample=\${i%"/"}; file=\${sample}.gtf; touch samples.txt; printf "\$sample\t\${i}\${file}\n" >> samples.txt; done
+
+	      prepDE.py -i samples.txt
+
+	      Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+	      """
+}
+
+(circrna_dir_mature_seq, circrna_dir_parent_gene, circrna_dir_report) = circrna_dir.into(3)
+(rnaseq_dir_parent_gene, rnaseq_dir_report) = rnaseq_dir.into(2)
+
+/*
+================================================================================
+                         circRNA - miRNA prediction
+================================================================================
+*/
+
+//Create filtered gtf in its own channel so sym link used saves space in work dir.
 
 process remove_unwanted_biotypes{
 
@@ -1277,8 +1370,6 @@ process remove_unwanted_biotypes{
         output:
           file("filt.gtf") into ch_gtf_filtered
 
-        when: ('circrna_discovery' || 'mirna_prediction' in module)
-
         script:
         """
         cp ${projectDir}/bin/unwanted_biotypes.txt ./
@@ -1286,6 +1377,7 @@ process remove_unwanted_biotypes{
         grep -vf unwanted_biotypes.txt $gtf > filt.gtf
         """
 }
+
 
 process get_mature_seq{
 
@@ -1296,7 +1388,7 @@ process get_mature_seq{
 		      file(fasta) from ch_fasta
 		      file(fai) from ch_fai
 		      file(gtf) from ch_gtf_filtered
-		      file(circRNA) from circrna_matrix_mature_seq
+		      file(circRNA) from circrna_dir_mature_seq
 
 	      output:
 		      file("miranda/*.fa") into miranda_sequences
@@ -1304,13 +1396,20 @@ process get_mature_seq{
 		      file("bed12/*.bed") into bed_files
           file("circrna_fasta/*.fa") into circ_seqs
 
-        when: ('circrna_discovery' || 'mirna_prediction' in module)
-
 	      script:
+	      up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
+	      down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
 	      """
-      	# convert circrna matrix to bed6 file
-        # de_circ.bed hardcoded into bash script, is actually all circrnas.
-      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > de_circ.bed
+      	# Extract circRNA ID's from DESeq2 DECs.
+      	awk '{print \$1}' $up_reg | tail -n +2 > up_reg_circ.txt
+      	awk '{print \$1}' $down_reg | tail -n +2 > down_reg_circ.txt
+
+      	# Split ID to BED file
+      	bash ${projectDir}/bin/ID_to_BED.sh up_reg_circ.txt
+      	bash ${projectDir}/bin/ID_to_BED.sh down_reg_circ.txt
+
+      	# Consolidate DEC BED files
+      	cat *.bed > de_circ.bed
 
       	# Create BED12 files
       	bash ${projectDir}/bin/get_mature_seq.sh
@@ -1332,39 +1431,9 @@ process get_mature_seq{
       	"""
 }
 
-process get_parent_gene{
-
-    	  input:
-      		file(gtf) from ch_gtf_filtered
-      		file(circRNA) from circrna_matrix_parent_gene
-
-      	output:
-      		file("parent_genes/*.txt") into parent_genes
-
-        when: 'circrna_discovery' in module
-
-      	script:
-      	"""
-        # convert circrna matrix to bed6 file
-        # 'de_circ.bed' hardcoded into bash script, is actually all circrnas.
-      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > de_circ.bed
-
-      	# Consolidate DEC BED files
-      	cat *.bed > de_circ.bed
-
-      	bash ${projectDir}/bin/get_parent_genes.sh
-      	"""
-}
-
-/*
-================================================================================
-                         circRNA - miRNA prediction
-================================================================================
-*/
-
 process miRanda{
 
-	      publishDir "$params.outdir/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode:'copy'
+	      publishDir "$params.outdir/mirna_prediction/miranda", mode:'copy'
 
       	input:
       		file(mirbase) from miranda_miRs
@@ -1373,8 +1442,6 @@ process miRanda{
       	output:
       		file("*.miRanda.txt") into miranda_out
       		file("*.mature_len.txt") into mature_len
-
-        when: 'mirna_prediction' in module
 
         script:
       	prefix = miranda.toString() - ~/.fa/
@@ -1397,14 +1464,49 @@ process targetscan{
       	output:
       		file("*.targetscan.txt") into targetscan_out
 
-        when: 'mirna_prediction' in module
-
       	script:
       	prefix = circ.toString() - ~/.txt/
       	"""
       	targetscan_70.pl $miR $circ ${prefix}.targetscan.txt
       	"""
 }
+
+
+process get_parent_gene{
+
+    	  input:
+      		file(gtf) from ch_gtf_filtered
+      		file(circRNA) from circrna_dir_parent_gene
+
+      	output:
+      		file("parent_genes/*.txt") into parent_genes
+
+      	script:
+      	up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
+      	down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
+      	"""
+      	# Extract circRNA ID's from DESeq2 DECs.
+      	awk '{print \$1}' $up_reg | tail -n +2 > up_reg_circ.txt
+      	awk '{print \$1}' $down_reg | tail -n +2 > down_reg_circ.txt
+
+      	# Split ID to BED file
+      	bash ${projectDir}/bin/ID_to_BED.sh up_reg_circ.txt
+      	bash ${projectDir}/bin/ID_to_BED.sh down_reg_circ.txt
+
+      	# Consolidate DEC BED files
+      	cat *.bed > de_circ.bed
+
+      	bash ${projectDir}/bin/get_parent_genes.sh
+      	"""
+}
+
+
+/*
+================================================================================
+                         circRNA Plots
+================================================================================
+*/
+
 
 // Create tuples, merge channels by simpleName for report.
 ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
@@ -1415,38 +1517,72 @@ ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 ch_bed_tmp = bed_files.flatten()
 ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
 
+
 ch_report = ch_targetscan.join(ch_miranda).join(ch_bed).join(ch_parent_genes).join(ch_mature_len)
 
 // must combine folders here or else process uses once then exits.
 ch_DESeq2_dirs = circrna_dir_report.combine(rnaseq_dir_report)
 
+process make_circRNA_plots{
 
-process circos_plots{
+        publishDir "$params.outdir/circRNA_Report", mode:'copy'
 
-        publishDir "$params.outdir/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
-        publishDir "$params.outdir/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
-        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*_annotated.txt", mode: 'copy'
+      	input:
+      		file(phenotype) from ch_phenotype
+      		tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_len), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
 
-        input:
-          tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_report
+      	output:
+      		file("chr*") into circRNA_plots
 
-        output:
-          file("*.pdf") into circos_plots
-          file("*_annotated.txt") into circrna_annotated
-          file("*miRNA_targets.txt") into circrna_mirna_targets
-
-        when: 'mirna_prediction' in module
-
-        script:
-        """
-        # create file for circos plot
+      	script:
+      	up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
+      	down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
+      	circ_counts = "${circRNA}/DESeq2_normalized_counts.txt"
+      	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
+      	"""
+      	# create file for circos plot
       	bash ${projectDir}/bin/prep_circos.sh $bed
+
+      	# merge upreg, downreg info
+      	cat $up_reg $down_reg > de_circ.txt
 
       	# remove 6mers from TargetScan
       	grep -v "6mer" $targetscan > targetscan_filt.txt
 
       	# Make plots and generate circRNA info
-      	Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
+      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_len $phenotype circlize_exons.txt
+      	"""
+}
+
+// collect all from previous process
+//master_ch = circRNA_plots.collect()
+//(test, test1) = circRNA_plots.into(2)
+//test.view()
+// delete text files in process script, left with only dirs.
+
+
+process master_report{
+
+        publishDir "$params.outdir/circRNA_Report", mode:'copy'
+
+      	input:
+      		file(reports) from circRNA_plots.collect()
+
+      	output:
+      		file("*circRNAs.txt") into final_out
+
+      	script:
+      	"""
+      	## extract reports
+      	for dir in '*/'; do cp \$dir/*_Report.txt .; done
+
+      	# remove header, add manually
+      	cat *.txt > merged.txt
+      	grep -v "Log2FC" merged.txt > no_headers.txt
+      	echo "circRNA_ID Type Mature_Length Parent_Gene Strand Log2FC pvalue Adjusted_pvalue" | tr ' ' '\t' > headers.txt
+      	cat headers.txt no_headers.txt > merged_reports.txt
+
+      	Rscript ${projectDir}/bin/annotate_report.R
       	"""
 }
 
