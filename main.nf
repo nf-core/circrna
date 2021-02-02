@@ -1593,6 +1593,15 @@ ch_report = targetscan_diff_exp.join(miranda_diff_exp).join(bed_diff_exp).join(p
 // must combine folders here or else process uses once then exits.
 ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
 
+
+/*
+ * BARRY
+ * you can omit miranda, targetscan here
+ * you also need to filter the incoming BED files
+ * only need the Diff exp circrna bed files, not all
+ */ 
+
+
 process de_plots{
 
         publishDir "$params.outdir/differential_expression/circrna_plots", pattern:"*.pdf", mode:'copy'
@@ -1614,9 +1623,6 @@ process de_plots{
       	circ_counts = "${circRNA}/DESeq2_normalized_counts.txt"
       	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
       	"""
-      	# create file for circos plot
-      	bash ${projectDir}/bin/prep_circos.sh $bed
-
       	# merge upreg, downreg info
       	cat $up_reg $down_reg > de_circ.txt
 

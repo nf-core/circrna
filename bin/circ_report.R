@@ -13,16 +13,16 @@ get_args <- function(){
 		help="DESeq2 Results for DE circs")
 
 	argp <- add_argument(
-            	parser=argp,
-            	arg="circ_counts",
+    parser=argp,
+    arg="circ_counts",
 		short="c",
-            	help="Normalized circRNA counts")
+    help="Normalized circRNA counts")
 
  	argp <- add_argument(
-            	parser=argp,
-            	arg="gene_counts",
+    parser=argp,
+    arg="gene_counts",
 		short="g",
-            	help="Normalized gene counts")
+    help="Normalized gene counts")
 
 	argp <- add_argument(
 		parser=argp,
@@ -60,12 +60,6 @@ get_args <- function(){
 		short="p",
 		help="Phenotype / colData / samples file used previously for DESeq2")
 
-	argp <- add_argument(
-		parser=argp,
-		arg="circlize_exons",
-		short="z",
-		help="output from bash script preparing circlize exons")
-
     	argv <- parse_args(
             	parser=argp,
             	argv = commandArgs(trailingOnly = TRUE))
@@ -78,9 +72,9 @@ giveError <- function(message){
     quit()
     }
 
-usage <- function(){giveError("USAGE: circ_report.R de_circ circrna_counts gene_counts bed miranda targetscan mature_len")}
+usage <- function(){giveError("USAGE: circ_report.R de_circ circrna_counts gene_counts bed miranda targetscan mature_len phenotype")}
 
-stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, miranda, targetscan, mature_len, phenotype, circlize_exons){
+stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, miranda, targetscan, mature_len, phenotype){
 
 	inputdata <- list()
 
@@ -97,7 +91,6 @@ stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mira
 	mature_tmp <- read.table(mature_len)
 	mature <- mature_tmp$V1
 	pheno <- read.table(phenotype, sep="\t", header=T, row.names=1)
-	circlize_exons <- read.table(circlize_exons, sep="\t")
 
 	inputdata$de <- de
 	inputdata$circ <- circ
@@ -108,7 +101,6 @@ stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mira
 	inputdata$targetscan <- targetscan
 	inputdata$mature <- mature
 	inputdata$pheno <- pheno
-	inputdata$circlize_exons <- circlize_exons
 
 	return(inputdata)
 }
@@ -170,31 +162,36 @@ prep_plots <- function(inputdata){
 	circ_df <- t(circ_df)
 	rna_df <- t(rna_df)
 
-	print(circ_df)
-	print(rna_df)
+	# it is possible that the parent gene is not in the RNA matrix
+	# the df is transposed, check if columns are ifEmpty
 
-	circ_df <- cbind(circ_df, pheno)
-	rna_df <- cbind(rna_df, pheno)
+	if(dim(rna_df)[2] == 0){
+		print("Parent Gene not present in RNA-Seq matrix, skipping plots")
+	}else{
 
-	circ_df$type <- "circRNA"
-	rna_df$type <- "linear RNA"
+		circ_df <- cbind(circ_df, pheno)
+		rna_df <- cbind(rna_df, pheno)
 
-	rna_names <- colnames(rna_df)
-	rna_names[1] <- "count"
-	colnames(rna_df) <- rna_names
+		circ_df$type <- "circRNA"
+		rna_df$type <- "linear RNA"
 
-	circ_names <- colnames(circ_df)
-	circ_names[1] <- "count"
-	colnames(circ_df) <- circ_names
+		rna_names <- colnames(rna_df)
+		rna_names[1] <- "count"
+		colnames(rna_df) <- rna_names
 
-	make_boxplot(circ_df, inputdata)
+		circ_names <- colnames(circ_df)
+		circ_names[1] <- "count"
+		colnames(circ_df) <- circ_names
 
-	merged <- rbind(circ_df, rna_df)
-	merged$count <- log2(merged$count + 1)
-	merged_df <- data_summary(merged, varname="count", groupnames=c("condition", "type"))
+		make_boxplot(circ_df, inputdata)
 
-	make_lineplot(merged_df, inputdata)
-	make_ratioplot(merged_df, inputdata)
+		merged <- rbind(circ_df, rna_df)
+		merged$count <- log2(merged$count + 1)
+		merged_df <- data_summary(merged, varname="count", groupnames=c("condition", "type"))
+
+		make_lineplot(merged_df, inputdata)
+		make_ratioplot(merged_df, inputdata)
+		}
 }
 
 
@@ -292,18 +289,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype, arg$circlize_exons)
+inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype)
 dir.create(inputdata$bed$name)
 x <- prep_plots(inputdata)
-y <- miRNAs(inputdata)
 z <- singular_report(inputdata)
-
-#head(inputdata$de)
-#head(inputdata$circ)
-#head(inputdata$gene)
-#head(inputdata$parent)
-#head(inputdata$bed)
-#head(inputdata$miranda)
-#head(inputdata$targetscan)
-#head(inputdata$mature)
-#head(inputdata$pheno)
