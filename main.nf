@@ -1577,7 +1577,7 @@ process diff_exp{
 ch_report = targetscan_diff_exp.join(miranda_diff_exp).join(bed_diff_exp).join(parent_diff_exp).join(mature_diff_exp)
 
 // must combine folders here or else process uses once then exits.
-ch_DESeq2_dirs = circrna_dir_report.combine(rnaseq_dir_report)
+ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
 
 process de_plots{
 
