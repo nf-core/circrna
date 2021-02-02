@@ -1763,7 +1763,6 @@ def retrieve_input_paths(input, glob, type){
               .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
               .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', 'fq.gz', fastq' or 'fq'."}
               .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
-              .view()
               .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
               .set{reads_for_csv}
 
@@ -1774,7 +1773,6 @@ def retrieve_input_paths(input, glob, type){
               .fromFilePairs(bam_files, size: 1)
               .filter{ it =~/.*.bam/}
               .map{ row -> [row[0], [row[1][0]]]}
-              .view()
               .ifEmpty{exit 1, "[nf-core/circrna] error: Cannot find bam file matching: ${bam_files}"}
               .set{reads_for_csv}
       }
@@ -1795,5 +1793,4 @@ def retrieve_input_paths(input, glob, type){
 
                 }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
-                .view()
 }
