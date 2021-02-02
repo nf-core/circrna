@@ -1473,6 +1473,85 @@ process circos_plots{
 
 /*
 ================================================================================
+                        circRNA Differential Expression
+================================================================================
+*/
+
+// re-jig the above to check for params.hisat2_index if it exists, otherwise use built files.
+ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
+
+process Hisat2_align{
+
+        input:
+          tuple val(base), file(fastq) from hisat2_reads
+          file(hisat2_index) from ch_hisat2_index_files.collect()
+          file(fasta) from ch_fasta
+
+        output:
+          tuple val(base), file("${base}.bam") into hisat2_bam
+
+        when: 'differential_expression' in module
+
+        script:
+        """
+        hisat2 -p 16 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
+        """
+}
+
+
+process StringTie{
+
+        publishDir "$params.outdir/differential_expression/stringtie_quantification", mode:'copy'
+
+        input:
+          tuple val(base), file(bam) from hisat2_bam
+          file(gtf) from ch_gencode_gtf
+
+        output:
+          file("${base}") into stringtie_dir
+
+        when: 'differential_expression' in module
+
+        script:
+        """
+        mkdir ${base}/
+        stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 16 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+        """
+}
+
+if(params.phenotype == null){
+  exit 1, "[nf-core/circrna] error: parameter '--phenotype' (file for DESeq2) not supplied. Please see '--help' or documentation for help."
+}else{
+  ch_phenotype = file(params.phenotype)
+}
+
+process diff_exp{
+
+        publishDir "$params.outdir/differential_expression", mode:'copy'
+
+	      input:
+		      file(gtf_dir) from stringtie_dir.collect()
+		      file(circ_matrix) from circrna_matrix_diff_exp
+		      file(phenotype) from ch_phenotype
+
+	      output:
+		      file("RNA-Seq") into rnaseq_dir
+		      file("circRNA") into circrna_dir
+
+        when: 'differential_expression' in module
+
+	      script:
+	      """
+	      for i in \$(ls -d */); do sample=\${i%"/"}; file=\${sample}.gtf; touch samples.txt; printf "\$sample\t\${i}\${file}\n" >> samples.txt; done
+
+	      prepDE.py -i samples.txt
+
+	      Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+	      """
+}
+
+/*
+================================================================================
                          Functions
 ================================================================================
 */
