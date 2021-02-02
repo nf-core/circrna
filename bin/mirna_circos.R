@@ -81,42 +81,6 @@ stage_data <- function(parent_gene, bed, miranda, targetscan, mature_len, circli
 	return(inputdata)
 }
 
-data_summary <- function(data, varname, groupnames){
-  	require(plyr)
-  	summary_func <- function(x, col){
-    		c(mean = mean(x[[col]], na.rm=TRUE), sd = sd(x[[col]], na.rm=TRUE))
-		}
-  	data_sum<-ddply(data, groupnames, .fun=summary_func, varname)
-  	data_sum <- rename(data_sum, c("mean" = varname))
-
-	return(data_sum)
-}
-
-
-singular_report <- function(inputdata){
-
-	chr <- inputdata$bed$chr
-	start <- inputdata$bed$start
-	end <- inputdata$bed$end
-	coords <- paste(start, end, sep="-")
-	circ_id <- paste(chr, coords, sep=":")
-	strand <- inputdata$bed$strand
-	gene <- inputdata$parent
-	mature_len <- inputdata$mature
-	file_name <- inputdata$bed$name
-	type <- inputdata$bed$type
-
-	vec <- c(circ_id, type, mature_len, gene, strand)
-	mat <- matrix(vec, ncol=5)
-	out_df <- as.data.frame(mat, stringsAsFactors=FALSE)
-
-	colnames(out_df) <- c("circRNA_ID", "Type", "Mature_Length", "Parent_Gene", "Strand")
-
-	write.table(out_df, file.path(file_name, paste(file_name, "annotated.txt", sep="_")), quote=F, sep="\t", row.names=F)
-}
-
-
-
 miRNAs <- function(inputdata){
 
 	outdir <- inputdata$bed$name
@@ -185,7 +149,7 @@ miRNAs <- function(inputdata){
 	write_mirs <- subset(write_mirs, select=c(miRNA, Score, Energy_KcalMol, MSA_start, MSA_end, Site_type))
 	colnames(write_mirs) <- c("miRNA", "Score", "Energy_KcalMol", "Start", "End", "Site_type")
 
-	write.table(write_mirs, file.path(outdir, paste(outdir, "miRNA_targets.txt", sep="_")), sep="\t", row.names=F, quote=F)
+	write.table(write_mirs, paste(outdir, "miRNA_targets.txt", sep="_"), sep="\t", row.names=F, quote=F)
 	make_circos_plot(inputdata, circlize_exons, circlize_mirs)
 }
 
@@ -194,7 +158,7 @@ make_circos_plot <- function(inputdata, circlize_exons, circlize_mirs){
 	circ_id <- inputdata$bed$name
 	col_text <- "grey25"
 
-	pdf(file.path(circ_id, paste(circ_id, "miRNA_Plot.pdf", sep="_")))
+	pdf(paste(circ_id, "miRNA_Plot.pdf", sep="_"))
 	circos.initialize(factors=circlize_exons$V1, xlim=matrix(c(circlize_exons$V2,circlize_exons$V3), ncol=2))
 	circos.genomicLabels(circlize_mirs,labels.column = 5, side = "outside", niceFacing = TRUE, cex = 0.8)
 	circos.track(ylim=c(0,0.5), panel.fun=function(x,y){
@@ -219,9 +183,8 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype, arg$circlize_exons)
+inputdata <- stage_data(arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$circlize_exons)
 y <- miRNAs(inputdata)
-z <- singular_report(inputdata)
 
 #head(inputdata$de)
 #head(inputdata$circ)
