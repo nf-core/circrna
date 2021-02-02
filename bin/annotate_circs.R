@@ -57,18 +57,6 @@ stage_data <- function(parent_gene, bed, mature_len){
 	return(inputdata)
 }
 
-data_summary <- function(data, varname, groupnames){
-  	require(plyr)
-  	summary_func <- function(x, col){
-    		c(mean = mean(x[[col]], na.rm=TRUE), sd = sd(x[[col]], na.rm=TRUE))
-		}
-  	data_sum<-ddply(data, groupnames, .fun=summary_func, varname)
-  	data_sum <- rename(data_sum, c("mean" = varname))
-
-	return(data_sum)
-}
-
-
 singular_report <- function(inputdata){
 
 	chr <- inputdata$bed$chr
@@ -102,13 +90,3 @@ arg <- get_args()
 inputdata <- stage_data(arg$parent_gene, arg$bed, arg$mature_len)
 dir.create(inputdata$bed$name)
 z <- singular_report(inputdata)
-
-#head(inputdata$de)
-#head(inputdata$circ)
-#head(inputdata$gene)
-#head(inputdata$parent)
-#head(inputdata$bed)
-#head(inputdata$miranda)
-#head(inputdata$targetscan)
-#head(inputdata$mature)
-#head(inputdata$pheno)

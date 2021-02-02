@@ -1387,13 +1387,13 @@ ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 process annotate_circrnas{
 
-        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*annotated.txt", mode: 'copy'
+        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "${base}/*annotated.txt", mode: 'copy'
 
         input:
           tuple val(base), file(bed), file(mature_length), file(parent_gene) from ch_annotate
 
         output:
-          file("*annotated.txt") into circrna_annotated
+          file("${base}/*annotated.txt") into circrna_annotated
 
         when: 'circrna_discovery' in module
 
