@@ -1515,7 +1515,7 @@ process Hisat2_align{
 
         script:
         """
-        hisat2 -p 16 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
+        hisat2 -p 2 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
         """
 }
 
@@ -1536,7 +1536,7 @@ process StringTie{
         script:
         """
         mkdir ${base}/
-        stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 16 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+        stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 2 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
         """
 }
 
