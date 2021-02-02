@@ -219,8 +219,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype, arg$circlize_exons)
-dir.create(inputdata$bed$name)
+inputdata <- stage_data(arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype, arg$circlize_exons)
 y <- miRNAs(inputdata)
 z <- singular_report(inputdata)
 
