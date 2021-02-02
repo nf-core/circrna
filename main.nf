@@ -1363,11 +1363,15 @@ ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
 ch_bed_tmp = bed_files.flatten()
 ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
 
-ch_annotate = ch_bed.join(ch_mature_len).join(ch_parent_genes)
+(bed_ann, bed_circos) = ch_bed.into(2)
+(mature_ann, mature_circos) = ch_mature_len.into(2)
+(parent_ann, parent_circos) = ch_parent_genes.into(2)
+
+ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 process annotate_circrnas{
 
-        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*_annotated.txt", mode: 'copy'
+        publishDir "$params.outdir/circrna_discovery/circrna_annotated", pattern: "*annotated.txt", mode: 'copy'
 
         input:
           tuple val(base), file(bed), file(mature_len), file(parent_gene) from ch_annotate
@@ -1382,9 +1386,6 @@ process annotate_circrnas{
         Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
         """
 }
-
-
-
 
 /*
 ================================================================================
@@ -1440,13 +1441,15 @@ process targetscan{
 ch_targetscan = targetscan_out.map{ file -> [file.simpleName, file]}
 ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 
+ch_circos_plot = ch_targetscan.join(ch_miranda).join(bed_circos).join(parent_circos).join(mature_circos)
+
 process circos_plots{
 
         publishDir "$params.outdir/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
         publishDir "$params.outdir/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
 
         input:
-          tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_report
+          tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_circos_plot
 
         output:
           file("*.pdf") into circos_plots
