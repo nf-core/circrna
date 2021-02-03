@@ -1669,9 +1669,6 @@ process master_report{
 
       	script:
       	"""
-      	## extract reports
-      	for dir in '*/'; do cp \$dir/*_Report.txt .; done
-
       	# remove header, add manually
       	cat *.txt > merged.txt
       	grep -v "Log2FC" merged.txt > no_headers.txt
