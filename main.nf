@@ -1523,7 +1523,7 @@ process Hisat2_align{
 
         script:
         """
-        hisat2 -p 2 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 16 -m 2G - > ${base}.bam
+        hisat2 -p 2 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 2 -m 2G - > ${base}.bam
         """
 }
 
