@@ -1402,7 +1402,7 @@ process master_annotate{
           file(annotated) from circrna_annotated.collect()
 
         output:
-          file("circrna_annotated.txt") into annotated_merged
+          file("circrnas_annotated.txt") into annotated_merged
 
         script:
         """
