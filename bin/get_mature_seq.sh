@@ -15,7 +15,7 @@ while IFS='' read -r line; do
 	echo "#"
 	echo "## Starting analysis for: $name"
 	echo "#"
-        # is the gtf file empty? 
+        # is the gtf file empty?
         if [[ -s ${name}.gtf ]];
 	then
 		echo "$name overlaps features in GTF file"
@@ -63,7 +63,7 @@ while IFS='' read -r line; do
 				mv ${name}.bed12.bed_tmp ${name}.bed12.bed
 			fi
 		fi
-	else 
+	else
                 echo "$name returned empty GTF file in bedtools query."
 		echo "Most likely an intronic circRNA"
 		type="ciRNA"
@@ -74,7 +74,7 @@ while IFS='' read -r line; do
                 awk -v OFS="\t" -v thick=$start -v rgb=$rgb -v count=$block_count -v start=$block_start -v size=$block_size \
                 '{print $0, thick, thick, rgb, count, size, start}' ${name}.bed > ${name}.bed12.bed
 	fi
-	
+
 echo "replacing tx with circRNA & RGB with circRNA type"
 awk -v type="$type" 'BEGIN{FS=OFS="\t"}{$9=type}1' ${name}.bed12.bed > ${name}.bed12.bed_tmp
 awk -v OFS="\t" -v name=$name '{$4 = name; print}' ${name}.bed12.bed_tmp > ${name}.bed12.bed_tmp1
@@ -90,7 +90,7 @@ rm -f ${name}.bed
 
 cp ${name}.bed12.bed bed12/
 
-done < de_circ.bed
+done < circs.bed
 
 cat bed12/*.bed12.bed > de_circ_exon_annotated.bed
 

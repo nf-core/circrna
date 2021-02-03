@@ -511,10 +511,7 @@ if( csv_path ){
 
 }else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
 
-
-
-// Bam to FASTQ
-
+// Process bam file / stage fastq
 
 if(params.input_type == 'bam'){
 
@@ -545,8 +542,6 @@ if(params.input_type == 'bam'){
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
-check_reads.view()
-
 // FASTQC on raw data. Mandatory.
 
 process FastQC {
@@ -565,7 +560,7 @@ process FastQC {
         """
 }
 
-// Set up Trimming logic
+// BBDUK
 
 if(params.trimming == true){
 
@@ -1174,7 +1169,7 @@ process uroborus{
 /*
  * CONSOLIDATION OF TOOLS
  * Keep circRNAs that have been called by at least 2 tools (if tools_selected > 1)
- * circRNA tool outputs converted to matrix to facilitate filtering
+ * circRNA tool outputs converted to count matrix to facilitate filtering
  * (circRNAs with read counts < 1 have already been removed during aligner processes)
  */
 
@@ -1290,7 +1285,7 @@ process remove_unwanted_biotypes{
 process get_mature_seq{
 
         publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'bed12/*.bed'
-        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'circrna_fasta/*.fa'
+        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'fasta/*.fa'
 
 	      input:
 		      file(fasta) from ch_fasta
@@ -1302,15 +1297,14 @@ process get_mature_seq{
 		      file("miranda/*.fa") into miranda_sequences
 		      file("targetscan/*.txt") into targetscan_sequences
 		      file("bed12/*.bed") into bed_files
-          file("circrna_fasta/*.fa") into circ_seqs
+          file("fasta/*.fa") into circ_seqs
 
         when: ('circrna_discovery' || 'mirna_prediction' in module)
 
 	      script:
 	      """
       	# convert circrna matrix to bed6 file
-        # de_circ.bed hardcoded into bash script, is actually all circrnas.
-      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > de_circ.bed
+      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > circs.bed
 
       	# Create BED12 files
       	bash ${projectDir}/bin/get_mature_seq.sh
@@ -1328,7 +1322,7 @@ process get_mature_seq{
       	while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < de_circ_seq_tab.txt
 
         # Save fasta sequences for users
-        cp -r miranda/ circrna_fasta/
+        cp -r miranda/ fasta/
       	"""
 }
 
@@ -1348,8 +1342,7 @@ process get_parent_gene{
       	script:
       	"""
         # convert circrna matrix to bed6 file
-        # 'de_circ.bed' hardcoded into bash script, is actually all circrnas.
-      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > de_circ.bed
+      	tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > circs.bed
 
       	bash ${projectDir}/bin/get_parent_genes.sh
       	"""
@@ -1599,7 +1592,7 @@ ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
  * you can omit miranda, targetscan here
  * you also need to filter the incoming BED files
  * only need the Diff exp circrna bed files, not all
- */ 
+ */
 
 
 process de_plots{

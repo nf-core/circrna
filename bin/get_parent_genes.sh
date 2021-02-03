@@ -12,4 +12,4 @@ while IFS='' read -r line; do
 
         echo -e "$name\t$gene" >> parent_genes/${name}.parent_genes.txt
 
-done < de_circ.bed
+done < circs.bed
