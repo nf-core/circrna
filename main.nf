@@ -1367,12 +1367,10 @@ process get_mature_len{
 
 // Create tuples, merge channels by simpleName for annotation.
 ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
-ch_parent_genes_tmp = parent_genes.flatten()
-ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
-ch_bed_tmp = bed_files.flatten()
-ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
+ch_parent_genes = parent_genes.flatten().map{ file -> [file.simpleName, file]}
+ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
 
-(bed_ann, bed_circos, bed_diff_exp, bed_view) = ch_bed.into(4)
+(bed_ann, bed_circos, bed_diff_exp) = ch_bed.into(3)
 (mature_ann, mature_circos, mature_diff_exp) = ch_mature_len.into(3)
 (parent_ann, parent_circos, parent_diff_exp) = ch_parent_genes.into(3)
 
@@ -1610,27 +1608,19 @@ process fetch_de_circ_id{
 }
 
 // de circrna dummy bed files in de_bed_files channel, map to get simpleName
-ch_de_bed = de_bed_files.map{ file -> [file.simpleName, file]}
+ch_de_bed = de_bed_files.flatten().map{ file -> [file.simpleName, file]}
 
-// filter incoming bed file channel of all circrnas to pick out de circrnas
-filt_bed = ch_de_bed.join(bed_diff_exp)
+// match incoming bed file channel of all circrnas with DE circ bed ID's
+filt_bed_tmp = ch_de_bed.join(bed_diff_exp)
 
-(a, b) = filt_bed.into(2)
-a.view()
+// remove the dummy files (file[1])
+filt_bed = filt_bed_tmp.map{file -> [file[0], file[2]]}
 
+// join should keep only the DE keys and apply it to parent, mature files if they are in correct structure.
+ch_report = filt_bed.join(parent_diff_exp).join(mature_diff_exp)
 
-/*
- * BARRY
- * you can omit miranda, targetscan here
- * you also need to filter the incoming BED files
- * only need the Diff exp circrna bed files, not all
- */
-
- ch_report = b.join(parent_diff_exp).join(mature_diff_exp)
-
- // must combine folders here or else process uses once then exits.
- ch_DESeq2_dirs = circrna_dir_plots.combine(rnaseq_dir)
-
+// must combine folders here or else process uses once then exits.
+ch_DESeq2_dirs = circrna_dir_plots.combine(rnaseq_dir)
 
 process de_plots{
 
