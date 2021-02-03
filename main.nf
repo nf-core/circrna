@@ -1620,7 +1620,7 @@ process de_plots{
       	cat $up_reg $down_reg > de_circ.txt
 
       	# Make plots and generate circRNA info
-      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype circlize_exons.txt
+      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype
       	"""
 }
 
