@@ -1022,7 +1022,7 @@ process ciriquant{
 
         script:
         """
-        CIRIquant -t 1 \
+        CIRIquant -t 2 \
         -1 ${fastq[0]} \
         -2 ${fastq[1]} \
         --config $ciriquant_yml \
