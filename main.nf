@@ -1603,7 +1603,7 @@ process fetch_de_circ_id{
         cat $down_reg up_reg_noheader.txt > de_circs.txt
 
         # make dummy files out of these to place in channel
-        awk '{print \$1}' de_circs.txt | grep -v "ID" | while read -r line; do touch ${line}.bed12.bed; done
+        awk '{print \$1}' de_circs.txt | grep -v "ID" | while read -r line; do touch \${line}.bed12.bed; done
         """
 }
 
