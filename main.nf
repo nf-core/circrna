@@ -1643,7 +1643,7 @@ process de_plots{
       	"""
       	# merge upreg, downreg info
         grep -v "baseMean" $up_reg > up_reg_noheader.txt
-        cat $down_reg up_reg_noheader.txt > de_circs.txt
+        cat $down_reg up_reg_noheader.txt > de_circ.txt
 
       	# Make plots and generate circRNA info
       	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype
