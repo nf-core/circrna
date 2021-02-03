@@ -1372,9 +1372,11 @@ ch_parent_genes = ch_parent_genes_tmp.map{ file -> [file.simpleName, file]}
 ch_bed_tmp = bed_files.flatten()
 ch_bed = ch_bed_tmp.map{ file -> [file.simpleName, file]}
 
-(bed_ann, bed_circos, bed_diff_exp) = ch_bed.into(3)
+(bed_ann, bed_circos, bed_diff_exp, bed_view) = ch_bed.into(4)
 (mature_ann, mature_circos, mature_diff_exp) = ch_mature_len.into(3)
 (parent_ann, parent_circos, parent_diff_exp) = ch_parent_genes.into(3)
+
+bed_view.view()
 
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
