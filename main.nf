@@ -1374,8 +1374,6 @@ ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
 (mature_ann, mature_circos, mature_diff_exp) = ch_mature_len.into(3)
 (parent_ann, parent_circos, parent_diff_exp) = ch_parent_genes.into(3)
 
-bed_view.view()
-
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 process annotate_circrnas{
