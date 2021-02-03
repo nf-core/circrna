@@ -1622,8 +1622,7 @@ ch_DESeq2_dirs = circrna_dir_plots.combine(rnaseq_dir)
 
 process de_plots{
 
-        publishDir "$params.outdir/differential_expression/circrna_plots", pattern:"*.pdf", mode:'copy'
-        publishDir "$params.outdir/differential_expression/circrna_stats", pattern:"*DESeq2_stats.txt", mode: 'copy'
+        publishDir "$params.outdir/differential_expression/circrna_expression_plots", pattern:"*.pdf", mode:'copy'
 
       	input:
       		file(phenotype) from ch_phenotype
@@ -1656,10 +1655,9 @@ process de_plots{
 //test.view()
 // delete text files in process script, left with only dirs.
 
-
 process master_report{
 
-        publishDir "$params.outdir/differential_expression/de_circ_annotated", mode:'copy'
+        publishDir "$params.outdir/differential_expression/circrna_diff_exp_stats", mode:'copy'
 
       	input:
       		file(reports) from de_stats.collect()
