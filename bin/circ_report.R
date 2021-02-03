@@ -38,18 +38,6 @@ get_args <- function(){
 
 	argp <- add_argument(
 		parser=argp,
-		arg="miranda",
-		short="m",
-		help="miRanda output for circRNA")
-
-	argp <- add_argument(
-		parser=argp,
-		arg="targetscan",
-		short="t",
-		help="targetscan output for circRNA")
-
-	argp <- add_argument(
-		parser=argp,
 		arg="mature_len",
 		short="l",
 		help="length of mature circRNA")
@@ -74,7 +62,7 @@ giveError <- function(message){
 
 usage <- function(){giveError("USAGE: circ_report.R de_circ circrna_counts gene_counts bed miranda targetscan mature_len phenotype")}
 
-stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, miranda, targetscan, mature_len, phenotype){
+stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mature_len, phenotype){
 
 	inputdata <- list()
 
@@ -86,8 +74,6 @@ stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mira
 	parent <- parent_tmp$gene
 	bed <- read.table(bed, sep="\t", header=F, stringsAsFactors=F)
 	colnames(bed) <- c("chr", "start", "end", "name", "score", "strand", "thickStart", "thickEnd", "type", "ExonCount", "ExonSizes", "ExonStart")
-	miranda <- read.table(miranda, sep="\t", header=T, stringsAsFactors=F)
-	targetscan <- read.table(targetscan, sep="\t", header=T, stringsAsFactors=F)
 	mature_tmp <- read.table(mature_len)
 	mature <- mature_tmp$V1
 	pheno <- read.table(phenotype, sep="\t", header=T, row.names=1)
@@ -97,8 +83,6 @@ stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mira
 	inputdata$gene <- gene
 	inputdata$parent <- parent
 	inputdata$bed <- bed
-	inputdata$miranda <- miranda
-	inputdata$targetscan <- targetscan
 	inputdata$mature <- mature
 	inputdata$pheno <- pheno
 
@@ -289,7 +273,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$phenotype)
+inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$mature_len, arg$phenotype)
 dir.create(inputdata$bed$name)
 x <- prep_plots(inputdata)
 z <- singular_report(inputdata)

@@ -1581,7 +1581,7 @@ process diff_exp{
 	      """
 }
 
-ch_report = targetscan_diff_exp.join(miranda_diff_exp).join(bed_diff_exp).join(parent_diff_exp).join(mature_diff_exp)
+ch_report = bed_diff_exp.join(parent_diff_exp).join(mature_diff_exp)
 
 // must combine folders here or else process uses once then exits.
 ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
@@ -1602,7 +1602,7 @@ process de_plots{
 
       	input:
       		file(phenotype) from ch_phenotype
-      		tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
+      		tuple val(base), file(bed), file(parent_gene), file(mature_length), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
 
       	output:
       		file("*.pdf") into de_plots
@@ -1619,11 +1619,8 @@ process de_plots{
       	# merge upreg, downreg info
       	cat $up_reg $down_reg > de_circ.txt
 
-      	# remove 6mers from TargetScan
-      	grep -v "6mer" $targetscan > targetscan_filt.txt
-
       	# Make plots and generate circRNA info
-      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $miranda targetscan_filt.txt $mature_length $phenotype circlize_exons.txt
+      	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype circlize_exons.txt
       	"""
 }
 
