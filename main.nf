@@ -1581,10 +1581,40 @@ process diff_exp{
 	      """
 }
 
-ch_report = bed_diff_exp.join(parent_diff_exp).join(mature_diff_exp)
+(circrna_dir_fetch, circrna_dir_plots) = circrna_dir.into(2)
 
-// must combine folders here or else process uses once then exits.
-ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
+// obtain the IDs of the differentially expressed circrna
+
+process fetch_de_circ_id{
+
+        input:
+          file(circrna_dir) from circrna_dir_fetch
+
+        output:
+          file("*.bed") into de_bed_files
+
+        when: 'differential_expression' in module
+
+        script:
+        up_reg = "${circrna_dir}/*up_regulated_differential_expression.txt"
+      	down_reg = "${circrna_dir}/*down_regulated_differential_expression.txt"
+        """
+        grep -v "baseMean" $up_reg > up_reg_noheader.txt
+        cat $down_reg up_reg_noheader.txt > de_circs.txt
+
+        # make dummy files out of these to place in channel
+        awk '{print \$1}' de_circs.txt | grep -v "ID" | while read -r line; do touch ${line}.bed12.bed; done
+        """
+}
+
+// de circrna dummy bed files in de_bed_files channel, map to get simpleName
+ch_de_bed = de_bed_files.map{ file -> [file.simpleName, file]}
+
+// filter incoming bed file channel of all circrnas to pick out de circrnas
+filt_bed = ch_de_bed.join(bed_diff_exp)
+
+(a, b) = filt_bed.into(2)
+a.view()
 
 
 /*
@@ -1593,6 +1623,11 @@ ch_DESeq2_dirs = circrna_dir.combine(rnaseq_dir)
  * you also need to filter the incoming BED files
  * only need the Diff exp circrna bed files, not all
  */
+
+ ch_report = b.join(parent_diff_exp).join(mature_diff_exp)
+
+ // must combine folders here or else process uses once then exits.
+ ch_DESeq2_dirs = circrna_dir_plots.combine(rnaseq_dir)
 
 
 process de_plots{
@@ -1617,7 +1652,8 @@ process de_plots{
       	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
       	"""
       	# merge upreg, downreg info
-      	cat $up_reg $down_reg > de_circ.txt
+        grep -v "baseMean" $up_reg > up_reg_noheader.txt
+        cat $down_reg up_reg_noheader.txt > de_circs.txt
 
       	# Make plots and generate circRNA info
       	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype
