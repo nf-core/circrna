@@ -128,7 +128,7 @@ singular_report <- function(inputdata){
 
 	colnames(out_df) <- c("circRNA_ID", "Type", "Mature_Length", "Parent_Gene", "Strand", "Log2FC", "pvalue", "Adjusted_pvalue")
 
-	write.table(out_df, file.path(file_name, paste(file_name, "DESeq2_stats.txt", sep="_")), quote=F, sep="\t", row.names=F)
+	write.table(out_df, paste(file_name, "DESeq2_stats.txt", sep="_"), quote=F, sep="\t", row.names=F)
 }
 
 prep_plots <- function(inputdata){
