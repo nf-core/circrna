@@ -149,25 +149,29 @@ prep_plots <- function(inputdata){
 	# it is possible that the parent gene is not in the RNA matrix
 	# the df is transposed, check if columns are ifEmpty
 
-	if(dim(rna_df)[2] == 0){
-		print("Parent Gene not present in RNA-Seq matrix, skipping plots")
-	}else{
+  # boxplots dont need rna and satisfy process output (*.pdf)
+	circ_df <- cbind(circ_df, pheno)
+	circ_df$type <- "circRNA"
 
-		circ_df <- cbind(circ_df, pheno)
+	circ_names <- colnames(circ_df)
+	circ_names[1] <- "count"
+	colnames(circ_df) <- circ_names
+
+	make_boxplot(circ_df, inputdata)
+
+	if(dim(rna_df)[2] == 0){
+
+			print("Parent Gene not present in RNA-Seq matrix, skipping plots")
+
+		}else{
+
 		rna_df <- cbind(rna_df, pheno)
 
-		circ_df$type <- "circRNA"
 		rna_df$type <- "linear RNA"
 
 		rna_names <- colnames(rna_df)
 		rna_names[1] <- "count"
 		colnames(rna_df) <- rna_names
-
-		circ_names <- colnames(circ_df)
-		circ_names[1] <- "count"
-		colnames(circ_df) <- circ_names
-
-		make_boxplot(circ_df, inputdata)
 
 		merged <- rbind(circ_df, rna_df)
 		merged$count <- log2(merged$count + 1)
@@ -201,7 +205,7 @@ make_boxplot <- function(circ_df, inputdata){
   	theme(plot.caption = element_text(face = "italic", size=12)) +
   	theme(axis.text.y = element_text(color = "black", size=10))
   	p2 <- p1  + theme(legend.position="none")
-  	pdf(file.path(circ_id, paste(circ_id, "Boxplot.pdf", sep="_")))
+  	pdf(paste(circ_id, "Boxplot.pdf", sep="_"))
   	plot(p2)
  	dev.off()
 }
@@ -224,7 +228,7 @@ make_lineplot <- function(merged_df, inputdata){
   	theme(axis.title.x = element_blank()) +
   	theme(plot.caption = element_text(face = "italic", size=12)) +
   	theme(axis.text.y = element_text(color = "black", size=10))
-  	pdf(file.path(circ_id, paste(circ_id, gene_id, "Expression.pdf", sep="_")))
+  	pdf(paste(circ_id, gene_id, "Expression.pdf", sep="_"))
   	plot(p3)
   	dev.off()
 }
@@ -258,7 +262,7 @@ make_ratioplot <- function(merged_df, inputdata){
   	theme(axis.text.y = element_text(color = "black", size=10)) +
   	scale_y_continuous(expand = expansion(mult = c(0, .1)))
   	p5 <- p4  + theme(legend.position="none")
-  	pdf(file.path(circ_id, paste(circ_id, "Ratio_Plot.pdf", sep="_")))
+  	pdf(paste(circ_id, "Ratio_Plot.pdf", sep="_"))
   	plot(p5)
   	dev.off()
 }
