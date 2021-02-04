@@ -638,7 +638,7 @@ process multiqc_raw {
 
 	      publishDir "$params.outdir/quality_control/multiqc/raw", mode:'copy'
 
-      	label 'multiqc'
+      	label 'py3'
 
       	input:
       	file(htmls) from fastqc_raw.collect()
@@ -967,6 +967,8 @@ process dcc_2{
 ch_dcc_dirs = dcc_samples.join(dcc_mate1).join(dcc_mate2)
 
 process dcc{
+
+        label 'py3'
 
         publishDir "$params.outdir/circrna_discovery/dcc/parsed", pattern: "${base}_dcc.txt", mode:'copy'
         publishDir "$params.outdir/circrna_discovery/dcc/raw", pattern: "${base}.Circ*", mode:'copy'
@@ -1402,6 +1404,8 @@ process master_annotate{
         output:
           file("circrnas_annotated.txt") into annotated_merged
 
+        when: 'circrna_discovery' in module
+
         script:
         """
         cat *.txt > merged.txt
@@ -1608,13 +1612,13 @@ process fetch_de_circ_id{
 // de circrna dummy bed files in de_bed_files channel, map to get simpleName
 ch_de_bed = de_bed_files.flatten().map{ file -> [file.simpleName, file]}
 
-// match incoming bed file channel of all circrnas with DE circ bed ID's
+// match incoming bed file channel of all circrnas with 'dummy' DE circ bed files
 filt_bed_tmp = ch_de_bed.join(bed_diff_exp)
 
 // remove the dummy files (file[1])
 filt_bed = filt_bed_tmp.map{file -> [file[0], file[2]]}
 
-// join should keep only the DE keys and apply it to parent, mature files if they are in correct structure.
+// join should keep only the DE keys and apply it to parent, mature files
 ch_report = filt_bed.join(parent_diff_exp).join(mature_diff_exp)
 
 // must combine folders here or else process uses once then exits.
