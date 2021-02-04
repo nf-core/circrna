@@ -1552,9 +1552,9 @@ process StringTie{
         """
 }
 
-if('differential_expression' in module && params.phenotype == null){
+if('differential_expression' in module && (!params.phenotype || params.phenotype == null)){
   exit 1, "[nf-core/circrna] error: parameter '--phenotype' (file for DESeq2) not supplied. Please see '--help' or documentation for help."
-}else if('differential_expression' in module && params.phenotype != null){
+}else if('differential_expression' in module && (params.phenotype != null)){
   ch_phenotype = file(params.phenotype)
 }
 
@@ -1682,11 +1682,6 @@ process master_report{
       	Rscript ${projectDir}/bin/annotate_report.R
       	"""
 }
-
-
-
-
-
 
 
 /*
