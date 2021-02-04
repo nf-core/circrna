@@ -681,7 +681,7 @@ process star_align{
         script:
         """
         STAR    \
-        --runThreadN 16 \
+        --runThreadN ${params.threads} \
         --twopassMode Basic \
         --twopass1readsN -1 \
         --genomeLoad NoSharedMemory \
@@ -756,9 +756,9 @@ process find_anchors{
 
         script:
         """
-        bowtie2 -p 16 --very-sensitive --mm -D 20 --score-min=C,-15,0 \
+        bowtie2 -p ${params.threads} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
         -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \
-        | samtools view -hbuS - | samtools sort --threads 16 -m 2G - > ${base}.bam
+        | samtools view -hbuS - | samtools sort --threads ${params.threads} -m 2G - > ${base}.bam
 
         samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
 
@@ -786,7 +786,7 @@ process find_circ{
 
         script:
         """
-        bowtie2 -p 16 --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
+        bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
         -U $anchors | python /opt/conda/envs/circrna/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
         echo "# chrom:start:end:name:n_reads:strand:n_uniq:best_qual_A:best_qual_B:spliced_at_begin:spliced_at_end:tissues:tiss_counts:edits:anchor_overlap:breakpoints" > tmp.txt
@@ -819,7 +819,7 @@ process circrna_finder_star{
         --genomeDir $star_index \
         --readFilesIn ${fastq[0]} ${fastq[1]} \
         --readFilesCommand zcat \
-        --runThreadN 16 \
+        --runThreadN ${params.threads} \
         --chimSegmentMin 20 \
         --chimScoreMin 1 \
         --chimOutType Junctions SeparateSAMold \
@@ -870,7 +870,7 @@ process dcc_pair{
         script:
         """
         STAR \
-        --runThreadN 16 \
+        --runThreadN ${params.threads} \
         --genomeDir $star_index \
         --outSAMtype BAM SortedByCoordinate \
         --readFilesIn ${fastq[0]} ${fastq[1]} \
@@ -905,7 +905,7 @@ process dcc_1{
         script:
         """
         STAR \
-        --runThreadN 16 \
+        --runThreadN ${params.threads} \
         --genomeDir $star_index \
         --outSAMtype None \
         --readFilesIn ${fastq[0]} \
@@ -941,7 +941,7 @@ process dcc_2{
         script:
         """
         STAR \
-        --runThreadN 16 \
+        --runThreadN ${params.threads} \
         --genomeDir $star_index \
         --outSAMtype None \
         --readFilesIn ${fastq[1]} \
@@ -993,7 +993,7 @@ process dcc{
         printf "mate1/${base}.${COJ}" > mate1file
         printf "mate2/${base}.${COJ}" > mate2file
 
-        DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T 8
+        DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${params.threads}
 
         awk '{print \$6}' CircCoordinates >> strand
         paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
@@ -1024,7 +1024,7 @@ process ciriquant{
 
         script:
         """
-        CIRIquant -t 2 \
+        CIRIquant -t ${params.threads} \
         -1 ${fastq[0]} \
         -2 ${fastq[1]} \
         --config $ciriquant_yml \
@@ -1068,7 +1068,7 @@ process mapsplice_align{
         -x $prefix \
         -1 ${base}_r1.fastq \
         -2 ${base}_r2.fastq \
-        -p 8 \
+        -p ${params.threads} \
         --bam \
         --seglen 25 \
         --min-map-len 40 \
@@ -1124,7 +1124,7 @@ process tophat_align{
 
         script:
         """
-        tophat -p 8 -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
+        tophat -p ${params.threads} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
         mv ${base}/unmapped.bam ./
         mv ${base}/accepted_hits.bam ./
         """

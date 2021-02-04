@@ -303,6 +303,8 @@
         },
         "module": {
           "type": "string"
+        },
+        "threads": {
+          "type": "integer"
         }
-    }
 }
