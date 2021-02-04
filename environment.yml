@@ -41,6 +41,7 @@ dependencies:
   - conda-forge::r-pheatmap=1.0.12
   - r-pvclust=2.2_0
   - r-rcolorbrewer=1.1_2
+  - r-ggpubr=0.4.0
   - samtools=1.10
   - star=2.7.6a
   - stringtie=2.1.1

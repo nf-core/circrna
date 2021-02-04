@@ -37,14 +37,6 @@ RUN conda env export --name nf-core-circrna-1.0dev > nf-core-circrna-1.0dev.yml
 # comment CIRIquant line that attempts to run os.chmod()
 RUN sed -i '126s/^/#/' /opt/conda/envs/nf-core-circrna-1.0dev/lib/python2.7/site-packages/CIRIquant/main.py
 
-#DCC
-WORKDIR /usr/src/app
-RUN wget --no-check-certificate https://github.com/dieterich-lab/DCC/archive/v0.4.8.tar.gz
-RUN tar -xvf v0.4.8.tar.gz
-WORKDIR /usr/src/app/DCC-0.4.8
-# remove --user or else scripts installed to /root/
-RUN python setup.py install
-
 #find_circ
 WORKDIR /usr/src/app
 RUN wget --no-check-certificate http://www.circbase.org/download/find_circ.tar.gz
