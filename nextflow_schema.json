@@ -307,4 +307,5 @@
         "threads": {
           "type": "integer"
         }
+    }
 }

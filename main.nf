@@ -546,6 +546,8 @@ if(params.input_type == 'bam'){
 
 process FastQC {
 
+        label 'py3'
+
         publishDir "$params.outdir/quality_control/fastqc/raw", mode:'copy'
 
         input:
@@ -596,6 +598,8 @@ if(params.trimming == true){
 
         process FastQC_trim {
 
+                label 'py3'
+
                 publishDir "$params.outdir/quality_control/fastqc/trimmed", mode:'copy'
 
                 input:
@@ -614,7 +618,7 @@ if(params.trimming == true){
 
               	publishDir "$params.outdir/quality_control/multiqc/trimmed", mode:'copy'
 
-              	label 'multiqc'
+              	label 'py3'
 
               	input:
               	  file(htmls) from fastqc_trimmed.collect()
