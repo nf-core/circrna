@@ -1554,7 +1554,7 @@ process StringTie{
 
 if('differential_expression' in module && params.phenotype == null){
   exit 1, "[nf-core/circrna] error: parameter '--phenotype' (file for DESeq2) not supplied. Please see '--help' or documentation for help."
-}else{
+}else if('differential_expression' in module && params.phenotype != null){
   ch_phenotype = file(params.phenotype)
 }
 
