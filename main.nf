@@ -343,7 +343,7 @@ process star_index{
 
         STAR \
         --runMode genomeGenerate \
-        --runThreadN 8 \
+        --runThreadN ${params.threads} \
         --sjdbGTFfile $gtf \
         --genomeDir star_index/ \
         --genomeFastaFiles $fasta
