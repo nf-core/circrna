@@ -60,7 +60,7 @@ giveError <- function(message){
     quit()
     }
 
-usage <- function(){giveError("USAGE: circ_report.R de_circ circrna_counts gene_counts bed miranda targetscan mature_len phenotype")}
+usage <- function(){giveError("USAGE: circ_report.R de_circ circrna_counts gene_counts bed mature_len phenotype")}
 
 stage_data <- function(de_circ, circ_counts, gene_counts, parent_gene, bed, mature_len, phenotype){
 
@@ -178,7 +178,6 @@ prep_plots <- function(inputdata){
 		merged_df <- data_summary(merged, varname="count", groupnames=c("condition", "type"))
 
 		make_lineplot(merged_df, inputdata)
-		make_ratioplot(merged_df, inputdata)
 		}
 }
 
@@ -187,26 +186,24 @@ make_boxplot <- function(circ_df, inputdata){
 
 	circ_id <- inputdata$bed$name
 
-	p1 <- ggplot(circ_df, aes(condition, count, color=condition)) +
-  	stat_boxplot(geom = 'errorbar', width=0.1) +
-  	geom_boxplot(notch = F, aes(fill = factor(condition)), width=0.3) +
-  	theme_bw() +
-  	geom_dotplot(binaxis='y', stackdir='center', dotsize=0.3) +
-  	scale_color_manual(values=c('black','black')) +
-  	scale_fill_manual(values = c('steelblue1','salmon')) +
-  	labs(x = "Condition") +
-  	labs(y = "Normalized Counts") +
-  	labs(title = paste(circ_id)) +
-  	guides(fill = FALSE) +
-  	theme(plot.title = element_text(face = "bold", size=18, hjust = 0.5)) +
-  	theme(axis.text.x = element_text( colour = "black", size=14)) +
-  	theme(axis.title.y = element_text(size=14)) +
-  	theme(axis.title.x = element_blank()) +
-  	theme(plot.caption = element_text(face = "italic", size=12)) +
-  	theme(axis.text.y = element_text(color = "black", size=10))
-  	p2 <- p1  + theme(legend.position="none")
-  	pdf(paste(circ_id, "Boxplot.pdf", sep="_"))
-  	plot(p2)
+	p1 <- ggboxplot(circ_df, x="condition", y="count",
+									fill="condition", palette = "npg",
+									ylab = paste0(circ_id), xlab="",
+          				add = c("dotplot"),
+									add.params = list(size=0.5, jitter=0.1),
+									legend = "none",
+									bxp.errorbar = T,
+          				bxp.errorbar.width = 0.2, width=0.3,
+									ggtheme = theme_classic()) +
+          				rotate_x_text(angle = 0) +
+          				labs(x="") +
+          				theme(axis.title.x = element_text( colour = "black", size=14)) +
+          				theme(axis.text.x = element_text( colour = "black", size=14)) +
+          				theme(axis.text.y = element_text( color="black", size=10)) +
+          				theme(axis.title.y = element_text( colour = "black", size=14, face="bold"))
+
+  pdf(paste(circ_id, "boxplot.pdf", sep="_"))
+  plot(p1)
  	dev.off()
 }
 
@@ -215,66 +212,31 @@ make_lineplot <- function(merged_df, inputdata){
 	circ_id <- inputdata$bed$name
 	gene_id <- inputdata$parent
 
-	p3 <- ggplot(merged_df, aes(x=condition, y=count, group=type, color=type)) +
-  	geom_errorbar(aes(ymin=count-sd, ymax=count+sd), width=0.1) +
-  	geom_line() + geom_point() +
-  	scale_color_manual(values=c('dodgerblue1','firebrick1')) + theme_bw() +
-  	labs(y = "log2(Normalized Counts)") +
-  	labs(title = paste(circ_id, "|", gene_id, sep=" ")) +
-  	guides(fill = FALSE) +
-  	theme(plot.title = element_text(face = "bold", size=18, hjust = 0.5)) +
-  	theme(axis.text.x = element_text( colour = "black", size=14)) +
-  	theme(axis.title.y = element_text(size=14)) +
-  	theme(axis.title.x = element_blank()) +
-  	theme(plot.caption = element_text(face = "italic", size=12)) +
-  	theme(axis.text.y = element_text(color = "black", size=10))
-  	pdf(paste(circ_id, gene_id, "Expression.pdf", sep="_"))
-  	plot(p3)
-  	dev.off()
+	p2 <- ggline(merged, x="condition", y="count",
+				color="type", ylab="log2(normalized counts + 1)",
+				title = paste(circ_id, "|", gene_id, sep=" "),
+				palette="npg", add = c("mean_se", "jitter"),
+				add.params = list(size=0.5, jitter=0.1),
+				legend="right", ggtheme = theme_classic()) +
+				theme(plot.title = element_text(face = "bold", size=16, hjust = 0.5)) +
+  			theme(axis.text.x = element_text( colour = "black", size=14)) +
+  			theme(axis.title.y = element_text(size=14, face = "italic")) +
+  			theme(axis.title.x = element_blank()) +
+  			theme(axis.text.y = element_text(color = "black", size=10))
+
+	pdf(paste(circ_id, gene_id, "expression.pdf", sep="_"))
+  plot(p2)
+  dev.off()
 }
 
-make_ratioplot <- function(merged_df, inputdata){
-
-	circ_id <- inputdata$bed$name
-	gene_id <- inputdata$parent
-
-	require(dplyr)
-  	ratio_df <- merged_df %>%
-  	group_by(condition) %>%
-  	summarise(ratio = count[type=="circRNA"]/(count[type=="linear RNA"] + count[type=="circRNA"]))
-  	detach(package:dplyr)
-  	ratio_df$ratio[is.nan(ratio_df$ratio)] <- 0
-
- 	p4 <- ggplot(ratio_df, aes(condition, ratio, fill=condition)) +
-  	geom_bar(stat="identity", width=0.4) + # create boxplot
-  	theme_bw() +
-  	scale_color_manual(values=c('black','black')) +
-  	scale_fill_manual(values = c('steelblue1','salmon')) +   # def. col. palette
-  	labs(x = "Condition") +
-  	labs(y = "Ratio log2(circRNA/circRNA + linear)") +
-  	labs(title = paste(circ_id, "|", gene_id, "Ratio", sep=" ")) +
-  	guides(fill = FALSE) +
-  	theme(plot.title = element_text(face = "bold", size=18, hjust = 0.5)) +
-  	theme(axis.text.x = element_text( colour = "black", size=14)) +
-  	theme(axis.title.y = element_text(size=14)) +
-  	theme(axis.title.x = element_blank()) +
-  	theme(plot.caption = element_text(face = "italic", size=12)) +
-  	theme(axis.text.y = element_text(color = "black", size=10)) +
-  	scale_y_continuous(expand = expansion(mult = c(0, .1)))
-  	p5 <- p4  + theme(legend.position="none")
-  	pdf(paste(circ_id, "Ratio_Plot.pdf", sep="_"))
-  	plot(p5)
-  	dev.off()
-}
 
 
 
 # Packages + Error traceback (really handy for explicit error tracing)
 options(error=function()traceback(2))
 suppressPackageStartupMessages(library("argparser"))
-suppressPackageStartupMessages(library("rmarkdown"))
 suppressPackageStartupMessages(library("ggplot2"))
-suppressPackageStartupMessages(library("circlize"))
+suppressPackageStartupMessages(library("ggpubr"))
 
 arg <- get_args()
 inputdata <- stage_data(arg$de_circ, arg$circ_counts, arg$gene_counts, arg$parent_gene, arg$bed, arg$mature_len, arg$phenotype)
