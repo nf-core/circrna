@@ -62,7 +62,6 @@ if (params.help) {
             print_yellow('      Mandatory arguments:\n') +
             print_cyan('      --input <path>            ') + print_green('Path to input data\n') +
             print_cyan('      --input_type <str>           ') + print_green('Input data type. Supported: fastq, bam\n') +
-            print_cyan('      --input_glob <str>           ') + print_green('Glob pattern of input files e.g: \'_R{1,2}.fastq.gz\'\n') +
             print_cyan('      --tool <str>                 ') + print_green('circRNA tool to use for analysis. \n') +
             print_green('                                   Supported: CIRCexplorer2, CIRIquant, find_circ\n') +
             print_green('                                   mapsplice, DCC, circRNA_finder\n') +
@@ -113,7 +112,6 @@ params.fasta_chr = null
 params.ciriquant_yml = null
 params.input = null
 params.input_type = null
-params.input_glob = null
 params.adapters = null
 params.phenotype = null
 params.trimming = null
@@ -506,7 +504,7 @@ if( csv_path ){
     log.info ""
     log.info "No CSV file provided, reading input files from directory provided"
     log.info "Reading path: ${params.input}\n"
-    inputSample = retrieve_input_paths(params.input, params.input_glob, params.input_type)
+    inputSample = retrieve_input_paths(params.input, params.input_type)
     ch_input_sample = inputSample
 
 }else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
@@ -1787,16 +1785,11 @@ def extract_data(csvFile){
 }
 
 // If no input CSV provided, parse input directory containing files.
-def retrieve_input_paths(input, glob, type){
-
-      // debug
-      println input
-      println glob
-      println type
+def retrieve_input_paths(input, type){
 
       if(type == 'fastq'){
 
-          fastq_files = input + glob
+          fastq_files = input
           Channel
               .fromFilePairs(fastq_files)
               .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
@@ -1807,7 +1800,7 @@ def retrieve_input_paths(input, glob, type){
 
       }else if(type == 'bam'){
 
-          bam_files = input + glob
+          bam_files = input
           Channel
               .fromFilePairs(bam_files, size: 1)
               .filter{ it =~/.*.bam/}

@@ -9,16 +9,22 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
+            "description": "Define where the pipeline should find input data, sample metadata and save output data.",
             "required": [
-                "input"
+                "input",
+                "input_type"
             ],
             "properties": {
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-dna",
-                    "description": "Input FastQ files.",
-                    "help_text": "Use this to specify the location of your input FastQ files. For example:\n\n```bash\n--input 'path/to/data/sample_*_{1,2}.fastq'\n```\n\nPlease note the following requirements:\n\n1. The path must be enclosed in quotes\n2. The path must have at least one `*` wildcard character\n3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.\n\nIf left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`"
+                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the path or URL to FASTQ/BAM files.",
+                    "help_text": "There are two ways to supply data to `nf-core/circrna`:\n\n 1. Provide the path to the directory containing either FASTQ/BAM files. The path must contain a wildcard glob ('*') and the string must be enclosed by single or double quotes (e.g for paired end data: `--input '/<path to fastq>/*_R{1,2}.fq.gz'`).\n 2. Provide a CSV file containing the paths or URLs to FASTQ/BAM files. The CSV must contain the following headers: `Sample_ID`, `Read1`, `Read2`, `BAM`. If you are using FASTQ files, set the BAM column to `NA`. Similarly, if you are using BAM files, set the `Read1`, `Read2` columns to `NA`."
+                },
+                "input_type": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dna",
+                    "description": "Input data type, `fastq` or `bam`."
                 },
                 "outdir": {
                     "type": "string",
@@ -26,14 +32,29 @@
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "email": {
-                    "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                }
             }
+        },
+        "pipeline_options": {
+          "title": "Pipeline Options",
+          "type": "object",
+          "fa-icon": "fas fa-cog"
+          "description": "Options for [nf-core/circrna] deployment",
+          "required": [
+            "module",
+            "tool"
+          ],
+          "properties":{
+            "tool":{
+              "type":"string",
+              "fa_icon": "fas fa-sliders",
+              "description": "Comma separated list of circRNA quantification tools to use. The user can select one or a combination of tools. Supported tools: `CIRIquant`, `CIRCexplorer2`, `find_circ`, `circRNA_finder`, `MapSplice`, `DCC`."
+            },
+            "module": {
+              "type": "string",
+              "fa_icon": "fas fa-sliders",
+              "description": "Comma separated list of modules to run: `'circrna_discovery'` (mandatory), '`mirna_prediction`' & `'differential_expression'`."
+            }
+          }
         },
         "reference_genome_options": {
             "title": "Reference genome options",
@@ -44,22 +65,52 @@
                 "fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-font",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "If you have no genome reference available, the pipeline can build one using a FASTA file. This requires additional time and resources, so it's better to use a pre-build index if possible."
+                    "description": "Path to gencode FASTA genome file.",
+                    "help_text": "[nf-core/circrna] has been developed using gencode reference FASTA files, users can provide alternative reference FASTA files (UCSC, ENSEMBL) at their own risk.\n\n When running the pipeline for the first time, the user can leave `--fasta` empty and specify the genome version to use."
                 },
-                "igenomes_base": {
+                "genome_version": {
                     "type": "string",
-                    "description": "Directory / URL base for iGenomes references.",
-                    "default": "s3://ngi-igenomes/igenomes/",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
+                    "fa_icon": "fas fa-clone",
+                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`.",
                 },
-                "igenomes_ignore": {
-                    "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                "fasta_fai": {
+                    "type": "string",
+                    "fa_icon" : "fas fa-address-book",
+                    "description": "Path to samtools genome index file (`.fai`).",
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the FASTA `.fai` file to save compute resources."
+                },
+                "bowtie_index": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to bowtie index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie_index '/<path>/<bowtie_index>/*'`.\n\n Quantification tool dependency: `mapsplice`."
+                },
+                "bowtie2_index": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to bowtie2 index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie2_index '/<path>/<bowtie2_index>/*'`.\n\n Quantification tool dependency: `find_circ`."
+                },
+                "bwa_index": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to bwa index files.",
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bwa indices to save compute resources e.g `--bwa_index '/<path>/<bwa_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+
+                },
+                "hisat2_index": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to Hisat 2 index files.",
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to hisat2 indices to save compute resources e.g `--hisat2_index '/<path>/<hisat2_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+
+                },
+                "star_index": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to STAR index files."
+                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to STAR indices to save compute resources e.g `--star_index '/<path>/<star_index>/'`.\n\n Quantification tool dependency: `CIRCexplorer2, circRNA_finder, DCC`."
+
                 }
             }
         },
@@ -266,15 +317,6 @@
             "type": "string"
         },
         "input_type": {
-            "type": "string"
-        },
-        "input_glob": {
-            "type": "string"
-        },
-        "fastq_glob": {
-            "type": "string"
-        },
-        "bam_glob": {
             "type": "string"
         },
         "adapters": {
