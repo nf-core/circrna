@@ -104,11 +104,6 @@ moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
-// Check Input parameter
-if(params.input == null){
-  exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
-}
-
 // Check input type
 if(params.input_type == null){
   exit 1, "[nf-core/circrna] error: --input_type was not supplied! Please select 'fastq' or 'bam'."
@@ -118,9 +113,6 @@ if(params.input_type == null){
 if(params.genome_version == null){
   exit 1, "[nf-core/circrna] error: --genome_version was not supplied!. Please select 'GRCh37' or 'GRCh37'."
 }
-
-
-// Check
 
 /*
 ================================================================================
