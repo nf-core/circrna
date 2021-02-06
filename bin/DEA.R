@@ -3,13 +3,13 @@
 ##
 ##
 ## Pass to script:
-## 1. gene_counts matrix from prep_DE.py 
+## 1. gene_counts matrix from prep_DE.py
 ## 2. sample file that is essentially colData. Will deduce Design / model matrix from this
 ## 3. circRNA matrix
 ## 4. output dir (./) for nextflow
-## 
 ##
- 
+##
+
 
 get_args <- function(){
 
@@ -54,24 +54,24 @@ usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <colData.txt> <out
 
 
 stage_data <- function(gene_counts, phenotype, circRNA){
-	
+
 	inputdata <- list()
-	
+
 	gene_mat <- read.csv(gene_counts, row.names="gene_id", check.names=F)
 	circ <- read.table(circRNA, sep ="\t", header = T, stringsAsFactors=FALSE)
-	
+
 	# Merge circRNA genomic loci to ID
 	circ$circ <- with(circ, paste0(Chr, sep=":", Start, sep="-", Stop, sep=":", Strand))
 	rownames(circ) <- circ$circ
 	circ <- subset(circ, select=-c(Chr, Start, Stop, Strand, circ))
-	
+
 	## add pseudocount of 1
 	gene_mat <- gene_mat + 1
 	circ <- circ + 1
 
 	inputdata$pheno <- checkinputdata(phenotype)
 	cols <- rownames(inputdata$pheno)
-	
+
 	if(identical(rownames(inputdata$pheno), colnames(gene_mat))){
 		circ <- circ[, cols,]
 	}else{
@@ -80,7 +80,7 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 			    "*Make sure they are sorted in alphabetical order:",
 			    "tail -n +2 phenotype.txt | sort -k1,1\n\n"))
 	}
-	
+
         inputdata$gene <- gene_mat
         inputdata$circ <- circ
 	inputdata$design <- makedesign(inputdata$pheno)
@@ -90,7 +90,7 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 
 
 checkinputdata <- function(phenotype){
-	
+
 	pheno <- read.table(phenotype, sep="\t", row.names=1, header = T)
 
 	if(min(table(pheno$condition)) >= 3){
@@ -98,7 +98,7 @@ checkinputdata <- function(phenotype){
 	}else{
 		giveError("Not enough samples per condition to perform DE analysis!")
 	}
-	
+
 	if("sex" %in% names(pheno)){
 		print("Renaming sex to gender in phenotype file")
 		rename <- gsub("sex", "gender", names(pheno))
@@ -109,8 +109,8 @@ checkinputdata <- function(phenotype){
         if (! all(unique(pheno$gender) %in% c("m", "f", "u"))) {
         	giveError("SAMPLEINFO ERROR:\nOnly the values m [male], f [female] and u [unknown] are supported in field <gender>.\n")}
         }
-	
-	
+
+
 	return(pheno)
 }
 
@@ -127,7 +127,7 @@ makedesign <- function(phenotype){
 
 
 ens2symbol <- function(mat){
-	
+
 	mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 
 	mat <- as.data.frame(mat)
@@ -142,14 +142,14 @@ ens2symbol <- function(mat){
 	tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
 	rownames(tmp) <- tmp$external_gene_name
 	tmp <- subset(tmp, select=-c(ensembl_gene_id_version, external_gene_name))
-	
+
 	return(tmp)
 }
 
 get_upregulated <- function(df){
 
 	key <- intersect(rownames(df)[which(df$log2FoldChange>=1)], rownames(df)[which(df$pvalue<=0.05)])
-  
+
   	results <- as.data.frame((df)[which(rownames(df) %in% key),])
 	return(results)
 }
@@ -157,18 +157,18 @@ get_upregulated <- function(df){
 get_downregulated <- function(df){
 
   	key <- intersect(rownames(df)[which(df$log2FoldChange<=-1)], rownames(df)[which(df$pvalue<=0.05)])
-  
+
   	results <- as.data.frame((df)[which(rownames(df) %in% key),])
   	return(results)
 }
 
 
 annotate_de_genes <- function(df){
-  	
+
 	df$ensembl_gene_id_version <- rownames(df)
- 
+
 	mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
- 
+
 	info <- getBM(attributes=c("ensembl_gene_id_version",
                              "external_gene_name",
                              "chromosome_name",
@@ -179,8 +179,8 @@ annotate_de_genes <- function(df){
                 filters = c("ensembl_gene_id_version"),
                 values = df$ensembl_gene_id_version,
                 mart = mart)
-	
-	 
+
+
 	tmp <- merge(df, info, by="ensembl_gene_id_version")
 	tmp$strand <- gsub("-1", "-", tmp$strand)
 	tmp$strand <- gsub("1", "+", tmp$strand)
@@ -188,7 +188,7 @@ annotate_de_genes <- function(df){
 
 	output_col <- c("Gene", "Chromosome", "Start", "Stop", "Strand", "Description", "Log2FC", "P-value", "Adj P-value")
 	index <- c(9, 10, 11, 12, 13, 14, 3, 6, 7)
-  
+
 	tmp <- tmp[,index]
 	colnames(tmp) <- output_col
 
@@ -197,7 +197,7 @@ annotate_de_genes <- function(df){
 	}else{
 		tmp <- tmp[order(tmp$Log2FC),]
 	}
-  
+
 	return(tmp)
 }
 
@@ -207,11 +207,14 @@ DESeq2 <- function(inputdata, data_type){
 
 		outdir <- "RNA-Seq/"
 
+    # add pseudocount of 1 (test data)
+    pseudo <- (inputdata$gene + 1)
+
 		dds <- DESeqDataSetFromMatrix(
-		countData=inputdata$gene,
+		countData=pseudo,
 		colData=inputdata$pheno,
 		design = inputdata$design)
-		
+
 		dds$condition <- relevel(dds$condition, ref="normal")
 		dds <- DESeq(dds, quiet=TRUE)
 		contrasts <- levels(dds$condition)
@@ -221,26 +224,31 @@ DESeq2 <- function(inputdata, data_type){
 		outdir <- "circRNA/"
 
 		## use gene sizeFactors
+    pseudo_gene <- (inputdata$gene + 1)
+
 		tmp <- DESeqDataSetFromMatrix(
-		countData=inputdata$gene,
+		countData=pseudo_gene,
 		colData=inputdata$pheno,
 		design = inputdata$design)
 		tmp$condition <- relevel(tmp$condition, ref="normal")
 		tmp <- DESeq(tmp, quiet=TRUE)
 		contrasts <- levels(tmp$condition)
-		
+
 		sizefactors <- sizeFactors(tmp)
-		
+
+    ##circRNA
+    pseudo_circ <- (inputdata$circ + 1)
+
 		dds <- DESeqDataSetFromMatrix(
-		countData=inputdata$circ,
+		countData=pseudo_circ,
 		colData=inputdata$pheno,
 		design = inputdata$design)
-		
+
 		dds$condition <- relevel(dds$condition, ref="normal")
 		dds <- DESeq(dds, quiet=TRUE)
 		contrasts <- levels(dds$condition)
 		sizeFactors(dds) <- sizefactors
-		
+
 	}else{
 		print("ERROR in Execution stage of script")
 	}
@@ -248,10 +256,10 @@ DESeq2 <- function(inputdata, data_type){
 	DESeq2_plots(dds, outdir)
 
 	for(group in contrasts[contrasts != "normal"]){
-	
+
 		DEG <- getDESeqDEAbyContrast(dds, group, outdir)
 	}
-	
+
 	return(DEG)
 }
 
@@ -271,17 +279,17 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
         cts <- counts(dds, normalized=T)
         log2 <- log2(cts +1)
         global_heatmap(de, log2, contrast, outdir)
-	
+
 	if(outdir == "RNA-Seq/"){
 		up_regulated <- annotate_de_genes(up_regulated)
 		down_regulated <- annotate_de_genes(down_regulated)
 	}else{
 		up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
 		down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
-		
+
 	}
 
-	write.table(up_regulated, file.path(outdir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)	
+	write.table(up_regulated, file.path(outdir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
 	write.table(down_regulated, file.path(outdir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
 
 	res_df <- as.data.frame(res)
@@ -302,13 +310,13 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
 	dev.off()
 
 	pdf(file.path(outdir, paste("DESeq2", contrast, "pvalue_distribution.pdf", sep="_")), width=8, height=8)
-	hist(res$pvalue, breaks=50, col="seagreen", xlab=paste("P-Value (Fold change)", contrast, sep=" "), main="Distribution of P-Values") 
+	hist(res$pvalue, breaks=50, col="seagreen", xlab=paste("P-Value (Fold change)", contrast, sep=" "), main="Distribution of P-Values")
 	abline(v=c(0.05),col="black",lwd=2,lty=2)
 	legend("topright", "P-Value <0.05",lwd=2,lty=2)
 	dev.off()
 
 	pdf(file.path(outdir, paste("DESeq2", contrast, "Adj_pvalue_distribution.pdf", sep="_")), width=8, height=8)
-	hist(res$padj, breaks=50, col="seagreen", xlab=paste("P-Adj (Fold change)", contrast, sep=" "), main="Distribution of AdjP-Values") 
+	hist(res$padj, breaks=50, col="seagreen", xlab=paste("P-Adj (Fold change)", contrast, sep=" "), main="Distribution of AdjP-Values")
 	abline(v=c(0.05),col="black",lwd=2,lty=2)
 	legend("top", "P-Adj <0.05",lwd=2,lty=2)
 	dev.off()
@@ -320,7 +328,7 @@ DESeq2_plots <- function(dds, outdir){
 	pdf(file.path(outdir, "DESeq2_MAplot.pdf"), height=8, width=8)
 	plotMA(dds)
 	dev.off()
-	
+
 	pdf(file.path(outdir, "DESeq2_dispersion.pdf"), width=8, height=8)
 	plotDispEsts(dds)
 	dev.off()
@@ -334,7 +342,7 @@ DESeq2_plots <- function(dds, outdir){
 		counts <- as.data.frame(counts)
 		log2 <- log2(counts + 1)
 	}
-	
+
 	write_counts <- tibble::rownames_to_column(counts, "ID")
 	write_log2 <- tibble::rownames_to_column(log2, "ID")
 
@@ -347,12 +355,12 @@ DESeq2_plots <- function(dds, outdir){
 	sample_to_sample_dendogram(log2, outdir)
 	print("starting PCA")
 	PCA_plot(log2, outdir)
-	
+
 }
 
 
 sample_to_sample_heatmap <- function(log2, outdir){
-	
+
 	sampleDists <- dist(t(log2))
    	sampleDistMatrix <- as.matrix(sampleDists)
     	print("test sample_to_sample_heatmap")
@@ -367,7 +375,7 @@ sample_to_sample_heatmap <- function(log2, outdir){
 	dev.off()
 }
 
-		
+
 
 sample_to_sample_dendogram <- function(log2, outdir){
 
@@ -383,7 +391,7 @@ sample_to_sample_dendogram <- function(log2, outdir){
 
 
 PCA_plot <- function(log2, outdir){
-  
+
 	p <- pca(log2, metadata=inputdata$pheno)
   	n_comp <- length(p$components)
   	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"), width=10, height=8)
@@ -394,13 +402,13 @@ PCA_plot <- function(log2, outdir){
 		 subtitle="80% variation explained")
 	plot(scree)
   	dev.off()
-  
+
   	for(exp_var in names(inputdata$pheno)){
     		pdf(file.path(outdir, paste("DESeq2", exp_var, "PCA.pdf", sep="_")), width=8, height=8)
     		biplot <- biplot(
 			  p,
        			  colby=paste(exp_var),
-			  hline=0, 
+			  hline=0,
         		  vline=0,
         		  legendPosition="right",
         		  legendLabSize=12,
@@ -417,7 +425,7 @@ PCA_plot <- function(log2, outdir){
 volcano_plot <- function(res, contrast, outdir){
 
 	res <- na.omit(res)
-	
+
 	min_width <- min(res$log2FoldChange)
 	max_width <- max(res$log2FoldChange)
 	max_height <- -log10(min(res[res$pvalue>0, 5]))
