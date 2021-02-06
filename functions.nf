@@ -1,12 +1,11 @@
 #!/usr/bin/env nextflow
 
-params.input = 'https://raw.githubusercontent.com/BarryDigby/test/dev/test_samples.csv'
-params.input_glob = null
+params.input = 'https://raw.githubusercontent.com/BarryDigby/test/dev/function_samples.csv'
 params.input_type = null
 
 // Check inputs
 
-if(params.input == null){
+if(!params.input){
   exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
 }
 
@@ -28,7 +27,7 @@ if( csv_path ){
     log.info ""
     log.info "No CSV file provided, reading input files from directory provided"
     log.info "Reading path: ${params.input}\n"
-    inputSample = retrieve_input_paths(params.input, params.input_glob, params.input_type)
+    inputSample = retrieve_input_paths(params.input, params.input_type)
     ch_input_sample = inputSample
 
 }else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
@@ -112,12 +111,11 @@ def retrieve_input_paths(input, glob, type){
 
       // debug
       println input
-      println glob
       println type
 
       if(type == 'fastq'){
 
-          fastq_files = input + glob
+          fastq_files = input
           Channel
               .fromFilePairs(fastq_files)
               .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
@@ -129,7 +127,7 @@ def retrieve_input_paths(input, glob, type){
 
       }else if(type == 'bam'){
 
-          bam_files = input + glob
+          bam_files = input
           Channel
               .fromFilePairs(bam_files, size: 1)
               .filter{ it =~/.*.bam/}

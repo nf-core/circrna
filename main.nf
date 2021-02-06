@@ -580,8 +580,8 @@ if(params.trimming == true){
                 bbduk.sh -Xmx4g \
                 in1=${fastq[0]} \
                 in2=${fastq[1]} \
-                out1=${base}_1.trim.fq.gz \
-                out2=${base}_2.trim.fq.gz \
+                out1=${base}_R1.trim.fq.gz \
+                out2=${base}_R2.trim.fq.gz \
                 ref=$adapters \
                 minlen=30 \
                 ktrim=r \
@@ -1061,6 +1061,8 @@ process mapsplice_align{
 
         script:
         prefix = gtf.toString() - ~/.gtf/
+        strip1 = fastq[0].toString() - ~/.gz/
+        strip2 = fastq[1].toString() - ~/.gz/
         """
         gzip -d --force ${fastq[0]}
         gzip -d --force ${fastq[1]}
@@ -1068,8 +1070,8 @@ process mapsplice_align{
         mapsplice.py \
         -c $mapsplice_ref \
         -x $prefix \
-        -1 ${base}_r1.fastq \
-        -2 ${base}_r2.fastq \
+        -1 ${strip1} \
+        -2 ${strip2} \
         -p ${params.threads} \
         --bam \
         --seglen 25 \
