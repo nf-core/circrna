@@ -4,8 +4,8 @@ library(biomaRt)
 
 x <- read.table("merged_reports.txt", sep="\t", header=T)
 
-mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", useCache=FALSE)
-results <- getBM(attributes=c("entrezgene_description", "hgnc_symbol"), mart=mart)
+mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+results <- getBM(attributes=c("entrezgene_description", "hgnc_symbol"), mart=mart, useCache=FALSE)
 colnames(results) <- c("Description", "Parent_Gene")
 
 # allow for missing descriptions! Crucial to capture lncRNAs
