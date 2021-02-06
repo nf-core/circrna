@@ -136,7 +136,8 @@ ens2symbol <- function(mat){
 	info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
 	              filters = c("ensembl_gene_id_version"),
 		      values = mat$ensembl_gene_id_version,
-		      mart = mart)
+		      mart = mart,
+          useCache=FALSE)
 
 	tmp <- merge(mat, info, by="ensembl_gene_id_version")
 	tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
@@ -178,7 +179,8 @@ annotate_de_genes <- function(df){
                              "entrezgene_description"),
                 filters = c("ensembl_gene_id_version"),
                 values = df$ensembl_gene_id_version,
-                mart = mart)
+                mart = mart,
+                useCache=FALSE)
 
 
 	tmp <- merge(df, info, by="ensembl_gene_id_version")
@@ -187,7 +189,7 @@ annotate_de_genes <- function(df){
 	tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
 
 	output_col <- c("Gene", "Chromosome", "Start", "Stop", "Strand", "Description", "Log2FC", "P-value", "Adj P-value")
-	index <- c(9, 10, 11, 12, 13, 14, 3, 6, 7)
+	index <- c(8, 9, 10, 11, 12, 13, 3, 5, 6)
 
 	tmp <- tmp[,index]
 	colnames(tmp) <- output_col
@@ -207,11 +209,8 @@ DESeq2 <- function(inputdata, data_type){
 
 		outdir <- "RNA-Seq/"
 
-    # add pseudocount of 1 (test data)
-    pseudo <- (inputdata$gene + 1)
-
 		dds <- DESeqDataSetFromMatrix(
-		countData=pseudo,
+		countData=inputdata$gene,
 		colData=inputdata$pheno,
 		design = inputdata$design)
 
@@ -224,10 +223,9 @@ DESeq2 <- function(inputdata, data_type){
 		outdir <- "circRNA/"
 
 		## use gene sizeFactors
-    pseudo_gene <- (inputdata$gene + 1)
 
 		tmp <- DESeqDataSetFromMatrix(
-		countData=pseudo_gene,
+		countData=inputdata$gene,
 		colData=inputdata$pheno,
 		design = inputdata$design)
 		tmp$condition <- relevel(tmp$condition, ref="normal")
@@ -236,11 +234,8 @@ DESeq2 <- function(inputdata, data_type){
 
 		sizefactors <- sizeFactors(tmp)
 
-    ##circRNA
-    pseudo_circ <- (inputdata$circ + 1)
-
 		dds <- DESeqDataSetFromMatrix(
-		countData=pseudo_circ,
+		countData=inputdata$circ,
 		colData=inputdata$pheno,
 		design = inputdata$design)
 
