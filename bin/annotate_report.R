@@ -4,7 +4,7 @@ library(biomaRt)
 
 x <- read.table("merged_reports.txt", sep="\t", header=T)
 
-mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", useCache=FALSE)
 results <- getBM(attributes=c("entrezgene_description", "hgnc_symbol"), mart=mart)
 colnames(results) <- c("Description", "Parent_Gene")
 
