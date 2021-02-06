@@ -627,8 +627,6 @@ process multiqc_raw {
 
 process star_align{
 
-        publishDir "$params.outdir/star_alignment", mode:'copy', overwrite: true
-
         input:
           tuple val(base), file(fastq) from circexplorer2_reads
           file(gtf) from ch_gencode_gtf
