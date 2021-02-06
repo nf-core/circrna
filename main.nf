@@ -183,7 +183,7 @@ process multiqc_raw {
 
 // Stage Aligner read channels
 (circexplorer2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, circrna_finder_reads, dcc_reads, dcc_reads_mate1, dcc_reads_mate2, hisat2_reads) = aligner_reads.into(10)
-aligner_reads.view()
+dcc_reads.view()
 
 
 /*
