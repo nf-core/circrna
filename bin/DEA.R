@@ -189,9 +189,7 @@ annotate_de_genes <- function(df){
 	tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
 
 	output_col <- c("Gene", "Chromosome", "Start", "Stop", "Strand", "Description", "Log2FC", "P-value", "Adj P-value")
-	index <- c(8, 9, 10, 11, 12, 13, 3, 5, 6)
-
-	tmp <- tmp[,index]
+	tmp <- subset(tmp, select=c(external_gene_name, chromosome_name, start_position, end_position, strand, entrezgene_description, log2FoldChange, pvalue, padj))
 	colnames(tmp) <- output_col
 
 	if(min(tmp$Log2FC) > 0){
