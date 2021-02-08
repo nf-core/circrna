@@ -31,13 +31,14 @@
                     "description": "The output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
-                },
-            }
+                }
+            },
+            "help_text": "This text appears when user clicks help beside the title - Input/output options"
         },
         "pipeline_options": {
           "title": "Pipeline Options",
           "type": "object",
-          "fa-icon": "fas fa-cog"
+          "fa-icon": "fas fa-cog",
           "description": "Options for [nf-core/circrna] deployment",
           "required": [
             "module",
@@ -54,7 +55,8 @@
               "fa_icon": "fas fa-sliders",
               "description": "Comma separated list of modules to run: `'circrna_discovery'` (mandatory), '`mirna_prediction`' & `'differential_expression'`."
             }
-          }
+          },
+          "help_text": "This text appears when user click help beside Pipeline Options"
         },
         "reference_genome_options": {
             "title": "Reference genome options",
@@ -71,7 +73,21 @@
                 "genome_version": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`.",
+                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`."
+                },
+                "igenomes_base": {
+                    "type": "string",
+                    "description": "Directory / URL base for iGenomes references.",
+                    "default": "s3://ngi-igenomes/igenomes/",
+                    "fa_icon": "fas fa-cloud-download-alt",
+                    "hidden": true
+                },
+                "igenomes_ignore": {
+                    "type": "boolean",
+                    "description": "Do not load the iGenomes reference config.",
+                    "fa_icon": "fas fa-ban",
+                    "hidden": true,
+                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
                 },
                 "fasta_fai": {
                     "type": "string",
@@ -108,11 +124,11 @@
                 "star_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to STAR index files."
+                    "description": "Path to STAR index files.",
                     "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to STAR indices to save compute resources e.g `--star_index '/<path>/<star_index>/'`.\n\n Quantification tool dependency: `CIRCexplorer2, circRNA_finder, DCC`."
-
                 }
-            }
+            },
+            "help_text": "displayed whe user clicks help beside reference genome options."
         },
         "generic_options": {
             "title": "Generic options",
@@ -133,6 +149,13 @@
                     "fa_icon": "fas fa-fingerprint",
                     "hidden": true,
                     "help_text": "A custom name for the pipeline run. Unlike the core nextflow `-name` option with one hyphen this parameter can be reused multiple times, for example if using `-resume`. Passed through to steps such as MultiQC and used for things like report filenames and titles."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "help_text": "An email address to send a summary email to when the pipeline is completed.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
                 "email_on_fail": {
                     "type": "string",
@@ -270,6 +293,9 @@
             "$ref": "#/definitions/reference_genome_options"
         },
         {
+            "$ref": "#/definitions/pipeline_options"
+        },
+        {
             "$ref": "#/definitions/generic_options"
         },
         {
@@ -286,37 +312,10 @@
         "gene_annotation": {
             "type": "string"
         },
-        "genome_version": {
-            "type": "string"
-        },
-        "tool": {
-            "type": "string"
-        },
-        "fasta_fai": {
-            "type": "string"
-        },
-        "bwa_index": {
-            "type": "string"
-        },
-        "star_index": {
-            "type": "string"
-        },
-        "hisat2_index": {
-            "type": "string"
-        },
-        "bowtie_index": {
-            "type": "string"
-        },
-        "bowtie2_index": {
-            "type": "string"
-        },
         "fasta_chr": {
             "type": "string"
         },
         "ciriquant_yml": {
-            "type": "string"
-        },
-        "input_type": {
             "type": "string"
         },
         "adapters": {
@@ -326,7 +325,7 @@
             "type": "string"
         },
         "trimming": {
-            "type": "boolean"
+            "type": "string"
         },
         "minlen": {
             "type": "integer"
@@ -342,9 +341,6 @@
         },
         "trimq": {
           "type": "integer"
-        },
-        "module": {
-          "type": "string"
         },
         "threads": {
           "type": "integer"
