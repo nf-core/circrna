@@ -406,7 +406,7 @@ process ciriquant_yml{
         output:
           file("travis.yml") into yml_built
 
-        when: !(params.ciriquant_yml) && 'ciriquant' in tool && 'circrna_discovery' in tool
+        when: !(params.ciriquant_yml) && 'ciriquant' in tool && 'circrna_discovery' in module
 
         script:
         index_prefix = fasta.toString() - ~/.fa/
@@ -773,7 +773,7 @@ process circrna_finder_star{
         output:
           tuple val(base), file("${base}") into circrna_finder_star
 
-        when: 'circrna_finder' && 'circrna_discovery' in module
+        when: 'circrna_finder' in tool && 'circrna_discovery' in module
 
         script:
         """
