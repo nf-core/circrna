@@ -394,7 +394,7 @@ ch_fasta_chr.view()
 
 process ciriquant_yml{
 
-        publishDir "$params.outdir", mode:'copy'
+        publishDir "$params.outdir/assets", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -452,7 +452,7 @@ ch_input_sample = Channel.empty()
 if( csv_path ){
 
     csv_file = file(csv_path)
-
+    println csv_file
     if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one csv file per run."
     if(!csv_file.exists()) exit 1, "[nf-core/circrna] error: input CSV file could not be found using the path provided: ${params.input}"
 
@@ -499,6 +499,8 @@ if(params.input_type == 'bam'){
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
+check_reads.view()
+
 // FASTQC on raw data. Mandatory.
 
 process FastQC {
@@ -519,9 +521,29 @@ process FastQC {
         """
 }
 
+// MultiQC of the Raw Data, Mandatory.
+
+process multiqc_raw {
+
+	      publishDir "$params.outdir/quality_control/multiqc/raw", mode:'copy'
+
+      	label 'py3'
+
+      	input:
+      	file(htmls) from fastqc_raw.collect()
+
+      	output:
+      	file("Raw_Reads_MultiQC.html") into multiqc_raw_out
+
+      	script:
+      	"""
+      	multiqc -i "Raw_Reads_MultiQC" -b "nf-circ pipeline" -n "Raw_Reads_MultiQC.html" .
+      	"""
+}
+
 // BBDUK
 
-if(params.trimming == true){
+if(params.trimming == 'true'){
 
         process bbduk {
 
@@ -569,9 +591,9 @@ if(params.trimming == true){
                 """
                 fastqc -q $fastq
                 """
-  }
+        }
 
-	     process multiqc_trim {
+	      process multiqc_trim {
 
               	publishDir "$params.outdir/quality_control/multiqc/trimmed", mode:'copy'
 
@@ -589,30 +611,11 @@ if(params.trimming == true){
               	"""
  }
 
-}else if(params.trimming == false){
+}else if(params.trimming == 'false'){
         aligner_reads = raw_reads
+}else{
+  exit 1, "[nf-core/circrna] error: --trimming not specified, please select 'true' or 'false'. See '--help' or documentation for help."
 }
-
-// MultiQC of the Raw Data, Mandatory.
-
-process multiqc_raw {
-
-	      publishDir "$params.outdir/quality_control/multiqc/raw", mode:'copy'
-
-      	label 'py3'
-
-      	input:
-      	file(htmls) from fastqc_raw.collect()
-
-      	output:
-      	file("Raw_Reads_MultiQC.html") into multiqc_raw_out
-
-      	script:
-      	"""
-      	multiqc -i "Raw_Reads_MultiQC" -b "nf-circ pipeline" -n "Raw_Reads_MultiQC.html" .
-      	"""
-}
-
 
 // Stage Aligner read channels
 (circexplorer2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, circrna_finder_reads, dcc_reads, dcc_reads_mate1, dcc_reads_mate2, hisat2_reads) = aligner_reads.into(10)
@@ -1730,7 +1733,7 @@ def extract_data(csvFile){
 
         if ( !read1.matches('NA') && !has_extension(read1, "fastq.gz") && !has_extension(read1, "fq.gz") && !has_extension(read1, "fastq") && !has_extension(read1, "fq")) exit 1, "[nf-core/circrna] error: A specified R1 file either has a non-recognizable FASTQ extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${r1}"
         if ( !read2.matches('NA') && !has_extension(read2, "fastq.gz") && !has_extension(read2, "fq.gz") && !has_extension(read2, "fastq") && !has_extension(read2, "fq")) exit 1, "[nf-core/circrna] error: A specified R2 file either has a non-recognizable FASTQ extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${r2}"
-        if ( !bam.matches('NA') && !has_extension(bam, "bam")) exit 1, "[nf-core/eager] error: A specified R1 file either has a non-recognizable BAM extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${bam}"
+        if ( !bam.matches('NA') && !has_extension(bam, "bam")) exit 1, "[nf-core/eager] error: A specified BAM file either has a non-recognizable extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${bam}"
 
         // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
         if(bam.matches('NA')){
