@@ -397,7 +397,6 @@ process ciriquant_yml{
         publishDir "$params.outdir/assets", mode:'copy'
 
         input:
-          file(fasta) from ch_fasta
           file(gencode_gtf) from ch_gencode_gtf
           file(fasta) from ch_fasta
           val(bwa_path) from ch_bwa_index
