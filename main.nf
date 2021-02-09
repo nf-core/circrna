@@ -398,8 +398,8 @@ process ciriquant_yml{
 
         input:
           file(fasta) from ch_fasta
-          val(gencode_gtf_path) from ch_gencode_gtf
-          val(fasta_path) from ch_fasta
+          file(gencode_gtf) from ch_gencode_gtf
+          file(fasta) from ch_fasta
           val(bwa_path) from ch_bwa_index
           val(hisat2_path) from ch_hisat2_index
 
@@ -410,6 +410,8 @@ process ciriquant_yml{
 
         script:
         index_prefix = fasta.toString() - ~/.fa/
+        fasta_path = fasta.toRealPath()
+        gencode_gtf_path = gencode_gtf.toRealPath()
         """
         export bwa=`whereis bwa | cut -f2 -d':'`
         export hisat2=`whereis hisat2 | cut -f2 -d':'`
