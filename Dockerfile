@@ -8,19 +8,19 @@ RUN apt-get update; apt-get clean all;
 RUN apt-get install --yes build-essential \
                           gcc-multilib \
                           apt-utils \
-			  curl \
+			                    curl \
                           perl \
-			  zip \
-			  unzip \
+                  			  zip \
+                  			  unzip \
                           expat \
                           libexpat-dev
 
 RUN apt-get install --yes cpanminus
 
 RUN apt-get install --yes libxml-libxml-perl \
-			  libxml-dom-xpath-perl \
-			  libxml-libxml-simple-perl \
-			  libxml-dom-perl
+                  			  libxml-dom-xpath-perl \
+                  			  libxml-libxml-simple-perl \
+                  			  libxml-dom-perl
 
 RUN cpanm CPAN::Meta Statistics::Lite Bio::TreeIO
 
