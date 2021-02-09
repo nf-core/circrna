@@ -9,7 +9,7 @@ on:
 jobs:
   run-awstest:
     name: Run AWS tests
-    if: github.repository == 'nf-core/circrna'
+    if: github.repository == 'BarryDigby/test'
     runs-on: ubuntu-latest
     steps:
       - name: Setup Miniconda
