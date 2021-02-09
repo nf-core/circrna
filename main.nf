@@ -410,8 +410,6 @@ process ciriquant_yml{
 
         script:
         index_prefix = fasta.toString() - ~/.fa/
-        fasta_file = fasta_path.toRealPath()
-        gtf_file = gencode_gtf_path.toRealPath()
         """
         export bwa=`whereis bwa | cut -f2 -d':'`
         export hisat2=`whereis hisat2 | cut -f2 -d':'`
@@ -426,8 +424,8 @@ process ciriquant_yml{
          stringtie: \$stringtie\n\
          samtools: \$samtools\n\n\
         reference:\n\
-         fasta: ${fasta_file}\n\
-         gtf: ${gtf_file}\n\
+         fasta: ${fasta_path}\n\
+         gtf: ${gencode_gtf_path}\n\
          bwa_index: ${bwa_path}/${index_prefix}\n\
          hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
         """
