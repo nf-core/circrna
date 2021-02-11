@@ -26,4 +26,4 @@ jobs:
       - name: Push Docker image to DockerHub (dev)
         run: |
           echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          docker push nfcore/circrna:dev
+          docker push barryd237/circrna:dev
