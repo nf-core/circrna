@@ -15,11 +15,6 @@ jobs:
         run: |
           { [[ ${{github.event.pull_request.head.repo.full_name}} == nf-core/circrna ]] && [[ $GITHUB_HEAD_REF = "dev" ]]; } || [[ $GITHUB_HEAD_REF == "patch" ]]
 
-      - name: Check PRs in another repository
-        if: github.repository == '<repo_name>/<pipeline_name>'
-        run: |
-          { [[ ${{github.event.pull_request.head.repo.full_name}} == BarryDigby/test ]] && [[ $GITHUB_HEAD_REF = "dev" ]]; } || [[ $GITHUB_HEAD_REF == "patch" ]]
-
       # If the above check failed, post a comment on the PR explaining the failure
       # NOTE - this doesn't currently work if the PR is coming from a fork, due to limitations in GitHub actions secrets
       - name: Post PR comment
