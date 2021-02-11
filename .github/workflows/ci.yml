@@ -34,13 +34,13 @@ jobs:
 
       - name: Build new docker image
         if: env.MATCHED_FILES
-        run: docker build --no-cache . -t nfcore/circrna:dev
+        run: docker build --no-cache . -t barryd237/circrna:dev
 
       - name: Pull docker image
         if: ${{ !env.MATCHED_FILES }}
         run: |
-          docker pull nfcore/circrna:dev
-          docker tag nfcore/circrna:dev nfcore/circrna:dev
+          docker pull barryd237/circrna:dev
+          docker tag barryd237/circrna:dev barryd237/circrna:dev
 
       - name: Install Nextflow
         env:

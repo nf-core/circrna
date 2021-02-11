@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build new docker image
-        run: docker build --no-cache . -t nfcore/circrna:dev
+        run: docker build --no-cache . -t barryd237/circrna:dev
 
       - name: Push Docker image to DockerHub (dev)
         run: |
