@@ -11,6 +11,7 @@
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23circrna-4A154B?logo=slack)](https://nfcore.slack.com/channels/circrna)
 
 ## Introduction
+
 **nf-core/circrna** is a bioinformatics pipeline used for the quantification, miRNA target prediction and differential expression analysis of circRNAs present in RNA sequencing data (currently supporting total RNA-Seq paired end sequencing data, mapped to *H. sapiens* Gencode reference genomes GRCh37, GRCh38 v34).
 
 The pipleline has been developed in a modular fashion, permitting the user to select miRNA target prediction, differential expression analysis (or both) in addition to circRNA quantification to facilitate hypotheses surrounding circRNAs involvement in the competing endogenous RNA network.
@@ -18,6 +19,7 @@ The pipleline has been developed in a modular fashion, permitting the user to se
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ## Pipeline Summary
+
 By default, `nf-core/circrna` utilises all 3 analysis modules: `circrna_discovery, mirna_prediction, differential_expression`.
 
 The creation of reference genome indices and aligners used depends on the circRNA quantification tools selected, given by `--tool`.
