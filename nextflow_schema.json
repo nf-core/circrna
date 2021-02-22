@@ -57,7 +57,7 @@
               "fa_icon": "fas fa-sliders",
               "description": "Comma separated list of modules to run: `'circrna_discovery'`, '`mirna_prediction`' & `'differential_expression'`.",
               "default": "circrna_discovery",
-              "help_text": "The `circrna_discovery` module is mandatory. After circRNA quantification, the user can select `mirna_prediction`, `differential_expression` or both to deploy additional analyses."
+              "help_text": "The `circrna_discovery` module is mandatory. After circRNA quantification, the user can select `mirna_prediction`, `differential_expression` or both to deploy additional analyses *e.g:*\n```bash\n--module \"circrna_discovery, mirna_prediction, differential_expression\"\n```"
             }
           }
         },
