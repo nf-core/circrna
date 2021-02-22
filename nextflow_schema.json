@@ -129,7 +129,7 @@
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to BWA index files.",
+                    "description": "Path to BWA index directory.",
                     "default": "null",
                     "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:* `--bwa_index \"/index/bwa\"`."
 
@@ -137,7 +137,7 @@
                 "hisat2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to HISAT2 index files.",
+                    "description": "Path to HISAT2 index directory.",
                     "default": "null",
                     "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:* `--hisat2_index \"/index/hisat2\"`."
 
@@ -145,7 +145,7 @@
                 "star_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to STAR index files.",
+                    "description": "Path to STAR index directory.",
                     "default": "null",
                     "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:* `--star_index \"/index/STAR\"`."
                 }
