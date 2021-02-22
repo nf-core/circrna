@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data, sample metadata and save output data.",
+            "description": "Define where the pipeline should find input data and write output data.",
             "required": [
                 "input",
                 "input_type"
@@ -19,7 +19,21 @@
                     "type": "string",
                     "fa_icon": "fas fa-dna",
                     "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the path or URL to FASTQ/BAM files.",
-                    "help_text": "There are two ways to supply data to `nf-core/circrna`:\n\n 1. Provide the path to the directory containing either FASTQ/BAM files. The path must contain a wildcard glob ('*') and the string must be enclosed by single or double quotes (e.g for paired end data: `--input '/<path to fastq>/*_R{1,2}.fq.gz'`).\n 2. Provide a CSV file containing the paths or URLs to FASTQ/BAM files. The CSV must contain the following headers: `Sample_ID`, `Read1`, `Read2`, `BAM`. If you are using FASTQ files, set the BAM column to `NA`. Similarly, if you are using BAM files, set the `Read1`, `Read2` columns to `NA`."
+                    "help_text": "There are two ways to supply data to `nf-core/circrna`:\n\n
+                    1. Provide the path to the directory containing either FASTQ or BAM files, with the appropriate wildcard glob pattern.\n
+                    *e.g:*\n
+                    `--input \"/path/to/raw_data/*_r{1,2}.fastq.gz\"`.\n
+                    2. Provide a CSV file containing the absolute paths to FASTQ or BAM files.\n
+                    *e.g:*\n\n
+                    | Sample_ID   	| Read1                         	| Read2                         	| Bam 	|\n
+                    |-------------	    |-------------------------------	|-------------------------------	|-----	|\n
+                    | normal_rep1 	| /data/normal_rep1_r1.fastq.gz 	| /data/normal_rep1_r2.fastq.gz 	| NA  	|\n
+                    | normal_rep2 	| /data/normal_rep2_r1.fastq.gz 	| /data/normal_rep2_r2.fastq.gz 	| NA  	|\n
+                    | normal_rep3 	| /data/normal_rep3_r1.fastq.gz 	| /data/normal_rep3_r2.fastq.gz 	| NA  	|\n
+                    | tumor_rep1  	| /data/tumor_rep1_r1.fastq.gz  	| /data/tumor_rep1_r2.fastq.gz  	| NA  	|\n
+                    | tumor_rep2  	| /data/tumor_rep2_r1.fastq.gz  	| /data/tumor_rep2_r2.fastq.gz  	| NA  	|\n
+                    | tumor_rep3  	| /data/tumor_rep3_r1.fastq.gz  	| /data/tumor_rep3_r2.fastq.gz  	| NA  	|\n\n
+                    If you are supplying the paths to BAM files, set Read1 & Read2 columns to 'NA'."
                 },
                 "input_type": {
                     "type": "string",
@@ -33,7 +47,6 @@
                     "fa_icon": "fas fa-folder-open"
                 }
             },
-            "help_text": "This text appears when user clicks help beside the title - Input/output options"
         },
         "pipeline_options": {
           "title": "Pipeline Options",
