@@ -89,7 +89,7 @@
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
                     "default": "null",
-                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for `CIRCexplorer2` compatability. The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for [CIRCexplorer2 compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
                 },
                 "igenomes_base": {
                     "type": "string",
