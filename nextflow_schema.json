@@ -61,13 +61,14 @@
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Options for the reference genome indices used to align reads.",
+            "description": "Reference genome indices used to align reads.",
+            "help_text": "`nf-core/circrna` will automatically download reference files and generate the appropriate genome index files based on the circRNA quantification tools selected by the user."
             "properties": {
                 "fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-font",
-                    "description": "Path to gencode FASTA genome file.",
-                    "help_text": "[nf-core/circrna] has been developed using gencode reference FASTA files, users can provide alternative reference FASTA files (UCSC, ENSEMBL) at their own risk.\n\n When running the pipeline for the first time, the user can leave `--fasta` empty and specify the genome version to use."
+                    "description": "Path to gencode (GRCh37/GRCh38) FASTA genome file.",
+                    "help_text": "If set to `null` (i.e on the first pipeline run), the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n *N.B:* The pipleine has been developed using Gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "genome_version": {
                     "type": "string",
@@ -126,8 +127,7 @@
                     "description": "Path to STAR index files.",
                     "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to STAR indices to save compute resources e.g `--star_index '/<path>/<star_index>/'`.\n\n Quantification tool dependency: `CIRCexplorer2, circRNA_finder, DCC`."
                 }
-            },
-            "help_text": "displayed whe user clicks help beside reference genome options."
+            }
         },
         "generic_options": {
             "title": "Generic options",
