@@ -61,20 +61,35 @@
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Reference genome indices used to align reads.",
-            "help_text": "`nf-core/circrna` will automatically download reference files and generate the appropriate genome index files based on the circRNA quantification tools selected by the user.",
+            "description": "Reference genome options used in the analysis.",
+            "help_text": "`nf-core/circrna` will automatically download reference files if none are provided and generate genome index files based on the tools selected by the user.",
             "properties": {
                 "fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-font",
-                    "description": "Path to gencode (GRCh37/GRCh38) FASTA genome file.",
-                    "help_text": "If set to `null` (i.e on the first run), the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n\n *N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "description": "Path to gencode FASTA genome file.",
+                    "default": "null",
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash --fasta \"/data/reference/GRCh38.fa\"```\n\n *N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "genome_version": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
                     "description": "Genome version to use, options: `GRCh37`, `GRCh38`.",
-                    "help_text": "Required if `--fasta` is not specified."
+                    "help_text": "Required if `--fasta` is set to `null`."
+                },
+                "gencode_gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to gencode reference GTF file.",
+                    "default": "null",
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash --gencode_gtf \"/data/reference/GRCh38.gtf\"\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                },
+                "gene_annotation": {
+                    "type": "string",
+                    "fa_icon": "fa-address-book",
+                    "description": "Path to custom annotation text file.",
+                    "default": "null",
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash --gene_annotation \"/data/reference/GRCh38.txt\"\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for `CIRCexplorer2` compatability. The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -312,12 +327,6 @@
         }
     ],
     "properties": {
-        "gencode_gtf": {
-            "type": "string"
-        },
-        "gene_annotation": {
-            "type": "string"
-        },
         "fasta_chr": {
             "type": "string"
         },
