@@ -290,7 +290,7 @@ process star_index{
           file(gtf) from ch_gencode_gtf
 
         output:
-          file("star_index") into star_built
+          file("STAR") into star_built
 
         when: !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
@@ -302,7 +302,7 @@ process star_index{
         --runMode genomeGenerate \
         --runThreadN ${params.threads} \
         --sjdbGTFfile $gtf \
-        --genomeDir star_index/ \
+        --genomeDir STAR/ \
         --genomeFastaFiles $fasta
         """
 }
