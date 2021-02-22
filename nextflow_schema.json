@@ -68,12 +68,13 @@
                     "type": "string",
                     "fa_icon": "fas fa-font",
                     "description": "Path to gencode (GRCh37/GRCh38) FASTA genome file.",
-                    "help_text": "If set to `null` (i.e on the first pipeline run), the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n *N.B:* The pipleine has been developed using Gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "help_text": "If set to `null` (i.e on the first run), the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n\n *N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "genome_version": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`."
+                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`.",
+                    "help_text": "Required if `--fasta` is not specified."
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -92,40 +93,46 @@
                 "fasta_fai": {
                     "type": "string",
                     "fa_icon" : "fas fa-address-book",
-                    "description": "Path to samtools genome index file (`.fai`).",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the FASTA `.fai` file to save compute resources."
+                    "description": "Path to SAMtools index file.",
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file."
                 },
                 "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bowtie index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie_index '/<path>/<bowtie_index>/*'`.\n\n Quantification tool dependency: `mapsplice`."
+                    "description": "Path to Bowtie index files.",
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie indices directory including a wildcard glob pattern *e.g:* `--bowtie_index \"/index/bowtie/*\"`."
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bowtie2 index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie2_index '/<path>/<bowtie2_index>/*'`.\n\n Quantification tool dependency: `find_circ`."
+                    "description": "Path to Bowtie2 index files.",
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie2 indices directory including a wildcard glob pattern *e.g:* `--bowtie2_index \"/index/bowtie2/*\"`."
                 },
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bwa index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bwa indices to save compute resources e.g `--bwa_index '/<path>/<bwa_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+                    "description": "Path to BWA index files.",
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:* `--bwa_index \"/index/bwa\"`."
 
                 },
                 "hisat2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to Hisat 2 index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to hisat2 indices to save compute resources e.g `--hisat2_index '/<path>/<hisat2_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+                    "description": "Path to HISAT2 index files.",
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:* `--hisat2_index \"/index/hisat2\"`."
 
                 },
                 "star_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to STAR index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to STAR indices to save compute resources e.g `--star_index '/<path>/<star_index>/'`.\n\n Quantification tool dependency: `CIRCexplorer2, circRNA_finder, DCC`."
+                    "default": "null",
+                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:* `--star_index \"/index/STAR\"`."
                 }
             }
         },
