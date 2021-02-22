@@ -62,7 +62,7 @@
             "type": "object",
             "fa_icon": "fas fa-dna",
             "description": "Reference genome indices used to align reads.",
-            "help_text": "`nf-core/circrna` will automatically download reference files and generate the appropriate genome index files based on the circRNA quantification tools selected by the user."
+            "help_text": "`nf-core/circrna` will automatically download reference files and generate the appropriate genome index files based on the circRNA quantification tools selected by the user.",
             "properties": {
                 "fasta": {
                     "type": "string",
