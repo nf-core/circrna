@@ -69,27 +69,27 @@
                     "fa_icon": "fas fa-font",
                     "description": "Path to gencode FASTA genome file.",
                     "default": "null",
-                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash --fasta \"/data/reference/GRCh38.fa\"```\n\n *N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash\n--fasta \"/reference/GRCh38.fa\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "genome_version": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`.",
-                    "help_text": "Required if `--fasta` is set to `null`."
+                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`",
+                    "help_text": "Required if `--fasta`, `--gencode_gtf`, `--gene_annotation` are set to `null`."
                 },
                 "gencode_gtf": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to gencode reference GTF file.",
                     "default": "null",
-                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash --gencode_gtf \"/data/reference/GRCh38.gtf\"\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gencode_gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "gene_annotation": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
                     "default": "null",
-                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash --gene_annotation \"/data/reference/GRCh38.txt\"\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for `CIRCexplorer2` compatability. The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
+                    "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for `CIRCexplorer2` compatability. The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -110,28 +110,28 @@
                     "fa_icon" : "fas fa-address-book",
                     "description": "Path to SAMtools index file.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\n```bash\n--fasta_fai \"/index/GRCh38.fa.fai\"\n```"
                 },
                 "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie index files.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie indices directory including a wildcard glob pattern *e.g:* `--bowtie_index \"/index/bowtie/*\"`."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie_index \"/index/bowtie/*\"\n```"
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie2 index files.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie2 indices directory including a wildcard glob pattern *e.g:* `--bowtie2_index \"/index/bowtie2/*\"`."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie2 indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie2_index \"/index/bowtie2/*\"\n```"
                 },
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to BWA index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:* `--bwa_index \"/index/bwa\"`."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"/index/bwa\"\n```"
 
                 },
                 "hisat2_index": {
@@ -139,7 +139,7 @@
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to HISAT2 index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:* `--hisat2_index \"/index/hisat2\"`."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"/index/hisat2\"\n```"
 
                 },
                 "star_index": {
@@ -147,7 +147,7 @@
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to STAR index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if `null` supplied. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:* `--star_index \"/index/STAR\"`."
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:*\n```bash\n--star_index \"/index/STAR\"\n```"
                 }
             }
         },
