@@ -86,7 +86,7 @@
                 },
                 "gene_annotation": {
                     "type": "string",
-                    "fa_icon": "fa-address-book",
+                    "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
                     "default": "null",
                     "help_text": "If set to `null`, the parameter `--genome_version` must be supplied and the customised annotation text file will be generated.\n```bash --gene_annotation \"/data/reference/GRCh38.txt\"\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for `CIRCexplorer2` compatability. The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
