@@ -38,7 +38,7 @@
           "title": "Pipeline Options",
           "type": "object",
           "fa-icon": "fas fa-cog",
-          "description": "Options for `nf-core/circrna` deployment",
+          "description": "Mandatory options for `nf-core/circrna` deployment",
           "help_text": "Documentation for selecting circRNA quantification tools and analysis modules.",
           "required": [
             "module",
@@ -47,7 +47,7 @@
           "properties":{
             "tool":{
               "type":"string",
-              "fa_icon": "fas fa-sliders",
+              "fa_icon": "fas fa-wrench",
               "description": "Comma separated list of circRNA quantification tools to use. Supported tools: `CIRIquant`, `CIRCexplorer2`, `find_circ`, `circRNA_finder`, `MapSplice`, `DCC`.",
               "default": "circexplorer2",
               "help_text": "User can select one or a combination of circRNA quantification tools for the pipeline *e.g:*\n```bash\n--tool \"circexplorer2, ciriquant, find_circ\"\n```\n\n*N.B:* Selecting more than one circRNA quantification tool will trigger a circRNA filtering method whereby circRNAs called by only one tool are discarded."
