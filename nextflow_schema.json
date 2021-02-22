@@ -38,8 +38,8 @@
           "title": "Pipeline Options",
           "type": "object",
           "fa-icon": "fas fa-cog",
-          "description": "Options for `nf-core/circrna` module deployment",
-          "help_text": ""
+          "description": "Options for `nf-core/circrna` deployment",
+          "help_text": "Documentation for selecting circRNA quantification tools and analysis modules.",
           "required": [
             "module",
             "tool"
