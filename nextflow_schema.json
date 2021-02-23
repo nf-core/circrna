@@ -53,7 +53,7 @@
             },
             "module": {
               "type": "string",
-              "fa_icon": "fas fa-sliders",
+              "fa_icon": "fas fa-sliders-h",
               "description": "Comma separated list of modules to run: `'circrna_discovery'`, '`mirna_prediction`' & `'differential_expression'`.",
               "mandatory": "circrna_discovery",
               "help_text": "The `circrna_discovery` module is mandatory. After circRNA quantification, the user can select `mirna_prediction`, `differential_expression` or both to deploy additional analyses *e.g:*\n```bash\n--module \"circrna_discovery, mirna_prediction, differential_expression\"\n```"
@@ -157,7 +157,7 @@
         "read_trimming_and_adapter_removal":{
           "title": "Read trimming & adapter removal",
           "type": "object",
-          "fa_icon": "fas fa_cut",
+          "fa_icon": "fas fa-cut",
           "description": "Parameters for BBDUK",
           "help_text": "BBDUK is implemented in the following order:\n\n1. Kmer based operations, i.e adapter removal.\n2. Base PHRED score quality filtering.\n3. Read length filtering.",
           "properties": {
@@ -169,14 +169,14 @@
             },
             "adapter_ref":{
               "type": "string",
-              "fa_icon": "fas file-alt",
+              "fa_icon": "fas fa-file-alt",
               "description": "Reference adapter file supplied to BBDUK",
               "deafult": "adapters.fa",
               "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `/opt/conda/envs/circrna/bbtools/lib/resources/adapters.fa` within the container, should the user wish to add customised sequences to the file.\n*N.B:* The container is read-only, should the user choose to make additions to the `adapters.fa` file, copy the contents of the file and make the modifications, saving them to a new `.fa` file. Provide the path to this file via the configuration file when running the analysis.\n```bash\n--adapter_ref \"/assets/adapters.fa\"\n```\n\nBy default, the file supplied by BBDUK is used for adapter removal."
             },
             "kmer_len":{
               "type": "string",
-              "fa_icon": "fas font-case",
+              "fa_icon": "fas fa-font-case",
               "description": "Specifies K-mer size to use for adapter removal",
               "default": "12",
               "help_text": "kmer_len specifies the kmer size to use (must be at most the length of the adapters). For example, `--kmer_len \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
@@ -197,7 +197,7 @@
             },
             "qtrim":{
               "type": "string",
-              "fa_icon": "fas fafa-exchange-alt",
+              "fa_icon": "fas fa-exchange-alt",
               "description": "Which end of reads to perform quality filtering",
               "default": "r",
               "help_text": "Used in conjunction with `trimq`, quality-trims to Q(N) using the Phred algorithm, which is more accurate than naive trimming. \"qtrim=r\" means it will trim the right side only; you can alternatively set \"qtrim=l\" for left or \"qtrim=rl\" for both. If quality trimming is enabled, it happens after all kmer-based operations."
