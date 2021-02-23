@@ -556,6 +556,7 @@ if(params.skip_trim == 'true'){
 
                 output:
                   tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+                  file("*BBDUK.txt") into bbduk_stats_ch
 
                 script:
                 """
@@ -570,6 +571,7 @@ if(params.skip_trim == 'true'){
                 k=12 \
                 qtrim=r \
                 trimq=20
+                stats=${base}_BBDUK.txt
                 """
         }
 
@@ -602,13 +604,14 @@ if(params.skip_trim == 'true'){
 
               	input:
               	  file(htmls) from fastqc_trimmed.collect()
+                  file(bbduk_stats) from bbduk_stats_ch.collect()
 
               	output:
               	  file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
 
               	script:
               	"""
-              	multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
+              	multiqc -i "BBDUK_MultiQC" -b "nf-circ pipeline" -n "BBDUK_MultiQC.html" .
               	"""
  }
 
