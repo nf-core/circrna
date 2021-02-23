@@ -172,7 +172,7 @@
               "fa_icon": "fas file-alt",
               "description": "Reference adapter file supplied to BBDUK",
               "deafult": "adapters.fa",
-              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `/opt/conda/envs/circrna/bbtools/lib/resources/adapters.fa` within the container, should the user wish to add customised sequences to the file.\n*N.B:* The container is read-only, should the user choose to make additions to the `adapters.fa` file, copy the contents of the file and make the modifications, saving them to a new `.fa` file. Provide the path to this file when running the analysis.\n```bash\n--adapter_ref \"/assets/adapters.fa\"\n```\n\nBy default, the file supplied by BBDUK is used for adapter removal."
+              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `/opt/conda/envs/circrna/bbtools/lib/resources/adapters.fa` within the container, should the user wish to add customised sequences to the file.\n*N.B:* The container is read-only, should the user choose to make additions to the `adapters.fa` file, copy the contents of the file and make the modifications, saving them to a new `.fa` file. Provide the path to this file via the configuration file when running the analysis.\n```bash\n--adapter_ref \"/assets/adapters.fa\"\n```\n\nBy default, the file supplied by BBDUK is used for adapter removal."
             },
             "kmer_len":{
               "type": "string",
@@ -374,6 +374,9 @@
             "$ref": "#/definitions/reference_genome_options"
         },
         {
+            "$ref": "#/definitions/read_trimming_and_adapter_removal"
+        },
+        {
             "$ref": "#/definitions/pipeline_options"
         },
         {
@@ -393,29 +396,8 @@
         "ciriquant_yml": {
             "type": "string"
         },
-        "adapters": {
-            "type": "string"
-        },
         "phenotype": {
             "type": "string"
-        },
-        "trimming": {
-            "type": "string"
-        },
-        "minlen": {
-            "type": "integer"
-        },
-        "ktrim": {
-            "type": "string"
-        },
-        "k": {
-            "type": "string"
-        },
-        "qtrim": {
-          "type": "string"
-        },
-        "trimq": {
-          "type": "integer"
         },
         "threads": {
           "type": "integer"
