@@ -179,7 +179,7 @@
               "fa_icon": "fas font-case",
               "description": "Specifies K-mer size to use for adapter removal",
               "default": "12",
-              "help_text": "kmer_len specifies the kmer size to use (must be at most the length of the adapters). For example, `--kmer_len \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided.\n\n*N.B:* The shortest adapter sequence in `adapters.fa` is 21. If using the default adapters file supplied by BBDUK do not set `kmer_len` lower than 21."
+              "help_text": "kmer_len specifies the kmer size to use (must be at most the length of the adapters). For example, `--kmer_len \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
             },
             "ktrim":{
               "type": "string",
