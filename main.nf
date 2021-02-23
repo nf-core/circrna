@@ -544,7 +544,7 @@ process multiqc_raw {
 
 // BBDUK
 
-if(params.trimming == 'true'){
+if(params.skip_trim == 'true'){
 
         process bbduk {
 
@@ -612,10 +612,10 @@ if(params.trimming == 'true'){
               	"""
  }
 
-}else if(params.trimming == 'false'){
+}else if(params.skip_trim == 'false'){
         aligner_reads = raw_reads
 }else{
-  exit 1, "[nf-core/circrna] error: --trimming not specified, please select 'true' or 'false'. See '--help' or documentation for help."
+  exit 1, "[nf-core/circrna] error: --skip_trim not specified, please select 'true' or 'false'. See '--help' or documentation for help."
 }
 
 // Stage Aligner read channels
