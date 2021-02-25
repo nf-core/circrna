@@ -198,7 +198,7 @@
             "trimq":{
               "type": "string",
               "fa_icon": "fas fa-award",
-              "description": "Base quality trimming performed on reads below specified Phred score",
+              "description": "Trimming performed on regions in reads with an average Phred score below specified value",
               "default": "20",
               "help_text": "Quality trims reads to *n*Phred score.\n\n *N.B:* This action is performed after adapter removal."
             },
