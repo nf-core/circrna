@@ -176,7 +176,7 @@
             },
             "k":{
               "type": "string",
-              "fa_icon": "fas fa-kickstarter-k",
+              "fa_icon": "fab fa-kickstarter",
               "description": "Specifies K-mer size to use for adapter removal",
               "default": "12",
               "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
