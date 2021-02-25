@@ -159,55 +159,62 @@
           "type": "object",
           "fa_icon": "fas fa-cut",
           "description": "Parameters for BBDUK",
-          "help_text": "BBDUK is implemented in the following order:\n\n1. Kmer based operations, i.e adapter removal.\n2. Base PHRED score quality filtering.\n3. Read length filtering.",
+          "help_text": "BBDUK read filtering is deployed when `--skip_trim 'false'`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & `--hdist`.\n2. Quality trimming. Must specify values for `--trimq` & `--qtrim`.\n3.Read length filtering. Must provide value for `--minlen`.",
           "properties": {
             "skip_trim":{
               "type": "string",
               "fa_icon": "fas fa-fast-forward",
               "description": "Skip BBDUK read trimming and adapter removal",
-              "help_text": "If set to `true`, the BBDUK process is executed, otherwise it is skipped.\n```bash\n--skip_trim \"true/false\"\n```"
+              "help_text": "If set to `false`, the BBDUK process is executed, otherwise it is skipped.\n```bash\n--skip_trim \"true/false\"\n```"
             },
-            "adapter_ref":{
+            "adapters":{
               "type": "string",
               "fa_icon": "fas fa-file-alt",
               "description": "Reference adapter file supplied to BBDUK",
               "deafult": "adapters.fa",
-              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `/opt/conda/envs/circrna/bbtools/lib/resources/adapters.fa` within the container, should the user wish to add customised sequences to the file.\n*N.B:* The container is read-only, should the user choose to make additions to the `adapters.fa` file, copy the contents of the file and make the modifications, saving them to a new `.fa` file. Provide the path to this file via the configuration file when running the analysis.\n```bash\n--adapter_ref \"/assets/adapters.fa\"\n```\n\nBy default, the file supplied by BBDUK is used for adapter removal."
+              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `${projectDir}/bin/adapters.fa` should the user wish to modify the file. Make sure to specify the **absolute path** to the `adapters.fa` if modified.\n```bash\n--adapters \"${projectDir}/bin/adapters.fa\"\n```"
             },
-            "kmer_len":{
+            "k":{
               "type": "string",
               "fa_icon": "fas fa-font-case",
               "description": "Specifies K-mer size to use for adapter removal",
               "default": "12",
-              "help_text": "kmer_len specifies the kmer size to use (must be at most the length of the adapters). For example, `--kmer_len \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
+              "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
             },
             "ktrim":{
               "type": "string",
               "fa_icon": "fas fa-exchange-alt",
               "description": "Which end of reads to perform kmer trimming",
               "default": "r",
-              "help_text": "When `--kmer_len` selected, user must specify which end of the reads to perform kmer trimming on. Options are `r`, `l`, and `f` (right, left, don't trim)."
+              "help_text": "Specify which end of the reads to perform kmer trimming on. Options are `r`, `l`, and `f` (right, left, don't trim)."
+            },
+            "hdist":{
+              "type": "string",
+              "fa_icon": "fas fa-ruler-horizontal",
+              "description": "Maximum Hamming distance for reference kmers",
+              "default": "1",
+              "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n*Warning:* setting `--hdist` to values higher than 1 will result in high memory usage."
             },
             "trimq":{
               "type": "string",
               "fa_icon": "fas fa-award",
-              "description": "Base quality trimming performed on reads based on Phred algortihm",
+              "description": "Base quality trimming performed on reads below specified Phred score",
               "default": "20",
-              "help_text": "After Kmer based operations, reads can be filtered based on Phred scores per base."
+              "help_text": "This action is performed after adapter removal, if `--adapters`, `--k`, `--ktrim` & `--hdist` (optionally) have been supplied."
             },
             "qtrim":{
               "type": "string",
               "fa_icon": "fas fa-exchange-alt",
-              "description": "Which end of reads to perform quality filtering",
+              "description": "Which end of reads to perform quality trimming",
               "default": "r",
-              "help_text": "Used in conjunction with `trimq`, quality-trims to Q(N) using the Phred algorithm, which is more accurate than naive trimming. \"qtrim=r\" means it will trim the right side only; you can alternatively set \"qtrim=l\" for left or \"qtrim=rl\" for both. If quality trimming is enabled, it happens after all kmer-based operations."
+              "help_text": "Used in conjunction with `--trimq`, quality trims reads to Q(N) using Phred scores.\n\n \"qtrim=r\" will trim the right side only; you can alternatively set \"qtrim=l\" for left or \"qtrim=rl\" for both."
             },
-            "min_len":{
+            "minlen":{
               "type": "string",
               "fa_icon": "fas fa-ruler-horizontal",
-              "description": "Remove reads with length *n* after kmer, quality filtering operations",
+              "description": "Remove reads with length *n*",
               "default": "30",
-              "help_text": "Discard reads shorter than (*n*)bp after adapter removal and quality trimming."
+              "help_text": "Discard reads shorter than *n*bp."
             }
           }
         },

@@ -526,7 +526,7 @@ process FastQC {
 
 process multiqc_raw {
 
-	      publishDir "$params.outdir/quality_control/multiqc/raw", mode:'copy'
+	      publishDir "$params.outdir/quality_control/multiqc", mode:'copy'
 
       	label 'py3'
 
@@ -544,7 +544,7 @@ process multiqc_raw {
 
 // BBDUK
 
-if(params.skip_trim == 'true'){
+if(params.skip_trim == 'false'){
 
         process bbduk {
 
@@ -559,18 +559,25 @@ if(params.skip_trim == 'true'){
                   file("*BBDUK.txt") into bbduk_stats_ch
 
                 script:
+                def adapter = params.adapters ? "ref=${params.adapters}" : ''
+                def k = params.k ? "k=${params.k}" : ''
+                def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
+                def hdist = params.hdist ? "hdist=${params.hdist}" : ''
+                def trimq = params.trimq ? "trimq=${params.trimq}" : ''
+                def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
+                def minlen = params.minlen ? "minlen=${params.minlen}" : ''
                 """
                 bbduk.sh -Xmx4g \
                 in1=${fastq[0]} \
                 in2=${fastq[1]} \
                 out1=${base}_R1.trim.fq.gz \
                 out2=${base}_R2.trim.fq.gz \
-                ref=$adapters \
-                minlen=30 \
-                ktrim=r \
-                k=12 \
-                qtrim=r \
-                trimq=20
+                $adapter \
+                $k \
+                $ktrim \
+                $trimq \
+                $qtrim \
+                $minlen \
                 stats=${base}_BBDUK.txt
                 """
         }
@@ -598,7 +605,7 @@ if(params.skip_trim == 'true'){
 
 	      process multiqc_trim {
 
-              	publishDir "$params.outdir/quality_control/multiqc/trimmed", mode:'copy'
+              	publishDir "$params.outdir/quality_control/multiqc", mode:'copy'
 
               	label 'py3'
 
@@ -611,11 +618,11 @@ if(params.skip_trim == 'true'){
 
               	script:
               	"""
-              	multiqc -i "BBDUK_MultiQC" -b "nf-circ pipeline" -n "BBDUK_MultiQC.html" .
+              	multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
               	"""
  }
 
-}else if(params.skip_trim == 'false'){
+}else if(params.skip_trim == 'true'){
         aligner_reads = raw_reads
 }else{
   exit 1, "[nf-core/circrna] error: --skip_trim not specified, please select 'true' or 'false'. See '--help' or documentation for help."
