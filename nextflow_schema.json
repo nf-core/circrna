@@ -159,7 +159,7 @@
           "type": "object",
           "fa_icon": "fas fa-cut",
           "description": "Parameters for BBDUK",
-          "help_text": "BBDUK read filtering is deployed when `--skip_trim 'false'`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & `--hdist`.\n2. Quality trimming. Must specify values for `--trimq` & `--qtrim`.\n3.Read length filtering. Must provide value for `--minlen`.",
+          "help_text": "BBDUK read filtering is deployed when `--skip_trim 'false'`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
           "properties": {
             "skip_trim":{
               "type": "string",
