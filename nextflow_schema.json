@@ -172,7 +172,7 @@
               "fa_icon": "fas fa-file-alt",
               "description": "Reference adapter file supplied to BBDUK",
               "deafult": "adapters.fa",
-              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `${projectDir}/bin/adapters.fa` should the user wish to modify the file. Make sure to specify the **absolute path** to the `adapters.fa` if modified.\n```bash\n--adapters \"${projectDir}/bin/adapters.fa\"\n```"
+              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `${projectDir}/bin/adapters.fa` should the user wish to modify the file. Make sure to specify the **absolute path** to the `adapters.fa` file if modified."
             },
             "k":{
               "type": "string",
@@ -186,7 +186,7 @@
               "fa_icon": "fas fa-exchange-alt",
               "description": "Which end of reads to perform kmer trimming",
               "default": "r",
-              "help_text": "Specify which end of the reads to perform kmer trimming on. Options are `r`, `l`, and `f` (right, left, don't trim)."
+              "help_text": "Specify which end of the reads to perform kmer trimming on. Options are `'r'`, `'l'`, and `'f'` (right, left, don't trim)."
             },
             "hdist":{
               "type": "string",
@@ -200,21 +200,20 @@
               "fa_icon": "fas fa-award",
               "description": "Base quality trimming performed on reads below specified Phred score",
               "default": "20",
-              "help_text": "This action is performed after adapter removal, if `--adapters`, `--k`, `--ktrim` & `--hdist` (optionally) have been supplied."
+              "help_text": "Quality trims reads to *n*Phred score.\n\n *N.B:* This action is performed after adapter removal."
             },
             "qtrim":{
               "type": "string",
               "fa_icon": "fas fa-exchange-alt",
               "description": "Which end of reads to perform quality trimming",
               "default": "r",
-              "help_text": "Used in conjunction with `--trimq`, quality trims reads to Q(N) using Phred scores.\n\n \"qtrim=r\" will trim the right side only; you can alternatively set \"qtrim=l\" for left or \"qtrim=rl\" for both."
+              "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are `'r'`, `'l'` and `'rl'` (right, left, both)."
             },
             "minlen":{
               "type": "string",
               "fa_icon": "fas fa-ruler-horizontal",
-              "description": "Remove reads with length *n*",
-              "default": "30",
-              "help_text": "Discard reads shorter than *n*bp."
+              "description": "Remove reads below length *n*",
+              "default": "30"
             }
           }
         },
