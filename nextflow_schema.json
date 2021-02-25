@@ -164,7 +164,7 @@
             "skip_trim":{
               "type": "string",
               "fa_icon": "fas fa-fast-forward",
-              "description": "Skip BBDUK read trimming and adapter removal",
+              "description": "Skip BBDUK?",
               "help_text": "If set to `false`, the BBDUK process is executed, otherwise it is skipped and raw reads will be supplied to circRNA quantification tools."
             },
             "adapters":{
