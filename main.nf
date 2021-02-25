@@ -548,8 +548,6 @@ if(params.skip_trim == 'false'){
 
         process bbduk {
 
-                publishDir "$params.outdir/trimmed_reads", mode:'copy'
-
                 input:
                   tuple val(base), file(fastq) from trimming_reads
                   path adapters from params.adapters
