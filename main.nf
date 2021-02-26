@@ -301,6 +301,7 @@ process star_index{
         STAR \
         --runMode genomeGenerate \
         --runThreadN ${params.threads} \
+        --sjdbOverhang ${params.sjdbOverhang} \
         --sjdbGTFfile $gtf \
         --genomeDir STAR/ \
         --genomeFastaFiles $fasta
@@ -676,7 +677,6 @@ process STAR_1PASS{
         def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
         def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbOverhang = "--sjdbOverhang ${params.sjdbOverhang}"
         def sjdbScore = "--sjdbScore ${params.sjdbScore}"
         def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
@@ -712,7 +712,6 @@ process STAR_1PASS{
         $readFilesCommand \
         --readFilesIn $reads \
         --runThreadN ${params.threads} \
-        $sjdbOverhang \
         $sjdbScore \
         $winAnchorMultimapNmax
         """
@@ -778,7 +777,6 @@ process STAR_2PASS{
         def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
         def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbOverhang = "--sjdbOverhang ${params.sjdbOverhang}"
         def sjdbScore = "--sjdbScore ${params.sjdbScore}"
         def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
@@ -815,7 +813,6 @@ process STAR_2PASS{
         --readFilesIn $reads \
         --runThreadN ${params.threads} \
         --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbOverhang \
         $sjdbScore \
         $winAnchorMultimapNmax
         """
@@ -914,7 +911,6 @@ process dcc_mate1{
         def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
         def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbOverhang = "--sjdbOverhang ${params.sjdbOverhang}"
         def sjdbScore = "--sjdbScore ${params.sjdbScore}"
         def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
@@ -951,7 +947,6 @@ process dcc_mate1{
         --readFilesIn $reads \
         --runThreadN ${params.threads} \
 	      --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbOverhang \
         $sjdbScore \
         $winAnchorMultimapNmax
 	      """
@@ -997,7 +992,6 @@ process dcc_mate2{
         def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
         def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbOverhang = "--sjdbOverhang ${params.sjdbOverhang}"
         def sjdbScore = "--sjdbScore ${params.sjdbScore}"
         def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
@@ -1034,7 +1028,6 @@ process dcc_mate2{
         --readFilesIn $reads \
         --runThreadN ${params.threads} \
 	      --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbOverhang \
         $sjdbScore \
         $winAnchorMultimapNmax
 	      """
