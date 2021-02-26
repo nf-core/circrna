@@ -132,7 +132,7 @@ process download_genome {
         when: !(params.fasta) && !(params.gencode_gtf) && !(params.gene_annotation)
 
         shell:
-        if(params.genome_version == 'GRCh37'){
+        if(params.genome_version == GRCh37){
               $/
               wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
               wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
@@ -145,7 +145,7 @@ process download_genome {
               perl -alne '$"="\t";print "@F[11,0..9]"' GRCh37.genepred > GRCh37.txt
               rm GRCh37.fa.tmp
               /$
-        }else if(params.genome_version == 'GRCh38'){
+        }else if(params.genome_version == GRCh38){
               $/
               wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
               wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz
@@ -471,7 +471,7 @@ if( csv_path ){
 
 // Process bam file / stage fastq
 
-if(params.input_type == 'bam'){
+if(params.input_type == bam){
 
         process bam_to_fq{
 
@@ -494,7 +494,7 @@ if(params.input_type == 'bam'){
 
         (fastqc_reads, trimming_reads, raw_reads, check_reads) = fastq_built.into(4)
 
-}else if(params.input_type == 'fastq'){
+}else if(params.input_type == fastq){
 
         (fastqc_reads, trimming_reads, raw_reads, check_reads) = ch_input_sample.into(4)
 
@@ -962,7 +962,7 @@ process dcc_mate2{
       	input:
           tuple val(base), file(reads) from dcc_mate2
           file(sjdbfile) from sjdbfile_mate2.collect()
-          val(star_idx) from ch_star_idx
+          val(star_idx) from ch_star_index
 
       	output:
           tuple val(base), file("mate2") into dcc_mate2
