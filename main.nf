@@ -627,7 +627,7 @@ if(params.skip_trim == 'false'){
 }
 
 // Stage Aligner read channels
-(circexplorer2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, circrna_finder_reads, dcc_reads, dcc_reads_mate1, dcc_reads_mate2, hisat2_reads) = aligner_reads.into(10)
+(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, dcc_mate1, dcc_mate2, hisat2_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
@@ -740,7 +740,7 @@ process sjdbFile{
 process STAR_2PASS{
 
         input:
-          tuple val(base), file(reads) from reads_ch2
+          tuple val(base), file(reads) from star_pass2_reads
           file(sjdbfile) from sjdbfile_pass2.collect()
           val(star_idx) from ch_star_index
 
@@ -877,7 +877,7 @@ process circrna_finder{
 process dcc_mate1{
 
       	input:
-        	tuple val(base), file(reads) from reads_ch3
+        	tuple val(base), file(reads) from dcc_mate1
         	file(sjdbfile) from sjdbfile_mate1.collect()
         	val(star_idx) from ch_star_index
 
@@ -960,7 +960,7 @@ process dcc_mate1{
 process dcc_mate2{
 
       	input:
-          tuple val(base), file(reads) from reads_ch4
+          tuple val(base), file(reads) from dcc_mate2
           file(sjdbfile) from sjdbfile_mate2.collect()
           val(star_idx) from ch_star_idx
 
