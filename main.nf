@@ -1070,7 +1070,7 @@ process dcc{
         DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T 16
         awk '{print \$6}' CircCoordinates >> strand
         paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
-	      bash filter_DCC.sh ${base}_dcc.txt
+	      bash ${projectDir}/bin/filter_DCC.sh ${base}_dcc.txt
         mv CircCoordinates ${base}.CircCoordinates
         mv CircRNACount ${base}.CircRNACount
         """
