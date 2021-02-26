@@ -1051,7 +1051,7 @@ process dcc{
 
       	input:
         	tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
-        	file(gtf) from ch_gtf
+        	file(gtf) from ch_gencode_gtf
         	file(fasta) from ch_fasta
 
       	output:
