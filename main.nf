@@ -1046,7 +1046,7 @@ process dcc{
 
       	label 'py3'
 
-        publishDir "$params.outdir/circrna_discovery/dcc/parsed", pattern: "${base}_dcc.txt", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/dcc/parsed", pattern: "${base}_dcc.bed", mode:'copy'
         publishDir "$params.outdir/circrna_discovery/dcc/raw", pattern: "${base}.Circ*", mode:'copy'
 
       	input:
