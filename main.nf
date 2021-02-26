@@ -270,7 +270,7 @@ process hisat2_index{
           file("${fasta.baseName}.*.ht2") into hisat2_built
           val("$launchDir/${params.outdir}index/hisat2") into hisat2_path
 
-        when: !(params.hisat2_index) && ( 'ciriquant' in tool || 'circrna_discovery' || 'differential_expression' in module )
+        when: !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
 
         script:
         """
