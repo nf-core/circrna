@@ -1054,8 +1054,6 @@ process ciriquant{
 
 process mapsplice_align{
 
-        publishDir "$params.outdir/mapsplice", mode:'copy'
-
         input:
           tuple val(base), file(fastq) from mapsplice_reads
           val(mapsplice_ref) from ch_fasta_chr
