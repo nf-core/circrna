@@ -371,7 +371,7 @@ process split_fasta{
 
         output:
           path("*.fa", includeInputs:true) into split_fasta
-          val("$launchDir/index/chromosomes") into split_fasta_path
+          val("${launchDir}/${params.outdir}/index/chromosomes") into split_fasta_path
 
         when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
@@ -390,7 +390,6 @@ process split_fasta{
         '''
 }
 
-split_fasta.view()
 ch_fasta_chr = params.fasta_chr ? Channel.value(params.fasta_chr) : split_fasta_path
 ch_fasta_chr.view()
 
