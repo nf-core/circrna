@@ -1236,7 +1236,7 @@ if(tools_selected > 1){
 			    output:
 				    file("circRNA_matrix.txt") into circRNA_counts
 
-          when: 'circrna_discovery' in module)
+          when: 'circrna_discovery' in module
 
           script:
       		"""
@@ -1261,7 +1261,7 @@ if(tools_selected > 1){
           output:
             file("circRNA_matrix.txt") into circRNA_counts
 
-          when: 'circrna_discovery' in module)
+          when: 'circrna_discovery' in module
 
           script:
           """
@@ -1286,7 +1286,7 @@ process remove_unwanted_biotypes{
         output:
           file("filt.gtf") into ch_gtf_filtered
 
-        when: 'circrna_discovery' in module)
+        when: 'circrna_discovery' in module
 
         script:
         """
