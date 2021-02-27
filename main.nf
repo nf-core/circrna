@@ -1066,27 +1066,46 @@ process mapsplice_align{
         when: 'mapsplice' in tool && 'circrna_discovery' in module
 
         script:
-        prefix = gtf.toString() - ~/.gtf/
-        strip1 = fastq[0].toString() - ~/.gz/
-        strip2 = fastq[1].toString() - ~/.gz/
-        """
-        gzip -d --force ${fastq[0]}
-        gzip -d --force ${fastq[1]}
+        if(fastq[0].toString().endsWith('.gz')){
+            prefix = gtf.toString() - ~/.gtf/
+            strip1 = fastq[0].toString() - ~/.gz/
+            strip2 = fastq[1].toString() - ~/.gz/
+            """
+            gzip -d --force ${fastq[0]}
+            gzip -d --force ${fastq[1]}
 
-        mapsplice.py \
-        -c $mapsplice_ref \
-        -x $prefix \
-        -1 ${strip1} \
-        -2 ${strip2} \
-        -p ${params.threads} \
-        --bam \
-        --seglen 25 \
-        --min-map-len 40 \
-        --fusion-non-canonical \
-        --min-fusion-distance 200 \
-        --gene-gtf $gtf \
-        -o $base
-        """
+            mapsplice.py \
+            -c $mapsplice_ref \
+            -x $prefix \
+            -1 ${strip1} \
+            -2 ${strip2} \
+            -p ${params.threads} \
+            --bam \
+            --seglen 25 \
+            --min-map-len 40 \
+            --fusion-non-canonical \
+            --min-fusion-distance 200 \
+            --gene-gtf $gtf \
+            -o $base
+            """
+        }else{
+            prefix = gtf.toString() - ~/.gtf/
+            """
+            mapsplice.py \
+            -c $mapsplice_ref \
+            -x $prefix \
+            -1 ${fastq[0]} \
+            -2 ${fastq[1]} \
+            -p ${params.threads} \
+            --bam \
+            --seglen 25 \
+            --min-map-len 40 \
+            --fusion-non-canonical \
+            --min-fusion-distance 200 \
+            --gene-gtf $gtf \
+            -o $base
+            """
+            }
 }
 
 
