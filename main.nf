@@ -1205,7 +1205,7 @@ if(tools_selected > 1){
           output:
             file("${base}.bed") into sample_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'circrna_discovery' in module
 
           script:
           """
@@ -1236,7 +1236,7 @@ if(tools_selected > 1){
 			    output:
 				    file("circRNA_matrix.txt") into circRNA_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'circrna_discovery' in module)
 
           script:
       		"""
@@ -1261,7 +1261,7 @@ if(tools_selected > 1){
           output:
             file("circRNA_matrix.txt") into circRNA_counts
 
-          when: ( 'circrna_discovery' || 'differential_expression' || 'mirna_prediction' in module)
+          when: 'circrna_discovery' in module)
 
           script:
           """
@@ -1286,7 +1286,7 @@ process remove_unwanted_biotypes{
         output:
           file("filt.gtf") into ch_gtf_filtered
 
-        when: ('circrna_discovery' || 'mirna_prediction' in module)
+        when: 'circrna_discovery' in module)
 
         script:
         """
@@ -1313,7 +1313,7 @@ process get_mature_seq{
 		      file("bed12/*.bed") into bed_files
           file("fasta/*.fa") into circ_seqs
 
-        when: ('circrna_discovery' || 'mirna_prediction' in module)
+        when: 'circrna_discovery' in module
 
 	      script:
 	      """
