@@ -390,6 +390,7 @@ process split_fasta{
         '''
 }
 
+split_fasta.view()
 ch_fasta_chr = params.fasta_chr ? Channel.value(params.fasta_chr) : split_fasta_path
 ch_fasta_chr.view()
 
