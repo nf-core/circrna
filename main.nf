@@ -650,70 +650,42 @@ process STAR_1PASS{
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
         script:
-        def alignIntronMax = "--alignIntronMax ${params.alignIntronMax}"
-        def alignIntronMin = "--alignIntronMin ${params.alignIntronMin}"
-        def alignMatesGapMax = "--alignMatesGapMax ${params.alignMatesGapMax}"
-        def alignSJDBoverhangMin = "--alignSJDBoverhangMin ${params.alignSJDBoverhangMin}"
-        def alignSJoverhangMin = "--alignSJoverhangMin ${params.alignSJoverhangMin}"
-        def alignSoftClipAtReferenceEnds = "--alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds}"
-        def alignTranscriptsPerReadNmax = "--alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax}"
-        def chimJunctionOverhangMin = "--chimJunctionOverhangMin ${params.chimJunctionOverhangMin}"
-        def chimOutType = "--chimOutType ${params.chimOutType}"
-        def chimScoreMin = "--chimScoreMin ${params.chimScoreMin}"
-        def chimScoreSeparation = "--chimScoreSeparation ${params.chimScoreSeparation}"
-        def chimSegmentMin = "--chimSegmentMin ${params.chimSegmentMin}"
-        def genomeLoad = "--genomeLoad ${params.genomeLoad}"
-        def limitSjdbInsertNsj = "--limitSjdbInsertNsj ${params.limitSjdbInsertNsj}"
-        def outFilterMatchNminOverLread = "--outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread}"
-        def outFilterMismatchNmax = "--outFilterMismatchNmax ${params.outFilterMismatchNmax}"
-        def outFilterMismatchNoverLmax = "--outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax}"
-        def outFilterMultimapNmax = "--outFilterMultimapNmax ${params.outFilterMultimapNmax}"
-        def outFilterMultimapScoreRange = "--outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange}"
-        def outFilterScoreMin = "--outFilterScoreMin ${params.outFilterScoreMin}"
-        def outFilterScoreMinOverLread = "--outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread}"
-        def outFilterType = "--outFilterType ${params.outFilterType}"
-        def outReadsUnmapped = "--outReadsUnmapped ${params.outReadsUnmapped}"
-        def outSAMtype = "--outSAMtype ${params.outSAMtype}"
-        def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
-        def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbScore = "--sjdbScore ${params.sjdbScore}"
-        def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
         STAR \
-        $alignIntronMax \
-        $alignIntronMin \
-        $alignMatesGapMax \
-        $alignSJDBoverhangMin \
-        $alignSJoverhangMin \
-        $alignSoftClipAtReferenceEnds \
-        $alignTranscriptsPerReadNmax \
-        $chimJunctionOverhangMin \
-        $chimOutType \
-        $chimScoreMin \
-        $chimScoreSeparation \
-        $chimSegmentMin \
-        --genomeDir $star_idx \
-        $genomeLoad \
-        $limitSjdbInsertNsj \
+        --alignIntronMax ${params.alignIntronMax} \
+        --alignIntronMin ${params.alignIntronMin} \
+        --alignMatesGapMax ${params.alignMatesGapMax} \
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
+        --chimOutType ${params.chimOutType} \
+        --chimScoreMin ${params.chimScoreMin} \
+        --chimScoreSeparation ${params.chimScoreSeparation} \
+        --chimSegmentMin ${params.chimSegmentMin} \
+        --genomeDir ${star_idx} \
+        --genomeLoad ${params.genomeLoad} \
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix ${base}. \
-        $outFilterMatchNminOverLread \
-        $outFilterMismatchNmax \
-        $outFilterMismatchNoverLmax \
-        $outFilterMultimapNmax \
-        $outFilterMultimapScoreRange \
-        $outFilterScoreMin \
-        $outFilterScoreMinOverLread \
-        $outFilterType \
-        $outReadsUnmapped \
-        $outSAMtype \
-        $outSAMunmapped \
-        $outSJfilterOverhangMin \
-        $readFilesCommand \
-        --readFilesIn $reads \
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
+        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
+        --outFilterScoreMin ${params.outFilterScoreMin} \
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
+        --outFilterType ${params.outFilterType} \
+        --outReadsUnmapped ${params.outReadsUnmapped} \
+        --outSAMtype ${params.outSAMtype} \
+        --outSAMunmapped ${params.outSAMunmapped} \
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
+        ${readFilesCommand} \
+        --readFilesIn ${reads} \
         --runThreadN ${params.threads} \
-        $sjdbScore \
-        $winAnchorMultimapNmax
+        --sjdbScore ${params.sjdbScore} \
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
         """
 }
 
@@ -750,71 +722,43 @@ process STAR_2PASS{
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
         script:
-        def alignIntronMax = "--alignIntronMax ${params.alignIntronMax}"
-        def alignIntronMin = "--alignIntronMin ${params.alignIntronMin}"
-        def alignMatesGapMax = "--alignMatesGapMax ${params.alignMatesGapMax}"
-        def alignSJDBoverhangMin = "--alignSJDBoverhangMin ${params.alignSJDBoverhangMin}"
-        def alignSJoverhangMin = "--alignSJoverhangMin ${params.alignSJoverhangMin}"
-        def alignSoftClipAtReferenceEnds = "--alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds}"
-        def alignTranscriptsPerReadNmax = "--alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax}"
-        def chimJunctionOverhangMin = "--chimJunctionOverhangMin ${params.chimJunctionOverhangMin}"
-        def chimOutType = "--chimOutType ${params.chimOutType}"
-        def chimScoreMin = "--chimScoreMin ${params.chimScoreMin}"
-        def chimScoreSeparation = "--chimScoreSeparation ${params.chimScoreSeparation}"
-        def chimSegmentMin = "--chimSegmentMin ${params.chimSegmentMin}"
-        def genomeLoad = "--genomeLoad ${params.genomeLoad}"
-        def limitSjdbInsertNsj = "--limitSjdbInsertNsj ${params.limitSjdbInsertNsj}"
-        def outFilterMatchNminOverLread = "--outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread}"
-        def outFilterMismatchNmax = "--outFilterMismatchNmax ${params.outFilterMismatchNmax}"
-        def outFilterMismatchNoverLmax = "--outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax}"
-        def outFilterMultimapNmax = "--outFilterMultimapNmax ${params.outFilterMultimapNmax}"
-        def outFilterMultimapScoreRange = "--outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange}"
-        def outFilterScoreMin = "--outFilterScoreMin ${params.outFilterScoreMin}"
-        def outFilterScoreMinOverLread = "--outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread}"
-        def outFilterType = "--outFilterType ${params.outFilterType}"
-        def outReadsUnmapped = "--outReadsUnmapped ${params.outReadsUnmapped}"
-        def outSAMtype = "--outSAMtype ${params.outSAMtype}"
-        def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
-        def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbScore = "--sjdbScore ${params.sjdbScore}"
-        def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
         STAR \
-        $alignIntronMax \
-        $alignIntronMin \
-        $alignMatesGapMax \
-        $alignSJDBoverhangMin \
-        $alignSJoverhangMin \
-        $alignSoftClipAtReferenceEnds \
-        $alignTranscriptsPerReadNmax \
-        $chimJunctionOverhangMin \
-        $chimOutType \
-        $chimScoreMin \
-        $chimScoreSeparation \
-        $chimSegmentMin \
-        --genomeDir $star_idx \
-        $genomeLoad \
-        $limitSjdbInsertNsj \
+        --alignIntronMax ${params.alignIntronMax} \
+        --alignIntronMin ${params.alignIntronMin} \
+        --alignMatesGapMax ${params.alignMatesGapMax} \
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
+        --chimOutType ${params.chimOutType} \
+        --chimScoreMin ${params.chimScoreMin} \
+        --chimScoreSeparation ${params.chimScoreSeparation} \
+        --chimSegmentMin ${params.chimSegmentMin} \
+        --genomeDir ${star_idx} \
+        --genomeLoad ${params.genomeLoad} \
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix ${base}/${base}. \
-        $outFilterMatchNminOverLread \
-        $outFilterMismatchNmax \
-        $outFilterMismatchNoverLmax \
-        $outFilterMultimapNmax \
-        $outFilterMultimapScoreRange \
-        $outFilterScoreMin \
-        $outFilterScoreMinOverLread \
-        $outFilterType \
-        $outReadsUnmapped \
-        $outSAMtype \
-        $outSAMunmapped \
-        $outSJfilterOverhangMin \
-        $readFilesCommand \
-        --readFilesIn $reads \
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
+        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
+        --outFilterScoreMin ${params.outFilterScoreMin} \
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
+        --outFilterType ${params.outFilterType} \
+        --outReadsUnmapped ${params.outReadsUnmapped} \
+        --outSAMtype ${params.outSAMtype} \
+        --outSAMunmapped ${params.outSAMunmapped} \
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
+        ${readFilesCommand} \
+        --readFilesIn ${reads} \
         --runThreadN ${params.threads} \
-        --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbScore \
-        $winAnchorMultimapNmax
+        --sjdbFileChrStartEnd ${sjdbfile} \
+        --sjdbScore ${params.sjdbScore} \
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
         """
 }
 
@@ -884,71 +828,43 @@ process dcc_mate1{
         when: 'dcc' in tool && 'circrna_discovery' in module
 
 	      script:
-	      def alignIntronMax = "--alignIntronMax ${params.alignIntronMax}"
-        def alignIntronMin = "--alignIntronMin ${params.alignIntronMin}"
-        def alignMatesGapMax = "--alignMatesGapMax ${params.alignMatesGapMax}"
-        def alignSJDBoverhangMin = "--alignSJDBoverhangMin ${params.alignSJDBoverhangMin}"
-        def alignSJoverhangMin = "--alignSJoverhangMin ${params.alignSJoverhangMin}"
-        def alignSoftClipAtReferenceEnds = "--alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds}"
-        def alignTranscriptsPerReadNmax = "--alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax}"
-        def chimJunctionOverhangMin = "--chimJunctionOverhangMin ${params.chimJunctionOverhangMin}"
-        def chimOutType = "--chimOutType ${params.chimOutType}"
-        def chimScoreMin = "--chimScoreMin ${params.chimScoreMin}"
-        def chimScoreSeparation = "--chimScoreSeparation ${params.chimScoreSeparation}"
-        def chimSegmentMin = "--chimSegmentMin ${params.chimSegmentMin}"
-        def genomeLoad = "--genomeLoad ${params.genomeLoad}"
-        def limitSjdbInsertNsj = "--limitSjdbInsertNsj ${params.limitSjdbInsertNsj}"
-        def outFilterMatchNminOverLread = "--outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread}"
-        def outFilterMismatchNmax = "--outFilterMismatchNmax ${params.outFilterMismatchNmax}"
-        def outFilterMismatchNoverLmax = "--outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax}"
-        def outFilterMultimapNmax = "--outFilterMultimapNmax ${params.outFilterMultimapNmax}"
-        def outFilterMultimapScoreRange = "--outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange}"
-        def outFilterScoreMin = "--outFilterScoreMin ${params.outFilterScoreMin}"
-        def outFilterScoreMinOverLread = "--outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread}"
-        def outFilterType = "--outFilterType ${params.outFilterType}"
-        def outReadsUnmapped = "--outReadsUnmapped ${params.outReadsUnmapped}"
-        def outSAMtype = "--outSAMtype ${params.outSAMtype}"
-        def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
-        def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbScore = "--sjdbScore ${params.sjdbScore}"
-        def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
         STAR \
-        $alignIntronMax \
-        $alignIntronMin \
-        $alignMatesGapMax \
-        $alignSJDBoverhangMin \
-        $alignSJoverhangMin \
-        $alignSoftClipAtReferenceEnds \
-        $alignTranscriptsPerReadNmax \
-        $chimJunctionOverhangMin \
-        $chimOutType \
-        $chimScoreMin \
-        $chimScoreSeparation \
-        $chimSegmentMin \
-        --genomeDir $star_idx \
-        $genomeLoad \
-        $limitSjdbInsertNsj \
+        --alignIntronMax ${params.alignIntronMax} \
+        --alignIntronMin ${params.alignIntronMin} \
+        --alignMatesGapMax ${params.alignMatesGapMax} \
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
+        --chimOutType ${params.chimOutType} \
+        --chimScoreMin ${params.chimScoreMin} \
+        --chimScoreSeparation ${params.chimScoreSeparation} \
+        --chimSegmentMin ${params.chimSegmentMin} \
+        --genomeDir ${star_idx} \
+        --genomeLoad ${params.genomeLoad} \
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix mate1/${base}. \
-        $outFilterMatchNminOverLread \
-        $outFilterMismatchNmax \
-        $outFilterMismatchNoverLmax \
-        $outFilterMultimapNmax \
-        $outFilterMultimapScoreRange \
-        $outFilterScoreMin \
-        $outFilterScoreMinOverLread \
-        $outFilterType \
-        $outReadsUnmapped \
-        $outSAMtype \
-        $outSAMunmapped \
-        $outSJfilterOverhangMin \
-        $readFilesCommand \
-        --readFilesIn $reads \
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
+        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
+        --outFilterScoreMin ${params.outFilterScoreMin} \
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
+        --outFilterType ${params.outFilterType} \
+        --outReadsUnmapped ${params.outReadsUnmapped} \
+        --outSAMtype ${params.outSAMtype} \
+        --outSAMunmapped ${params.outSAMunmapped} \
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
+        ${readFilesCommand} \
+        --readFilesIn ${reads} \
         --runThreadN ${params.threads} \
-	      --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbScore \
-        $winAnchorMultimapNmax
+        --sjdbFileChrStartEnd ${sjdbfile} \
+        --sjdbScore ${params.sjdbScore} \
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
 	      """
 }
 
@@ -965,71 +881,43 @@ process dcc_mate2{
         when: 'dcc' in tool && 'circrna_discovery' in module
 
 	      script:
-	      def alignIntronMax = "--alignIntronMax ${params.alignIntronMax}"
-        def alignIntronMin = "--alignIntronMin ${params.alignIntronMin}"
-        def alignMatesGapMax = "--alignMatesGapMax ${params.alignMatesGapMax}"
-        def alignSJDBoverhangMin = "--alignSJDBoverhangMin ${params.alignSJDBoverhangMin}"
-        def alignSJoverhangMin = "--alignSJoverhangMin ${params.alignSJoverhangMin}"
-        def alignSoftClipAtReferenceEnds = "--alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds}"
-        def alignTranscriptsPerReadNmax = "--alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax}"
-        def chimJunctionOverhangMin = "--chimJunctionOverhangMin ${params.chimJunctionOverhangMin}"
-        def chimOutType = "--chimOutType ${params.chimOutType}"
-        def chimScoreMin = "--chimScoreMin ${params.chimScoreMin}"
-        def chimScoreSeparation = "--chimScoreSeparation ${params.chimScoreSeparation}"
-        def chimSegmentMin = "--chimSegmentMin ${params.chimSegmentMin}"
-        def genomeLoad = "--genomeLoad ${params.genomeLoad}"
-        def limitSjdbInsertNsj = "--limitSjdbInsertNsj ${params.limitSjdbInsertNsj}"
-        def outFilterMatchNminOverLread = "--outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread}"
-        def outFilterMismatchNmax = "--outFilterMismatchNmax ${params.outFilterMismatchNmax}"
-        def outFilterMismatchNoverLmax = "--outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax}"
-        def outFilterMultimapNmax = "--outFilterMultimapNmax ${params.outFilterMultimapNmax}"
-        def outFilterMultimapScoreRange = "--outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange}"
-        def outFilterScoreMin = "--outFilterScoreMin ${params.outFilterScoreMin}"
-        def outFilterScoreMinOverLread = "--outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread}"
-        def outFilterType = "--outFilterType ${params.outFilterType}"
-        def outReadsUnmapped = "--outReadsUnmapped ${params.outReadsUnmapped}"
-        def outSAMtype = "--outSAMtype ${params.outSAMtype}"
-        def outSAMunmapped = "--outSAMunmapped ${params.outSAMunmapped}"
-        def outSJfilterOverhangMin = "--outSJfilterOverhangMin ${params.outSJfilterOverhangMin}"
         def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
-        def sjdbScore = "--sjdbScore ${params.sjdbScore}"
-        def winAnchorMultimapNmax = "--winAnchorMultimapNmax ${params.winAnchorMultimapNmax}"
         """
         STAR \
-        $alignIntronMax \
-        $alignIntronMin \
-        $alignMatesGapMax \
-        $alignSJDBoverhangMin \
-        $alignSJoverhangMin \
-        $alignSoftClipAtReferenceEnds \
-        $alignTranscriptsPerReadNmax \
-        $chimJunctionOverhangMin \
-        $chimOutType \
-        $chimScoreMin \
-        $chimScoreSeparation \
-        $chimSegmentMin \
-        --genomeDir $star_idx \
-        $genomeLoad \
-        $limitSjdbInsertNsj \
+        --alignIntronMax ${params.alignIntronMax} \
+        --alignIntronMin ${params.alignIntronMin} \
+        --alignMatesGapMax ${params.alignMatesGapMax} \
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
+        --chimOutType ${params.chimOutType} \
+        --chimScoreMin ${params.chimScoreMin} \
+        --chimScoreSeparation ${params.chimScoreSeparation} \
+        --chimSegmentMin ${params.chimSegmentMin} \
+        --genomeDir ${star_idx} \
+        --genomeLoad ${params.genomeLoad} \
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix mate2/${base}. \
-        $outFilterMatchNminOverLread \
-        $outFilterMismatchNmax \
-        $outFilterMismatchNoverLmax \
-        $outFilterMultimapNmax \
-        $outFilterMultimapScoreRange \
-        $outFilterScoreMin \
-        $outFilterScoreMinOverLread \
-        $outFilterType \
-        $outReadsUnmapped \
-        $outSAMtype \
-        $outSAMunmapped \
-        $outSJfilterOverhangMin \
-        $readFilesCommand \
-        --readFilesIn $reads \
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
+        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
+        --outFilterScoreMin ${params.outFilterScoreMin} \
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
+        --outFilterType ${params.outFilterType} \
+        --outReadsUnmapped ${params.outReadsUnmapped} \
+        --outSAMtype ${params.outSAMtype} \
+        --outSAMunmapped ${params.outSAMunmapped} \
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
+        ${readFilesCommand} \
+        --readFilesIn ${reads} \
         --runThreadN ${params.threads} \
-	      --sjdbFileChrStartEnd $sjdbfile \
-        $sjdbScore \
-        $winAnchorMultimapNmax
+        --sjdbFileChrStartEnd ${sjdbfile} \
+        --sjdbScore ${params.sjdbScore} \
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
 	      """
 }
 
@@ -1115,13 +1003,13 @@ process find_circ{
         script:
         """
         bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
-        -U $anchors | python /opt/conda/envs/circrna/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
+        -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
         echo "# chrom:start:end:name:n_reads:strand:n_uniq:best_qual_A:best_qual_B:spliced_at_begin:spliced_at_end:tissues:tiss_counts:edits:anchor_overlap:breakpoints" > tmp.txt
 
         cat tmp.txt | tr ':' '\t' > ${base}.bed
 
-        grep circ ${base}.sites.bed | grep -v chrM | python /opt/conda/envs/circrna/bin/sum.py -2,3 | python /opt/conda/envs/circrna/bin/scorethresh.py -16 1 | python /opt/conda/envs/circrna/bin/scorethresh.py -15 2 | python /opt/conda/envs/circrna/bin/scorethresh.py -14 2 | python /opt/conda/envs/circrna/bin/scorethresh.py 7 2 | python /opt/conda/envs/circrna/bin/scorethresh.py 8,9 35 | python /opt/conda/envs/circrna/bin/scorethresh.py -17 100000 >> ${base}.txt
+        grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 2 | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
 	      tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
 	      """
