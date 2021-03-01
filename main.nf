@@ -674,10 +674,10 @@ process STAR_1PASS{
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType 'BySJout' \
-        --outReadsUnmapped 'None' \
-        --outSAMtype 'BAM SortedByCoordinate' \
-        --outSAMunmapped 'Within' \
+        --outFilterType BySJout \
+        --outReadsUnmapped None \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped Within \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -744,10 +744,10 @@ process STAR_2PASS{
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType 'BySJout' \
-        --outReadsUnmapped 'None' \
-        --outSAMtype 'BAM SortedByCoordinate' \
-        --outSAMunmapped 'Within' \
+        --outFilterType BySJout \
+        --outReadsUnmapped None \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped Within \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -848,10 +848,10 @@ process dcc_mate1{
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType 'BySJout' \
-        --outReadsUnmapped 'None' \
-        --outSAMtype 'BAM SortedByCoordinate' \
-        --outSAMunmapped 'Within' \
+        --outFilterType BySJout \
+        --outReadsUnmapped None \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped Within \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -899,10 +899,10 @@ process dcc_mate2{
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType 'BySJout' \
-        --outReadsUnmapped 'None' \
-        --outSAMtype 'BAM SortedByCoordinate' \
-        --outSAMunmapped 'Within' \
+        --outFilterType BySJout \
+        --outReadsUnmapped None \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped Within \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
