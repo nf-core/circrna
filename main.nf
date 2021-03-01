@@ -1082,6 +1082,8 @@ process mapsplice_align{
             -p ${params.threads} \
             --bam \
             --seglen 25 \
+            --min-intron ${params.alignIntronMin} \
+            --max-intron ${params.alignIntronMax} \
             --min-map-len 40 \
             --fusion-non-canonical \
             --min-fusion-distance 200 \
@@ -1099,6 +1101,8 @@ process mapsplice_align{
             -p ${params.threads} \
             --bam \
             --seglen 25 \
+            --min-intron ${params.alignIntronMin} \
+            --max-intron ${params.alignIntronMax} \
             --min-map-len 40 \
             --fusion-non-canonical \
             --min-fusion-distance 200 \
