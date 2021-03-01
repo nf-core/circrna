@@ -315,7 +315,7 @@
                   "default": "0.05",
                   "description": "Alignment output if ratio of mismatched bases relative to **mapped** read length is lower than value",
                   "fa_icon": "fas fa-sliders-h",
-                  "help_text": "For example, for reads <20b no mismatches are allowed (1/19 = 0.0526), 20-39b: 1 mismatch, 40-59b 2 mismatches and so on. Simply put, increasing this value will allow for more mismatches in the aligned reads.\n\n`outFilterMismatchNoverLmax` is preferred over `outFilterMismatchNmax` as it considers the mapped read length, suitable for experiments with varying read length."
+                  "help_text": "For example, for reads <20b no mismatches are allowed (1/19 = 0.0526), 20-39b: 1 mismatch, 40-59b 2 mismatches and so on. Simply put, increasing this value will allow for more mismatches in the mapped reads.\n\n`outFilterMismatchNoverLmax` is preferred over `outFilterMismatchNmax` as it considers the mapped read length, suitable for experiments with varying read length."
                 },
                 "outFilterMultimapNmax": {
                   "type": "integer",
