@@ -295,7 +295,7 @@
                   "default": "NoSharedMemory",
                   "description": "Mode of shared memory usage for the genome files",
                   "fa_icon": "fas fa-sliders-h",
-                  "help_text": "Users can select a variety of options depending on their resource configuration:\n\n1.`LoadAndKeep`: load genome into shared and keep it in memory after run\n2. `LoadAndRemove`: load genome into shared but remove it after run\n3. `LoadAndExit`: load genome into shared memory and exit, keeping the genome in memory for future runs\n4. `Remove`: do not map anything, just remove loaded genome from memory\n5. `NoSharedMemory`: do not use shared memory, each job will have its own private copy of the genome"
+                  "help_text": "Users can select a variety of options depending on their resource configuration:\n\n1. `LoadAndKeep`: load genome into shared and keep it in memory after run\n2. `LoadAndRemove`: load genome into shared but remove it after run\n3. `LoadAndExit`: load genome into shared memory and exit, keeping the genome in memory for future runs\n4. `Remove`: do not map anything, just remove loaded genome from memory\n5. `NoSharedMemory`: do not use shared memory, each job will have its own private copy of the genome"
                 },
                 "limitSjdbInsertNsj": {
                   "type": "integer",
