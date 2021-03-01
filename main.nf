@@ -661,7 +661,7 @@ process STAR_1PASS{
         --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
         --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
         --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-        --chimOutType ${params.chimOutType} \
+        --chimOutType Junctions SeparateSAMold \
         --chimScoreMin ${params.chimScoreMin} \
         --chimScoreSeparation ${params.chimScoreSeparation} \
         --chimSegmentMin ${params.chimSegmentMin} \
@@ -670,16 +670,14 @@ process STAR_1PASS{
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix ${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-        --outFilterScoreMin ${params.outFilterScoreMin} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType ${params.outFilterType} \
-        --outReadsUnmapped ${params.outReadsUnmapped} \
-        --outSAMtype ${params.outSAMtype} \
-        --outSAMunmapped ${params.outSAMunmapped} \
+        --outFilterType 'BySJout' \
+        --outReadsUnmapped 'None' \
+        --outSAMtype 'BAM SortedByCoordinate' \
+        --outSAMunmapped 'Within' \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -733,7 +731,7 @@ process STAR_2PASS{
         --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
         --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
         --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-        --chimOutType ${params.chimOutType} \
+        --chimOutType Junctions SeparateSAMold \
         --chimScoreMin ${params.chimScoreMin} \
         --chimScoreSeparation ${params.chimScoreSeparation} \
         --chimSegmentMin ${params.chimSegmentMin} \
@@ -742,16 +740,14 @@ process STAR_2PASS{
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix ${base}/${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-        --outFilterScoreMin ${params.outFilterScoreMin} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType ${params.outFilterType} \
-        --outReadsUnmapped ${params.outReadsUnmapped} \
-        --outSAMtype ${params.outSAMtype} \
-        --outSAMunmapped ${params.outSAMunmapped} \
+        --outFilterType 'BySJout' \
+        --outReadsUnmapped 'None' \
+        --outSAMtype 'BAM SortedByCoordinate' \
+        --outSAMunmapped 'Within' \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -839,7 +835,7 @@ process dcc_mate1{
         --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
         --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
         --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-        --chimOutType ${params.chimOutType} \
+        --chimOutType Junctions SeparateSAMold \
         --chimScoreMin ${params.chimScoreMin} \
         --chimScoreSeparation ${params.chimScoreSeparation} \
         --chimSegmentMin ${params.chimSegmentMin} \
@@ -848,16 +844,14 @@ process dcc_mate1{
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix mate1/${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-        --outFilterScoreMin ${params.outFilterScoreMin} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType ${params.outFilterType} \
-        --outReadsUnmapped ${params.outReadsUnmapped} \
-        --outSAMtype ${params.outSAMtype} \
-        --outSAMunmapped ${params.outSAMunmapped} \
+        --outFilterType 'BySJout' \
+        --outReadsUnmapped 'None' \
+        --outSAMtype 'BAM SortedByCoordinate' \
+        --outSAMunmapped 'Within' \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
@@ -892,7 +886,7 @@ process dcc_mate2{
         --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
         --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
         --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-        --chimOutType ${params.chimOutType} \
+        --chimOutType Junctions SeparateSAMold \
         --chimScoreMin ${params.chimScoreMin} \
         --chimScoreSeparation ${params.chimScoreSeparation} \
         --chimSegmentMin ${params.chimSegmentMin} \
@@ -901,16 +895,14 @@ process dcc_mate2{
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
         --outFileNamePrefix mate2/${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-        --outFilterMismatchNmax ${params.outFilterMismatchNmax} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
         --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-        --outFilterScoreMin ${params.outFilterScoreMin} \
         --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-        --outFilterType ${params.outFilterType} \
-        --outReadsUnmapped ${params.outReadsUnmapped} \
-        --outSAMtype ${params.outSAMtype} \
-        --outSAMunmapped ${params.outSAMunmapped} \
+        --outFilterType 'BySJout' \
+        --outReadsUnmapped 'None' \
+        --outSAMtype 'BAM SortedByCoordinate' \
+        --outSAMunmapped 'Within' \
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
         ${readFilesCommand} \
         --readFilesIn ${reads} \
