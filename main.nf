@@ -762,8 +762,9 @@ process STAR_2PASS{
 
 process circexplorer2_star{
 
-        publishDir "$params.outdir/circrna_discovery/circexplorer2/parsed", pattern: '*_circexplorer2.bed', mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/circexplorer2/raw", pattern: "${base}.txt", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/filtered_outputs/circexplorer2", pattern: '*_circexplorer2.bed', mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}.txt", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}.STAR.junction.bed", mode:'copy'
 
         input:
           tuple val(base), file(chimeric_reads) from circexplorer2_input
@@ -772,7 +773,8 @@ process circexplorer2_star{
 
         output:
           tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
-          tuple val(base), file("${base}.txt") into circexplorer2_raw_results
+          tuple val(base), file("${base}.txt") into circexplorer2_raw_text
+          tuple val(base), file("${base}.STAR.junction.bed") into circexplorer2_raw_STAR_junctions
 
         when: 'circexplorer2' in tool && 'circrna_discovery' in module
 
@@ -789,15 +791,17 @@ process circexplorer2_star{
 
 process circrna_finder{
 
-        publishDir "$params.outdir/circrna_discovery/circrna_finder/parsed", pattern: '*_circrna_finder.bed', mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/circrna_finder/raw", pattern: "${base}.filteredJunctions.bed", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "*.filteredJunctions.*", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "*.Chimeric.out.sorted.*", mode:'copy'
 
         input:
           tuple val(base), file(star_dir) from circrna_finder_input
 
         output:
           tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
-          tuple val(base), file("${base}.filteredJunctions.bed") into circrna_finder_raw_results
+          tuple val(base), file("*.filteredJunctions.*") into circrna_finder_raw_beds
+          tuple val(base), file("*.Chimeric.out.sorted.*") into circrna_finder_raw_bams
 
         when: 'circrna_finder' in tool && 'circrna_discovery' in module
 
@@ -1011,8 +1015,8 @@ process find_circ{
 
 process ciriquant{
 
-        publishDir "$params.outdir/circrna_discovery/ciriquant/parsed", pattern: "${base}_ciriquant.bed", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/ciriquant/raw", pattern: "${base}.gtf", mode: 'copy'
+        publishDir "$params.outdir/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}/", mode: 'copy'
 
         input:
           tuple val(base), file(fastq) from ciriquant_reads
@@ -1020,7 +1024,7 @@ process ciriquant{
 
         output:
           tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
-          tuple val(base), file("${base}.gtf") into ciriquant_raw_results
+          tuple val(base), file("${base}/") into ciriquant_raw_dir
 
         when: 'ciriquant' in tool && 'circrna_discovery' in module
 
@@ -1034,7 +1038,7 @@ process ciriquant{
         -o ${base} \
         -p ${base}
 
-        mv ${base}/${base}.gtf ${base}_ciriquant.gtf
+        cp ${base}/${base}.gtf ${base}_ciriquant.gtf
 
 	      bash filter_CIRIquant.sh ${base}_ciriquant.gtf
         mv ${base}_ciriquant.gtf ${base}.gtf
