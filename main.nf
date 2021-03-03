@@ -805,7 +805,7 @@ process circrna_finder{
         """
         postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ./
 
-	      tail -n +2 ${base}.filteredJunctions.bed | awk '{if(\$5 > 1) print \$0}' | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
+	      awk '{if(\$5 > 1) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
         """
 }
 
