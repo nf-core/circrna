@@ -1612,7 +1612,7 @@ process StringTie{
 //  ch_phenotype = file(params.phenotype)
 //}
 
-ch_phenotype = params.phenotype ? file(params.phenotype) : 'null'
+ch_phenotype = params.phenotype ? file(params.phenotype) : ''
 
 process diff_exp{
 
