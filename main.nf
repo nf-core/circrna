@@ -787,7 +787,7 @@ process circexplorer2_star{
         script:
         """
         mkdir -p ${base}
-        
+
         CIRCexplorer2 parse -t STAR $chimeric_reads -b ${base}/${base}.STAR.junction.bed
         CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
@@ -825,7 +825,7 @@ process circrna_finder{
 
 process dcc_mate1{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}/mate1", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
 
       	input:
         	tuple val(base), file(reads) from dcc_mate1_reads
@@ -833,7 +833,7 @@ process dcc_mate1{
         	val(star_idx) from ch_star_index
 
       	output:
-      	  tuple val(base), file("${base}/mate1") into dcc_mate1
+      	  tuple val(base), file("${base}") into dcc_mate1
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -878,7 +878,7 @@ process dcc_mate1{
 
 process dcc_mate2{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}/mate2", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
 
       	input:
           tuple val(base), file(reads) from dcc_mate2_reads
@@ -886,7 +886,7 @@ process dcc_mate2{
           val(star_idx) from ch_star_index
 
       	output:
-          tuple val(base), file("${base}/mate2") into dcc_mate2
+          tuple val(base), file("${base}") into dcc_mate2
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
