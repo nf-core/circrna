@@ -640,7 +640,7 @@ if(params.skip_trim == 'no'){
 
 process STAR_1PASS{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}/", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(reads) from star_pass1_reads
