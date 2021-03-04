@@ -648,7 +648,7 @@ process STAR_1PASS{
 
         output:
           file("${base}/*SJ.out.tab") into sjdb_ch
-          file("${base}/") into 1st_pass_dir
+          file("${base}") into 1st_pass_dir
 
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
@@ -722,7 +722,7 @@ process STAR_2PASS{
 
         output:
           tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
-          tuple val(base), file("${base}/") into circrna_finder_input, dcc_pairs
+          tuple val(base), file("${base}") into circrna_finder_input, dcc_pairs
 
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
@@ -832,7 +832,7 @@ process dcc_mate1{
         	val(star_idx) from ch_star_index
 
       	output:
-      	  tuple val(base), file("${base}/mate1/") into dcc_mate1
+      	  tuple val(base), file("${base}/mate1") into dcc_mate1
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -935,7 +935,7 @@ process dcc{
       	label 'py3'
 
         publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode:'copy'
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}/", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
 
       	input:
         	tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
@@ -944,7 +944,7 @@ process dcc{
 
       	output:
         	tuple val(base), file("${base}_dcc.bed") into dcc_results
-        	tuple val(base), file("${base}/") into dcc_raw_results
+        	tuple val(base), file("${base}") into dcc_raw_results
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -972,7 +972,7 @@ process dcc{
 
 process find_anchors{
 
-        publishDir "${params.outdir}/circrna_discovery_/tool_outputs/find_circ", pattern: "${base}/", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery_/tool_outputs/find_circ", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from find_circ_reads
@@ -981,7 +981,7 @@ process find_anchors{
 
         output:
           tuple val(base), file("${base}/${base}_anchors.qfa.gz") into ch_anchors
-          tuple val(base), file("${base}/") into find_circ_dir
+          tuple val(base), file("${base}") into find_circ_dir
 
         when: 'find_circ' in tool && 'circrna_discovery' in module
 
@@ -1002,7 +1002,7 @@ process find_anchors{
 process find_circ{
 
         publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode:'copy'
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}/", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}", mode: 'copy'
 
         input:
           tuple val(base), file(anchors) from ch_anchors
@@ -1012,7 +1012,7 @@ process find_circ{
 
         output:
           tuple val(base), file("${base}_find_circ.bed") into find_circ_results
-          tuple val(base), file("${base}/") into find_circ_raw_results
+          tuple val(base), file("${base}") into find_circ_raw_results
 
         when: 'find_circ' in tool && 'circrna_discovery' in module
 
@@ -1041,7 +1041,7 @@ process find_circ{
 process ciriquant{
 
         publishDir "$params.outdir/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}/", mode: 'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: 'copy'
 
         input:
           tuple val(base), file(fastq) from ciriquant_reads
@@ -1049,7 +1049,7 @@ process ciriquant{
 
         output:
           tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
-          tuple val(base), file("${base}/") into ciriquant_raw_dir
+          tuple val(base), file("${base}") into ciriquant_raw_dir
 
         when: 'ciriquant' in tool && 'circrna_discovery' in module
 
@@ -1075,7 +1075,7 @@ process ciriquant{
 
 process mapsplice_align{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}/", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from mapsplice_reads
@@ -1085,7 +1085,7 @@ process mapsplice_align{
 
         output:
           tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
-          tuple val(base), file("${base}/") into mapsplice_raw
+          tuple val(base), file("${base}") into mapsplice_raw
 
         when: 'mapsplice' in tool && 'circrna_discovery' in module
 
@@ -1148,7 +1148,6 @@ process mapsplice_parse{
 
         output:
           tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
-          tuple val(base), file("${base}.txt") into mapsplice_raw_results
 
         when: 'mapsplice' in tool && 'circrna_discovery' in module
 
