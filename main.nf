@@ -640,7 +640,7 @@ if(params.skip_trim == 'no'){
 
 process STAR_1PASS{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(reads) from star_pass1_reads
@@ -648,7 +648,6 @@ process STAR_1PASS{
 
         output:
           file("${base}/*SJ.out.tab") into sjdb_ch
-          file("${base}") into 1st_pass_dir
 
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
