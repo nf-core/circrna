@@ -786,6 +786,8 @@ process circexplorer2_star{
 
         script:
         """
+        mkdir -p ${base}
+        
         CIRCexplorer2 parse -t STAR $chimeric_reads -b ${base}/${base}.STAR.junction.bed
         CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
@@ -1152,8 +1154,9 @@ process mapsplice_parse{
 
         script:
         """
-        CIRCexplorer2 parse -t MapSplice $raw_fusion -b ${base}.mapsplice.junction.bed
+        mkdir -p ${base}
 
+        CIRCexplorer2 parse -t MapSplice $raw_fusion -b ${base}.mapsplice.junction.bed
         CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}.mapsplice.junction.bed -o ${base}.txt
 
 	      awk '{if(\$13 > 1) print \$0}' ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
