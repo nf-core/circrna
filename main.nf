@@ -993,7 +993,7 @@ process find_anchors{
 
         samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
 
-        unmapped2anchors.py ${base}/${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
+        unmapped2anchors.py ${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
         """
 }
 
