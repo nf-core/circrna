@@ -801,7 +801,7 @@ process circexplorer2_star{
 process circrna_finder{
 
         publishDir "$params.outdir/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder/${base}/", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
 
         input:
           tuple val(base), file(star_dir) from circrna_finder_input
