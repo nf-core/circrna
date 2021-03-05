@@ -648,6 +648,7 @@ process STAR_1PASS{
 
         output:
           file("${base}/*SJ.out.tab") into sjdb_ch
+          file("${base}") into star_1st_pass_output
 
         when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
@@ -712,7 +713,7 @@ process sjdbFile{
 
 process STAR_2PASS{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}/", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: 'copy'
 
         input:
           tuple val(base), file(reads) from star_pass2_reads
@@ -769,8 +770,7 @@ process STAR_2PASS{
 process circexplorer2_star{
 
         publishDir "$params.outdir/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}/${base}.txt", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}/${base}.STAR.junction.bed", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(chimeric_reads) from circexplorer2_input
@@ -779,8 +779,8 @@ process circexplorer2_star{
 
         output:
           tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
-          tuple val(base), file("${base}/${base}.txt") into circexplorer2_raw_text
-          tuple val(base), file("${base}/${base}.STAR.junction.bed") into circexplorer2_raw_STAR_junctions
+          tuple val(base), file("${base}") into circexplorer2_raw
+
 
         when: 'circexplorer2' in tool && 'circrna_discovery' in module
 
@@ -789,6 +789,7 @@ process circexplorer2_star{
         mkdir -p ${base}
 
         CIRCexplorer2 parse -t STAR $chimeric_reads -b ${base}/${base}.STAR.junction.bed
+
         CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
         awk '{if(\$13 > 1) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
@@ -800,24 +801,22 @@ process circexplorer2_star{
 process circrna_finder{
 
         publishDir "$params.outdir/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "${base}/*.filteredJunctions.*", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "${base}/*.Chimeric.out.sorted.*", mode:'copy'
+        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder", pattern: "${base}/{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
 
         input:
           tuple val(base), file(star_dir) from circrna_finder_input
 
         output:
           tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
-          tuple val(base), file("${base}/*.filteredJunctions.*") into circrna_finder_raw_beds
-          tuple val(base), file("${base}/*.Chimeric.out.sorted.*") into circrna_finder_raw_bams
+          tuple val(base), file("${base}/{*filteredJunctions*,*.Chimeric.out.sorted.*}") into circrna_finder_raw
 
         when: 'circrna_finder' in tool && 'circrna_discovery' in module
 
         script:
         """
-        postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ${base}/
+        postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ./
 
-	      awk '{if(\$5 > 1) print \$0}' ${base}/${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
+	      awk '{if(\$5 > 1) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
         """
 }
 
@@ -825,7 +824,7 @@ process circrna_finder{
 
 process dcc_mate1{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode:'copy'
 
       	input:
         	tuple val(base), file(reads) from dcc_mate1_reads
@@ -833,7 +832,7 @@ process dcc_mate1{
         	val(star_idx) from ch_star_index
 
       	output:
-      	  tuple val(base), file("${base}") into dcc_mate1
+      	  tuple val(base), file("mate1") into dcc_mate1
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -856,7 +855,7 @@ process dcc_mate1{
         --genomeDir ${star_idx} \
         --genomeLoad ${params.genomeLoad} \
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-        --outFileNamePrefix ${base}/mate1/${base}. \
+        --outFileNamePrefix mate1/${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
@@ -878,7 +877,7 @@ process dcc_mate1{
 
 process dcc_mate2{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode:'copy'
 
       	input:
           tuple val(base), file(reads) from dcc_mate2_reads
@@ -886,7 +885,7 @@ process dcc_mate2{
           val(star_idx) from ch_star_index
 
       	output:
-          tuple val(base), file("${base}") into dcc_mate2
+          tuple val(base), file("mate2") into dcc_mate2
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -909,7 +908,7 @@ process dcc_mate2{
         --genomeDir ${star_idx} \
         --genomeLoad ${params.genomeLoad} \
         --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-        --outFileNamePrefix ${base}/mate2/${base}. \
+        --outFileNamePrefix mate2/${base}. \
         --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
         --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
         --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
@@ -954,8 +953,8 @@ process dcc{
         """
         sed -i 's/^chr//g' $gtf
         printf "${base}/${base}.${COJ}" > samplesheet
-        printf "${base}/mate1/${base}.${COJ}" > mate1file
-        printf "${base}/mate2/${base}.${COJ}" > mate2file
+        printf "mate1/${base}.${COJ}" > mate1file
+        printf "mate2/${base}.${COJ}" > mate2file
         DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${params.threads}
         awk '{print \$6}' CircCoordinates >> strand
         paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
@@ -964,8 +963,8 @@ process dcc{
         mv CircRNACount ${base}.CircRNACount
 
         mkdir -p ${base}
-        cp *Circ* ${base}/
-        cp *.log ${base}/
+        cp *Circ* ${base}
+        cp *.log ${base}
         """
 }
 
@@ -973,7 +972,7 @@ process dcc{
 
 process find_anchors{
 
-        publishDir "${params.outdir}/circrna_discovery_/tool_outputs/find_circ", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from find_circ_reads
@@ -1032,8 +1031,7 @@ process find_circ{
 
 	      tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
 
-        cp *.sites* ${base}/
-        cp ${base}.txt ${base}/
+        cp *.sites* ${base}
 	      """
 }
 
