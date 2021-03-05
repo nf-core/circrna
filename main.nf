@@ -972,7 +972,7 @@ process dcc{
 
 process find_anchors{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}/{*anchors,*bam}", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from find_circ_reads
@@ -981,7 +981,7 @@ process find_anchors{
 
         output:
           tuple val(base), file("${base}/${base}_anchors.qfa.gz") into ch_anchors
-          tuple val(base), file("${base}") into find_circ_dir
+          tuple val(base), file("${base}/${base}{_anchors.qfa.gz,_unmapped.bam}") into find_circ_dir
 
         when: 'find_circ' in tool && 'circrna_discovery' in module
 
