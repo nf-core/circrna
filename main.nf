@@ -935,7 +935,7 @@ process dcc{
       	label 'py3'
 
         publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode:'copy'
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode:'copy'
 
       	input:
         	tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
@@ -944,7 +944,7 @@ process dcc{
 
       	output:
         	tuple val(base), file("${base}_dcc.bed") into dcc_results
-        	tuple val(base), file("${base}") into dcc_raw_results
+        	tuple val(base), file("{*.log,*Circ*}") into dcc_raw_results
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -961,10 +961,7 @@ process dcc{
 	      bash ${projectDir}/bin/filter_DCC.sh ${base}_dcc.txt
         mv CircCoordinates ${base}.CircCoordinates
         mv CircRNACount ${base}.CircRNACount
-
-        mkdir -p ${base}
-        cp *Circ* ${base}
-        cp *.log ${base}
+        mv *.log ${base}.log 
         """
 }
 
