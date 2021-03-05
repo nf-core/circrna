@@ -944,7 +944,7 @@ process dcc{
 
       	output:
         	tuple val(base), file("${base}_dcc.bed") into dcc_results
-        	tuple val(base), file("{*.log,*Circ*}") into dcc_raw_results
+        	tuple val(base), file("${base}{.log,*.Circ*}") into dcc_raw_results
 
         when: 'dcc' in tool && 'circrna_discovery' in module
 
@@ -959,9 +959,10 @@ process dcc{
         awk '{print \$6}' CircCoordinates >> strand
         paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
 	      bash ${projectDir}/bin/filter_DCC.sh ${base}_dcc.txt
+
         mv CircCoordinates ${base}.CircCoordinates
         mv CircRNACount ${base}.CircRNACount
-        mv *.log ${base}.log 
+        mv *.log ${base}.log
         """
 }
 
