@@ -972,7 +972,7 @@ process dcc{
 
 process find_anchors{
 
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}/{*anchors,*bam}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from find_circ_reads
@@ -980,29 +980,27 @@ process find_anchors{
           file(bowtie2_index) from ch_bowtie2_index.collect()
 
         output:
-          tuple val(base), file("${base}/${base}_anchors.qfa.gz") into ch_anchors
-          tuple val(base), file("${base}/${base}{_anchors.qfa.gz,_unmapped.bam}") into find_circ_dir
+          tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
+          tuple val(base), file("${base}{_anchors.qfa.gz,_unmapped.bam}") into find_circ_dir
 
         when: 'find_circ' in tool && 'circrna_discovery' in module
 
         script:
         """
-        mkdir -p ${base}
-
         bowtie2 -p ${params.threads} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
         -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \
         | samtools view -hbuS - | samtools sort --threads ${params.threads} -m 2G - > ${base}.bam
 
-        samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}/${base}_unmapped.bam
+        samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
 
-        unmapped2anchors.py ${base}/${base}_unmapped.bam | gzip > ${base}/${base}_anchors.qfa.gz
+        unmapped2anchors.py ${base}/${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
         """
 }
 
 process find_circ{
 
         publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode:'copy'
-        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ", pattern: "${base}", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: 'copy'
 
         input:
           tuple val(base), file(anchors) from ch_anchors
@@ -1012,14 +1010,12 @@ process find_circ{
 
         output:
           tuple val(base), file("${base}_find_circ.bed") into find_circ_results
-          tuple val(base), file("${base}") into find_circ_raw_results
+          tuple val(base), file("*.sites.*") into find_circ_raw_results
 
         when: 'find_circ' in tool && 'circrna_discovery' in module
 
         script:
         """
-        mkdir -p ${base}
-
         bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
         -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
@@ -1030,8 +1026,6 @@ process find_circ{
         grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 2 | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
 	      tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
-
-        cp *.sites* ${base}
 	      """
 }
 
