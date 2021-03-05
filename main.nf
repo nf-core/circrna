@@ -1231,9 +1231,6 @@ if(tools_selected > 1){
 
   process consolidate_algorithms{
 
-          echo true
-          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
-
           input:
             tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
 
