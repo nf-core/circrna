@@ -324,6 +324,8 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 * `circrna_discovery/annotated/`
   * `circrnas_annotated.txt`: Master file containing circRNA_ID, Type, Mature_Length, Parent_Gene & Strand for all called circRNAs.
 
+</details>
+
 ## BED12 Files{#bed12files}
 
 `nf-core/circrna` outputs each filtered circRNA in BED12 format. Initially an intermediate file used for calculating the mature spliced sequence of circRNAs, the user may wish to concatenate the individual files into a master file for visualisation in IGV.
