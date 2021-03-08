@@ -36,9 +36,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   * [circRNA Expression Plots](#circrna_expression_plots) - Plots of circRNA, circRNA - parent gene expression.
   * [RNA-Seq](#rnaseq) - Output directory for RNA-Seq DESeq2 analysis.
 
-# Download Files{#downloadfiles}
+# Download Files
 
-## Reference Files{#reference}
+## Reference Files
 
 `nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
 
