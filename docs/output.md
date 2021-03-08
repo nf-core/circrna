@@ -1,63 +1,520 @@
 # nf-core/circrna: Output
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/circrna/output](https://nf-co.re/circrna/output)
+## Pipeline Overview:
 
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-## Introduction
+* [Download Files](#downloadfiles)
 
-This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
+  * [Reference Files](#reference) - Download reference files.
+  * [miRNA Databases](#mirnadb) - Download mature miRNA sequences.
+* [Preprocessing](#preprocessing)
 
-The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
+  * [BAM to Fastq](#bamtofastq) - Convert BAM to fastq.
+  * [FastQC](#fastqc) - Raw read QC.
+  * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering.
+* [circRNA Quantification](#circrnaquantification)
+  * [Miscellaneous Requirements](#misc) - Generate tool specific requirements.
+  * [CIRCexplorer2](#circexplorer2) - Annotation of circular RNAs from STAR 2 pass mode Chimeric out files.
+  * [circRNA-finder](#circrnafinder) - Identify circular RNAs from STAR 2 pass mode SAM files.
+  * [CIRIquant](#ciriquant) - De novo identification of circular RNAs using circular pseudo reference.
+  * [DCC](#dcc) - Identify circular RNAs from STAR 2 pass mode utilising joint *and* separate read pairs.
+  * [find_circ](#findcirc) - Identify circular RNAs in unmapped anchors from Bowtie2.
+  * [MapSplice](#mapsplice) - Identify circular RNAs in unmapped anchors from Bowtie.
+  * [STAR](#star) - Characterise back-splice junctions in all samples using 2 pass mode.
+* [circRNA Annotation](#circannotation)
+  * [Annotated circRNAs](#anncircs) - Basic circRNA information.
+  * [BED12 files](#bed12files) - Individual circRNA coordinates in BED12 format.
+  * [count matrix](#countmatrix) - circRNA counts matrix
+  * [fasta](#fasta) - mature spliced circRNA fasta sequence.
+* [miRNA Target Prediction](#mirnaprediction)
+  * [miranda](#miranda) - Raw output from miRanda.
+  * [targetscan](#targetscan) - Raw output from TargetScan.
+  * [mirna_targets](#mirnatargets) - Filtered outputs from miRanda, TargetScan for each circRNA.
+  * [circos_plots](#circosplots) - circos plot of circRNA - miRNA filtered predictions.
+* [Differential Expression Analysis](#differentialexpression)
+  * [circRNA](#circrna) - Output directory for circRNA DESeq2 analysis.
+  * [circRNA Differential Expression Stats](#circrna_de_stats) - Differentially expressed circRNA statistics.
+  * [circRNA Expression Plots](#circrna_expression_plots) - Plots of circRNA, circRNA - parent gene expression.
+  * [RNA-Seq](#rnaseq) - Output directory for RNA-Seq DESeq2 analysis.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
+# Download Files{#downloadfiles}
 
-## Pipeline overview
+## Reference Files{#reference}
 
-The pipeline is built using [Nextflow](https://www.nextflow.io/)
-and processes data using the following steps:
+`nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
 
-* [FastQC](#fastqc) - Read quality control
-* [MultiQC](#multiqc) - Aggregate report describing results from the whole pipeline
-* [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+There are 3 reference files output by `nf-core/circrna` (the user can specify genome versions `GRCh37/GRCh38` via the `nextflow.config` file).
 
-## FastQC
+**Output directory for reference files:** `reference`
 
-[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences.
+<details markdown="1">
+<summary>Output files</summary>
 
-For further reading and documentation see the [FastQC help pages](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
 
-**Output files:**
+* `reference/`
+  * `*.fa`: Gencode v34 reference FASTA file.
+  * `*.gtf `: Gencode v34 reference GTF file.
+  * `*.txt`: Customised reference text annotation file.
 
-* `fastqc/`
-  * `*_fastqc.html`: FastQC report containing quality metrics for your untrimmed raw fastq files.
-* `fastqc/zips/`
-  * `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
 
-> **NB:** The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
+## miRNA Databases{#mirnadb}
 
-## MultiQC
+Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.shtml) and [TargetScan](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi) for compatibility with `miRanda` and `targetscan.pl` miRNA prediction tools, respectively.
 
-[MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarizing all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.
+**Output directory for miRNA database files:** `assets/`
 
-The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability.
+<details markdown="1">
+<summary>Output files</summary>
 
-For more information about how to use MultiQC reports, see [https://multiqc.info](https://multiqc.info).
 
-**Output files:**
+* `assets/`
 
-* `multiqc/`
-  * `multiqc_report.html`: a standalone HTML file that can be viewed in your web browser.
-  * `multiqc_data/`: directory containing parsed statistics from the different tools used in the pipeline.
-  * `multiqc_plots/`: directory containing static images from the report in various formats.
+  * `hsa_mature.fa`: mature *H. sapiens* miRNA sequences in FASTA format for `miRanda` compatibility.
+  * `hsa_miR.txt`: mature *H. sapiens* miRNA sequences in tab delimited format with species ID information for `TargetScan` compatibility.  
 
-## Pipeline information
+# Preprocessing{#preprocessing}
 
-[Nextflow](https://www.nextflow.io/docs/latest/tracing.html) provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.
+## Bam to Fastq{#bamtofastq}
 
-**Output files:**
+`nf-core/circrna` can accept input BAM files generated from paired end sequencing reads (e.g `TCGA`), invoking [picard](https://broadinstitute.github.io/picard/) `SamToFastq`, reverting BAM files to paired end fastq files.
 
-* `pipeline_info/`
-  * Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
-  * Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.csv`.
-  * Documentation for interpretation of results in HTML format: `results_description.html`.
+**Output directory for converted BAM files:** `preprocessing/bamtofastq`
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `preprocessing/bamtofastq`
+
+  * `*_R{1,2}.fq.gz`: Paired end fastq files, generated using `VALIDATION_STRINGENCY=LENIENT`.
+
+## FastQC{#fastqc}
+
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads.
+It provides information about the quality score distribution across your reads and the per base sequence content (%T/A/G/C).
+Information about adapter contamination and other over-represented sequences is also displayed.
+
+**Output directory for raw reads:** `${params.outdir}/quality_control/fastqc/raw`
+
+**Output directory for trimmed reads:** `${params.outdir}/quality_control/fastqc/trimmed`
+
+## BBDUK{#bbduk}
+
+[BBDUK](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/) (DUK - "Decontamination Using Kmers") is capable of performing adapter trimming, quality trimming + filtering and read length filtering suitable for the quality control of sequencing reads.
+
+There are two outputs from `BBDUK`, trimmed sequencing reads and a `BBDUK` statistics file.  `nf-core/circrna` will automatically output gzipped fastq files from `BBDUK` in order to minimise data usage.  
+
+**Output directory for trimmed reads:** `preprocessing/BBDUK`.
+
+**Output directory for `BBDUK` statistics:** `quality_control/BBDUK`.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `preprocessing/BBDUK`
+
+  * `*_r{1,2}.trim.fq.gz`: Trimmed paired end fastq files.
+
+* `quality_control/BBDUK`
+
+  * `*_BBDUK.txt`: Summary statistics file from BBDUK detailing % reads trimmed/filtered and adapter removal statistics.
+
+# circRNA Quantification{#circrnaquantification}
+
+`nf-core/circrna` is capable of performing circRNA quantification using a combination of tools or a single tool. This is the core module of the workflow and is mandatory in the `--module` parameter via the configuration file (both `mirna_prediction` and `differential_expression` modules depend on `circrna_discovery`).  
+
+```bash
+--module 'circrna_discovery'
+```
+
+## Miscellaneous Requirements{#misc}
+
+Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantification tools.
+
+`MapSplice` requires the reference FASTA file to be split into individual FASTA files per chromosome, whilst `CIRIquant` requires a `.yaml` file specifying the containerised paths of `BWA`, `SAMtools`, `HISAT2`, `StringTie` executables in addition to the absolute paths for the reference FASTA, GTF files and `BWA`, `HISAT2` genome index files.
+
+**Output directory for chromosome FASTA files:** `index/chromosomes/`
+
+**Output directory for `CIRIquant` `travis.yml` file:** `assets/`
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `index/chromosomes/`
+
+  * `*.fa`: Individual FASTA files per chromosome.
+
+* `assets/`
+
+  * `travis.yml`: Example of file below, paths are automatically generated - there is no required input from the user.
+
+  ```bash
+  name: ciriquant
+  tools:
+   bwa:  /opt/conda/envs/nf-core-circrna-1.0dev/bin/bwa
+   hisat2:  /opt/conda/envs/nf-core-circrna-1.0dev/bin/hisat2
+   stringtie:  /opt/conda/envs/nf-core-circrna-1.0dev/bin/stringtie
+   samtools: /opt/conda/envs/nf-core-circrna-1.0dev/bin/samtools
+  reference:
+   fasta: /data/bdigby/results/reference/GRCh37.fa
+   gtf: /data/bdigby/results/reference/GRCh37.gtf
+   bwa_index: /data/bdigby/results/index/bwa/GRCh37
+   hisat_index: /data/bdigby/results/index/hisat2/GRCh37
+  ```
+
+## CIRCexplorer2{#circexplorer2}
+
+[CIRCexplorer2](https://circexplorer2.readthedocs.io/en/latest/) uses `*.Chimeric.out.junction` files generated from `STAR` 2 pass mode to extract back-splice junction sites using the `CIRCexplorer2 parse` module. Following this, `CIRCexplorer2 annotate` performs re-alignment of reads to the back-splice junction sites to determine the precise positions of downstream donor and upstream acceptor splice sites. Back-splice junction sites are subsequently updated and annotated using the customised annotation text file.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `circrna_discovery/tool_outputs/circexplorer2/${sample_id}/`
+  * `*.STAR.junction.bed`: Intermediate file generated by `CIRCexplorer2 parse` module, identifying STAR fusion junctions for downstream annotation.
+  * `*.txt`: Output files generated by `CIRCexplorer2 annotate` module, based on BED 12 format containing circRNA genomic location information, exon cassette composition and an additional 6 columns specifying circRNA annotations.  Full descriptions of the 18 columns can be found in the `CIRCexplorer2` [documentation](https://circexplorer2.readthedocs.io/en/latest/modules/annotate/#output).
+
+* `circrna_discovery/filtered_outputs/circexplorer2/`
+  * `*_circexplorer2.bed`: Parsed `CIRCexplorer2` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
+
+## circrna_finder{#circrnafinder}
+
+[circrna_finder](https://github.com/orzechoj/circRNA_finder) uses `*.Chimeric.out.sam`, `*.Chimeric.out.junction` & `*.SJ.out.tab` files to identify circular RNAs. It's dependency on output SAM files containing chimeric reads requires the flag `--chimOutType Junctions SeparateSAMold` in STAR, which is hard-coded  in the pipeline. This comes at the cost of increasing bloat in the `work/` & `circrna_discovery/tool_outputs/STAR` directories.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `circrna_discovery/tool_outputs/circrna_finder/${sample_id}/`
+  * `*.Chimeric.out.sorted.{bam,bam.bai}`: (Sorted and indexed) bam file with all chimeric reads identified by STAR. The circRNA junction spanning reads are a subset of these.
+  * `*.filteredJunctions.bed`: A bed file with **all** circular junctions found by the pipeline. The score column indicates the number reads spanning each junction.
+  * `*.s_filteredJunctions.bed`: A bed file with those junctions in `*.filteredJunctions.bed` that are flanked by GT-AG splice sites. The score column indicates the number reads spanning each junction.
+  * `*.s_filteredJunctions_fw.bed`:  A bed file with the same circular junctions as in file (b), but here the score column gives the average number of forward spliced reads at both splice sites around each circular junction.
+
+* `circrna_discovery/filtered_outputs/circrna_finder/`
+  * `*_circrna_finder.bed`: Parsed `circrna_finder` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
+
+## CIRIquant{#ciriquant}
+
+[CIRIquant](https://github.com/Kevinzjy/CIRIquant) operates by aligning RNA-Seq reads using `HISAT2` and [CIRI2](https://sourceforge.net/projects/ciri/files/CIRI2/) to identify putative circRNAs. Next, a pseudo reference index is generated using `bwa index ` by concatenating the two full-length sequences of the putative back-splice junction regions. Candidate circular reads are re-aligned against this pseudo reference using `bwa mem`, and back-splice junction reads are determined if they can be linearly and completely aligned to the putative back-splice junction regions.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `circrna_discovery/tool_outputs/ciriquant/${sample_id}/`
+  * `*.log`: A `CIRIerror.log` file which should be empty, and a `${sample_id}.log` file which contains the output log of `CIRIquant`.
+  * `*.bed`: `CIRI2` output file in BED 6 format.
+  * `*.gtf`: Output file from `CIRIquant` in GTF format. Full description of the columns available in the `CIRIquant` [documentation](https://ciriquant-cookbook.readthedocs.io/en/latest/quantification.html#output-format).
+* `circrna_discovery/tool_outputs/ciriquant/${sample_id}/align/`
+  * `*.sorted.{bam, bam.bai}`: (Sorted and indexed) bam file from `HISAT2` alignment of RNA-Seq reads.
+* `circrna_discovery/tool_outputs/ciriquant/${sample_id}/circ/`
+  * `*.ciri`: `CIRI2` output file.
+  * `*_denovo.sorted.{bam, bam.bai}`: (Sorted and indexed) bam file from `BWA` alignment of candidate circular reads to the pseudo reference.
+  * `*_index.*.ht2`: `BWA` index files of the pseudo reference.
+  * `*_index.fa`: Reference FASTA file of candidate circular reads.
+* `circrna_dicovery/filtered_outputs/ciriquant/`
+  * `*_ciriquant.bed`: Parsed `CIRIquant` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
+
+*Note:* The `--no-gene` flag has been included, disabling host gene expression analysis.
+
+## DCC{#dcc}
+
+[DCC](https://github.com/dieterich-lab/DCC) identifies back-splice junction sites from `*Chimeric.out.junction`, `*SJ.out.tab` & `*Aligned.sortedByCoord.out.bam` files generated by `STAR` 2 pass mode mapping the paired end reads both jointly and separately (`STAR` does not output read pairs that contain more than one chimeric junction thus a more granular approach is taken by `DCC`, mapping R1 + R2, then R1 & R2 individually to fully characterise back-splice junctions in reads).
+
+`DCC` then performs a series of filtering steps on candidate circular reads:
+
+1. Mapping of mates must be consistent with a circular RNA template i.e align to the back-splice junction.
+2. Filtering by a minimum number of junction reads per replicate (`nf-core/circrna` has set this parameter to`-Nr 1 1` allowing all reads).
+3. Circular reads are not allowed span more than one gene.
+4. Circular reads aligning to mitochondrial genome are removed.
+5. Circular reads that lack a canonical (GT/AG) splicing signal at the circRNA junction borders are removed.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `/circrna_discovery/tool_outputs/dcc/${sample_id}/`
+  * `*CircCoordinates`: Circular RNA annotations in BED format. Full description of the columns are available in the `DCC` [documentation](https://github.com/dieterich-lab/DCC#output-files-generated-by-dcc).
+  * `*CircRNACount`: A table containing read counts for circRNAs detected.
+  * `mate1/`: Output directory of STAR 2nd pass alignment for R1.
+  * `mate2/`: Output directory of STAR 2nd pass alignment for R2.
+* `circrna_dicovery/filtered_outputs/dcc/`
+  * `*_dcc.bed`: Parsed `DCC` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
+
+*Note:* `-G` flag has been omitted from `nf-core/circrna`, disabling host gene expression analysis.
+
+## find_circ{#findcirc}
+
+[find_circ](https://github.com/marvin-jens/find_circ) utilises `Bowtie2` short read mapper to align RNA-Seq reads to the genome. Reads that align fully and contiguously are discarded. Unmapped reads are converted to 20mers and aligned independently to find unique anchor positions within spliced exons - anchors that align in reverse orientation indicate circular RNA junctions. Anchor alignments are extended and must meet the following criteria:
+
+1. Breakpoints flanked by GT/AG splice sites.
+2. Unambiguous breakpoint detection.
+3. Maximum 2 mismatches in extension procedure.
+4. Breakpoint cannot reside more than 2nt inside a 20mer anchor.
+5. 2 reads must support the junction.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `circrna_discovery/tool_outputs/find_circ/${sample_id}/`
+  * `*_anchors.qfa.gz`: 20mer anchors extracted from unmapped reads.
+  * `*_unmapped.bam`: Unmapped RNA-Seq reads to reference genome.
+  * `*.sites.bed`: Output from `find_circ`, first six columns are in standard BED format. A description of the remaining columns is available in the `find_circ` [documentation](https://github.com/marvin-jens/find_circ#output-format).
+  * `*.sites.log`: Summary statistics of candidate circular reads in the sample.
+  * `*.sites.reads`: Tab delimited file containing circRNA ID & sequence.
+* `circrna_discovery/filtered_outputs/find_circ/`
+  * `*_find_circ.bed`: Parsed `find_circ` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
+
+## MapSplice{#mapsplice}
+
+[MapSplice](http://www.netlab.uky.edu/p/bioinfo/MapSplice2) first splits reads into segments, and maps them to reference genome by using `Bowtie`. `MapSplice` attempts to fix unmapped segments as gapped alignments, with each gap corresponding to a splice junction. Finally a remapping step is used to identify back-spliced alignments that are in the presence of small exons.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+
+* `circrna_discovery/tool_outputs/mapsplice/${sample_id}/`
+  * `alignments.bam`: Bam file containing aligned reads and fusion alignments.
+  * `deletions.txt`: Report of deletions.
+  * `Fusion output files`:
+    * `fusions_raw.txt`: raw fusion junctions without filtering
+    * `fusion_candidates.txt`: filtered fusion junctions  
+    * `fusions_well_annotated.txt`:  annotated fusion junction candidates (align to annotation file provided)
+    * `fusions_not_well_annotated.txt`: fusions that do not align with supplied annotations
+    * `circular_RNAs.txt`: circular RNAs reported.
+  * `insertions.txt`: Report of Insertions.
+  * `junctions.txt`: Reported splice junctions.
+  * `stats.txt`: Read alignment, Junction statistics.
+
+*Note:* `fusions_raw.txt` is supplied to `CIRCexplorer2 parse` & `CIRCexplorer2 annotate` for robust annotation.
+
+## STAR{#star}
+
+[STAR](https://github.com/alexdobin/STAR) can characterise novel splice junctions in RNA-Seq data by specifying `--ChimOutType Junctions`, with reported novel junctions written to a `*SJ.out.tab` file (per sample). Following the initial `STAR` alignment, a 2nd pass strategy is employed whereby **all** `*SJ.out.tab` files from RNA-Seq samples are converted to `*SJFile.tab` files of novel junction coordinates and provided during the 2nd alignment step via `--sjdbFileChrStartEnd`.
+
+This achieves the highest sensitivity for novel junction alignment. For instance, if there is a novel junction that's highly expressed (many reads, confident detection) in the wild-type, but only weakly expressed (few reads) in the experimental group, by using junctions detected in all samples for the 2nd pass will allow `STAR` to detect lowly expressed spliced reads in the experimental group.
+
+
+<details markdown="1">
+<summary>Output files</summary>
+* `circrna_discovery/tool_outputs/STAR/1st_Pass/${sample_id}/`
+  * `*.Aligned.sortedByCoord.out.bam`: Coordinate sorted bam file containing aligned reads and chimeric reads.
+  * `*.Chimeric.out.junction`: Each line contains the details of chimerically aligned reads. Full descriptions of columns can be found in `STAR` [documentation](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) (section 5.4).
+  * `*.Chimeric.out.sam`: Chimeric alignments in SAM format.
+  * `*.Log.final.out`:  Summary mapping statistics after mapping job is complete, useful for quality control. The statistics are calculated for each read (single- or paired-end) and then summed or averaged over all reads.
+  * `*.Log.out`: Main log file with a lot of detailed information about the run. This file is most useful for troubleshooting and debugging.
+  * `*.Log.progress.out`: Reports job progress statistics, such as the number of processed reads, % of mapped reads etc.
+  * `*.SJ.out.tab`: High confidence collapsed splice junctions in tab-delimited form. Full description of columns can be found in  `STAR` [documentation](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) (section 4.4).
+
+
+* `circrna_discovery/tool_outputs/STAR/2nd_Pass/${sample_id}/`
+  * `*.Aligned.sortedByCoord.out.bam`: Coordinate sorted bam file containing aligned reads and chimeric reads.
+  * `*.Chimeric.out.junction`: Each line contains the details of chimerically aligned reads. Full descriptions of columns can be found in `STAR` [documentation](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) (section 5.4).
+  * `*.Chimeric.out.sam`: Chimeric alignments in SAM format.
+  * `*.Log.final.out`:  Summary mapping statistics after mapping job is complete, useful for quality control. The statistics are calculated for each read (single- or paired-end) and then summed or averaged over all reads.
+  * `*.Log.out`: Main log file with a lot of detailed information about the run. This file is most useful for troubleshooting and debugging.
+  * `*.Log.progress.out`: Reports job progress statistics, such as the number of processed reads, % of mapped reads etc.
+  * `*.SJ.out.tab`: High confidence collapsed splice junctions in tab-delimited form. Full description of columns can be found in  `STAR` [documentation](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) (section 4.4).
+* `circrna_discovery/tool_outputs/STAR/SJFile/`
+  * `*.SJFile.tab`: Chromosome, start, end & strand coordinates of novel splice junctions.
+
+# circRNA Annotation{#circannotation}
+
+## Annotated circRNAs{#anncircs}
+
+`nf-core/circrna` takes filtered BED outputs from circRNA quantification tools and performs circRNA annotation using a filtered GTF file (biotypes not involved in circRNA biogenesis are removed). circRNA mature spliced length, parent gene and circRNA type are calculated using a customised script.
+
+<details markdown="1">
+<summary>Output files</summary>
+* `circrna_discovery/annotated/`
+
+
+  * `circrnas_annotated.txt`: Master file containing circRNA_ID, Type, Mature_Length, Parent_Gene & Strand for all called circRNAs.
+
+## BED12 Files{#bed12files}
+
+`nf-core/circrna` outputs each filtered circRNA in BED12 format. Initially an intermediate file used for calculating the mature spliced sequence of circRNAs, the user may wish to concatenate the individual files into a master file for visualisation in IGV.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `circrna_discovery/bed12/`
+  * `*_bed12.bed`: Columns described in `BEDtools` [documentation](https://bedtools.readthedocs.io/en/latest/content/general-usage.html#bed-format).  
+
+## Count Matrix{#countmatrix}
+
+`nf-core/circrna` produces a counts matrix of circRNA read counts for each sample. circRNAs with BSJ reads < 2 have been removed during the quantification step, with a further filtering step included depending on the number of quantification tools selected. If the user has selected more than one circRNA quantification tool, `nf-core/circrna` will demand that a circRNA be called by at least two quantification tools or else it is removed. This approach is recommended to reduce the number of false positives.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `circrna_discovery/count_matrix/`
+  * `circRNA_matrix.txt`: Raw circRNA read counts for all samples in matrix format.
+
+## Fasta{#fasta}
+
+`nf-core/circrna` produces the mature spliced sequence of circRNAs in fasta format. Note that `nf-core/circrna` assumes for `circRNA type: circRNA` that all introns are removed from the mature sequence. For `circRNA type: EIciRNA` if the start/end of the circRNA falls outside 200nt of an annotated exon, the entire circRNA sequence (both exonic and intronic) is assumed to be in the mature splice length. If the `EIciRNA` falls within 200nt of an annotated exon, `nf-core/circrna` attempts to re-fit the circRNA as `circRNA type: circRNA` and all introns are removed from the sequence.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `circrna_discovery/fasta/`
+  * `*.fa`: Mature spliced sequence of circRNAs.  
+
+# miRNA Prediction{#mirnaprediction}
+
+`nf-core/circrna` performs miRNA target prediction of mature circRNA sequences using a combination of `miRanda` and `TargetScan` to maximise the target miRNA profile and reduce spurious calls. The module is invoked via the `--module` parameter in the configuration file or via the command line:
+
+```bash
+--module 'circrna_discovery, mirna_prediction'
+```
+
+## miRanda{#miranda}
+
+[miRanda](http://cbio.mskcc.org/miRNA2003/miranda.html) performs miRNA target prediction of a genomic sequence against a miRNA database in 2 phases:
+
+1. First a dynamic programming local alignment is carried out between the query miRNA sequence and the reference  sequence. This alignment procedure scores based on sequence complementarity and not on sequence identity.
+2. Secondly, the algorithm takes high-scoring alignments detected from phase 1 and estimates the thermodynamic stability of RNA duplexes based on these alignments. This second phase of the method utilises folding routines from the `RNAlib` library,  part of the [ViennaRNA](https://www.tbi.univie.ac.at/RNA/) package.
+
+`nf-core/circrna` parses the raw output from `miRanda` into a standardised text file with miRNA targets per line for easier interpretation and downstream processing.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `mirna_prediction/miranda/`
+  * `*.miRanda.txt`: Raw outputs from `miRanda`.
+
+## TargetScan{#targetscan}
+
+[TargetScan](http://www.targetscan.org/vert_72/) predicts biological targets of miRNAs by searching for the presence of conserved 8mer, 7mer, and 6mer sites that match the seed region of each miRNA.
+
+`nf-core/circrna` provides the raw outputs from `TargetScan` for the user.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `mirna_prediction/targetscan/`
+  * `*.targetscan.txt`: Raw outputs from `TargetScan`.
+
+## miRNA_targets{#mirnatargets}
+
+`nf-core/circrna` performs miRNA target filtering on `miRanda` and `TargetScan` predictions:
+
+1. miRNA must be called by both `miRanda` and `TargetScan`.
+2. `6mer` site predictions are removed from `TargetScan` output. `nf-core/circrna` requires:
+   * `7mer-m8`: An exact match to positions 2-8 of the mature miRNA (the seed + position 8).
+   * `7mer-A1`: An exact match to positions 2-7 of the mature miRNA (the seed) followed by an 'A'.
+   * `8-mer`: An exact match to positions 2-8 of the mature miRNA (the seed + position 8) followed by an 'A'.
+3. Removal of miRNAs with minimum free energy of <= -20.00 Kcal/Mol as calculated by `ViennaRNA`.
+4. If a site within the circRNA mature sequence shares duplicate miRNA ID's, the miRNA with the highest score is kept.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `mirna_prediction/mirna_targets/`
+  * `*_miRNA_targets.txt`: Filtered target miRNAs of circRNAs called by quantification tools. Columns are self explanatory: miRNA, Score, Energy_KcalMol, Start, End, Site_type.
+
+## Circos Plot{#circosplots}
+
+`nf-core/circrna` plots the filtered miRNA targets given in `mirna_prediction/mirna_targets/` using a circos plot, displaying the miRNA response elements along the mature circRNA sequence. Please note this plot becomes overcrowded when plotting `EIciRNAs` due to their highly variable sequence length (in contrast to `circRNAs` and `ciRNAs` which typically fall within the range of 100 - 1000nt). Therefore `EIciRNAs` with large mature spliced lengths should be considered as potentially spurious calls.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `mirna_prediction/circos_plots/`
+  * `*_miRNA_Plot.pdf`: Circos plot of mature spliced circRNA sequence with exon boundaries where applicable, displaying miRNA binding sites.
+
+# Differential Expression{#differentialexpression}
+
+`nf-core/circrna` performs circRNA differential expression analysis using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html). The module is invoked by the `--module` parameter in the configuration file or via the command line:
+
+```bash
+--module 'circrna_discovery, differential_expression'
+```
+
+## circRNA{#circrna}
+
+Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs.
+
+Currently `nf-core/circrna` supports a simple two factor response variable (wild type vs. condition) and an explanatory variable such as 'replicates'.
+
+The authors of `nf-core/circrna` plan on facilitating more complex design types in the near future.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `differential_expression/circRNA/`
+  * `DESeq2_condition_PCA.pdf`: Principal component plot (PC1 vs PC2) displaying the highest amount of variation present in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
+  * `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
+  * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
+  * `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
+  * `DESeq2_normalized_counts.txt`: Normalised circRNA counts.
+  * `DESeq2_{condition_vs_wildtype}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
+  * `DESeq2_{condition_vs_wildtype}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated circRNAs (fold change <= -1, pvalue <= 0.05).
+  * `DESeq2_{condition_vs_wildtype}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
+  * `DESeq2_{condition_vs_wildtype}_global_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
+  * `DESeq2_{condition_vs_wildtype}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
+  * `DESeq2_{condition_vs_wildtype}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated circRNAs (fold change >= 1, pvalue <= 0.05).
+  * `DESeq2_{condition_vs_wildtype}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+  * `DESeq2_sample_dendogram.pdf`: Dendogram depicting sample distances using [pvclust](https://cran.r-project.org/web/packages/pvclust/index.html).
+  * `DESeq2_sample_heatmap.pdf`: Manhattan distance heatmap of samples.
+  * `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
+
+## circRNA Differential Expression Stats{#circ_de_stats}
+
+`nf-core/circrna` combines the output of `DESeq2` and annotated circRNAs to provide a comprehensive annotation of differentially expressed circRNAs. Headers in all files are: circRNA_ID, Type, Mature_Length, Parent_Gene, Strand, Log2FC, pvalue, Adjusted_pvalue, Description
+
+*Description* refers to the entrez gene description of the parent gene.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `differential_expression/circrna_diff_exp_stats/`
+  * `DE_circRNAs.txt`: Both up and down regulated circRNAs in a master file.
+  * `Down_Regulated_circRNAs.txt`: Annotated down regulated circRNAs.
+  * `Up_Regulated_circRNAs.txt`: Annotated up regulated circRNAs.
+
+## circRNA Expression Plots{#circrna_expression_plots}
+
+`nf-core/circrna` will produce a boxplot of circRNA expression and a lineplot of circRNA - parent gene expression between the phenotypes specified in the `DESeq2` analysis.
+
+*Note:* if the parent gene cannot be found in the normalised RNA-Seq count matrix, the line plot of circRNA - parent gene expression will be omitted. This behaviour is observed in the test dataset, which has been heavily modified to maximise circRNA reads as opposed to reads aligning canonically to transcripts for gene expression analysis.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `differential_expression/circrna_expression_plots/`
+
+  * `*boxplot.pdf`: Boxplot of circRNA expression between phenotypes of interest.
+
+  * `*expression.pdf`: *log2* transformed line plot of both circRNA and parent gene expression in phenotypes of interest.  
+
+
+
+## RNA-Seq{#rnaseq}
+
+Output directory of `DESeq2` gene differential expression analysis, complete with quality control, results plots and contrast outputs.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `DESeq2_condition_PCA.pdf`: Principal component plot (PC1 vs PC2) displaying the highest amount of variation present in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
+* `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
+* `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
+* `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
+* `DESeq2_normalized_counts.txt`: Normalised gene counts.
+* `DESeq2_{condition_vs_wildtype}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
+* `DESeq2_{condition_vs_wildtype}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated genes (fold change <= -1, pvalue <= 0.05).
+* `DESeq2_{condition_vs_wildtype}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed genes.
+* `DESeq2_{condition_vs_wildtype}_global_heatmap.pdf`: Heatmap of all differentially expressed genes.
+* `DESeq2_{condition_vs_wildtype}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (pvalue <= 0.05).
+* `DESeq2_{condition_vs_wildtype}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated genes (fold change >= 1, pvalue <= 0.05).
+* `DESeq2_{condition_vs_wildtype}_volcano_plot.pdf`: Volcano plot of differentially expressed genes from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+* `DESeq2_sample_dendogram.pdf`: Dendogram depicting sample distances using [pvclust](https://cran.r-project.org/web/packages/pvclust/index.html).
+* `DESeq2_sample_heatmap.pdf`: Manhattan distance heatmap of samples.
+* `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).rm

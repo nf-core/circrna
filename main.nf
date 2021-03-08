@@ -476,6 +476,8 @@ if(params.input_type == 'bam'){
 
         process bam_to_fq{
 
+                publishDir "${params.outdir}/preprocessing/bamtofastq", mode:'copy'
+
                 input:
                   tuple val(base), file(bam) from ch_input_sample
 
@@ -548,6 +550,8 @@ process multiqc_raw {
 if(params.skip_trim == 'no'){
 
         process bbduk {
+
+                publishDir "${params.outdir}/preprocessing/BBDUK", pattern: "*fq.gz", mode: 'copy'
 
                 input:
                   tuple val(base), file(fastq) from trimming_reads
