@@ -463,23 +463,26 @@ volcano_plot <- function(res, contrast, outdir){
 
 global_heatmap <- function(de, log2, contrast, group, outdir){
 
-        pheno <- inputdata$pheno
-        pheno_mtx <- as.matrix(pheno)
-        index <- which(matrix(grepl(paste(group), pheno_mtx), ncol=ncol(pheno_mtx)), arr.ind=T)
-        index_col <- unique(index[,2])
-        col_anno <- names(pheno[index_col])
-        sample_col <- pheno[paste(col_anno)]
-        mat <- as.data.frame((log2)[which(rownames(log2) %in% de),])
+				levels <- unlist(strsplit(contrast, "_vs_"))
+				pheno <- inputdata$pheno
+				pheno_subset <- subset(pheno, pheno$condition %in% levels)
+				mat <- log2[,rownames(pheno)]
+				mat <- mat[de,]
+        #pheno <- inputdata$pheno
+        #pheno_mtx <- as.matrix(pheno)
+        #index <- which(matrix(grepl(paste(group), pheno_mtx), ncol=ncol(pheno_mtx)), arr.ind=T)
+        #index_col <- unique(index[,2])
+        #col_anno <- names(pheno[index_col])
+        #sample_col <- pheno[paste(col_anno)]
+        #mat <- as.data.frame((log2)[which(rownames(log2) %in% de),])
         mat <- t(mat)
         mat <- scale(mat, center=T)
         mat <- t(mat)
-        pdf(file.path(outdir, paste("DESeq2", contrast, "global_heatmap.pdf", sep="_")))
+        pdf(file.path(outdir, paste("DESeq2", contrast, "heatmap.pdf", sep="_")))
         pheatmap(mat,
-                annotation_col=sample_col,
+                annotation_col=pheno_subset,
                 color=greenred(75),
                 cluster_rows = T,
-                fontsize=9,
-                cellwidth = 30,
                 show_rownames = F)
         dev.off()
 }
