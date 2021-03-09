@@ -387,17 +387,16 @@ PCA_plot <- function(log2, outdir){
 
 	p <- pca(log2, metadata=inputdata$pheno)
   	n_comp <- length(p$components)
-  	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"), width=10, height=8)
-  	scree <- screeplot(
-		 p,
-        	 components = getComponents(p, 1:n_comp),
-        	 hline = 80,
-		 subtitle="80% variation explained")
-	plot(scree)
+  	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"))
+  	scree <- screeplot(p,
+        	 						 components = getComponents(p, 1:n_comp),
+        	 	 					 hline = 80,
+		 								 	 subtitle="80% variation explained")
+	  plot(scree)
   	dev.off()
 
   	for(exp_var in names(inputdata$pheno)){
-    		pdf(file.path(outdir, paste("DESeq2", exp_var, "PCA.pdf", sep="_")), width=8, height=8)
+    		pdf(file.path(outdir, paste("DESeq2", exp_var, "PCA.pdf", sep="_")))
     		biplot <- biplot(
 			  p,
        			  colby=paste(exp_var),
@@ -436,13 +435,13 @@ volcano_plot <- function(res, contrast, outdir){
 	print(min_width)
 	print(max_width)
 	print(max_height)
-	pdf(file.path(outdir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")), width=10, height=8)
+	pdf(file.path(outdir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
 	p <- EnhancedVolcano(res,
 			lab=rownames(res),
 			x="log2FoldChange",
 			y="pvalue",
-			selectLab=plot_top_20,
-			drawConnectors=TRUE,
+			#selectLab=plot_top_20,
+			#drawConnectors=TRUE,
 			FCcutoff=1.0,
 			pCutoff=0.05,
 			title="Volcano Plot",
@@ -471,7 +470,7 @@ global_heatmap <- function(de, log2, contrast, outdir){
         mat <- t(mat)
         mat <- scale(mat, center=T)
         mat <- t(mat)
-        pdf(file.path(outdir, paste("DESeq2", contrast, "global_heatmap.pdf", sep="_")), height = 10, width=8)
+        pdf(file.path(outdir, paste("DESeq2", contrast, "global_heatmap.pdf", sep="_")))
         pheatmap(mat,
                 annotation_col=sample_col,
                 color=greenred(75),
