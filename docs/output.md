@@ -461,6 +461,22 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 ## Differential Expression Analysis
 
+`nf-core/circrna` will perform differential expression analysis on all factors vs. 'control' within the response variable (which must be named 'condition'):
+
+| samples | condition | replicates |
+|---------|-----------|------------|
+| ctrl_1  | control   | 1          |
+| ctrl_2  | control   | 2          |
+| ctrl_3  | control   | 3          |
+| A549_1  | lung      | 1          |
+| A549_2  | lung      | 2          |
+| A549_3  | lung      | 3          |
+| A375_1  | melanoma  | 1          |
+| A375_2  | melanoma  | 2          |
+| A375_3  | melanoma  | 3          |
+
+The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors within 'condition' producing outputs for `lung_vs_control` and `melanoma_vs_control`.
+
 ### circRNA
 
 <details markdown="1">
@@ -485,25 +501,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs. `nf-core/circrna` will perform differential expression analysis on all factors vs. 'control' within the response variable (which must be named 'condition'):
-
-<center>
-
-| samples | condition | replicates |
-|---------|-----------|------------|
-| ctrl_1  | control   | 1          |
-| ctrl_2  | control   | 2          |
-| ctrl_3  | control   | 3          |
-| A549_1  | lung      | 1          |
-| A549_2  | lung      | 2          |
-| A549_3  | lung      | 3          |
-| A375_1  | melanoma  | 1          |
-| A375_2  | melanoma  | 2          |
-| A375_3  | melanoma  | 3          |
-
-</center>
-
-The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors producing outputs for `lung_vs_control` and `melanoma_vs_control`.
+Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs.
 
 ### circRNA Differential Expression Stats
 
