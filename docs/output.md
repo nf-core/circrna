@@ -18,9 +18,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 * [Download files](#download-files)
   * [Reference files](#reference-files) - Download reference files
   * [miRNA databases](#mirna-databases) - Download mature miRNA sequences
-* [Preprocessing](#preprocessing)
+* [Quality Control](#quality-control)
   * [BAM to Fastq](#bam-to-fastq) - Convert BAM to fastq
   * [FastQC](#fastqc) - Raw read QC
+  * [MultiQC](#multiqc) - Consolidated fastqc reports
   * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
 * [Genome index files](#genome-index-files)
 * [circRNA quantification](#circrna-quantification)
@@ -78,7 +79,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.shtml) and [TargetScan](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi) as inputs for  `miRanda` and `targetscan.pl` miRNA prediction tools, respectively.
 
-## Preprocessing
+## Quality Control
 
 ### Bam to Fastq
 
@@ -106,6 +107,19 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 </details>
 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads. It provides information about the quality score distribution across your reads and the per base sequence content (%T/A/G/C). Information about adapter contamination and other over-represented sequences are also displayed.
+
+### MultiQC
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `quality_control/multiqc/`
+  * `Raw_Reads_MultiQC.html`: Summary reports of unprocessed RNA-Seq reads.
+  * `Trimmed_Reads_MultiQC.html`: Summary reports of processed RNA-Seq reads.
+
+</details>
+
+[MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.
 
 ### BBDUK
 
@@ -350,7 +364,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 <summary>Output files</summary>
 
 * `circrna_discovery/bed12/`
-  * `*_bed12.bed`: Columns described in `BEDtools` [documentation](https://bedtools.readthedocs.io/en/latest/content/general-usage.html#bed-format).  
+  * `*_bed12.bed`: Columns described in `BEDtools` [documentation](https://bedtools.readthedocs.io/en/latest/content/general-usage.html#bed-format). Note that the itemRGB column has been replaced with circRNA type.
 
 </details>
 
