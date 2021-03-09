@@ -113,7 +113,7 @@
                     "fa_icon" : "fas fa-address-book",
                     "description": "Path to SAMtools index file.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\n```bash\n--fasta_fai \"circrna_discovery/index/GRCh38.fa.fai\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file. When re-running the pipeline, provide the absolute path to the SAMtools index file *e.g:*\n```bash\n--fasta_fai \"/data/results/circrna_discovery/index/GRCh38.fa.fai\"\n```"
                 },
                 "bowtie_index": {
                     "type": "string",
