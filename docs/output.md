@@ -487,6 +487,8 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs. `nf-core/circrna` will perform differential expression analysis on all factors vs. 'control' within the response variable (which must be named 'condition'):
 
+<center>
+
 | samples | condition | replicates |
 |---------|-----------|------------|
 | ctrl_1  | control   | 1          |
@@ -499,7 +501,9 @@ Output directory of DESeq2 circRNA differential expression analysis, quality con
 | A375_2  | melanoma  | 2          |
 | A375_3  | melanoma  | 3          |
 
-The above experimental design will produce `lung_vs_control` and `melanoma_vs_control` outputs from `DESeq2`.
+</center>
+
+The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors producing outputs for `lung_vs_control` and `melanoma_vs_control`.
 
 ### circRNA Differential Expression Stats
 
