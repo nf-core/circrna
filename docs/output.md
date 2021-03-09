@@ -15,15 +15,16 @@ The processes listed below will fall into one of 4 output directories produced b
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-* [Download Files](#download-files)
-  * [Reference Files](#reference-files) - Download reference files
-  * [miRNA Databases](#mirna-databases) - Download mature miRNA sequences
+* [Download files](#download-files)
+  * [Reference files](#reference-files) - Download reference files
+  * [miRNA databases](#mirna-databases) - Download mature miRNA sequences
 * [Preprocessing](#preprocessing)
   * [BAM to Fastq](#bam-to-fastq) - Convert BAM to fastq
   * [FastQC](#fastqc) - Raw read QC
   * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
-* [circRNA Quantification](#circrna-quantification)
-  * [Miscellaneous Requirements](#miscellaneous-requirements) - Generate tool specific requirements
+* [Genome index files](#genome-index-files)
+* [circRNA quantification](#circrna-quantification)
+  * [Miscellaneous requirements](#miscellaneous-requirements) - Generate tool specific requirements
   * [CIRCexplorer2](#circexplorer2) - Annotation of circular RNAs from STAR 2 pass mode Chimeric out files
   * [circRNA finder](#circrna-finder) - Identify circular RNAs from STAR 2 pass mode SAM files
   * [CIRIquant](#ciriquant) - De novo identification of circular RNAs using circular pseudo reference
@@ -31,20 +32,20 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   * [find circ](#find-circ) - Identify circular RNAs in unmapped anchors from Bowtie2
   * [MapSplice](#mapsplice) - Identify circular RNAs in unmapped anchors from Bowtie
   * [STAR](#star) - Characterise back-splice junctions in all samples using 2 pass mode
-* [circRNA Annotation](#circrna-annotation)
+* [circRNA annotation](#circrna-annotation)
   * [Annotated circRNAs](#annotated-circrnas) - Basic circRNA information
   * [BED12 files](#bed12-files) - Individual circRNA coordinates in BED12 format
   * [count matrix](#count-matrix) - circRNA counts matrix
   * [fasta](#fasta) - mature spliced circRNA fasta sequence
-* [miRNA Target Prediction](#mirna-target-prediction)
+* [miRNA target prediction](#mirna-target-prediction)
   * [miranda](#miranda) - Raw output from miRanda
   * [targetscan](#targetscan) - Raw output from TargetScan
   * [miRNA targets](#mirna-targets) - Filtered outputs from miRanda, TargetScan for each circRNA
   * [circos plots](#circos-plots) - circos plot of circRNA - miRNA filtered predictions
-* [Differential Expression Analysis](#differential-expression-analysis)
+* [Differential expression analysis](#differential-expression-analysis)
   * [circRNA](#circrna) - Output directory for circRNA DESeq2 analysis
-  * [circRNA Differential Expression Stats](#circrna-differential-expression-stats) - Differentially expressed circRNA statistics
-  * [circRNA Expression Plots](#circrna-expression-plots) - Plots of circRNA, circRNA - parent gene expression
+  * [circRNA differential expression stats](#circrna-differential-expression-stats) - Differentially expressed circRNA statistics
+  * [circRNA expression plots](#circrna-expression-plots) - Plots of circRNA, circRNA - parent gene expression
   * [RNA-Seq](#rna-seq) - Output directory for RNA-Seq DESeq2 analysis
 
 ## Download Files
@@ -53,14 +54,14 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 `nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
 
-There are 3 reference files output by `nf-core/circrna` (the user can specify genome versions `GRCh37/GRCh38` via the `nextflow.config` file).
+There are 3 reference files output by `nf-core/circrna` & the user can specify genome versions `GRCh37/GRCh38` via the configuration file using the `--genome_version` parameter.
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `reference/`
-  * `*.fa`: Gencode v34 reference FASTA file.
-  * `*.gtf `: Gencode v34 reference GTF file.
+* `circrna_discovery/reference/`
+  * `*.fa`: Gencode reference FASTA file.
+  * `*.gtf `: Gencode reference GTF file.
   * `*.txt`: Customised reference text annotation file.
 
 </details>
@@ -72,7 +73,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 <details markdown="1">
 <summary>Output files</summary>
 
-* `assets/`
+* `mirna_prediction/assets/`
   * `hsa_mature.fa`: mature *H. sapiens* miRNA sequences in FASTA format for `miRanda` compatibility.
   * `hsa_miR.txt`: mature *H. sapiens* miRNA sequences in tab delimited format with species ID information for `TargetScan` compatibility.  
 
@@ -87,34 +88,54 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 <details markdown="1">
 <summary>Output files</summary>
 
-* `preprocessing/bamtofastq`
+* `quality_control/preprocessing/bamtofastq/`
   * `*_R{1,2}.fq.gz`: Paired end fastq files, generated using `VALIDATION_STRINGENCY=LENIENT`.
 
 </details>
 
 ### FastQC
 
-[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads.
-It provides information about the quality score distribution across your reads and the per base sequence content (%T/A/G/C).
-Information about adapter contamination and other over-represented sequences is also displayed.
-
-**Output directory for raw reads:** `${params.outdir}/quality_control/fastqc/raw`
-
-**Output directory for trimmed reads:** `${params.outdir}/quality_control/fastqc/trimmed`
-
-### BBDUK
-
-[BBDUK](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/) (DUK - "Decontamination Using Kmers") is capable of performing adapter trimming, quality trimming + filtering and read length filtering suitable for the quality control of sequencing reads.
-
-There are two outputs from `BBDUK`, trimmed sequencing reads and a `BBDUK` statistics file.  `nf-core/circrna` will automatically output gzipped fastq files from `BBDUK` in order to minimise data usage.  
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads. It provides information about the quality score distribution across your reads and the per base sequence content (%T/A/G/C). Information about adapter contamination and other over-represented sequences are also displayed.
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `preprocessing/BBDUK`
-  * `*_r{1,2}.trim.fq.gz`: Trimmed paired end fastq files.
-* `quality_control/BBDUK`
-  * `*_BBDUK.txt`: Summary statistics file from BBDUK detailing % reads trimmed/filtered and adapter removal statistics.
+* `quality_control/fastqc/`
+  * `raw/`
+    * `*{html,zip}`: Output files from `fastqc` for unprocessed RNA-Seq data.
+  * `trimmed/`
+    * `*{html,zip}`: Output files from `fastqc` for RNA-Seq reads processed by `BBDUK`.
+
+</details>
+
+### BBDUK
+
+[BBDUK](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/) (DUK - "Decontamination Using Kmers") is capable of performing adapter trimming, quality trimming + filtering and read length filtering for the quality control of sequencing reads.
+
+`nf-core/circrna` will automatically output gzipped fastq files from `BBDUK` in order to minimise data usage.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `quality_control/preprocessing/BBDUK/`
+  * `*_r{1,2}.trim.fq.gz`: Processed paired end fastq files.
+
+</details>
+
+## Genome Index Files
+
+`nf-core/circrna` will automatically generate genome index files depending on the circRNA quantification tool selected for the `circrna_discovery` module. In subsequent workflow runs, users should specify the paths to the genome index files generated to save compute resources - please check `nf-core/circrna` [parameter documentation](https://nf-co.re/circrna/dev/parameters#reference-genome-options) for guidance on how to do this.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+* `circrna_discovery/index/`
+  * `bowtie/`: Directory containing `Bowtie` indices.
+  * `bowtie2/`: Directory containing `Bowtie2` indices.
+  * `bwa/`: Directory containing `BWA` indices.
+  * `hisat2/`: Directory containing `HISAT2` indices.
+  * `samtools`: Directory containing `SAMtools` index file.
+  * `STAR`: Directory containing `STAR` indices. 
 
 </details>
 
@@ -135,10 +156,10 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 <details markdown="1">
 <summary>Output files</summary>
 
-* `index/chromosomes/`
+* `circrna_discovery/index/chromosomes/`
   * `*.fa`: Individual FASTA files per chromosome.
-* `assets/`
-  * `travis.yml`: Example of file below, paths are automatically generated - there is no required input from the user.
+* `circrna_discovery/ciriquant/`
+  * `travis.yml`: Example of `.yml` file below which is automatically generated for the user.
 
   ```bash
   name: ciriquant
@@ -148,10 +169,10 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
    stringtie:  /opt/conda/envs/nf-core-circrna-1.0dev/bin/stringtie
    samtools: /opt/conda/envs/nf-core-circrna-1.0dev/bin/samtools
   reference:
-   fasta: /data/bdigby/results/reference/GRCh37.fa
-   gtf: /data/bdigby/results/reference/GRCh37.gtf
-   bwa_index: /data/bdigby/results/index/bwa/GRCh37
-   hisat_index: /data/bdigby/results/index/hisat2/GRCh37
+   fasta: /data/bdigby/results/circrna_discovery/reference/GRCh37.fa
+   gtf: /data/bdigby/results/circrna_discovery/reference/GRCh37.gtf
+   bwa_index: /data/bdigby/results/circrna_discovery/index/bwa/GRCh37
+   hisat_index: /data/bdigby/results/circrna_discovery/index/hisat2/GRCh37
   ```
 
 </details>
