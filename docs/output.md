@@ -235,7 +235,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
   * `*_denovo.sorted.{bam, bam.bai}`: (Sorted and indexed) bam file from `BWA` alignment of candidate circular reads to the pseudo reference.
   * `*_index.*.ht2`: `BWA` index files of the pseudo reference.
   * `*_index.fa`: Reference FASTA file of candidate circular reads.
-* `circrna_dicovery/filtered_outputs/ciriquant/`
+* `circrna_discovery/filtered_outputs/ciriquant/`
   * `*_ciriquant.bed`: Parsed `CIRIquant` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
 
 </details>
@@ -252,7 +252,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
   * `*CircRNACount`: A table containing read counts for circRNAs detected.
   * `mate1/`: Output directory of STAR 2nd pass alignment for R1.
   * `mate2/`: Output directory of STAR 2nd pass alignment for R2.
-* `circrna_dicovery/filtered_outputs/dcc/`
+* `circrna_discovery/filtered_outputs/dcc/`
   * `*_dcc.bed`: Parsed `DCC` outputs in minimal BED file format. Low confidence circRNAs (BSJ reads < 2) have been removed.
 
 </details>

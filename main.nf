@@ -122,7 +122,7 @@ if(params.genome_version == null){
 
 process download_genome {
 
-        publishDir "$params.outdir/circrna_discovery/reference", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/reference", mode: 'copy'
 
         output:
           file('*.fa') into fasta_downloaded
@@ -170,7 +170,7 @@ process download_mirbase{
       	errorStrategy 'retry'
         maxRetries 10
 
-      	publishDir "$params.outdir/mirna_prediction/assets", mode:'copy'
+      	publishDir "${params.outdir}/mirna_prediction/assets", mode:'copy'
 
       	output:
       		file("hsa_mature.fa") into miranda_miRs
@@ -191,7 +191,7 @@ process download_targetscan{
       	errorStrategy 'retry'
         maxRetries 10
 
-      	publishDir "$params.outdir/mirna_prediction/assets", mode:'copy'
+      	publishDir "${params.outdir}/mirna_prediction/assets", mode:'copy'
 
       	output:
         	file("hsa_miR.txt") into targetscan_miRs
@@ -772,8 +772,8 @@ process STAR_2PASS{
 
 process circexplorer2_star{
 
-        publishDir "$params.outdir/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode:'copy'
 
         input:
           tuple val(base), file(chimeric_reads) from circexplorer2_input
@@ -803,8 +803,8 @@ process circexplorer2_star{
 
 process circrna_finder{
 
-        publishDir "$params.outdir/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
 
         input:
           tuple val(base), file(star_dir) from circrna_finder_input
@@ -1034,8 +1034,8 @@ process find_circ{
 
 process ciriquant{
 
-        publishDir "$params.outdir/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode:'copy'
-        publishDir "$params.outdir/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: 'copy'
 
         input:
           tuple val(base), file(fastq) from ciriquant_reads
@@ -1133,7 +1133,7 @@ process mapsplice_align{
 
 process mapsplice_parse{
 
-        publishDir "$params.outdir/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode:'copy'
 
         input:
           tuple val(base), file(raw_fusion) from mapsplice_fusion
@@ -1183,7 +1183,7 @@ process tophat_align{
 
 process uroborus{
 
-        publishDir "$params.outdir/circrna_discovery/uroborus", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/uroborus", mode:'copy'
 
         input:
           tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
@@ -1263,7 +1263,7 @@ if(tools_selected > 1){
 
   process get_counts_combined{
 
-          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
+          publishDir "${params.outdir}/circrna_discovery/count_matrix", mode:'copy'
 
 			    input:
 				    file(bed) from sample_counts.collect()
@@ -1286,8 +1286,7 @@ if(tools_selected > 1){
   process get_counts_single{
 
           echo true
-          publishDir "$params.outdir/circrna_discovery/count_matrix", mode:'copy'
-
+          publishDir "${params.outdir}/circrna_discovery/count_matrix", mode:'copy'
 
           input:
             file(bed) from single_tool.collect()
@@ -1333,8 +1332,8 @@ process remove_unwanted_biotypes{
 
 process get_mature_seq{
 
-        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'bed12/*.bed'
-        publishDir "$params.outdir/circrna_discovery", mode:'copy', pattern: 'fasta/*.fa'
+        publishDir "${params.outdir}/circrna_discovery", mode:'copy', pattern: 'bed12/*.bed'
+        publishDir "${params.outdir}/circrna_discovery", mode:'copy', pattern: 'fasta/*.fa'
 
 	      input:
 		      file(fasta) from ch_fasta
@@ -1443,7 +1442,7 @@ process annotate_circrnas{
 
 process master_annotate{
 
-        publishDir "$params.outdir/circrna_discovery/annotated", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/annotated", mode: 'copy'
 
         input:
           file(annotated) from circrna_annotated.collect()
@@ -1470,7 +1469,7 @@ process master_annotate{
 
 process miRanda{
 
-	      publishDir "$params.outdir/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode:'copy'
+	      publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode:'copy'
 
       	input:
       		file(mirbase) from miranda_miRs
@@ -1492,7 +1491,7 @@ process miRanda{
 
 process targetscan{
 
-    	  publishDir "$params.outdir/mirna_prediction/targetscan", mode:'copy'
+    	  publishDir "${params.outdir}/mirna_prediction/targetscan", mode:'copy'
 
       	input:
       		file(miR) from targetscan_miRs
@@ -1521,8 +1520,8 @@ ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(pa
 
 process circos_plots{
 
-        publishDir "$params.outdir/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
-        publishDir "$params.outdir/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
+        publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
+        publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
 
         input:
           tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_circos_plot
@@ -1581,8 +1580,6 @@ process Hisat2_align{
 
 process StringTie{
 
-        publishDir "$params.outdir/differential_expression/stringtie_quantification", mode:'copy'
-
         input:
           tuple val(base), file(bam) from hisat2_bam
           file(gtf) from ch_gencode_gtf
@@ -1609,7 +1606,7 @@ ch_phenotype = params.phenotype ? file(params.phenotype) : ''
 
 process diff_exp{
 
-        publishDir "$params.outdir/differential_expression", mode:'copy'
+        publishDir "${params.outdir}/differential_expression", mode:'copy'
 
 	      input:
 		      file(gtf_dir) from stringtie_dir.collect()
@@ -1675,7 +1672,7 @@ ch_DESeq2_dirs = circrna_dir_plots.combine(rnaseq_dir)
 
 process de_plots{
 
-        publishDir "$params.outdir/differential_expression/circrna_expression_plots", pattern:"*.pdf", mode:'copy'
+        publishDir "${params.outdir}/differential_expression/circrna_expression_plots", pattern:"*.pdf", mode:'copy'
 
       	input:
       		file(phenotype) from ch_phenotype
@@ -1710,7 +1707,7 @@ process de_plots{
 
 process master_report{
 
-        publishDir "$params.outdir/differential_expression/circrna_diff_exp_stats", mode:'copy'
+        publishDir "${params.outdir}/differential_expression/circrna_diff_exp_stats", mode:'copy'
 
       	input:
       		file(reports) from de_stats.collect()
