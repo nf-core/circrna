@@ -36,9 +36,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   * [circRNA Expression Plots](#circrna_expression_plots) - Plots of circRNA, circRNA - parent gene expression.
   * [RNA-Seq](#rnaseq) - Output directory for RNA-Seq DESeq2 analysis.
 
-# Download Files
+## Download Files
 
-## Reference Files
+### Reference Files
 
 `nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
 
@@ -54,7 +54,7 @@ There are 3 reference files output by `nf-core/circrna` (the user can specify ge
 
 </details>
 
-## miRNA Databases
+### miRNA Databases
 
 Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.shtml) and [TargetScan](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi) for compatibility with `miRanda` and `targetscan.pl` miRNA prediction tools, respectively.
 
@@ -67,9 +67,9 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 
 </details>
 
-# Preprocessing
+## Preprocessing
 
-## Bam to Fastq
+### Bam to Fastq
 
 `nf-core/circrna` can accept input BAM files generated from paired end sequencing reads (e.g `TCGA`), invoking [picard](https://broadinstitute.github.io/picard/) `SamToFastq`, reverting BAM files to paired end fastq files.
 
@@ -81,7 +81,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 
 </details>
 
-## FastQC
+### FastQC
 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads.
 It provides information about the quality score distribution across your reads and the per base sequence content (%T/A/G/C).
@@ -91,7 +91,7 @@ Information about adapter contamination and other over-represented sequences is 
 
 **Output directory for trimmed reads:** `${params.outdir}/quality_control/fastqc/trimmed`
 
-## BBDUK
+### BBDUK
 
 [BBDUK](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/) (DUK - "Decontamination Using Kmers") is capable of performing adapter trimming, quality trimming + filtering and read length filtering suitable for the quality control of sequencing reads.
 
