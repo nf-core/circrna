@@ -245,7 +245,7 @@ process bwa_index{
 
         output:
           file("${fasta.baseName}.*") into bwa_built
-          val("$launchDir/${params.outdir}index/bwa") into bwa_path
+          val("$launchDir/${params.outdir}/circrna_discovery/index/bwa") into bwa_path
 
         when: !(params.bwa_index) && 'ciriquant' in tool && 'circrna_discovery' in module
 
@@ -268,7 +268,7 @@ process hisat2_index{
 
         output:
           file("${fasta.baseName}.*.ht2") into hisat2_built
-          val("$launchDir/${params.outdir}index/hisat2") into hisat2_path
+          val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
 
         when: !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
 
@@ -320,7 +320,6 @@ process bowtie_index{
 
         output:
           file ("${fasta.baseName}.*") into bowtie_built
-          val("$launchDir/index/bowtie") into bowtie_path
 
         when: !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
 
