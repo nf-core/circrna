@@ -248,7 +248,7 @@ DESeq2 <- function(inputdata, data_type){
 
 	DESeq2_plots(dds, outdir)
 
-	for(group in contrasts[contrasts != "normal"]){
+	for(group in contrasts[contrasts != "control"]){
 
 		DEG <- getDESeqDEAbyContrast(dds, group, outdir)
 	}
