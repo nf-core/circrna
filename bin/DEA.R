@@ -70,6 +70,11 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 	circ <- circ + 1
 
 	inputdata$pheno <- checkinputdata(phenotype)
+
+	## make sure cols in pheno are factors
+	factor_me <- colnames(inputdata$pheno)
+	inputdata$pheno[factor_me] <- lapply(inputdata$pheno[factor_me], factor)
+	
 	cols <- rownames(inputdata$pheno)
 
 	if(identical(rownames(inputdata$pheno), colnames(gene_mat))){
