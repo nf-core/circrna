@@ -401,7 +401,7 @@ PCA_plot <- function(log2, outdir){
     		biplot <- biplot(
 			  p,
        			  colby=paste(exp_var),
-			  hline=0,
+			  			hline=0,
         		  vline=0,
         		  legendPosition="right",
         		  legendLabSize=12,

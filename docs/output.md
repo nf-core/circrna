@@ -486,7 +486,7 @@ The above experimental design will produce the `DESeq2` design formula `~replica
   * `DESeq2_condition_PCA.pdf`: Principal component plot (PC1 vs PC2) displaying the highest amount of variation present in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
   * `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
   * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
-  * `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
+  * `DESeq2_MAplot.pdf`: `DESeq2` MA plot.
   * `DESeq2_normalized_counts.txt`: Normalised circRNA counts.
   * `DESeq2_{condition_vs_control}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
   * `DESeq2_{condition_vs_control}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated circRNAs (fold change <= -1, pvalue <= 0.05).
@@ -550,7 +550,7 @@ Output directory of DESeq2 circRNA differential expression analysis, quality con
 * `DESeq2_condition_PCA.pdf`: Principal component plot (PC1 vs PC2) displaying the highest amount of variation present in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
 * `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
 * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
-* `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
+* `DESeq2_MAplot.pdf`: `DESeq2` MA plot.
 * `DESeq2_normalized_counts.txt`: Normalised gene counts.
 * `DESeq2_{condition_vs_control}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
 * `DESeq2_{condition_vs_control}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated genes (fold change <= -1, pvalue <= 0.05).

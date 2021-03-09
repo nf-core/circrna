@@ -122,7 +122,7 @@ if(params.genome_version == null){
 
 process download_genome {
 
-        publishDir "$params.outdir/reference", mode: 'copy'
+        publishDir "$params.outdir/circrna_discovery/reference", mode: 'copy'
 
         output:
           file('*.fa') into fasta_downloaded
@@ -170,7 +170,7 @@ process download_mirbase{
       	errorStrategy 'retry'
         maxRetries 10
 
-      	publishDir "$params.outdir/assets", mode:'copy'
+      	publishDir "$params.outdir/mirna_prediction/assets", mode:'copy'
 
       	output:
       		file("hsa_mature.fa") into miranda_miRs
@@ -191,7 +191,7 @@ process download_targetscan{
       	errorStrategy 'retry'
         maxRetries 10
 
-      	publishDir "$params.outdir/assets", mode:'copy'
+      	publishDir "$params.outdir/mirna_prediction/assets", mode:'copy'
 
       	output:
         	file("hsa_miR.txt") into targetscan_miRs
@@ -218,7 +218,7 @@ process download_targetscan{
 
 process samtools_index{
 
-        publishDir "$params.outdir/reference", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/index/samtools", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -238,7 +238,7 @@ ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_bu
 
 process bwa_index{
 
-        publishDir "$params.outdir/index/bwa", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/index/bwa", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -261,7 +261,7 @@ ch_bwa_index.view()
 
 process hisat2_index{
 
-        publishDir "$params.outdir/index/hisat2", mode: 'copy'
+        publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: 'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -283,7 +283,7 @@ ch_hisat2_index.view()
 
 process star_index{
 
-        publishDir "$params.outdir/index", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/index", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -313,7 +313,7 @@ ch_star_index.view()
 
 process bowtie_index{
 
-        publishDir "$params.outdir/index/bowtie", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -335,7 +335,7 @@ ch_bowtie_index.view()
 
 process bowtie2_index{
 
-        publishDir "$params.outdir/index/bowtie2", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
@@ -364,14 +364,14 @@ ch_bowtie2_index.view()
 
 process split_fasta{
 
-        publishDir "$params.outdir/index/chromosomes", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/reference/chromosomes", mode:'copy'
 
         input:
           file(fasta) from ch_fasta
 
         output:
           path("*.fa", includeInputs:true) into split_fasta
-          val("${launchDir}/${params.outdir}/index/chromosomes") into split_fasta_path
+          val("${launchDir}/${params.outdir}/circrna_discovery/index/chromosomes") into split_fasta_path
 
         when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
@@ -395,7 +395,7 @@ ch_fasta_chr.view()
 
 process ciriquant_yml{
 
-        publishDir "$params.outdir/assets", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/ciriquant", mode:'copy'
 
         input:
           file(gencode_gtf) from ch_gencode_gtf
@@ -476,7 +476,7 @@ if(params.input_type == 'bam'){
 
         process bam_to_fq{
 
-                publishDir "${params.outdir}/preprocessing/bamtofastq", mode:'copy'
+                publishDir "${params.outdir}/quality_control/preprocessing/bamtofastq", mode:'copy'
 
                 input:
                   tuple val(base), file(bam) from ch_input_sample
@@ -511,7 +511,7 @@ process FastQC {
 
         label 'py3'
 
-        publishDir "$params.outdir/quality_control/fastqc/raw", mode:'copy'
+        publishDir "${params.outdir}/quality_control/fastqc/raw", mode:'copy'
 
         input:
           tuple val(base), file(fastq) from fastqc_reads
@@ -529,7 +529,7 @@ process FastQC {
 
 process multiqc_raw {
 
-	      publishDir "$params.outdir/quality_control/multiqc", mode:'copy'
+	      publishDir "${params.outdir}/quality_control/multiqc", mode:'copy'
 
       	label 'py3'
 
@@ -551,7 +551,7 @@ if(params.skip_trim == 'no'){
 
         process bbduk {
 
-                publishDir "${params.outdir}/preprocessing/BBDUK", pattern: "*fq.gz", mode: 'copy'
+                publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: 'copy'
 
                 input:
                   tuple val(base), file(fastq) from trimming_reads
@@ -592,7 +592,7 @@ if(params.skip_trim == 'no'){
 
                 label 'py3'
 
-                publishDir "$params.outdir/quality_control/fastqc/trimmed", mode:'copy'
+                publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode:'copy'
 
                 input:
                   tuple val(base), file(fastq) from fastqc_trim_reads
@@ -608,7 +608,7 @@ if(params.skip_trim == 'no'){
 
 	      process multiqc_trim {
 
-              	publishDir "$params.outdir/quality_control/multiqc", mode:'copy'
+              	publishDir "${params.outdir}/quality_control/multiqc", mode:'copy'
 
               	label 'py3'
 
