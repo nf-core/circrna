@@ -394,7 +394,7 @@ ch_fasta_chr.view()
 
 process ciriquant_yml{
 
-        publishDir "${params.outdir}/circrna_discovery/ciriquant", mode:'copy'
+        publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode:'copy'
 
         input:
           file(gencode_gtf) from ch_gencode_gtf
