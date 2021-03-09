@@ -113,28 +113,28 @@
                     "fa_icon" : "fas fa-address-book",
                     "description": "Path to SAMtools index file.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\n```bash\n--fasta_fai \"/index/GRCh38.fa.fai\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\n```bash\n--fasta_fai \"circrna_discovery/index/GRCh38.fa.fai\"\n```"
                 },
                 "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie index files.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie_index \"/index/bowtie/*\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie_index \"circrna_discovery/index/bowtie/*\"\n```"
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie2 index files.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie2 indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie2_index \"/index/bowtie2/*\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to Bowtie2 indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie2_index \"circrna_discovery/index/bowtie2/*\"\n```"
                 },
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to BWA index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"/index/bwa\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"circrna_discovery/index/bwa\"\n```"
 
                 },
                 "hisat2_index": {
@@ -142,7 +142,7 @@
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to HISAT2 index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"/index/hisat2\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"circrna_discovery/index/hisat2\"\n```"
 
                 },
                 "star_index": {
@@ -150,7 +150,7 @@
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to STAR index directory.",
                     "default": "null",
-                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:*\n```bash\n--star_index \"/index/STAR\"\n```"
+                    "help_text": "Automatically generated if set to `null`. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the path to STAR indices directory *e.g:*\n```bash\n--star_index \"circrna_discovery/index/STAR\"\n```"
                 }
             }
         },
