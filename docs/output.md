@@ -525,7 +525,7 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 </p>
 
 <p markdown="1" align="center">
-<img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="500">
+<img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="600">
 </p>
 
 ### RNA-Seq
