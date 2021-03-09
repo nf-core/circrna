@@ -472,22 +472,34 @@ This achieves the highest sensitivity for novel junction alignment. For instance
   * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
   * `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
   * `DESeq2_normalized_counts.txt`: Normalised circRNA counts.
-  * `DESeq2_{condition_vs_wildtype}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
-  * `DESeq2_{condition_vs_wildtype}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated circRNAs (fold change <= -1, pvalue <= 0.05).
-  * `DESeq2_{condition_vs_wildtype}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
-  * `DESeq2_{condition_vs_wildtype}_global_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
-  * `DESeq2_{condition_vs_wildtype}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
-  * `DESeq2_{condition_vs_wildtype}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated circRNAs (fold change >= 1, pvalue <= 0.05).
-  * `DESeq2_{condition_vs_wildtype}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+  * `DESeq2_{condition_vs_control}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
+  * `DESeq2_{condition_vs_control}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated circRNAs (fold change <= -1, pvalue <= 0.05).
+  * `DESeq2_{condition_vs_control}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
+  * `DESeq2_{condition_vs_control}_global_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
+  * `DESeq2_{condition_vs_control}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
+  * `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated circRNAs (fold change >= 1, pvalue <= 0.05).
+  * `DESeq2_{condition_vs_control}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
   * `DESeq2_sample_dendogram.pdf`: Dendogram depicting sample distances using [pvclust](https://cran.r-project.org/web/packages/pvclust/index.html).
   * `DESeq2_sample_heatmap.pdf`: Manhattan distance heatmap of samples.
   * `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
 
 </details>
 
-Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs. Currently `nf-core/circrna` supports a simple two factor response variable (wild type vs. condition) and an explanatory variable such as 'replicates'.
+Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs. `nf-core/circrna` will perform differential expression analysis on all factors vs. 'control' within the response variable (which must be named 'condition'):
 
-The authors of `nf-core/circrna` plan on facilitating more complex design types in the near future.
+| samples | condition | replicates |
+|---------|-----------|------------|
+| ctrl_1  | control   | 1          |
+| ctrl_2  | control   | 2          |
+| ctrl_3  | control   | 3          |
+| A549_1  | lung      | 1          |
+| A549_2  | lung      | 2          |
+| A549_3  | lung      | 3          |
+| A375_1  | melanoma  | 1          |
+| A375_2  | melanoma  | 2          |
+| A375_3  | melanoma  | 3          |
+
+The above experimental design will produce `lung_vs_control` and `melanoma_vs_control` outputs from `DESeq2`.
 
 ### circRNA Differential Expression Stats
 
@@ -538,13 +550,13 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
 * `DESeq2_MAplot.pdf`: **needs to be fixed for res not dds. **
 * `DESeq2_normalized_counts.txt`: Normalised gene counts.
-* `DESeq2_{condition_vs_wildtype}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
-* `DESeq2_{condition_vs_wildtype}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated genes (fold change <= -1, pvalue <= 0.05).
-* `DESeq2_{condition_vs_wildtype}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed genes.
-* `DESeq2_{condition_vs_wildtype}_global_heatmap.pdf`: Heatmap of all differentially expressed genes.
-* `DESeq2_{condition_vs_wildtype}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (pvalue <= 0.05).
-* `DESeq2_{condition_vs_wildtype}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated genes (fold change >= 1, pvalue <= 0.05).
-* `DESeq2_{condition_vs_wildtype}_volcano_plot.pdf`: Volcano plot of differentially expressed genes from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+* `DESeq2_{condition_vs_control}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
+* `DESeq2_{condition_vs_control}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated genes (fold change <= -1, pvalue <= 0.05).
+* `DESeq2_{condition_vs_control}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed genes.
+* `DESeq2_{condition_vs_control}_global_heatmap.pdf`: Heatmap of all differentially expressed genes.
+* `DESeq2_{condition_vs_control}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (pvalue <= 0.05).
+* `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated genes (fold change >= 1, pvalue <= 0.05).
+* `DESeq2_{condition_vs_control}_volcano_plot.pdf`: Volcano plot of differentially expressed genes from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
 * `DESeq2_sample_dendogram.pdf`: Dendogram depicting sample distances using [pvclust](https://cran.r-project.org/web/packages/pvclust/index.html).
 * `DESeq2_sample_heatmap.pdf`: Manhattan distance heatmap of samples.
 * `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
