@@ -71,9 +71,9 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 
 	inputdata$pheno <- checkinputdata(phenotype)
 
-	# make covariates factors (partic if numeric)
+	# make covariates factors (particularly if numeric)
 	factor_me <- colnames(inputdata$pheno)
-	inputdata$pheno[factor_me] <- lapply(inputdata$pheno[factor_me], factor)
+	inputdata$pheno[factor_me] <- as.data.frame(lapply(inputdata$pheno[factor_me], factor))
 
 	cols <- rownames(inputdata$pheno)
 
