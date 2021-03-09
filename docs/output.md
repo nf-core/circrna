@@ -455,6 +455,10 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 `nf-core/circrna` plots the filtered miRNA targets given using a circos plot, displaying the miRNA response elements along the mature circRNA sequence. Please note this plot becomes overcrowded when plotting `EIciRNAs` due to their highly variable sequence length (in contrast to `circRNAs` and `ciRNAs` which typically fall within the range of 100 - 1000nt). Therefore `EIciRNAs` with large mature spliced lengths should be considered as potentially spurious calls.
 
+<p markdown="1" align="center">
+<img src="images/circos_plot.png" alt="circRNA - miRNA circos plot" width="500">
+</p>
+
 ## Differential Expression Analysis
 
 ### circRNA
