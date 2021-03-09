@@ -52,10 +52,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 ### Reference Files
 
-`nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
-
-There are 3 reference files output by `nf-core/circrna` & the user can specify genome versions `GRCh37/GRCh38` via the configuration file using the `--genome_version` parameter.
-
 <details markdown="1">
 <summary>Output files</summary>
 
@@ -65,6 +61,11 @@ There are 3 reference files output by `nf-core/circrna` & the user can specify g
   * `*.txt`: Customised reference text annotation file.
 
 </details>
+
+`nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended.
+
+There are 3 reference files output by `nf-core/circrna` & the user can specify genome versions `GRCh37/GRCh38` via the configuration file using the `--genome_version` parameter.
+
 
 ### miRNA Databases
 
@@ -124,7 +125,9 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 
 ## Genome Index Files
 
-`nf-core/circrna` will automatically generate genome index files depending on the circRNA quantification tool selected for the `circrna_discovery` module. In subsequent workflow runs, users should specify the paths to the genome index files generated to save compute resources - please check `nf-core/circrna` [parameter documentation](https://nf-co.re/circrna/dev/parameters#reference-genome-options) for guidance on how to do this.
+`nf-core/circrna` will automatically generate genome index files depending on the circRNA quantification tools selected for the `circrna_discovery` module. In subsequent workflow runs, users should specify the paths to the genome index files generated to save compute resources - please check `nf-core/circrna` [parameter documentation](https://nf-co.re/circrna/dev/parameters#reference-genome-options) for guidance on how to do this.
+
+*N.B:* Index files must be regenerated if the user re-runs analysis using different genome version.
 
 <details markdown="1">
 <summary>Output files</summary>
@@ -135,7 +138,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
   * `bwa/`: Directory containing `BWA` indices.
   * `hisat2/`: Directory containing `HISAT2` indices.
   * `samtools`: Directory containing `SAMtools` index file.
-  * `STAR`: Directory containing `STAR` indices. 
+  * `STAR`: Directory containing `STAR` indices.
 
 </details>
 
@@ -151,12 +154,14 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 
 Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantification tools.
 
-`MapSplice` requires the reference FASTA file to be split into individual FASTA files per chromosome, whilst `CIRIquant` requires a `.yaml` file specifying the containerised paths of `BWA`, `SAMtools`, `HISAT2`, `StringTie` executables in addition to the absolute paths for the reference FASTA, GTF files and `BWA`, `HISAT2` genome index files.
+`CIRIquant` requires a `.yaml` file specifying the containerised paths of `BWA`, `SAMtools`, `HISAT2`, `StringTie` executables in addition to the absolute paths for the reference FASTA, GTF files and `BWA`, `HISAT2` genome index files.
+
+`MapSplice` requires the reference FASTA file to be split into individual FASTA files per chromosome.
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `circrna_discovery/index/chromosomes/`
+* `circrna_discovery/reference/chromosomes/`
   * `*.fa`: Individual FASTA files per chromosome.
 * `circrna_discovery/ciriquant/`
   * `travis.yml`: Example of `.yml` file below which is automatically generated for the user.
