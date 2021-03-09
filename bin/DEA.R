@@ -212,7 +212,7 @@ DESeq2 <- function(inputdata, data_type){
 		colData=inputdata$pheno,
 		design = inputdata$design)
 
-		dds$condition <- relevel(dds$condition, ref="normal")
+		dds$condition <- relevel(dds$condition, ref="control")
 		dds <- DESeq(dds, quiet=TRUE)
 		contrasts <- levels(dds$condition)
 
@@ -226,7 +226,7 @@ DESeq2 <- function(inputdata, data_type){
 		countData=inputdata$gene,
 		colData=inputdata$pheno,
 		design = inputdata$design)
-		tmp$condition <- relevel(tmp$condition, ref="normal")
+		tmp$condition <- relevel(tmp$condition, ref="control")
 		tmp <- DESeq(tmp, quiet=TRUE)
 		contrasts <- levels(tmp$condition)
 
@@ -237,7 +237,7 @@ DESeq2 <- function(inputdata, data_type){
 		colData=inputdata$pheno,
 		design = inputdata$design)
 
-		dds$condition <- relevel(dds$condition, ref="normal")
+		dds$condition <- relevel(dds$condition, ref="control")
 		dds <- DESeq(dds, quiet=TRUE)
 		contrasts <- levels(dds$condition)
 		sizeFactors(dds) <- sizefactors
@@ -258,8 +258,8 @@ DESeq2 <- function(inputdata, data_type){
 
 
 getDESeqDEAbyContrast <- function(dds, group, outdir) {
-	contrast <- paste("normalvs", group, sep="")
-    	res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", group, "normal"))
+	contrast <- paste("control_vs_", group, sep="")
+    	res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", group, "control"))
     	cat('\n\nSummary data from DESeq2 for ', contrast, ':', sep="")
     	summary(res)
 
