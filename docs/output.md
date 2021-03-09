@@ -1,40 +1,51 @@
-# nf-core/circrna: Output
+## Introduction
+This documentation describes the output of `nf-core/circrna` for the test dataset which runs all 3 modules in the workflow: circRNA discovery, miRNA prediction and differential expression analysis of circular RNAs in RNA-Seq data.  
+
+The processes listed below will fall into one of 4 output directories produced by `nf-core/circrna`:
+
+```console
+|-- results/
+       |-- quality_control
+       |-- circrna_discovery
+       |-- mirna_prediction
+       |-- differential_expression
+```
 
 ## Pipeline Overview:
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-* [Download Files](#downloadfiles)
-  * [Reference Files](#reference) - Download reference files.
-  * [miRNA Databases](#mirnadb) - Download mature miRNA sequences.
+* [Download Files](#download-files)
+  * [Reference Files](#reference-files) - Download reference files
+  * [miRNA Databases](#mirna-databases) - Download mature miRNA sequences
 * [Preprocessing](#preprocessing)
-  * [BAM to Fastq](#bamtofastq) - Convert BAM to fastq.
-  * [FastQC](#fastqc) - Raw read QC.
-  * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering.
-* [circRNA Quantification](#circrnaquantification)
-  * [Miscellaneous Requirements](#misc) - Generate tool specific requirements.
-  * [CIRCexplorer2](#circexplorer2) - Annotation of circular RNAs from STAR 2 pass mode Chimeric out files.
-  * [circRNA-finder](#circrnafinder) - Identify circular RNAs from STAR 2 pass mode SAM files.
-  * [CIRIquant](#ciriquant) - De novo identification of circular RNAs using circular pseudo reference.
-  * [DCC](#dcc) - Identify circular RNAs from STAR 2 pass mode utilising joint *and* separate read pairs.
-  * [find_circ](#findcirc) - Identify circular RNAs in unmapped anchors from Bowtie2.
-  * [MapSplice](#mapsplice) - Identify circular RNAs in unmapped anchors from Bowtie.
-  * [STAR](#star) - Characterise back-splice junctions in all samples using 2 pass mode.
-* [circRNA Annotation](#circannotation)
-  * [Annotated circRNAs](#anncircs) - Basic circRNA information.
-  * [BED12 files](#bed12files) - Individual circRNA coordinates in BED12 format.
-  * [count matrix](#countmatrix) - circRNA counts matrix
-  * [fasta](#fasta) - mature spliced circRNA fasta sequence.
-* [miRNA Target Prediction](#mirnaprediction)
-  * [miranda](#miranda) - Raw output from miRanda.
-  * [targetscan](#targetscan) - Raw output from TargetScan.
-  * [mirna_targets](#mirnatargets) - Filtered outputs from miRanda, TargetScan for each circRNA.
-  * [circos_plots](#circosplots) - circos plot of circRNA - miRNA filtered predictions.
-* [Differential Expression Analysis](#differentialexpression)
-  * [circRNA](#circrna) - Output directory for circRNA DESeq2 analysis.
-  * [circRNA Differential Expression Stats](#circrna_de_stats) - Differentially expressed circRNA statistics.
-  * [circRNA Expression Plots](#circrna_expression_plots) - Plots of circRNA, circRNA - parent gene expression.
-  * [RNA-Seq](#rnaseq) - Output directory for RNA-Seq DESeq2 analysis.
+  * [BAM to Fastq](#bam-to-fastq) - Convert BAM to fastq
+  * [FastQC](#fastqc) - Raw read QC
+  * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
+* [circRNA Quantification](#circrna-quantification)
+  * [Miscellaneous Requirements](#miscellaneous-requirements) - Generate tool specific requirements
+  * [CIRCexplorer2](#circexplorer2) - Annotation of circular RNAs from STAR 2 pass mode Chimeric out files
+  * [circRNA finder](#circrna-finder) - Identify circular RNAs from STAR 2 pass mode SAM files
+  * [CIRIquant](#ciriquant) - De novo identification of circular RNAs using circular pseudo reference
+  * [DCC](#dcc) - Identify circular RNAs from STAR 2 pass mode utilising joint *and* separate read pairs
+  * [find circ](#find-circ) - Identify circular RNAs in unmapped anchors from Bowtie2
+  * [MapSplice](#mapsplice) - Identify circular RNAs in unmapped anchors from Bowtie
+  * [STAR](#star) - Characterise back-splice junctions in all samples using 2 pass mode
+* [circRNA Annotation](#circrna-annotation)
+  * [Annotated circRNAs](#annotated-circrnas) - Basic circRNA information
+  * [BED12 files](#bed12-files) - Individual circRNA coordinates in BED12 format
+  * [count matrix](#count-matrix) - circRNA counts matrix
+  * [fasta](#fasta) - mature spliced circRNA fasta sequence
+* [miRNA Target Prediction](#mirna-target-prediction)
+  * [miranda](#miranda) - Raw output from miRanda
+  * [targetscan](#targetscan) - Raw output from TargetScan
+  * [miRNA targets](#mirna-targets) - Filtered outputs from miRanda, TargetScan for each circRNA
+  * [circos plots](#circos-plots) - circos plot of circRNA - miRNA filtered predictions
+* [Differential Expression Analysis](#differential-expression-analysis)
+  * [circRNA](#circrna) - Output directory for circRNA DESeq2 analysis
+  * [circRNA Differential Expression Stats](#circrna-differential-expression-stats) - Differentially expressed circRNA statistics
+  * [circRNA Expression Plots](#circrna-expression-plots) - Plots of circRNA, circRNA - parent gene expression
+  * [RNA-Seq](#rna-seq) - Output directory for RNA-Seq DESeq2 analysis
 
 ## Download Files
 
@@ -107,7 +118,7 @@ There are two outputs from `BBDUK`, trimmed sequencing reads and a `BBDUK` stati
 
 </details>
 
-# circRNA Quantification
+## circRNA Quantification
 
 `nf-core/circrna` is capable of performing circRNA quantification using a combination of tools or a single tool. This is the core module of the workflow and is mandatory in the `--module` parameter via the configuration file (both `mirna_prediction` and `differential_expression` modules depend on `circrna_discovery`).  
 
@@ -115,7 +126,7 @@ There are two outputs from `BBDUK`, trimmed sequencing reads and a `BBDUK` stati
 --module 'circrna_discovery'
 ```
 
-## Miscellaneous Requirements
+### Miscellaneous Requirements
 
 Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantification tools.
 
@@ -145,7 +156,7 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 </details>
 
-## CIRCexplorer2
+### CIRCexplorer2
 
 [CIRCexplorer2](https://circexplorer2.readthedocs.io/en/latest/) uses `*.Chimeric.out.junction` files generated from `STAR` 2 pass mode to extract back-splice junction sites using the `CIRCexplorer2 parse` module. Following this, `CIRCexplorer2 annotate` performs re-alignment of reads to the back-splice junction sites to determine the precise positions of downstream donor and upstream acceptor splice sites. Back-splice junction sites are subsequently updated and annotated using the customised annotation text file.
 
@@ -161,9 +172,9 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 </details>
 
-## circrna_finder
+### circRNA finder
 
-[circrna_finder](https://github.com/orzechoj/circRNA_finder) uses `*.Chimeric.out.sam`, `*.Chimeric.out.junction` & `*.SJ.out.tab` files to identify circular RNAs. It's dependency on output SAM files containing chimeric reads requires the flag `--chimOutType Junctions SeparateSAMold` in STAR, which is hard-coded  in the pipeline. This comes at the cost of increasing bloat in the `work/` & `circrna_discovery/tool_outputs/STAR` directories.
+[circRNA finder](https://github.com/orzechoj/circRNA_finder) uses `*.Chimeric.out.sam`, `*.Chimeric.out.junction` & `*.SJ.out.tab` files to identify circular RNAs. It's dependency on output SAM files containing chimeric reads requires the flag `--chimOutType Junctions SeparateSAMold` in STAR, which is hard-coded  in the pipeline. This comes at the cost of increasing bloat in the `work/` & `circrna_discovery/tool_outputs/STAR` directories.
 
 <details markdown="1">
 <summary>Output files</summary>
@@ -179,7 +190,7 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 </details>
 
-## CIRIquant
+### CIRIquant
 
 [CIRIquant](https://github.com/Kevinzjy/CIRIquant) operates by aligning RNA-Seq reads using `HISAT2` and [CIRI2](https://sourceforge.net/projects/ciri/files/CIRI2/) to identify putative circRNAs. Next, a pseudo reference index is generated using `bwa index ` by concatenating the two full-length sequences of the putative back-splice junction regions. Candidate circular reads are re-aligned against this pseudo reference using `bwa mem`, and back-splice junction reads are determined if they can be linearly and completely aligned to the putative back-splice junction regions.
 
@@ -204,7 +215,7 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 *Note:* The `--no-gene` flag has been included, disabling host gene expression analysis.
 
-## DCC
+### DCC
 
 [DCC](https://github.com/dieterich-lab/DCC) identifies back-splice junction sites from `*Chimeric.out.junction`, `*SJ.out.tab` & `*Aligned.sortedByCoord.out.bam` files generated by `STAR` 2 pass mode mapping the paired end reads both jointly and separately (`STAR` does not output read pairs that contain more than one chimeric junction thus a more granular approach is taken by `DCC`, mapping R1 + R2, then R1 & R2 individually to fully characterise back-splice junctions in reads).
 
@@ -231,9 +242,9 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 *Note:* `-G` flag has been omitted from `nf-core/circrna`, disabling host gene expression analysis.
 
-## find_circ
+### find circ
 
-[find_circ](https://github.com/marvin-jens/find_circ) utilises `Bowtie2` short read mapper to align RNA-Seq reads to the genome. Reads that align fully and contiguously are discarded. Unmapped reads are converted to 20mers and aligned independently to find unique anchor positions within spliced exons - anchors that align in reverse orientation indicate circular RNA junctions. Anchor alignments are extended and must meet the following criteria:
+[find circ](https://github.com/marvin-jens/find_circ) utilises `Bowtie2` short read mapper to align RNA-Seq reads to the genome. Reads that align fully and contiguously are discarded. Unmapped reads are converted to 20mers and aligned independently to find unique anchor positions within spliced exons - anchors that align in reverse orientation indicate circular RNA junctions. Anchor alignments are extended and must meet the following criteria:
 
 1. Breakpoints flanked by GT/AG splice sites.
 2. Unambiguous breakpoint detection.
@@ -255,7 +266,7 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 </details>
 
-## MapSplice
+### MapSplice
 
 [MapSplice](http://www.netlab.uky.edu/p/bioinfo/MapSplice2) first splits reads into segments, and maps them to reference genome by using `Bowtie`. `MapSplice` attempts to fix unmapped segments as gapped alignments, with each gap corresponding to a splice junction. Finally a remapping step is used to identify back-spliced alignments that are in the presence of small exons.
 
@@ -279,7 +290,7 @@ Generates specific requirements for `CIRIquant` & `MapSplice` circRNA quantifica
 
 *Note:* `fusions_raw.txt` are supplied to `CIRCexplorer2 parse` & `CIRCexplorer2 annotate` for robust annotation.
 
-## STAR
+### STAR
 
 [STAR](https://github.com/alexdobin/STAR) can characterise novel splice junctions in RNA-Seq data by specifying `--ChimOutType Junctions`, with reported novel junctions written to a `*SJ.out.tab` file (per sample). Following the initial `STAR` alignment, a 2nd pass strategy is employed whereby **all** `*SJ.out.tab` files from RNA-Seq samples are converted to `*SJFile.tab` files of novel junction coordinates and provided during the 2nd alignment step via `--sjdbFileChrStartEnd`.
 
@@ -312,9 +323,9 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-# circRNA Annotation
+## circRNA Annotation
 
-## Annotated circRNAs
+### Annotated circRNAs
 
 `nf-core/circrna` takes filtered BED outputs from circRNA quantification tools and performs circRNA annotation using a filtered GTF file (biotypes not involved in circRNA biogenesis are removed). circRNA mature spliced length, parent gene and circRNA type are calculated using a customised script.
 
@@ -326,7 +337,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## BED12 Files
+### BED12 Files
 
 `nf-core/circrna` outputs each filtered circRNA in BED12 format. Initially an intermediate file used for calculating the mature spliced sequence of circRNAs, the user may wish to concatenate the individual files into a master file for visualisation in IGV.
 
@@ -338,7 +349,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## Count Matrix
+### Count Matrix
 
 `nf-core/circrna` produces a counts matrix of circRNA read counts for each sample. circRNAs with BSJ reads < 2 have been removed during the quantification step, with a further filtering step included depending on the number of quantification tools selected. If the user has selected more than one circRNA quantification tool, `nf-core/circrna` will demand that a circRNA be called by at least two quantification tools or else it is removed. This approach is recommended to reduce the number of false positives.
 
@@ -350,7 +361,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## Fasta
+### Fasta
 
 `nf-core/circrna` produces the mature spliced sequence of circRNAs in fasta format. Note that `nf-core/circrna` assumes for `circRNA type: circRNA` that all introns are removed from the mature sequence. For `circRNA type: EIciRNA` if the start/end of the circRNA falls outside 200nt of an annotated exon, the entire circRNA sequence (both exonic and intronic) is assumed to be in the mature splice length. If the `EIciRNA` falls within 200nt of an annotated exon, `nf-core/circrna` attempts to re-fit the circRNA as `circRNA type: circRNA` and all introns are removed from the sequence.
 
@@ -362,7 +373,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-# miRNA Prediction
+## miRNA Prediction
 
 `nf-core/circrna` performs miRNA target prediction of mature circRNA sequences using a combination of `miRanda` and `TargetScan` to maximise the target miRNA profile and reduce spurious calls. The module is invoked via the `--module` parameter in the configuration file or via the command line:
 
@@ -370,7 +381,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 --module 'circrna_discovery, mirna_prediction'
 ```
 
-## miRanda
+### miRanda
 
 [miRanda](http://cbio.mskcc.org/miRNA2003/miranda.html) performs miRNA target prediction of a genomic sequence against a miRNA database in 2 phases:
 
@@ -387,7 +398,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## TargetScan
+### TargetScan
 
 [TargetScan](http://www.targetscan.org/vert_72/) predicts biological targets of miRNAs by searching for the presence of conserved 8mer, 7mer, and 6mer sites that match the seed region of each miRNA.
 
@@ -401,7 +412,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## miRNA_targets
+### miRNA_targets
 
 `nf-core/circrna` performs miRNA target filtering on `miRanda` and `TargetScan` predictions:
 
@@ -421,7 +432,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-## Circos Plot
+### Circos Plot
 
 `nf-core/circrna` plots the filtered miRNA targets given in `mirna_prediction/mirna_targets/` using a circos plot, displaying the miRNA response elements along the mature circRNA sequence. Please note this plot becomes overcrowded when plotting `EIciRNAs` due to their highly variable sequence length (in contrast to `circRNAs` and `ciRNAs` which typically fall within the range of 100 - 1000nt). Therefore `EIciRNAs` with large mature spliced lengths should be considered as potentially spurious calls.
 
@@ -433,7 +444,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-# Differential Expression
+## Differential Expression Analysis
 
 `nf-core/circrna` performs circRNA differential expression analysis using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html). The module is invoked by the `--module` parameter in the configuration file or via the command line:
 
@@ -441,7 +452,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 --module 'circrna_discovery, differential_expression'
 ```
 
-## circRNA
+### circRNA
 
 Output directory of DESeq2 circRNA differential expression analysis, quality control, results plots and contrast outputs.
 
@@ -471,7 +482,7 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 
 </details>
 
-## circRNA Differential Expression Stats
+### circRNA Differential Expression Stats
 
 `nf-core/circrna` combines the output of `DESeq2` and annotated circRNAs to provide a comprehensive annotation of differentially expressed circRNAs. Headers in all files are: circRNA_ID, Type, Mature_Length, Parent_Gene, Strand, Log2FC, pvalue, Adjusted_pvalue, Description
 
@@ -487,7 +498,7 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 
 </details>
 
-## circRNA Expression Plots
+### circRNA Expression Plots
 
 `nf-core/circrna` will produce a boxplot of circRNA expression and a lineplot of circRNA - parent gene expression between the phenotypes specified in the `DESeq2` analysis.
 
@@ -502,7 +513,7 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 
 </details>
 
-## RNA-Seq
+### RNA-Seq
 
 Output directory of `DESeq2` gene differential expression analysis, complete with quality control, results plots and contrast outputs.
 
