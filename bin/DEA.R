@@ -71,10 +71,10 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 
 	inputdata$pheno <- checkinputdata(phenotype)
 
-	## make sure cols in pheno are factors
+	# make covariates factors (partic if numeric)
 	factor_me <- colnames(inputdata$pheno)
 	inputdata$pheno[factor_me] <- lapply(inputdata$pheno[factor_me], factor)
-	
+
 	cols <- rownames(inputdata$pheno)
 
 	if(identical(rownames(inputdata$pheno), colnames(gene_mat))){
@@ -276,7 +276,7 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
         de <- c(de_up, de_down)
         cts <- counts(dds, normalized=T)
         log2 <- log2(cts +1)
-        global_heatmap(de, log2, contrast, outdir)
+        global_heatmap(de, log2, contrast, group, outdir)
 
 	if(outdir == "RNA-Seq/"){
 		up_regulated <- annotate_de_genes(up_regulated)
@@ -392,12 +392,13 @@ PCA_plot <- function(log2, outdir){
 
 	p <- pca(log2, metadata=inputdata$pheno)
   	n_comp <- length(p$components)
-  	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"))
-  	scree <- screeplot(p,
-        	 						 components = getComponents(p, 1:n_comp),
-        	 	 					 hline = 80,
-		 								 	 subtitle="80% variation explained")
-	  plot(scree)
+  	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"), width=10, height=8)
+  	scree <- screeplot(
+		 p,
+        	 components = getComponents(p, 1:n_comp),
+        	 hline = 80,
+		 subtitle="80% variation explained")
+	plot(scree)
   	dev.off()
 
   	for(exp_var in names(inputdata$pheno)){
@@ -405,11 +406,13 @@ PCA_plot <- function(log2, outdir){
     		biplot <- biplot(
 			  p,
        			  colby=paste(exp_var),
-			  			hline=0,
+			  hline=0,
         		  vline=0,
         		  legendPosition="right",
         		  legendLabSize=12,
         		  legendIconSize=8,
+			  lab = FALSE,
+			  labSize = 0.0,
         		  drawConnectors=FALSE,
         		  title="PCA bi-plot",
         		  subtitle="PC1 vs. PC2")
@@ -442,11 +445,8 @@ volcano_plot <- function(res, contrast, outdir){
 	print(max_height)
 	pdf(file.path(outdir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
 	p <- EnhancedVolcano(res,
-			lab=rownames(res),
 			x="log2FoldChange",
 			y="pvalue",
-			#selectLab=plot_top_20,
-			#drawConnectors=TRUE,
 			FCcutoff=1.0,
 			pCutoff=0.05,
 			title="Volcano Plot",
@@ -461,13 +461,11 @@ volcano_plot <- function(res, contrast, outdir){
 }
 
 
-global_heatmap <- function(de, log2, contrast, outdir){
+global_heatmap <- function(de, log2, contrast, group, outdir){
 
-        conditions <- strsplit(contrast, "vs")
-        level <- unlist(conditions)[1]
         pheno <- inputdata$pheno
         pheno_mtx <- as.matrix(pheno)
-        index <- which(matrix(grepl(paste(level), pheno_mtx), ncol=ncol(pheno_mtx)), arr.ind=T)
+        index <- which(matrix(grepl(paste(group), pheno_mtx), ncol=ncol(pheno_mtx)), arr.ind=T)
         index_col <- unique(index[,2])
         col_anno <- names(pheno[index_col])
         sample_col <- pheno[paste(col_anno)]
