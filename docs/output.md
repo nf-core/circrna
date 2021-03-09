@@ -520,6 +520,14 @@ The authors of `nf-core/circrna` plan on facilitating more complex design types 
 
 *Note:* if the parent gene cannot be found in the normalised RNA-Seq count matrix, the line plot of circRNA - parent gene expression will be omitted. This behaviour is observed in the test dataset, which has been heavily modified to maximise circRNA reads and not reads aligning to transcripts for gene expression analysis.
 
+<p markdown="1" align="center">
+<img src="images/boxplot.png" alt="circRNA boxplot" width="500">
+</p>
+
+<p markdown="1" align="center">
+<img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="500">
+</p>
+
 ### RNA-Seq
 
 <details markdown="1">
