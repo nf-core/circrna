@@ -1230,13 +1230,14 @@ tools_selected = tool.size()
 println(tools_selected)
 
 if(tools_selected > 1){
-
+  println("if statement for tools_selected > 1 worked. Testing view on combined_tool channel")
   combined_tool = ciriquant_results.join(circexplorer2_results).join(dcc_results).join(circrna_finder_results).join(find_circ_results).join(mapsplice_results)
-
+  (a, b) = combined_tool.into(2)
+  a.view()
   process consolidate_algorithms{
 
           input:
-            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
+            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from b
 
           output:
             file("${base}.bed") into sample_counts
