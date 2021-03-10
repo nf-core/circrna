@@ -1235,7 +1235,7 @@ if(tools_selected > 1){
   process consolidate_algorithms{
 
           input:
-            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
+            file(bed_files) from combined_tool.collect()
 
           output:
             file("${base}.bed") into sample_counts
