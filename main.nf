@@ -1230,12 +1230,14 @@ tools_selected = tool.size()
 if(tools_selected > 1){
 
   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
+  // This causes a cardinality warning, but it works. Ask for help for cleaner fix in future.
+
   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
 
   process consolidate_algorithms{
 
           input:
-            file(bed_files) from combined_tool.collect()
+            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool.ifEmpty("")
 
           output:
             file("${base}.bed") into sample_counts
