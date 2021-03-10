@@ -1231,6 +1231,7 @@ if(tools_selected > 1){
 
   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
   // Causes WARN: input caridnality does not match (due to null items), but script works.
+  // No WARN if ciriquant selected in tool. 
   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
 
   process consolidate_algorithms{
