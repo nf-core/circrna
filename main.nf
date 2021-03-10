@@ -1156,6 +1156,8 @@ process mapsplice_parse{
         """
 }
 
+(foo, bar) = mapsplice_results.into(2)
+foo.view()
 
 // UROBORUS
 
