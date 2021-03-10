@@ -1233,7 +1233,7 @@ println(tools_selected)
 
 if(tools_selected > 1){
   println("if statement for tools_selected > 1 worked. Testing view on combined_tool channel")
-  combined_tool = ciriquant_results.join(circexplorer2_results).join(dcc_results).join(circrna_finder_results).join(find_circ_results).join(mapsplice_results)
+  combined_tool = ciriquant_results.join(circexplorer2_results).join(dcc_results).join(circrna_finder_results).join(find_circ_results).join(bar)
   (a, b) = combined_tool.into(2)
   a.view()
   process consolidate_algorithms{
@@ -1285,7 +1285,7 @@ if(tools_selected > 1){
 
 } else{
 
-  single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results)
+  single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, bar)
 
   process get_counts_single{
 
