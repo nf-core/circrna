@@ -1228,7 +1228,7 @@ process uroborus{
 // check the length of the tool list
 tools_selected = tool.size()
 
-if(tools_selected > 1 && 'circrna_discovery' in tool){
+if(tools_selected > 1){
 
 	combined_tool = ciriquant_results.join(circexplorer2_results).join(dcc_results).join(circrna_finder_results).join(find_circ_results).join(mapsplice_results)
 
@@ -1259,7 +1259,7 @@ if(tools_selected > 1 && 'circrna_discovery' in tool){
 
           mv combined_counts.bed ${base}.bed
           """
-    }
+  }
 
   process get_counts_combined{
 
