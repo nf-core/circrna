@@ -1156,9 +1156,6 @@ process mapsplice_parse{
         """
 }
 
-(foo, bar) = mapsplice_results.into(2)
-foo.view()
-
 // UROBORUS
 
 process tophat_align{
@@ -1229,17 +1226,16 @@ process uroborus{
 
 // check the length of the tool list
 tools_selected = tool.size()
-println(tools_selected)
 
 if(tools_selected > 1){
-  println("if statement for tools_selected > 1 worked. Testing view on combined_tool channel")
-  combined_tool = ciriquant_results.join(circexplorer2_results).join(dcc_results).join(circrna_finder_results).join(find_circ_results).join(bar)
-  (a, b) = combined_tool.into(2)
-  a.view()
+
+  // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
+  combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
+
   process consolidate_algorithms{
 
           input:
-            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from b
+            tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
 
           output:
             file("${base}.bed") into sample_counts
@@ -1285,7 +1281,7 @@ if(tools_selected > 1){
 
 } else{
 
-  single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, bar)
+  single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results)
 
   process get_counts_single{
 
