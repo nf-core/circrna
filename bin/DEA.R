@@ -281,11 +281,19 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
 													down_regulated <- get_downregulated(res)
 
 													de_up <- rownames(up_regulated)
-												        de_down <- rownames(down_regulated)
-												        de <- c(de_up, de_down)
-												        cts <- counts(dds, normalized=T)
-												        log2 <- log2(cts +1)
-												        global_heatmap(de, log2, contrast, outdir)
+												  de_down <- rownames(down_regulated)
+												  de <- c(de_up, de_down)
+												  cts <- counts(dds, normalized=T)
+
+													# attempt boxplots here
+													if(outdir == "circRNA/"){
+
+														make_boxplots(de, cts, contrast)
+
+													}
+
+												  log2 <- log2(cts +1)
+												  global_heatmap(de, log2, contrast, outdir)
 
 													if(outdir == "RNA-Seq/"){
 															up_regulated <- annotate_de_genes(up_regulated)
@@ -331,11 +339,15 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
 
 DESeq2_plots <- function(dds, outdir){
 
-								pdf(file.path(outdir, "DESeq2_MAplot.pdf"), height=8, width=8)
+								dir.create("DESeq2_QC")
+								dir.create(paste("DESeq2_QC/", outdir, sep=""))
+								dir=paste("DESeq2_QC/", outdir, sep="")
+
+								pdf(file.path(dir, "DESeq2_MAplot.pdf"), height=8, width=8)
 								plotMA(dds)
 								dev.off()
 
-								pdf(file.path(outdir, "DESeq2_dispersion.pdf"), width=8, height=8)
+								pdf(file.path(dir, "DESeq2_dispersion.pdf"), width=8, height=8)
 								plotDispEsts(dds)
 								dev.off()
 
@@ -367,11 +379,15 @@ DESeq2_plots <- function(dds, outdir){
 
 sample_to_sample_heatmap <- function(log2, outdir){
 
+														dir.create("DESeq2_QC")
+														dir.create(paste("DESeq2_QC/", outdir, sep=""))
+														dir=paste("DESeq2_QC/", outdir, sep="")
+
 														sampleDists <- dist(t(log2))
 												   	sampleDistMatrix <- as.matrix(sampleDists)
 												    print("test sample_to_sample_heatmap")
 														print(head(sampleDistMatrix))
-												    pdf(file.path(outdir, "DESeq2_sample_heatmap.pdf"), width=8, height=8)
+												    pdf(file.path(dir, "DESeq2_sample_heatmap.pdf"), width=8, height=8)
 												    pheatmap(mat=sampleDistMatrix,
 												        		clustering_distance_rows=sampleDists,
 												        		clustering_distance_cols=sampleDists,
@@ -384,12 +400,16 @@ sample_to_sample_heatmap <- function(log2, outdir){
 
 sample_to_sample_dendogram <- function(log2, outdir){
 
+															dir.create("DESeq2_QC")
+															dir.create(paste("DESeq2_QC/", outdir, sep=""))
+															dir=paste("DESeq2_QC/", outdir, sep="")
+
 															d=t(log2)
 															d=dist(d)
 															hc=hclust(d, method="complete")
 															print("test hclust")
 															print(head(d))
-															pdf(file.path(outdir, "DESeq2_sample_dendogram.pdf"))
+															pdf(file.path(dir, "DESeq2_sample_dendogram.pdf"))
 															plot(hc)
 															dev.off()
 }
@@ -397,9 +417,13 @@ sample_to_sample_dendogram <- function(log2, outdir){
 
 PCA_plot <- function(log2, outdir){
 
+						dir.create("DESeq2_QC")
+						dir.create(paste("DESeq2_QC/", outdir, sep=""))
+						dir=paste("DESeq2_QC/", outdir, sep="")
+
 						p <- pca(log2, metadata=inputdata$pheno)
 				  	n_comp <- length(p$components)
-				  	pdf(file.path(outdir, "DESeq2_Scree_plot.pdf"))
+				  	pdf(file.path(dir, "DESeq2_Scree_plot.pdf"))
 				  	scree <- screeplot(p,
 				        	 	   				components = getComponents(p, 1:n_comp),
 				        	           	hline = 80,
@@ -408,7 +432,9 @@ PCA_plot <- function(log2, outdir){
 				  	dev.off()
 
   					for(exp_var in names(inputdata$pheno)){
-		    		pdf(file.path(outdir, paste("DESeq2", exp_var, "PCA.pdf", sep="_")))
+						dir.create("DESeq2_QC")
+						dir=paste("DESeq2_QC/", outdir, sep="")
+		    		pdf(file.path(dir, paste("DESeq2", exp_var, "PCA.pdf", sep="_")))
 		    		biplot <- biplot(p,
 		       			  	 				colby=paste(exp_var),
 					  	 							hline=0,
@@ -479,7 +505,7 @@ global_heatmap <- function(de, log2, contrast, outdir){
 									# check it worked?
 									print(pheno_subset)
 									# subset log2 counts for contrast samples
-									mat <- log2[,rownames(pheno)]
+									mat <- log2[,rownames(pheno_subset)]
 									# subset de genes/circRNAs
 									mat <- mat[de,]
 									# check it worked
@@ -498,6 +524,50 @@ global_heatmap <- function(de, log2, contrast, outdir){
 }
 
 
+
+make_boxplots <- function(de, cts, contrast){
+
+                  pheno <- inputdata$pheno
+                  levels <- unlist(strsplit(contrast, "_vs_"))
+                  pheno_subset <- subset(pheno, pheno$condition %in% levels)
+                  # subset counts for levels of interest
+                  counts <- cts[,rownames(pheno_subset)]
+                  # subset for de genes
+                  counts <- as.data.frame(counts[de,])
+									dir.create("boxplots")
+                  dir.create(paste("boxplots/", contrast, sep=""))
+									dir=paste("boxplots/", contrast, sep="")
+                  for( i in 1:nrow(counts)){
+                      circ_id <- rownames(counts[i,]);
+                      mat <- as.data.frame(t(counts[i,]));
+                      mat <- cbind(mat, pheno_subset);
+                      names <- c("counts", "condition");
+                      colnames(mat) <- names;
+
+                      p1 <- ggboxplot(mat, x="condition", y="counts",
+                        							fill="condition", palette = "npg",
+                                      title = paste(circ_id),
+                                      ylab = "normalized counts", xlab="",
+                                      add = c("dotplot"),
+                                      add.params = list(size=0.5, jitter=0.1),
+                                      legend = "none",
+                                      bxp.errorbar = T,
+                                      bxp.errorbar.width = 0.2, width=0.3,
+                                      ggtheme = theme_classic()) +
+                                      rotate_x_text(angle = 0) +
+                                      theme(plot.title = element_text(face = "bold", size=16, hjust = 0.5)) +
+                                      theme(axis.text.x = element_text( colour = "black", size=14)) +
+                                      theme(axis.title.y = element_text(size=14, face = "italic")) +
+                                      theme(axis.title.x = element_blank()) +
+                                      theme(axis.text.y = element_text(color = "black", size=10))
+
+                      pdf(file.path(dir, paste(circ_id, "boxplot.pdf", sep="_")))
+                      plot(p1)
+                      dev.off()
+                      }
+}
+
+
 options(error=function()traceback(2))
 suppressPackageStartupMessages(library("argparser"))
 #suppressPackageStartupMessages(library("BiocParallel"))
@@ -509,6 +579,7 @@ suppressPackageStartupMessages(library("EnhancedVolcano"))
 #suppressPackageStartupMessages(library("EnsDb.Hsapiens.v86"))
 #suppressPackageStartupMessages(library("genefilter")) #for rowVars
 suppressPackageStartupMessages(library("ggplot2"))
+suppressPackageStartupMessages(library("ggpubr"))
 #suppressPackageStartupMessages(library("ggrepel"))
 #suppressPackageStartupMessages(library("ggfortify"))
 suppressPackageStartupMessages(library("gplots"))
