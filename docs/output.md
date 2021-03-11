@@ -489,21 +489,50 @@ The above experimental design will produce the `DESeq2` design formula `~replica
   <p markdown="1" align="center">
   <img src="images/circRNA_condition_PCA.pdf-1.png" alt="circRNA PCA" width="500">
   </p>
-
   * `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
+  <p markdown="1" align="center">
+  <img src="images/circRNA_dispersion.pdf-1.png" alt="circRNA dispersion" width="500">
+  </p>
   * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
   * `DESeq2_MAplot.pdf`: `DESeq2` MA plot.
+  <p markdown="1" align="center">
+  <img src="images/circRNA_MAplot.pdf-1.png" alt="circRNA MAPlot" width="500">
+  </p>
   * `DESeq2_normalized_counts.txt`: Normalised circRNA counts.
-  * `DESeq2_{condition_vs_control}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
-  * `DESeq2_{condition_vs_control}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include only down regulated circRNAs (fold change <= -1, pvalue <= 0.05).
-  * `DESeq2_{condition_vs_control}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
-  * `DESeq2_{condition_vs_control}_global_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
-  * `DESeq2_{condition_vs_control}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
-  * `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include only up regulated circRNAs (fold change >= 1, pvalue <= 0.05).
+  * `DESeq2_{control_vs_condition}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_control_vs_tumor_Adj_pvalue_distribution.pdf-1.png" alt="circRNA adj-p histogram" width="500">
+  </p>
+  * `DESeq2_{control_vs_condition}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated circRNAs (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
+  * `DESeq2_{control_vs_condition}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
+  <p markdown="1" align="center">
+  <img src="images/circRNA_control_vs_tumor_fold_change_distribution.pdf-1.png" alt="circRNA FC histogram" width="500">
+  </p>
+  * `DESeq2_{control_vs_condition}_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
+  <p markdown="1" align="center">
+  <img src="images/circRNA_control_vs_tumor_heatmap.pdf-1.png" alt="circRNA heatmap" width="500">
+  </p>
+  * `DESeq2_{control_vs_condition}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_control_vs_tumor_pvalue_distribution.pdf-1.png" alt="circRNA pval dist" width="500">
+  </p>
+  * `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include up regulated circRNAs (fold change >= 1, pvalue <= 0.05) in `condition` with respect to `control`.
   * `DESeq2_{condition_vs_control}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_control_vs_tumor_volcano_plot.pdf-1.png" alt="circRNA volcano" width="500">
+  </p>
   * `DESeq2_sample_dendogram.pdf`: Dendogram depicting sample distances using [pvclust](https://cran.r-project.org/web/packages/pvclust/index.html).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_sample_dendogram.pdf-1.png" alt="circRNA dendo" width="500">
+  </p>
   * `DESeq2_sample_heatmap.pdf`: Manhattan distance heatmap of samples.
+  <p markdown="1" align="center">
+  <img src="images/circRNA_sample_heatmap.pdf-1.png" alt="circRNA samplehm" width="500">
+  </p>
   * `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_Scree_plot.pdf-1.png" alt="circRNA scree" width="500">
+  </p>
 
 </details>
 
@@ -532,21 +561,19 @@ Output directory of DESeq2 circRNA differential expression analysis, quality con
 
 * `differential_expression/circrna_expression_plots/`
   * `*boxplot.pdf`: Boxplot of circRNA expression between phenotypes of interest.
-  * `*expression.pdf`: *log2* transformed line plot of both circRNA and parent gene expression in phenotypes of interest.  
+  <p markdown="1" align="center">
+  <img src="images/boxplot.png" alt="circRNA boxplot" width="500">
+  </p>
+  * `*expression.pdf`: *log2* transformed line plot of both circRNA and parent gene expression in phenotypes of interest.
+  <p markdown="1" align="center">
+  <img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="500">
+  </p>
 
 </details>
 
 `nf-core/circrna` will produce a boxplot of circRNA expression and a lineplot of circRNA - parent gene expression between the phenotypes specified in the `DESeq2` analysis.
 
 *Note:* if the parent gene cannot be found in the normalised RNA-Seq count matrix, the line plot of circRNA - parent gene expression will be omitted. This behaviour is observed in the test dataset, which has been heavily modified to maximise circRNA reads and not reads aligning to transcripts for gene expression analysis.
-
-<p markdown="1" align="center">
-<img src="images/boxplot.png" alt="circRNA boxplot" width="500">
-</p>
-
-<p markdown="1" align="center">
-<img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="600">
-</p>
 
 ### RNA-Seq
 
