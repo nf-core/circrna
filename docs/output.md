@@ -576,8 +576,9 @@ Output directory of DESeq2 circRNA differential expression analysis, quality con
 * `differential_expression/circrna_expression_plots/`
   * `*boxplot.pdf`: Boxplot of circRNA expression between phenotypes of interest.
   <p markdown="1" align="center">
-  <img src="images/boxplot.png" alt="circRNA boxplot" width="400">
+  <img src="images/boxplot.png" alt="circRNA boxplot" width="450">
   </p>
+  
   * `*expression.pdf`: *log2* transformed line plot of both circRNA and parent gene expression in phenotypes of interest.
   <p markdown="1" align="center">
   <img src="images/circ_gene_lineplot.png" alt="circRNA - parent gene plot" width="500">
