@@ -461,7 +461,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 ## Differential Expression Analysis
 
-`nf-core/circrna` will perform differential expression analysis on all factors vs. 'control' within the response variable (which must be named 'condition'):
+`nf-core/circrna` will perform differential expression analysis of `control` vs. all factors in the response variable:
 
 | samples | condition | replicates |
 |---------|-----------|------------|
@@ -475,7 +475,9 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 | A375_2  | melanoma  | 2          |
 | A375_3  | melanoma  | 3          |
 
-The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors within 'condition' producing outputs for `lung_vs_control` and `melanoma_vs_control`.
+The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors within `condition` producing outputs for `control_vs_lung` and `control_vs_melanoma` whereby upregulated circRNAs correspond to upregulated circRNAs in the experimental condition with respect to `control`.
+
+*N.B:* In the phenotype file the response variable must be called `condition`, and the wild-type samples must be called `control`. These values are hard-coded in the automated differential expression analysis R script.
 
 ### circRNA
 
@@ -484,6 +486,10 @@ The above experimental design will produce the `DESeq2` design formula `~replica
 
 * `differential_expression/circRNA/`
   * `DESeq2_condition_PCA.pdf`: Principal component plot (PC1 vs PC2) displaying the highest amount of variation present in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
+  <p markdown="1" align="center">
+  <img src="images/circRNA_condition_PCA.pdf-1.png" alt="circRNA PCA" width="500">
+  </p>
+
   * `DESeq2_dispersion.pdf`: Plot of re-fitted genes + gene outliers after shrinkage estimation performed by gene-wide maximum likelihood estimates (red curve) & maximum a posteriori estimates of dispersion.
   * `DESeq2_log2_transformed_counts.txt`: *log2(Normalised counts + 1)*
   * `DESeq2_MAplot.pdf`: `DESeq2` MA plot.
