@@ -542,7 +542,7 @@ The above experimental design will produce the `DESeq2` design formula `~replica
   <p markdown="1" align="center">
   <img src="images/circRNA_sample_heatmap.pdf-1.png" alt="circRNA samplehm" width="500">
   </p>
-  
+
   * `DESeq2_Scree_plot.pdf`: Elbow plot of principal components in the dataset using [PCAtools](https://bioconductor.org/packages/release/bioc/html/PCAtools.html).
   <p markdown="1" align="center">
   <img src="images/circRNA_Scree_plot.pdf-1.png" alt="circRNA scree" width="500">
@@ -576,7 +576,7 @@ Output directory of DESeq2 circRNA differential expression analysis, quality con
 * `differential_expression/circrna_expression_plots/`
   * `*boxplot.pdf`: Boxplot of circRNA expression between phenotypes of interest.
   <p markdown="1" align="center">
-  <img src="images/boxplot.png" alt="circRNA boxplot" width="500">
+  <img src="images/boxplot.png" alt="circRNA boxplot" width="400">
   </p>
   * `*expression.pdf`: *log2* transformed line plot of both circRNA and parent gene expression in phenotypes of interest.
   <p markdown="1" align="center">
