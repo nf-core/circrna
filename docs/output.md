@@ -153,6 +153,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
     <img src="images/output/DESeq2_QC/RNA-Seq/DESeq2_sample_heatmap.png" alt="circRNA samplehm" width="500">
     </p>
 
+</details>
 
 `nf-core/circrna` outputs quality control plots of normalised *log2* expression data from `DESeq2` to assess heterogeneity in the experiment samples. These plots can be useful to assess sample-sample similarity and to identify potential batch effects within the experiment. Plots are generated for both circRNAs and RNA-Seq data when the differential expression analysis module has been selected by the user (see `--module` [documentation](https://nf-co.re/circrna/dev/parameters#pipeline-options)).
 
