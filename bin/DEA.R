@@ -277,6 +277,8 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
 										    	cat('\n\nSummary data from DESeq2 for ', contrast, ':', sep="")
 										    	summary(res)
 
+													ma_plot(res, contrast, outdir)
+
 													up_regulated <- get_upregulated(res)
 													down_regulated <- get_downregulated(res)
 
@@ -343,9 +345,9 @@ DESeq2_plots <- function(dds, outdir){
 								dir.create(paste("DESeq2_QC/", outdir, sep=""))
 								dir=paste("DESeq2_QC/", outdir, sep="")
 
-								pdf(file.path(dir, "DESeq2_MAplot.pdf"), height=8, width=8)
-								plotMA(dds)
-								dev.off()
+								#pdf(file.path(dir, "DESeq2_MAplot.pdf"), height=8, width=8)
+								#plotMA(dds)
+								#dev.off()
 
 								pdf(file.path(dir, "DESeq2_dispersion.pdf"), width=8, height=8)
 								plotDispEsts(dds)
@@ -376,6 +378,14 @@ DESeq2_plots <- function(dds, outdir){
 
 }
 
+
+ma_plot <- function(res, contrast, outdir){
+
+					 pdf(file.path(outdir, paste("DESeq2", contrast, "MA_plot.pdf", sep="_")), width=8, height=8)
+					 plotMA(res)
+					 dev.off()
+
+}
 
 sample_to_sample_heatmap <- function(log2, outdir){
 
