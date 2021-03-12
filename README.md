@@ -21,7 +21,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 The diagram below gives an overview of the modules in `nf-core/circrna`:
 
 <p markdown="1" align="center">
-<img src="docs/images/workflow.png" alt="workflow" width="500">
+<img src="docs/images/workflow.png" alt="workflow" width="1000">
 </p>
 
 ## Pipeline Summary
@@ -29,7 +29,7 @@ The diagram below gives an overview of the modules in `nf-core/circrna`:
 1. Download reference genome files ([`Gencode`](https://www.gencodegenes.org/))
 2. Download miRNA database files ([`miRbase`](http://www.mirbase.org/ftp.shtml), [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi))
 3. Adapter trimming ([`BBDUK`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/))
-4. Read QC (([`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)))
+4. Read QC ([`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 5. Generate genome indices
 6. circRNA quantification
     1. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
