@@ -427,19 +427,7 @@ sample_to_sample_dendogram <- function(log2, outdir){
 
 PCA_plot <- function(log2, outdir){
 
-						dir.create("DESeq2_QC")
-						dir.create(paste("DESeq2_QC/", outdir, sep=""))
-						dir=paste("DESeq2_QC/", outdir, sep="")
-
 						p <- pca(log2, metadata=inputdata$pheno)
-				  	n_comp <- length(p$components)
-				  	pdf(file.path(dir, "DESeq2_Scree_plot.pdf"))
-				  	scree <- screeplot(p,
-				        	 	   				components = getComponents(p, 1:n_comp),
-				        	           	hline = 80,
-						           				subtitle="80% variation explained")
-						plot(scree)
-				  	dev.off()
 
   					for(exp_var in names(inputdata$pheno)){
 						dir.create("DESeq2_QC")
