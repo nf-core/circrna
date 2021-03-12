@@ -394,6 +394,7 @@
                     "type": "string",
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
+                    "hidden": true,
                     "help_text": "An email address to send a summary email to when the pipeline is completed.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
@@ -553,13 +554,16 @@
     ],
     "properties": {
         "fasta_chr": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "ciriquant_yml": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "threads": {
-          "type": "integer"
+          "type": "integer",
+          "hidden": true
         }
     }
 }
