@@ -20,9 +20,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   * [miRNA databases](#mirna-databases) - Download mature miRNA sequences
 * [Quality Control](#quality-control)
   * [BAM to Fastq](#bam-to-fastq) - Convert BAM to fastq
+  * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
+  * [DESeq2](#deseq2) - Quality control plots from `DESeq2` analysis  
   * [FastQC](#fastqc) - Raw read QC
   * [MultiQC](#multiqc) - Consolidated fastqc reports
-  * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
 * [Genome index files](#genome-index-files)
 * [circRNA quantification](#circrna-quantification)
   * [Miscellaneous requirements](#miscellaneous-requirements) - Generate tool specific requirements
@@ -45,8 +46,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   * [circos plots](#circos-plots) - circos plot of circRNA - miRNA filtered predictions
 * [Differential expression analysis](#differential-expression-analysis)
   * [circRNA](#circrna) - Output directory for circRNA DESeq2 analysis
-  * [circRNA differential expression stats](#circrna-differential-expression-stats) - Differentially expressed circRNA statistics
-  * [circRNA expression plots](#circrna-expression-plots) - Plots of circRNA, circRNA - parent gene expression
+  * [Boxplots](#boxplots) - Boxplots of differentially expressed circRNAs
   * [RNA-Seq](#rna-seq) - Output directory for RNA-Seq DESeq2 analysis
 
 ## Download Files
