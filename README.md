@@ -12,107 +12,36 @@
 
 ## Introduction
 
-**nf-core/circrna** is a bioinformatics pipeline used for the quantification, miRNA target prediction and differential expression analysis of circRNAs present in RNA sequencing data (currently supporting total RNA-Seq paired end sequencing data, mapped to *H. sapiens* Gencode reference genomes GRCh37, GRCh38 v34).
-
-The pipleline has been developed in a modular fashion, permitting the user to select miRNA target prediction, differential expression analysis (or both) in addition to circRNA quantification to facilitate hypotheses surrounding circRNAs involvement in the competing endogenous RNA network.
+**nf-core/circrna** is a bioinformatics pipeline used for the quantification, miRNA target prediction and differential expression analysis of circular RNAs in RNA sequencing data. Currently, the pipeline only supports the identification of circular RNAs in Human RNA-Seq data.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
+## Workflow
+
+The diagram below gives an overview of the modules in `nf-core/circrna`:
+
+<p markdown="1" align="center">
+<img src="images/workflow.png" alt="workflow" width="500">
+</p>
+
 ## Pipeline Summary
 
-By default, `nf-core/circrna` utilises all 3 analysis modules: `circrna_discovery, mirna_prediction, differential_expression`.
+1. Download reference genome files ([`Gencode`](https://www.gencodegenes.org/))
+2. Download miRNA database files ([`miRbase`](http://www.mirbase.org/ftp.shtml), [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi))
+3. Adapter trimming ([`BBDUK`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/))
+4. Read QC (([`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)))
+5. Generate genome indices
+6. circRNA quantification
+  1. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+  2. [`STAR`](https://github.com/alexdobin/STAR) -> [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+  3. [`STAR`](https://github.com/alexdobin/STAR) -> [`DCC`](https://github.com/dieterich-lab/DCC)
+  4. [`HISAT2`](http://daehwankimlab.github.io/hisat2/) -> [`CIRI2`](https://sourceforge.net/projects/ciri/files/CIRI2/) -> [`BWA`](http://bio-bwa.sourceforge.net/) -> [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+  5. [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) -> [`find circ`](https://github.com/marvin-jens/find_circ)
+  6. [`Bowtie`](http://bowtie-bio.sourceforge.net/index.shtml) -> [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+7. miRNA target prediction ([`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html), [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi))
+8. DESeq2 differential expression analysis ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html))
 
-The creation of reference genome indices and aligners used depends on the circRNA quantification tools selected, given by `--tool`.
-
-### 1. Download Reference Genome Files
-
-- Download Gencode GRCh37/GRCh38 *H. sapiens* reference genome, GTF files.
-- Create customised annotation text file ([`gtfToGenePred`](https://anaconda.org/bioconda/ucsc-gtftogenepred))
-
-- Download [`miRbase`](http://www.mirbase.org/ftp.shtml)  mature miRNA sequences.
-
-- Download [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi) miRNA sequences and family conservation information.
-
-### 2. Create Reference Index Files
-
-- [`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/) reference genome index.
-
-- [`bwa`](https://sourceforge.net/projects/bio-bwa/files/) reference genome indices (`ciriquant` in `--tool`).
-
-- [`HISAT2`](http://daehwankimlab.github.io/hisat2/download/) reference genome indices (`ciriquant` in `--tool`) .
-
-- [`STAR`](https://github.com/alexdobin/STAR/releases) reference genome indices (`circexplorer2`, `circrna_finder`, `dcc` in `--tool`).
-
-- [`Bowtie`](https://sourceforge.net/projects/bowtie-bio/) reference genome indices (`mapsplice` in `--tool`).
-
-- [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) reference genome indices (`find_circ` in `--tool`).
-
-### 3. Miscellaneous circRNA Tool Requirements
-
-- Split reference genome FASTA file per chromosome (`mapsplice`, `find_circ` in `--tool` ).
-
-- Create `CIRIquant` input `.yml` file (`ciriquant` in `--tool`).
-
-### 4. Stage Input Data
-
-- Accept `BAM` (converted to FASTQ pairs using [`picard`](https://sourceforge.net/projects/picard/)) or FASTQ  input data given as a path or `.csv` input file.
-
-### 5. Quality Control
-
-- Perform [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) , [`MultiQC`](http://multiqc.info/) on raw input data.
-
-- Optional adapter removal + read trimming performed by [`BBDUK`](https://sourceforge.net/projects/bbmap/).
-
-- Perform [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) , [`MultiQC`](http://multiqc.info/) on trimmed reads.
-
-### 6. circRNA Quantification
-
-- Align RNA-Seq reads and perform circRNA quantification ([`ciriquant`](https://sourceforge.net/projects/ciri/files/CIRIquant/), [`circrna_finder`](https://github.com/orzechoj/circRNA_finder), [`circexplorer2`](https://circexplorer2.readthedocs.io/en/latest/tutorial/setup/#installation), [`find_circ`](https://github.com/marvin-jens/find_circ), [`dcc`](https://github.com/dieterich-lab/DCC), [`mapsplice`](https://anaconda.org/bioconda/mapsplice)).
-- Raw quantification tool output.
-- Filtered quantification tool output as BED6 file.
-- Create circRNA count matrix.
-
-### 7. circRNA Filtering
-
-- Filter to remove:
-  - circRNAs with low evidence of reads aligned to back splice junction (read count < 2).
-  - circRNAs called by only one tool (when 2+ quantification tools selected).
-
-### 8. circRNA Annotation
-
-- Remove unwanted biotypes from Gencode GTF file.
-
-- Calculate circRNA mature spliced length ([`BEDTools`](https://sourceforge.net/projects/bedtools/)).
-- Annotate circRNA exon-intron boundaries, mark as `circRNA`, `ciRNA`, `EIciRNA`.
-
-- Identify circRNA parent gene ([`BEDTools`](https://sourceforge.net/projects/bedtools/)).
-
-- Create circRNA FASTA files ([`BEDTools`](https://sourceforge.net/projects/bedtools/)).
-- Create circRNA BED12 files ([`BEDTools`](https://sourceforge.net/projects/bedtools/)).
-- Create master annotation file reporting circRNA ID, circRNA type, mature length, parent gene, strand.
-
-### 9. miRNA Target Prediction
-
-- Identify miRNA response elements in mature circRNA sequence using [`miRanda`](https://anaconda.org/bioconda/miranda) and [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi).
-- Create filtered miRNA targets file for each circRNA.
-- Create circos plot of circRNA exons / filtered MRE sites.
-- Raw [`miRanda`](https://anaconda.org/bioconda/miranda) output.
-- Raw [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi) output.
-
-### 10. miRNA Target Filtering
-
-- Filter to remove:
-  - 6mers from `TargetScan` output.
-  - miRNAs with MFE <= -20.00 Kcal/Mol.
-  - Duplicate miRNA IDs targeting same circRNA MRE site (keep miRNA ID with highest score).
-
-### 11. Differential Expression Analysis
-
-- Perform RNA-Seq quantification using [`StringTie`](https://ccb.jhu.edu/software/stringtie/).
-
-- Perform circRNA differential expression analysis using RNA-Seq library size factors to normalise circRNA count matrix, QC plots, PCA and clustering  ([`R`](https://www.r-project.org/), [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)).
-- Create circRNA expression plots, circRNA-parent gene expression plots ([`R`](https://www.r-project.org/)).
-- Create differentially expressed circRNA master file reporting circRNA ID, circRNA Type, mature length, parent gene, strand, Log2FC, pvalue, padj, parent gene description.
+Ouputs given by each step in the pipeline can be viewed at the [output documentation](https://nf-co.re/circrna/dev/output)
 
 ## Quick Start
 
@@ -146,7 +75,8 @@ The nf-core/circrna pipeline comes with documentation about the pipeline: [usage
 
 ## Credits
 
-nf-core/circrna was originally written by [Barry Digby](https://github.com/BarryDigby).
+`nf-core/circrna` was originally written by Barry Digby [(@BarryDigby)](https://github.com/BarryDigby) from the [National University of Ireland, Galway](http://www.nuigalway.ie/index-internal.html) as a member of Dr. Pilib Ó Broins lab with the financial support of Science Foundation Ireland (Grant number 18/CRT/6214).
+
 
 ## Contributions and Support
 
