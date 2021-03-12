@@ -543,7 +543,7 @@ The above experimental design will produce the `DESeq2` design formula `~replica
 
   * `DESeq2_{control_vs_condition}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
   <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
+  <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
   </p>
 
   * `DESeq2_{control_vs_condition}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated circRNAs (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
@@ -578,6 +578,8 @@ The above experimental design will produce the `DESeq2` design formula `~replica
 </details>
 
 Output directory of DESeq2 circRNA differential expression analysis results. Up regulated, down regulated circRNAs and corresponding plots displaying expression patterns between the phenotypes in `condition` are written to this directory.
+
+*Note:* The test dataset produces sparsely populated plots due to aggressive subsampling. 
 
 ### Boxplots
 
@@ -617,7 +619,7 @@ Output directory of DESeq2 circRNA differential expression analysis results. Up 
 
   * `DESeq2_{control_vs_condition}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
   <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
+  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
   </p>
 
   * `DESeq2_{control_vs_condition}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated genes (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
@@ -652,3 +654,5 @@ Output directory of DESeq2 circRNA differential expression analysis results. Up 
 </details>
 
 Output directory of DESeq2 RNA-Seq differential expression analysis results. Up regulated, down regulated circRNAs and corresponding plots displaying expression patterns between the phenotypes in `condition` are written to this directory.
+
+*Note:* The test dataset produces sparsely populated plots due to aggressive subsampling.
