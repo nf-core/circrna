@@ -75,7 +75,7 @@ The nf-core/circrna pipeline comes with documentation about the pipeline: [usage
 
 ## Credits
 
-`nf-core/circrna` was originally written by Barry Digby [(@BarryDigby)](https://github.com/BarryDigby) from the [National University of Ireland, Galway](http://www.nuigalway.ie/index-internal.html) as a member of Dr. Pilib Ó Broins lab with the financial support of Science Foundation Ireland (Grant number 18/CRT/6214).
+`nf-core/circrna` was originally written by Barry Digby ([@BarryDigby](https://github.com/BarryDigby)) from the [National University of Ireland, Galway](http://www.nuigalway.ie/index-internal.html) as a member of Dr. Pilib Ó Broins lab with the financial support of Science Foundation Ireland (Grant number 18/CRT/6214).
 
 
 ## Contributions and Support

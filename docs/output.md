@@ -526,7 +526,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 | A375_2  | melanoma  |
 | A375_3  | melanoma  |
 
-The above experimental design will produce the `DESeq2` design formula `~replicates + condition` and loop through the nested factors within `condition` producing outputs for `control_vs_lung` and `control_vs_melanoma` whereby upregulated circRNAs correspond to upregulated circRNAs in the experimental condition with respect to `control`.
+The above experimental design will produce the `DESeq2` design formula `~ condition` and loop through the nested factors within `condition` producing outputs for `control_vs_lung` and `control_vs_melanoma` whereby upregulated circRNAs correspond to upregulated circRNAs in the experimental condition with respect to `control`.
 
 *N.B:* In the phenotype file the response variable must be called `condition`, and the wild-type samples must be called `control`. These values are hard-coded in the automated differential expression analysis R script.
 
@@ -579,7 +579,7 @@ The above experimental design will produce the `DESeq2` design formula `~replica
 
 Output directory of DESeq2 circRNA differential expression analysis results. Up regulated, down regulated circRNAs and corresponding plots displaying expression patterns between the phenotypes in `condition` are written to this directory.
 
-*Note:* The test dataset produces sparsely populated plots due to aggressive subsampling. 
+*Note:* The test dataset produces sparsely populated plots due to aggressive subsampling.
 
 ### Boxplots
 
