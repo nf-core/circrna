@@ -21,7 +21,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 The diagram below gives an overview of the modules in `nf-core/circrna`:
 
 <p markdown="1" align="center">
-<img src="docs/images/workflow.png" alt="workflow" width="1000">
+<img src="docs/images/workflow.png" alt="workflow" width="100%">
 </p>
 
 ## Pipeline Summary
