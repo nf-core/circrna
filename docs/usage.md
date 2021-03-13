@@ -4,28 +4,55 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
+## circRNA discovery
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
-
-## Running the pipeline
-
-The typical command for running the pipeline is as follows:
+### Basic parameters
+When running `nf-core/circrna` for the first time, the parameters `--input`, `--input_type` and `--genome_version` must be supplied:
 
 ```bash
-nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker
+nextflow run nf-core/circrna -profile '<docker/singularity>' --module 'circrna_discovery' --input 'samples.csv' --input_type 'fastq' --genome_version 'GRCh38'
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+#### `--input`
+Defines the input files for `nf-core/circrna` which can be paired end fastq RNA-Seq data or aligned BAM files that have been generated using paired end fastq RNA-Seq data. The user may supply a '`samples.csv`' file specifying the absolute paths to the files, or supply the path to the data using a wildcard glob pattern:
 
-Note that the pipeline will create the following files in your working directory:
+##### fastq
 
 ```bash
-work            # Directory containing the nextflow working files
-results         # Finished results (configurable, see below)
-.nextflow_log   # Log file from Nextflow
-# Other nextflow hidden files, eg. history of pipeline runs and old logs.
+--input "/data/*_r{1,2}.fastq.gz"
 ```
+
+or
+
+| Sample_ID    | Read1                          | Read2                          | Bam  |
+|------------- |------------------------------- |------------------------------- |----- |
+| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |
+| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |
+| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |
+| tumor_rep1   | /data/tumor_rep1_r1.fastq.gz   | /data/tumor_rep1_r2.fastq.gz   | NA   |
+| tumor_rep2   | /data/tumor_rep2_r1.fastq.gz   | /data/tumor_rep2_r2.fastq.gz   | NA   |
+| tumor_rep3   | /data/tumor_rep3_r1.fastq.gz   | /data/tumor_rep3_r2.fastq.gz   | NA   |
+
+##### bam
+
+```bash
+--input "/data/*.bam"
+```
+
+or
+
+| Sample_ID    | Read1                          | Read2                          | Bam  |
+|------------- |------------------------------- |------------------------------- |----- |
+| control_rep1  | NA  | NA  | /data/control_rep1.bam   |
+| control_rep2  | NA  | NA  | /data/control_rep2.bam   |
+| control_rep3  | NA  | NA  | /data/control_rep3.bam   |
+| tumor_rep1   | NA   | NA  | /data/tumor_rep1.bam     |
+| tumor_rep2   | NA   | NA  | /data/tumor_rep2.bam     |
+| tumor_rep3   | NA   | NA  | /data/tumor_rep3.bam     |
+
+
+###
+
 
 ### Updating the pipeline
 
