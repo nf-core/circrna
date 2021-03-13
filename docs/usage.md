@@ -7,14 +7,17 @@
 ## circRNA discovery
 
 ### Basic parameters
-When running `nf-core/circrna` for the first time, the parameters `--input`, `--input_type` and `--genome_version` must be supplied:
+When running `nf-core/circrna` for the first time, the parameters `--module`, `--input`, `--input_type` and `--genome_version` must be supplied:
 
 ```bash
-nextflow run nf-core/circrna -profile '<docker/singularity>' --module 'circrna_discovery' --input 'samples.csv' --input_type 'fastq' --genome_version 'GRCh38'
+nextflow run nf-core/circrna -profile '<docker/singularity>' --module 'circrna_discovery' --tool `circexplorer2` --input 'samples.csv' --input_type 'fastq' --genome_version 'GRCh38'
 ```
 
+#### `--module`
+Specify the analysis module to run.
+
 #### `--input`
-Defines the input files for `nf-core/circrna` which can be paired end fastq RNA-Seq data or aligned BAM files that have been generated using paired end fastq RNA-Seq data. The user may supply a '`samples.csv`' file specifying the absolute paths to the files, or supply the path to the data using a wildcard glob pattern:
+Defines the input files for `nf-core/circrna` which can be paired end fastq RNA-Seq data or aligned BAM files that have been generated using paired end fastq RNA-Seq data. The user may supply a comma separated '`samples.csv`' file specifying the absolute paths to the files, or supply the path to the data using a wildcard glob pattern:
 
 ##### fastq
 
@@ -50,8 +53,21 @@ or
 | tumor_rep2   | NA   | NA  | /data/tumor_rep2.bam     |
 | tumor_rep3   | NA   | NA  | /data/tumor_rep3.bam     |
 
+> Please note that the headers of the `samples.csv` file must match the examples given above i.e `Sample_ID`, `Read1`, `Read2` & `Bam`
 
-###
+#### `--input_type`
+Defines the type of input data, `fastq` or `bam`. This parameter is mandatory as `nf-core/circrna` needs to know if the input data must be converted back to paired end fastq pairs.
+
+#### `--genome_version`
+Defines which genome version to download, `GRCh37` or `GRCh38`. When running the workflow for the first time, this parameter is required.
+
+#### `--tool`
+Defines which circRNA quantification tool to use. The user may use one tool, all tools or a combination of tools for the `circrna_discovery` analysis. Quantification tools available include `circexplorer2`, `circrna_finder`, `ciriquant`, `dcc`, `find_circ` & `mapsplice`.
+
+### Advanced parameters
+Should the user wish to perform adapter trimming, the parameter `--skip_trim 'no'` must be supplied. This will invoke the `BBDUK` process, whose parameters are listed in full at the parameter [documentation](https://nf-co.re/circrna/dev/parameters#read-trimming--adapter-removal).
+
+`nf-core/circrna` also provides complete control for `STAR` alignment, which serves as the base for 3 circRNA quantification tools. Default values provided in the documentation should satisfy most users, however if one wants to modify any parameter please refer to the `STAR` parameter [documentation](https://nf-co.re/circrna/dev/parameters#star).
 
 
 ### Updating the pipeline
