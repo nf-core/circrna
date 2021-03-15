@@ -1,74 +1,34 @@
 # nf-core/circrna: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/circrna/usage](https://nf-co.re/circrna/usage)
-
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
-
-## circRNA discovery
-
-### Basic parameters
-When running `nf-core/circrna` for the first time, the parameters `--module`, `--input`, `--input_type` and `--genome_version` must be supplied:
+It is recommended that first time users run `nf-core/circrna` with the minimal test dataset either locally or on a HPC, referring to the [output documentation](https://nf-co.re/circrna/dev/output) before running a full analysis.
 
 ```bash
-nextflow run nf-core/circrna -profile '<docker/singularity>' --module 'circrna_discovery' --tool `circexplorer2` --input 'samples.csv' --input_type 'fastq' --genome_version 'GRCh38'
+nextflow run nf-core/circrna -profile test
 ```
 
-#### `--module`
-Specify the analysis module to run.
-
-#### `--input`
-Defines the input files for `nf-core/circrna` which can be paired end fastq RNA-Seq data or aligned BAM files that have been generated using paired end fastq RNA-Seq data. The user may supply a comma separated '`samples.csv`' file specifying the absolute paths to the files, or supply the path to the data using a wildcard glob pattern:
-
-##### fastq
+Run the test dataset on a HPC:
 
 ```bash
---input "/data/*_r{1,2}.fastq.gz"
+nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
 ```
 
-or
+## Running the pipeline
 
-| Sample_ID    | Read1                          | Read2                          | Bam  |
-|------------- |------------------------------- |------------------------------- |----- |
-| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |
-| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |
-| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |
-| tumor_rep1   | /data/tumor_rep1_r1.fastq.gz   | /data/tumor_rep1_r2.fastq.gz   | NA   |
-| tumor_rep2   | /data/tumor_rep2_r1.fastq.gz   | /data/tumor_rep2_r2.fastq.gz   | NA   |
-| tumor_rep3   | /data/tumor_rep3_r1.fastq.gz   | /data/tumor_rep3_r2.fastq.gz   | NA   |
-
-##### bam
+A typical command for running the pipeline is as follows:
 
 ```bash
---input "/data/*.bam"
+nextflow run nf-core/circrna \
+	-profile <docker/singularity/podman/institute> \
+	--input 'samples.csv' \
+	--input_type 'fastq' \
+	--phenotype 'phenotype.txt'
 ```
 
-or
+This will launch the pipeline and perform all 3 analysis modules: `circrna_discovery`, `mirna_prediction` and `differential_expression`.
 
-| Sample_ID    | Read1                          | Read2                          | Bam  |
-|------------- |------------------------------- |------------------------------- |----- |
-| control_rep1  | NA  | NA  | /data/control_rep1.bam   |
-| control_rep2  | NA  | NA  | /data/control_rep2.bam   |
-| control_rep3  | NA  | NA  | /data/control_rep3.bam   |
-| tumor_rep1   | NA   | NA  | /data/tumor_rep1.bam     |
-| tumor_rep2   | NA   | NA  | /data/tumor_rep2.bam     |
-| tumor_rep3   | NA   | NA  | /data/tumor_rep3.bam     |
+Input data `samples.csv` & `phenotype.txt` are described in detail in the [input specifications documentation](https://nf-co.re/circrna/dev/usage#input-specifications).
 
-> Please note that the headers of the `samples.csv` file must match the examples given above i.e `Sample_ID`, `Read1`, `Read2` & `Bam`
-
-#### `--input_type`
-Defines the type of input data, `fastq` or `bam`. This parameter is mandatory as `nf-core/circrna` needs to know if the input data must be converted back to paired end fastq pairs.
-
-#### `--genome_version`
-Defines which genome version to download, `GRCh37` or `GRCh38`. When running the workflow for the first time, this parameter is required.
-
-#### `--tool`
-Defines which circRNA quantification tool to use. The user may use one tool, all tools or a combination of tools for the `circrna_discovery` analysis. Quantification tools available include `circexplorer2`, `circrna_finder`, `ciriquant`, `dcc`, `find_circ` & `mapsplice`.
-
-### Advanced parameters
-Should the user wish to perform adapter trimming, the parameter `--skip_trim 'no'` must be supplied. This will invoke the `BBDUK` process, whose parameters are listed in full at the parameter [documentation](https://nf-co.re/circrna/dev/parameters#read-trimming--adapter-removal).
-
-`nf-core/circrna` also provides complete control for `STAR` alignment, which serves as the base for 3 circRNA quantification tools. Default values provided in the documentation should satisfy most users, however if one wants to modify any parameter please refer to the `STAR` parameter [documentation](https://nf-co.re/circrna/dev/parameters#star).
-
+Profile configurations are described in the [profile documentation](https://nf-co.re/circrna/dev/usage#profile).
 
 ### Updating the pipeline
 
@@ -85,6 +45,77 @@ It's a good idea to specify a pipeline version when running the pipeline on your
 First, go to the [nf-core/circrna releases page](https://github.com/nf-core/circrna/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
+
+## Input specifications
+
+Input data can be passed to `nf-core/circrna` in two possible ways using the `--input` parameter.
+
+### Input `path`
+
+The simplest way to pass input data to `nf-core/circrna` is by providing the path to the input data with a suitable wildcard glob pattern:
+
+#### fastq
+
+```bash
+--input "/data/*_r{1,2}.fastq.gz"
+```
+
+##### bam
+
+```bash
+--input "/data/*.bam"
+```
+
+### Input `CSV file`
+
+Alternatively the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
+
+The headers of the CSV file must be: `Sample_ID,Read1,Read2,Bam`.
+
+> This approach is recommended for most real life situations, where in-house sequencing facilities file naming convention requires the user to manually match file names to metadata. The below input files use `TCGA` identifiers as proof of concept.
+
+Valid examples for fastq/bam input data in a CSV file is given below:
+
+| Sample_ID        | Read1                                                        | Read2                                                        | Bam  |
+| ---------------- | :----------------------------------------------------------- | ------------------------------------------------------------ | ---- |
+| TCGA-EJ-7783-11A | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R1.fastq.gz | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-G9-6365-11A | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R1.fastq.gz | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-7782-11A | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R1.fastq.gz | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-CH-5772-01A | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R1.fastq.gz | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-5518-01A | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R1.fastq.gz | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-KK-A8I4-01A | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R1.fastq.gz | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R2.fastq.gz | NA   |
+
+***
+
+| Sample_ID        | Read1 | Read2 | Bam                                                          |
+| :--------------- | ----- | ----- | :----------------------------------------------------------- |
+| TCGA-EJ-7783-11A | NA    | NA    | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead.bam |
+| TCGA-G9-6365-11A | NA    | NA    | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead.bam |
+| TCGA-EJ-7782-11A | NA    | NA    | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead.bam |
+| TCGA-CH-5772-01A | NA    | NA    | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead.bam |
+| TCGA-EJ-5518-01A | NA    | NA    | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead.bam |
+| TCGA-KK-A8I4-01A | NA    | NA    | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead.bam |
+
+> Do not leave any cell empty in the CSV file.
+
+### Differential expression analysis
+
+When running the differential expression analysis module, an input `phenotype.txt` file is required.
+
+It is recommended to use an input CSV file in conjunction with the `phenotype.txt` file as the `Sample_ID` **must match** the first column of the `phenotype.txt` file.
+
+A valid example of a `phenotype.txt` file (following the input CSV files above) is given below:
+
+| samples          | condition |
+| ---------------- | --------- |
+| TCGA-EJ-7783-11A | control   |
+| TCGA-G9-6365-11A | control   |
+| TCGA-EJ-7782-11A | control   |
+| TCGA-CH-5772-01A | tumor     |
+| TCGA-EJ-5518-01A | tumor     |
+| TCGA-KK-A8I4-01A | tumor     |
+
+> The response variable must be named `condition` and wild type/control/normal samples must be named `control`. These values are hard coded within the automated differential expression analysis script!
 
 ## Core Nextflow arguments
 
