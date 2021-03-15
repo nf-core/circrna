@@ -100,11 +100,11 @@ Valid examples for fastq/bam input data in a CSV file is given below:
 
 ### Differential expression analysis
 
-When running the differential expression analysis module, an input `phenotype.txt` file is required.
+When running the differential expression analysis module, an input `phenotype.csv` file is required.
 
-It is recommended to use an input CSV file in conjunction with the `phenotype.txt` file as the `Sample_ID` **must match** the first column of the `phenotype.txt` file.
+It is recommended to use an input CSV file in conjunction with the `phenotype.csv` file as the `Sample_ID` **must match** the first column of the `phenotype.txt` file.
 
-A valid example of a `phenotype.txt` file (following the input CSV files above) is given below:
+A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
 
 | samples          | condition |
 | ---------------- | --------- |
