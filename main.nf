@@ -252,7 +252,7 @@ if(params.genome_version){
  */
 
 // Check Fasta
-if(params.fasta && (!has_extension(params.fasta, ".fa") || !has_extension(params.fasta, ".fasta"))){
+if(params.fasta && !has_extension(params.fasta, ".fa") && !has_extension(params.fasta, ".fasta")){
    exit 1, "[nf-core/circrna] error: Reference Fasta file provided (${params.fasta}) is not valid, Fasta file should have the extension '.fa' or '.fasta'."
 }
 
