@@ -218,17 +218,17 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
 
 // Check outdir not empty string.
 if(params.outdir == ''){
-  exit 1, "[nf-core/circrna] error: --outdir was not supplied, please provide a output directory to publish workflow results."
+   exit 1, "[nf-core/circrna] error: --outdir was not supplied, please provide a output directory to publish workflow results."
 }
 
 // Check input type not empty.
 if(params.input_type == ''){
-  exit 1, "[nf-core/circrna] error: --input_type was not supplied, please select 'fastq' or 'bam'."
+   exit 1, "[nf-core/circrna] error: --input_type was not supplied, please select 'fastq' or 'bam'."
 }
 
 // Check Genome version
 if(params.genome_version == ''){
-	exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
+	 exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
 }
 
 // Check proper versions supplied
@@ -238,12 +238,12 @@ if(params.genome_version){
 
   Channel
          .value(params.genome_version)
-         .map{ it ->
+        .map{ it ->
 
-	           if(!GenomeVersions.contains(it)){
-	             exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
+             if(!GenomeVersions.contains(it)){
+                exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
              }
-	        }
+        }
 }
 
 /*
