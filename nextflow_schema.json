@@ -121,13 +121,13 @@
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie index files.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie/*\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory *e.g:*\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie2 index files.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory including a wildcard glob pattern *e.g:*\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2/*\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory *e.g:*\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
                 },
                 "bwa_index": {
                     "type": "string",

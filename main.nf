@@ -2,91 +2,209 @@
 
 /*
 ================================================================================
-                                circRNA analysis
+                              nf-core/circrna
 ================================================================================
-Started August 2020
---------------------------------------------------------------------------------
-Description:
-  (To my knowledge) the first circRNA pipeline to scan RNA-Seq data for circRNAs and
-  conduct differential expression analysis + circRNA-miRNA predictions
+Started August 2020.
+Dev version to nf-core Feb 2021.
 --------------------------------------------------------------------------------
  @Homepage
- https://github.com/BarryDigby/circRNA
+ https://github.com/nf-core/circrna
  -------------------------------------------------------------------------------
  @Documentation
- Work in progress
+ https://nf-co.re/circrna
+--------------------------------------------------------------------------------
+ @Authors
+ Barry Digby (@BarryDigby)
 --------------------------------------------------------------------------------
 */
 
 /*
 ================================================================================
-                                  Help Flags
+                                Help Flags
 ================================================================================
 */
 
-ANSI_RESET = "\u001B[0m";
-ANSI_BLACK = "\u001B[30m";
-ANSI_RED = "\u001B[31m";
-ANSI_GREEN = "\u001B[32m";
-ANSI_YELLOW = "\u001B[33m";
-ANSI_BLUE = "\u001B[34m";
-ANSI_PURPLE = "\u001B[35m";
-ANSI_CYAN = "\u001B[36m";
-ANSI_WHITE = "\u001B[37m";
+def helpMessage() {
+    log.info nfcoreHeader()
+    log.info"""
+    ====================================================
+                    circrna v${workflow.manifest.version}
+   ====================================================
+    Usage:
 
+    The typical command for running the pipeline is as follows:
 
-def print_red = {  str -> ANSI_RED + str + ANSI_RESET }
-def print_black = {  str -> ANSI_BLACK + str + ANSI_RESET }
-def print_green = {  str -> ANSI_GREEN + str + ANSI_RESET }
-def print_yellow = {  str -> ANSI_YELLOW + str + ANSI_RESET }
-def print_blue = {  str -> ANSI_BLUE + str + ANSI_RESET }
-def print_cyan = {  str -> ANSI_CYAN + str + ANSI_RESET }
-def print_purple = {  str -> ANSI_PURPLE + str + ANSI_RESET }
-def print_white = {  str -> ANSI_WHITE + str + ANSI_RESET }
+    nextflow run nf-core/circrna -profile <docker/singularity/institute> --input 'samples.csv' --input_type 'fastq' --module 'circrna_discovery' --tool 'circexplorer2'
 
-//help information
-params.help = null
-if (params.help) {
-    log.info ''
-    log.info print_purple('------------------------------------------------------------------------')
-    log.info "tool_name: A Nextflow based circular RNA analsis pipeline"
-    log.info "tool_name integrates several NGS processing tools to identify novel circRNAs from "
-    log.info "un-processed RNA sequencing data. To run this pipeline users need to install nextflow"
-    log.info "and singularity. "
-    print_purple('------------------------------------------------------------------------')
-    log.info ''
-    log.info print_yellow('Usage: ') +
+   Mandatory arguments:
+      -profile                        [str] Configuration profile to use. If selecting multiple, provide as a comma seperated list.
+                                            Note that later profiles overwrite earlier profiles, order is important!
+                                            Available: docker, singularity, <institute>
 
-            print_purple('Nextflow run BarryDigby/circRNA --profile singularity, standard <options> \n') +
+      --module                        [str] Specify the analysis module(s) to run as a comma seperated list.
+                                            Available: 'circrna_discovery', 'mirna_prediction', 'differential_expression'.
+                                            Please note that 'circrna_disocvery' is mandatory.
 
-            print_yellow('      Mandatory arguments:\n') +
-            print_cyan('      --input <path>            ') + print_green('Path to input data\n') +
-            print_cyan('      --input_type <str>           ') + print_green('Input data type. Supported: fastq, bam\n') +
-            print_cyan('      --tool <str>                 ') + print_green('circRNA tool to use for analysis. \n') +
-            print_green('                                   Supported: CIRCexplorer2, CIRIquant, find_circ\n') +
-            print_green('                                   mapsplice, DCC, circRNA_finder\n') +
-            print_cyan('      --genome_version <str>              ') + print_green('Supported: GRCh37, GRCh38\n') +
-            '\n' +
-            print_yellow('    Input Files:            if left empty these will be generated\n') +
-            print_cyan('      --fasta <path>               ') + print_green('Path to genome fasta file\n') +
-            print_cyan('      --fasta_fai <path>           ') + print_green('Path to genome fasta fai file\n') +
-            print_cyan('      --gencode_gtf <path>         ') + print_green('Path to genocde gtf file\n') +
-            print_cyan('      --gene_annotation <path>     ') + print_green('Path to gene annotation file \n') +
-            print_cyan('      --star_index <str>           ') + print_green('Path to STAR index\n') +
-            print_cyan('      --bwa_index <str>            ') + print_green('Path to BWA index\n') +
-            print_cyan('      --bowtie_index <str>         ') + print_green('Path to Bowtie index (must include glob for files)\n') +
-            print_cyan('      --bowtie2_index <str>        ') + print_green('Path to Bowtie2 index (must include glob for files)\n') +
-            print_cyan('      --hisat2_index <str>         ') + print_green('Path to Hisat2 index\n') +
-            print_cyan('      --ciriquant_yml <str>        ') + print_green('Path to CIRIquant yml configuration file\n') +
-            print_cyan('      --adapters <path>            ') + print_green('Fasta file containing adapters to trim\n')
+      --tool                          [str] Specify which circRNA quantification tool to use.
+                                            If selecting multiple tools, provide as a comma seperated list.
+                                            Available: 'circexplorer2', 'circrna_finder', 'ciriquant', 'dcc', 'find_circ', 'mapsplice'.
 
+      --input_type                    [str] Specify the input data type. Avaialable: 'fastq' or 'bam'.
 
-            log.info ('------------------------------------------------------------------------')
-            log.info print_yellow('Contact information: b.digby237@gmail.com')
-            log.info print_yellow('O\'Broin Lab, National University of Ireland Galway')
-    log.info ('------------------------------------------------------------------------')
+    Input files
+      --input                        [file] Either paths to FASTQ/BAM data (must be surrounded with quotes).
+                                            Indicate multiple files with a suitable wildcard glob pattern i.e '*_{1,2}' for FASTQ paired end reads.
+
+                                            OR
+
+                                            A path to a CSV file (ending .csv) containing file URL/paths and sample IDs.
+                                            Please see documentation for a template.
+
+      --phenotype                    [file] When 'differential_expression' is provided to '--module', a phenotype CSV file (ending .csv) must be provided.
+                                            Sample IDs and response + explanatory variables from metadata must be included. Do not include irrelavant metadata.
+                                            This file is used to construct the DESeq2 model design.
+                                            The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
+                                            Please see online documentation for examples of a valid phenotype.csv file.
+
+    Reference files
+      --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
+                                            Gencode reference Fasta, GTF and annotation text files will be automatically generated.
+                                            Available: 'GRCh37', 'GRCh38'.
+
+      --fasta                        [file] Path to Gencode reference genome FASTA file. Must end with '.fa', '.fasta'.
+
+      --gencode_gtf                  [file] Path to Gencode reference GTF file. Must end with '.gtf'.
+
+      --gene_annotation              [file] Path to customised gene annotation file. Recommended to allow [nf-core/circrna] generate this file.
+
+      --bowtie_index                  [dir] Path to directory containing bowtie indices.
+
+      --bowtie2_index                 [dir] Path to directory containing bowtie2 indices.
+
+      --bwa_index                     [dir] Path to directory containing BWA indices.
+
+      --hisat2_index                  [dir] Path to directory containing HISAT2 indices.
+
+      --star_index                    [dir] Path to directory containing STAR indices.
+
+      --fasta_fai                    [file] Path to SAMtools genome index file.
+
+    Adapter trimming
+      --skip_trim                     [str] Specify whether to skip BBDUK adapter/quality trimming. Available: 'no', 'yes'
+
+      --adapters                     [file] Path to adapters file containing sequences to trim.
+                                            Requires '--k', '--ktrim' and optionally '--hdist'.
+                                            Default: ${params.adapters}
+
+      --k                             [int] Specify k-mer size to use for sequence - adapter matching.
+                                            Requires '--adapters', '--ktrim' and optionally '--hdist'.
+                                            Default: ${params.k}
+
+      --ktrim                         [str] Specify which ends of reads to perform adapter trimming on.
+                                            Requires '--adapters', '--k' and optionally '--hdist'.
+                                            Default: ${params.ktrim}
+
+      --hdist                         [int] Specify maximin hamming distance for reference k-mers.
+                                            Default: ${params.hdist}
+
+      --trimq                         [int] Regions within reads that fall below this average Phred score are trimmed.
+                                            Requires '--qtrim'.
+                                            Default: ${params.trimq}
+
+      --qtrim                         [str] Specify which ends of reads to perform trimming on.
+                                            Requires '--trimq'.
+                                            Default: ${params.qtrim}
+
+      --minlen                        [int] Filter to remove trimmed reads with length below this value.
+                                            Default: ${params.minlen}
+
+    STAR alignment
+      --alignIntronMax                [int] Maximum length STAR considers for introns.
+                                            Default: ${params.alignIntronMax}
+
+      --alignIntronMin                [int] Minimum length STAR considers for introns (otherwise considered a deletion).
+                                            Default: ${params.alignIntronMin}
+
+      --alignMatesGapMax              [int] Maximum gap STAR considers between mates.
+                                            Default: ${params.alignMatesGapMax}
+
+      --alignSJDBoverhangMin          [int] Minimum overhang for annotated junctions.
+                                            Default: ${params.alignSJDBoverhangMin}
+
+      --alignSJoverhangMin            [int] Minimum overhang for unannotated junctions.
+                                            Default: ${params.alignSJoverhangMin}
+
+      --alignSoftClipAtReferenceEnds  [str] Allow soft-clipping of alignments past the ends of chromosomes.
+                                            Default: ${params.alignSoftClipAtReferenceEnds}
+
+      --alignTranscriptsPerReadNmax   [int] Max number of alignments per read to consider.
+                                            Default: ${params.alignTranscriptsPerReadNmax}
+
+      --chimJunctionOverhangMin       [int] Minimum overhang for a chimeric junction.
+                                            Default: ${params.chimJunctionOverhangMin}
+
+      --chimScoreMin                  [int] Minimum total score (summed) of chimeric segments.
+                                            Default: ${params.chimScoreMin}
+
+      --chimScoreSeparation           [int] Minimum difference between the best chimeric score and the next one.
+                                            Default: ${params.chimScoreSeparation}
+
+      --genomeLoad                    [str] Mode of shared memory usage for genome files.
+                                            Available: 'LoadAndKeep', 'LoadAndRemove', 'LoadAndExit', 'Remove', 'NoSharedMemory'.
+                                            Default: ${params.genomeLoad}
+
+      --limitSjdbInsertNsj            [int] Maximum number of junctions to be inserted on the fly during mapping stage.
+                                            Default: ${params.limitSjdbInsertNsj}
+
+      --outFilterMatchNminOverLread [float] Output alignment if ratio of matched bases relative to read length is >= value.
+                                            Default: ${params.outFilterMatchNminOverLread}
+
+      --outFilterMismatchNoverLmax  [float] Output alignment if ratio of mismatched based relative to mapped read length is <= value.
+                                            Default: ${params.outFilterMismatchNoverLmax}
+
+      --outFilterMultimapNmax         [int] Maximum number of multiple alignments permitted for read.
+                                            Default: ${params.outFilterMultimapNmax}
+
+      --outFilterMultimapScoreRange   [int] Score range below the maximum score for multimapping alignments.
+                                            Default: ${params.outFilterMultimapScoreRange}
+
+      --outSJfilterOverhangMin        [str] Minimum overhang length for novel splice junctions. 4 integers provided in string.
+                                            From left to right, integers sepcify minimum overhang length for splice junction sites:
+                                            1. non-canonical motifs
+                                            2. GT/AG and CT/AC motifs
+                                            3. GC/AG and CT/GC motifs
+                                            4. AT/AC and GT/AT motifs
+                                            Default: ${params.outSJfilterOverhangMin}
+
+      --sjdbOverhang                  [int] Specify length of donor/acceptor sequence flanking junctions (Index generation step).
+                                            Default: ${params.sjdbOverhang}
+
+      --sjdbScore                     [int] Alignment score for alignments that traverse database junctions.
+                                            Default: ${params.sjdbScore}
+
+      --winAnchorMultimapNmax         [int] Maximum number of loci anchors are allowed map to.
+                                            Default: ${params.winAnchorMultimapNmax}
+
+   For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
+    """.stripIndent()
+}
+
+// Show help message
+params.help = false
+if (params.help){
+    helpMessage()
     exit 0
 }
+
+// Small console separator to make it easier to read errors after launch
+println ""
+
+
+/*
+================================================================================
+                          Check parameters
+================================================================================
+*/
 
 /*
 ================================================================================
@@ -97,22 +215,210 @@ if (params.help) {
 // Check Tools selected
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
-if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool, see --help for more information."
+if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool selected, see --help for more information."
 
 // Check Modules
 moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
+// Check outdir
+if(params.outdir == ''){
+  exit 1, "[nf-core/circrna] error: --outdir was not supplied, please provide a output directory to publish workflow results."
+}
+
+
 // Check input type
-if(params.input_type == null){
-  exit 1, "[nf-core/circrna] error: --input_type was not supplied! Please select 'fastq' or 'bam'."
+if(params.input_type == ''){
+  exit 1, "[nf-core/circrna] error: --input_type was not supplied, please select 'fastq' or 'bam'."
 }
 
 // Check Genome version
-if(params.genome_version == null){
-  exit 1, "[nf-core/circrna] error: --genome_version was not supplied!. Please select 'GRCh37' or 'GRCh37'."
+if(params.genome_version == ''){
+	exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
 }
+
+if(params.genome_version){
+
+  GenomeVersions = defineGenomeVersions()
+
+  Channel
+	.value(params.genome_version)
+	.map{ it ->
+
+	if(!GenomeVersions.contains(it)){
+	exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
+		}
+	}
+}
+
+/*
+ * The below parameters are allowed to be empty (they will be generated if empty)
+ * Mainly concerned about valid file extensions when provided.
+ */
+
+// Check Fasta
+if(params.fasta && (!has_extension(params.fasta, ".fa") || !has_extension(params.fasta, ".fasta"))){
+  exit 1, "[nf-core/circrna] error: Reference Fasta file provided (${params.fasta}) is not valid, Fasta file should have the extension '.fa' or '.fasta'."
+}
+
+// Check GTF
+if(params.gencode_gtf && !has_extension(params.gencode_gtf, ".gtf")){
+  exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gencode_gtf}) is not valid, GTF file should have the extension '.gtf'."
+}
+
+// Check Fasta fai
+if(params.fasta_fai && !has_extension(params.fasta_fai, ".fai")){
+  exit 1, "[nf-core/circrna] error: Fasta index file provided (${params.fasta_fai}) is not valid, Fasta index files should have the extension '.fai'."
+}
+
+// Check BWA index
+
+/*
+ * Workflow only requires BWA Path for CIRIquant yaml file,
+ * but we can check file extensions here if user provides
+ * --bwa_index parameter.
+ */
+
+if(params.bwa_index){
+
+  bwa_path_files = params.bwa_index + "/*"
+  Channel
+	.fromPath(bwa_path_files, checkIfExists: true)
+	.flatten()
+	.map{ it ->
+
+	if(!has_extension(it, ".ann") && !has_extension(it, ".amb") && !has_extension(it, ".bwt") && !has_extension(it, ".pac") && !has_extension(it, ".sa")){
+	exit 1, "[nf-core/circrna] error: BWA index file ($it) has an incorrect extension. Are you sure they are BWA indices?"
+		}
+	}
+}
+
+// Check Bowtie index
+
+if(params.bowtie_index){
+
+  bowtie_path_files = params.bowtie_index + "/*"
+
+  Channel
+	.fromPath(bowtie_path_files, checkIfExists: true)
+	.flatten().view()
+	.map{ it ->
+
+	if(!has_extension(it, ".ebwt")){
+	exit 1, "[nf-core/circrna] error: Bowtie index file ($it) has an incorrect extension. Are you sure they are Bowtie(1) indices?"
+		}
+	}
+}
+
+// Check Bowtie 2 index
+
+if(params.bowtie2_index){
+
+  bowtie2_path_files = params.bowtie2_index + "/*"
+
+  Channel
+	.fromPath(bowtie2_path_files, checkIfExists: true)
+	.flatten()
+	.map{ it ->
+
+	if(!has_extension(it, ".bt2")){
+	exit 1, "[nf-core/circrna] error: Bowtie 2 index file ($it) has an incorrect extension. Are you sure they are Bowtie 2 indices?"
+		}
+	}
+}
+
+
+// Check HISAT2 index
+
+if(params.hisat2_index){
+
+  hisat2_path_files = params.hisat2_index + "/*"
+
+  Channel
+	.fromPath(hisat2_path_files, checkIfExists: true)
+	.flatten()
+	.map{ it ->
+
+	if(!has_extension(it, ".ht2")){
+	exit 1, "[nf-core/circrna] error: HISAT2 index file ($it) has an incorrect extension. Are you sure they are HISAT2 indices?"
+		}
+	}
+}
+
+// Check STAR index
+
+if(params.star_index){
+
+  starList = defineStarFiles()
+
+  star_path_files = params.star_index + "/*"
+
+  Channel
+	.fromPath(star_path_files, checkIfExists: true)
+	.flatten()
+	.map{ it -> it.getName()}
+	.collect()
+	.flatten()
+  	.map{ it ->
+
+	if(!starList.contains(it)){
+	exit 1, "[nf-core/circrna] error: Incorrect index file ($it) is in the STAR directory provided.\n\nPlease check your STAR indices are valid:\n$starList."
+		}
+	}
+}
+
+/*
+ * End of 'allowed to be empty' files
+ */
+
+// Check phenotype file
+
+// Check it is a valid file & stage path:
+pheno_path = null
+if('differential_expression' in module && params.phenotype && (has_extension(params.phenotype, ".csv"))){
+	pheno_path = params.phenotype
+}else{
+	exit 1, "[nf-core/circrna] error: Attempting to run differential expression analysis but the input phenotype file is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
+}
+
+// Check 'condition' is a col name, and that it contains 'control'.
+ch_phenotype = Channel.empty()
+if(pheno_path){
+
+        pheno_file = file(pheno_path)
+
+	if(pheno_file instanceof List) exit 1, "[nf-core/circrna] error: multiple files passed to --phenotype parameter."
+        if(!pheno_file.exists()) exit 1, "[nf-core/circrna] error: input phenotype file could not be found using the path provided: ${params.phenotype}"
+
+        ch_phenotype = examine_phenotype(pheno_file)
+	ch_phenotype.filter{ it =~/control/ }
+		    .ifEmpty{ exit 1, "[nf-core/circrna] error: There are no samples named control in your condition column. Please rename the wild-type/normal samples control"}
+
+}
+
+// Check BBDUK params
+
+// Check adapters
+if(params.skip_trim == 'no'){
+	if(!has_extension(params.adapters, ".fa") && !has_extension(params.adapters, ".fasta")){
+		exit 1, "[nf-core/circrna] error: --adapters file provied (${params.adapters}) must be a fasta file."
+	}
+	if(params.adapters){
+	adapters = file(params.adapters, checkIfExists: true)
+	}
+}
+
+// Check all adapter trimming flags are provided
+if(params.skip_trim == 'no' && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
+  exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.\n\nPlease check the parameter documentation online."
+}
+
+// Check all quality trimming flags are provided
+if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
+  exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
+}
+
 
 /*
 ================================================================================
@@ -329,7 +635,8 @@ process bowtie_index{
         """
 }
 
-ch_bowtie_index = params.bowtie_index ? Channel.value(file(params.bowtie_index)) : bowtie_built
+bowtie_path_files = params.bowtie_index + "/*"
+ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) : bowtie_built
 ch_bowtie_index.view()
 
 process bowtie2_index{
@@ -350,7 +657,8 @@ process bowtie2_index{
         """
 }
 
-ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(params.bowtie2_index)) : bowtie2_built
+bowtie2_path_files = params.bowtie2_index + "/*"
+ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)) : bowtie2_built
 ch_bowtie2_index.view()
 
 
@@ -1679,6 +1987,35 @@ def defineModuleList() {
     ]
 }
 
+// Define STAR index files
+def defineStarFiles() {
+    return [
+    'chrLength.txt',
+    'chrNameLength.txt',
+    'chrName.txt',
+    'chrStart.txt',
+    'exonGeTrInfo.tab',
+    'exonInfo.tab',
+    'geneInfo.tab',
+    'Genome',
+    'genomeParameters.txt',
+    'Log.out',
+    'SA',
+    'SAindex',
+    'sjdbInfo.txt',
+    'sjdbList.fromGTF.out.tab',
+    'sjdbList.out.tab',
+    'transcriptInfo.tab'
+    ]
+}
+
+// Define Genome versions
+def defineGenomeVersions() {
+	return [
+	'GRCh37',
+	'GRCh38'
+	]
+}
 
 // Check if a row has the expected number of item
 def checkNumberOfItem(row, number) {
@@ -1774,4 +2111,56 @@ def retrieve_input_paths(input, type){
 
                 }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
+}
+
+// Check input phenotype file
+
+/*
+ * User can supply many explanatory variables and thus this function only checks the condition column.
+ * Ask @nf-core how this can be adapted to accept any number of columns?
+ */
+
+def examine_phenotype(pheno){
+
+  Channel
+        .fromPath(pheno)
+        .splitCsv(header: true, sep: ',')
+        .map{ row ->
+
+        def expected_cols = ['condition']
+
+        if (!row.keySet().containsAll(expected_cols)) exit 1, "[nf-core/circrna] error: 'condition' is not a column name in the phenotype file.\n\nThe response variable must be named 'condition', please refer to the usage documentation online"
+
+        def condition  = row.condition.matches('NA') ? 'NA' : row.condition
+
+        if(condition == '') exit 1, "[nf-core/circrna] error: Invalid phenotype file, condition column contains empty cells."
+        if(condition.matches('NA')) exit 1, "[nf-core/circrna] error: NA value in phenotype condition column."
+
+	return condition
+
+	}
+	.toList()
+}
+
+def nfcoreHeader() {
+    // Log colors ANSI codes
+    c_black = params.monochrome_logs ? '' : "\033[0;30m";
+    c_blue = params.monochrome_logs ? '' : "\033[0;34m";
+    c_cyan = params.monochrome_logs ? '' : "\033[0;36m";
+    c_dim = params.monochrome_logs ? '' : "\033[2m";
+    c_green = params.monochrome_logs ? '' : "\033[0;32m";
+    c_purple = params.monochrome_logs ? '' : "\033[0;35m";
+    c_reset = params.monochrome_logs ? '' : "\033[0m";
+    c_white = params.monochrome_logs ? '' : "\033[0;37m";
+    c_yellow = params.monochrome_logs ? '' : "\033[0;33m";
+
+    return """    -${c_dim}--------------------------------------------------${c_reset}-
+                                            ${c_green},--.${c_black}/${c_green},-.${c_reset}
+    ${c_blue}        ___     __   __   __   ___     ${c_green}/,-._.--~\'${c_reset}
+    ${c_blue}  |\\ | |__  __ /  ` /  \\ |__) |__         ${c_yellow}}  {${c_reset}
+    ${c_blue}  | \\| |       \\__, \\__/ |  \\ |___     ${c_green}\\`-._,-`-,${c_reset}
+                                            ${c_green}`._,._,\'${c_reset}
+    ${c_purple}  nf-core/circrna v${workflow.manifest.version}${c_reset}
+    -${c_dim}--------------------------------------------------${c_reset}-
+    """.stripIndent()
 }
