@@ -206,29 +206,22 @@ println ""
 ================================================================================
 */
 
-/*
-================================================================================
-                          Check mandatory flags
-================================================================================
-*/
-
 // Check Tools selected
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool selected, see --help for more information."
 
-// Check Modules
+// Check Modules selected
 moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
-// Check outdir
+// Check outdir not empty string.
 if(params.outdir == ''){
   exit 1, "[nf-core/circrna] error: --outdir was not supplied, please provide a output directory to publish workflow results."
 }
 
-
-// Check input type
+// Check input type not empty.
 if(params.input_type == ''){
   exit 1, "[nf-core/circrna] error: --input_type was not supplied, please select 'fastq' or 'bam'."
 }
@@ -238,18 +231,19 @@ if(params.genome_version == ''){
 	exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
 }
 
+// Check proper versions supplied
 if(params.genome_version){
 
   GenomeVersions = defineGenomeVersions()
 
   Channel
-	.value(params.genome_version)
-	.map{ it ->
+         .value(params.genome_version)
+         .map{ it ->
 
-	if(!GenomeVersions.contains(it)){
-	exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
-		}
-	}
+	           if(!GenomeVersions.contains(it)){
+	             exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
+             }
+	        }
 }
 
 /*
@@ -273,18 +267,11 @@ if(params.fasta_fai && !has_extension(params.fasta_fai, ".fai")){
 }
 
 // Check BWA index
-
-/*
- * Workflow only requires BWA Path for CIRIquant yaml file,
- * but we can check file extensions here if user provides
- * --bwa_index parameter.
- */
-
 if(params.bwa_index){
 
   bwa_path_files = params.bwa_index + "/*"
   Channel
-	.fromPath(bwa_path_files, checkIfExists: true)
+  .fromPath(bwa_path_files, checkIfExists: true)
 	.flatten()
 	.map{ it ->
 
