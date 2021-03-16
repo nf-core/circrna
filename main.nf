@@ -2019,12 +2019,12 @@ def extract_data(csvFile){
         if( !read2.matches('NA') && !has_extension(read2, "fastq.gz") && !has_extension(read2, "fq.gz") && !has_extension(read2, "fastq") && !has_extension(read2, "fq")) exit 1, "[nf-core/circrna] error: A specified R2 file either has a non-recognizable FASTQ extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${r2}"
         if( !bam.matches('NA') && !has_extension(bam, "bam")) exit 1, "[nf-core/eager] error: A specified BAM file either has a non-recognizable extension or is not NA. See '--help' flag and documentation under 'running the pipeline' for more information. Check: ${bam}"
 
-          // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
-          if(bam.matches('NA')){
-             [ samples, [read1, read2] ]
-          }else{
-             [ samples, bam ]
-          }
+        // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
+        if(bam.matches('NA')){
+           [ samples, [read1, read2] ]
+        }else{
+           [ samples, bam ]
+        }
 
         }
 
@@ -2063,11 +2063,11 @@ def retrieve_input_paths(input, type){
                   def read2 = (type == 'bam') ? 'NA' : return_file(it[1][1])
                   def bam =   (type == 'fastq') ? 'NA' : return_file(it[1][0])
 
-                    if(bam.matches('NA')){
-                       [ samples, [read1, read2] ]
-                    }else{
-                       [ samples, bam ]
-                    }
+                  if(bam.matches('NA')){
+                     [ samples, [read1, read2] ]
+                  }else{
+                     [ samples, bam ]
+                  }
 
                   }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
