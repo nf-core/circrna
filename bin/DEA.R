@@ -22,7 +22,7 @@ get_args <- function(){
 						arg="phenotype",
 						short="p",
 						help="file containing sample metadata information to guide the design",
-						default="phenotype.txt")
+						default="phenotype.csv")
 
 		argp <- add_argument(
 						parser=argp,
@@ -86,7 +86,7 @@ stage_data <- function(gene_counts, phenotype, circRNA){
 checkinputdata <- function(phenotype){
 
 		# Stage phenotype file
-		pheno <- read.table(phenotype, sep="\t", row.names=1, header = T, stringsAsFactors = T)
+		pheno <- read.csv(phenotype, row.names=1, header = T, stringsAsFactors = T)
 
 		# Check if there are at least 3 replicates (DESeq2 fails if < 3)
 		if(min(table(pheno$condition)) >= 3){
