@@ -41,26 +41,28 @@ def helpMessage() {
                                             Note that later profiles overwrite earlier profiles, order is important!
                                             Available: docker, singularity, <institute>
 
-      --module                        [str] Specify the analysis module(s) to run as a comma seperated list.
-                                            Available: 'circrna_discovery', 'mirna_prediction', 'differential_expression'.
-                                            Please note that 'circrna_disocvery' is mandatory.
+      --module                        [str] Specify analysis module(s) to run. Can use multiple (comma separated), must include 'circrna_discovery'
+                                            Available: circrna_discovery, mirna_prediction, differential_expression.
+                                            Default: ${params.module}
 
       --tool                          [str] Specify which circRNA quantification tool to use.
                                             If selecting multiple tools, provide as a comma seperated list.
-                                            Available: 'circexplorer2', 'circrna_finder', 'ciriquant', 'dcc', 'find_circ', 'mapsplice'.
+                                            Available: circexplorer2, circrna_finder, ciriquant, dcc, find_circ, mapsplice.
+                                            Default: ${params.tool}
 
-      --input_type                    [str] Specify the input data type. Avaialable: 'fastq' or 'bam'.
+      --input_type                    [str] Specify the input data type.
+                                            Avaialable: fastq or bam.
+                                            Default: ${params.input_type}
 
-    Input files
       --input                        [file] Either paths to FASTQ/BAM data (must be surrounded with quotes).
                                             Indicate multiple files with a suitable wildcard glob pattern i.e '*_{1,2}' for FASTQ paired end reads.
 
                                             OR
 
                                             A path to a CSV file (ending .csv) containing file URL/paths and sample IDs.
-                                            Please see documentation for a template.
+                                            Please see online documentation for a template.
 
-      --phenotype                    [file] When 'differential_expression' is provided to '--module', a phenotype CSV file (ending .csv) must be provided.
+      --phenotype                    [file] When differential_expression is provided to --module, a phenotype CSV file (ending .csv) must be provided.
                                             Sample IDs and response + explanatory variables from metadata must be included. Do not include irrelavant metadata.
                                             This file is used to construct the DESeq2 model design.
                                             The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
@@ -185,6 +187,10 @@ def helpMessage() {
       --winAnchorMultimapNmax         [int] Maximum number of loci anchors are allowed map to.
                                             Default: ${params.winAnchorMultimapNmax}
 
+    Other options:
+      --outdir                        [dir] The output directory where the results will be saved.
+                                            Default: ${params.outdir}
+
    For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
     """.stripIndent()
 }
@@ -198,7 +204,6 @@ if (params.help){
 
 // Small console separator to make it easier to read errors after launch
 println ""
-
 
 /*
 ================================================================================
