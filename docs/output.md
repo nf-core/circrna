@@ -1,4 +1,7 @@
+# nf-core/circrna: Output
+
 ## Introduction
+
 This documentation describes the output of `nf-core/circrna` for an extended version of the test dataset which runs all 3 modules in the workflow: `circRNA discovery` , `miRNA prediction` and `differential expression` analysis of circular RNAs in RNA-Seq data.  
 
 The processes listed below will fall into one of 4 output directories produced by `nf-core/circrna`:
@@ -58,13 +61,12 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 * `circrna_discovery/reference/`
   * `*.fa`: Gencode reference FASTA file.
-  * `*.gtf `: Gencode reference GTF file.
+  * `*.gtf`: Gencode reference GTF file.
   * `*.txt`: Customised reference text annotation file.
 
 </details>
 
 `nf-core/circrna` has been designed exclusively with [gencode](https://www.gencodegenes.org/) reference files due to their ubiquitous compatibility with circRNA quantification tools. For this reason, ENSEMBL and UCSC reference files are not recommended. The user can specify which genome version to use (`GRCh37/GRCh38`) via the `--genome_version` parameter, see [parameter documentation](https://nf-co.re/circrna/dev/parameters#reference-genome-options) for details.
-
 
 ### miRNA Databases
 
@@ -156,7 +158,6 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 </details>
 
 `nf-core/circrna` outputs quality control plots of normalised *log2* expression data from `DESeq2` to assess heterogeneity in the experiment samples. These plots can be useful to assess sample-sample similarity and to identify potential batch effects within the experiment. Plots are generated for both circRNAs and RNA-Seq data when the differential expression analysis module has been selected by the user (see `--module` [documentation](https://nf-co.re/circrna/dev/parameters#pipeline-options)).
-
 
 ### FastQC
 
@@ -292,7 +293,7 @@ Mature miRNA sequences are downloaded from [miRbase](http://www.mirbase.org/ftp.
 
 </details>
 
-[CIRIquant](https://github.com/Kevinzjy/CIRIquant) operates by aligning RNA-Seq reads using `HISAT2` and [CIRI2](https://sourceforge.net/projects/ciri/files/CIRI2/) to identify putative circRNAs. Next, a pseudo reference index is generated using `bwa index ` by concatenating the two full-length sequences of the putative back-splice junction regions. Candidate circular reads are re-aligned against this pseudo reference using `bwa mem`, and back-splice junction reads are determined if they can be linearly and completely aligned to the putative back-splice junction regions.
+[CIRIquant](https://github.com/Kevinzjy/CIRIquant) operates by aligning RNA-Seq reads using `HISAT2` and [CIRI2](https://sourceforge.net/projects/ciri/files/CIRI2/) to identify putative circRNAs. Next, a pseudo reference index is generated using `bwa index` by concatenating the two full-length sequences of the putative back-splice junction regions. Candidate circular reads are re-aligned against this pseudo reference using `bwa mem`, and back-splice junction reads are determined if they can be linearly and completely aligned to the putative back-splice junction regions.
 
 ### DCC
 
@@ -604,7 +605,6 @@ Output directory of DESeq2 circRNA differential expression analysis results. Up 
 `nf-core/circrna` will produce boxplots of differentially expressed circRNAs (normalised expression) between phenotypes given in `condition`, creating a directory for each comparison vs `control`.
 
 *Note:* The output files give examples for `control_vs_lung` and `control_vs_melanoma`.
-
 
 ### RNA-Seq
 

@@ -18,10 +18,10 @@ A typical command for running the pipeline is as follows:
 
 ```bash
 nextflow run nf-core/circrna \
-	-profile <docker/singularity/podman/institute> \
-	--input 'samples.csv' \
-	--input_type 'fastq' \
-	--phenotype 'phenotype.txt'
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt'
 ```
 
 This will launch the pipeline and perform all 3 analysis modules: `circrna_discovery`, `mirna_prediction` and `differential_expression`.
