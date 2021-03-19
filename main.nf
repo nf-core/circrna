@@ -416,50 +416,84 @@ if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq &
 ================================================================================
 */
 
-process download_genome {
+process download_fasta{
 
-    publishDir "${params.outdir}/circrna_discovery/reference", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/reference", mode:'copy'
 
     output:
-        file('*.fa') into fasta_downloaded
-        file('*.txt') into gene_annotation_created
-        file('*.gtf') into gencode_gtf_downloaded
+        file("*.fa") into fasta_downloaded
 
-    when: !(params.fasta) && !(params.gencode_gtf) && !(params.gene_annotation)
+    when: !params.fasta
 
     shell:
     if(params.genome_version == 'GRCh37'){
        $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
-       gunzip gencode.v34lift37.annotation.gtf.gz
        gunzip GRCh37.primary_assembly.genome.fa.gz
-       mv gencode.v34lift37.annotation.gtf GRCh37.gtf
        mv GRCh37.primary_assembly.genome.fa GRCh37.fa.tmp
        sed 's/\s.*$//' GRCh37.fa.tmp > GRCh37.fa
-       gtfToGenePred -genePredExt -geneNameAsName2 GRCh37.gtf GRCh37.genepred
-       perl -alne '$"="\t";print "@F[11,0..9]"' GRCh37.genepred > GRCh37.txt
        rm GRCh37.fa.tmp
        /$
     }else if(params.genome_version == 'GRCh38'){
        $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz
-       gunzip gencode.v34.primary_assembly.annotation.gtf.gz
        gunzip GRCh38.primary_assembly.genome.fa.gz
-       mv gencode.v34.primary_assembly.annotation.gtf GRCh38.gtf
        mv GRCh38.primary_assembly.genome.fa GRCh38.fa.tmp
        sed 's/\s.*$//' GRCh38.fa.tmp > GRCh38.fa
-       gtfToGenePred -genePredExt -geneNameAsName2 GRCh38.gtf GRCh38.genepred
-       perl -alne '$"="\t";print "@F[11,0..9]"' GRCh38.genepred > GRCh38.txt
        rm GRCh38.fa.tmp
        /$
     }
 }
 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : fasta_downloaded
+
+process download_gtf{
+
+    publishDir "${params.outdir}/circrna_discovery/reference", mode:'copy'
+
+    output:
+        file("*.gtf") into gtf_downloaded
+
+    when: !params.gencode_gtf
+
+    shell:
+    if(params.genome_version == 'GRCh37'){
+       $/
+       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
+       gunzip gencode.v34lift37.annotation.gtf.gz
+       mv gencode.v34lift37.annotation.gtf GRCh37.gtf
+       /$
+    }else if(params.genome_version == 'GRCh38'){
+       $/
+       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
+       gunzip gencode.v34.primary_assembly.annotation.gtf.gz
+       mv gencode.v34.primary_assembly.annotation.gtf GRCh38.gtf
+       /$
+    }
+}
+
+ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gtf_downloaded
+
+process create_gene_annotation{
+
+    publishDir "${params.outdir}/circrna_discovery/reference/", mode:'copy'
+
+    input:
+        file(gtf) from ch_gencode_gtf
+
+    output:
+        file("*.txt") into gene_annotation_created
+
+    when: !params.gene_annotation
+
+    shell:
+    $/
+    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome_version}.genepred
+    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome_version}.genepred > !{params.genome_version}.txt
+    /$
+}
+
 ch_gene_annotation = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : gene_annotation_created
-ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gencode_gtf_downloaded
 
 process download_mirbase{
 
