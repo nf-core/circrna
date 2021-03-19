@@ -14,7 +14,7 @@ The processes listed below will fall into one of 4 output directories produced b
        |-- differential_expression
 ```
 
-## Pipeline Overview:
+## Pipeline Overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
