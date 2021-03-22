@@ -445,7 +445,7 @@ if(params.fasta_fai)       summary['SAMtools index']    = params.fasta_fai
 if(params.hisat2_index)    summary['HISAT2 indices']    = params.hisat2_index
 if(params.star_index)      summary ['STAR indices']     = params.star_index
 
-if(params.skip_trim == 'false'){
+if(params.skip_trim == 'no'){
                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
