@@ -192,8 +192,8 @@ def helpMessage() {
                                             Default: ${params.outdir}
       --publish_dir_mode             [list] Mode for publishing results in the output directory (only one)
                                             Available: symlink, rellink, link, copy, copyNoFollow, move
-                                            Default: copy                                      
-      
+                                            Default: copy
+
    For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
     """.stripIndent()
 }
@@ -643,7 +643,7 @@ process download_targetscan{
 
 process samtools_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode'
+    publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
