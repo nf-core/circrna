@@ -67,15 +67,6 @@ Ouputs given by each step in the pipeline can be viewed at the [output documenta
 
 See [usage docs](https://nf-co.re/circrna/usage) for all of the available options when running the pipeline.
 
-## Pipeline Summary
-
-By default, the pipeline currently performs the following:
-
-<!-- TODO nf-core: Fill in short bullet-pointed list of default steps of pipeline -->
-
-* Sequencing quality control (`FastQC`)
-* Overall pipeline run summaries (`MultiQC`)
-
 ## Documentation
 
 The nf-core/circrna pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/circrna/usage) and [output](https://nf-co.re/circrna/output).
