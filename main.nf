@@ -190,7 +190,10 @@ def helpMessage() {
     Other options:
       --outdir                        [dir] The output directory where the results will be saved.
                                             Default: ${params.outdir}
-
+      --publish_dir_mode             [list] Mode for publishing results in the output directory (only one)
+                                            Available: symlink, rellink, link, copy, copyNoFollow, move
+                                            Default: copy                                      
+      
    For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
     """.stripIndent()
 }
@@ -424,6 +427,7 @@ summary['Max Resources']     = "${params.max_memory} memory, ${params.max_cpus} 
 summary['Config Files']   = workflow.configFiles.join(', ')
 summary['Launch dir']  = workflow.launchDir
 summary['Output dir']  = params.outdir
+summary['Publish dir mode']  = params.publish_dir_mode
 summary['Working dir'] = workflow.workDir
 summary['Script dir']  = workflow.projectDir
 summary['User']        = workflow.userName
@@ -510,7 +514,7 @@ log.info "\033[2m----------------------------------------------------\033[0m"
 
 process download_fasta{
 
-    publishDir "${params.outdir}/circrna_discovery/reference", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
 
     output:
         file("*.fa") into fasta_downloaded
@@ -541,7 +545,7 @@ ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : fasta_downloaded
 
 process download_gtf{
 
-    publishDir "${params.outdir}/circrna_discovery/reference", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
 
     output:
         file("*.gtf") into gtf_downloaded
@@ -568,7 +572,7 @@ ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : 
 
 process create_gene_annotation{
 
-    publishDir "${params.outdir}/circrna_discovery/reference/", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
 
     input:
         file(gtf) from ch_gencode_gtf
@@ -592,7 +596,7 @@ process download_mirbase{
     errorStrategy 'retry'
     maxRetries 10
 
-    publishDir "${params.outdir}/mirna_prediction/assets", mode:'copy'
+    publishDir "${params.outdir}/mirna_prediction/assets",mode: params.publish_dir_mode
 
     output:
         file("hsa_mature.fa") into miranda_miRs
@@ -612,7 +616,7 @@ process download_targetscan{
     errorStrategy 'retry'
     maxRetries 10
 
-    publishDir "${params.outdir}/mirna_prediction/assets", mode:'copy'
+    publishDir "${params.outdir}/mirna_prediction/assets", mode: params.publish_dir_mode
 
     output:
         file("hsa_miR.txt") into targetscan_miRs
@@ -633,13 +637,13 @@ process download_targetscan{
 
 /*
 ================================================================================
-                          Create Genome Index
+                          Create Genome Indices
 ================================================================================
 */
 
 process samtools_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/samtools", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode'
 
     input:
         file(fasta) from ch_fasta
@@ -659,7 +663,7 @@ ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_bu
 
 process bwa_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/bwa", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/index/bwa", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -680,7 +684,7 @@ ch_bwa_index = params.bwa_index ? Channel.value(params.bwa_index) : bwa_path
 
 process hisat2_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -701,7 +705,7 @@ ch_hisat2_index = params.hisat2_index ? Channel.value(params.hisat2_index) : his
 
 process star_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/index", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -728,7 +732,7 @@ ch_star_index = params.star_index ? Channel.value(file(params.star_index)) : sta
 
 process bowtie_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -749,7 +753,7 @@ ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) :
 
 process bowtie2_index{
 
-    publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -777,7 +781,7 @@ ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)
 
 process split_fasta{
 
-    publishDir "${params.outdir}/circrna_discovery/reference/chromosomes", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/reference/chromosomes", mode: params.publish_dir_mode
 
     input:
         file(fasta) from ch_fasta
@@ -807,7 +811,7 @@ ch_fasta_chr = params.fasta_chr ? Channel.value(params.fasta_chr) : split_fasta_
 
 process ciriquant_yml{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
 
     input:
         file(gencode_gtf) from ch_gencode_gtf
@@ -888,7 +892,7 @@ if(params.input_type == 'bam'){
 
    process bam_to_fq{
 
-        publishDir "${params.outdir}/quality_control/preprocessing/bamtofastq", mode:'copy'
+        publishDir "${params.outdir}/quality_control/preprocessing/bamtofastq", mode: params.publish_dir_mode
 
         input:
             tuple val(base), file(bam) from ch_input_sample
@@ -921,7 +925,7 @@ process FastQC {
 
     label 'py3'
 
-    publishDir "${params.outdir}/quality_control/fastqc/raw", mode:'copy'
+    publishDir "${params.outdir}/quality_control/fastqc/raw", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(fastq) from fastqc_reads
@@ -939,7 +943,7 @@ process FastQC {
 
 process multiqc_raw {
 
-    publishDir "${params.outdir}/quality_control/multiqc", mode:'copy'
+    publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
 
     label 'py3'
 
@@ -961,7 +965,7 @@ if(params.skip_trim == 'no'){
 
    process bbduk {
 
-       publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: 'copy'
+       publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: params.publish_dir_mode
 
        input:
            tuple val(base), file(fastq) from trimming_reads
@@ -1002,7 +1006,7 @@ if(params.skip_trim == 'no'){
 
        label 'py3'
 
-       publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode:'copy'
+       publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode: params.publish_dir_mode
 
        input:
            tuple val(base), file(fastq) from fastqc_trim_reads
@@ -1018,7 +1022,7 @@ if(params.skip_trim == 'no'){
 
    process multiqc_trim {
 
-       publishDir "${params.outdir}/quality_control/multiqc", mode:'copy'
+       publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
 
        label 'py3'
 
@@ -1051,7 +1055,7 @@ if(params.skip_trim == 'no'){
 
 process STAR_1PASS{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(reads) from star_pass1_reads
@@ -1103,7 +1107,7 @@ process STAR_1PASS{
 
 process sjdbFile{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode: params.publish_dir_mode
 
     input:
         file(sjdb) from sjdb_ch
@@ -1124,7 +1128,7 @@ process sjdbFile{
 
 process STAR_2PASS{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(reads) from star_pass2_reads
@@ -1180,8 +1184,8 @@ process STAR_2PASS{
 
 process circexplorer2_star{
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode:'copy'
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(chimeric_reads) from circexplorer2_input
@@ -1211,8 +1215,8 @@ process circexplorer2_star{
 
 process circrna_finder{
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode:'copy'
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(star_dir) from circrna_finder_input
@@ -1235,7 +1239,7 @@ process circrna_finder{
 
 process dcc_mate1{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(reads) from dcc_mate1_reads
@@ -1288,7 +1292,7 @@ process dcc_mate1{
 
 process dcc_mate2{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(reads) from dcc_mate2_reads
@@ -1345,8 +1349,8 @@ process dcc{
 
     label 'py3'
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode:'copy'
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
@@ -1381,7 +1385,7 @@ process dcc{
 
 process find_anchors{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(fastq) from find_circ_reads
@@ -1408,8 +1412,8 @@ process find_anchors{
 
 process find_circ{
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode:'copy'
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(anchors) from ch_anchors
@@ -1442,8 +1446,8 @@ process find_circ{
 
 process ciriquant{
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode:'copy'
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(fastq) from ciriquant_reads
@@ -1477,7 +1481,7 @@ process ciriquant{
 
 process mapsplice_align{
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(fastq) from mapsplice_reads
@@ -1541,7 +1545,7 @@ process mapsplice_align{
 
 process mapsplice_parse{
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(raw_fusion) from mapsplice_fusion
@@ -1591,7 +1595,7 @@ process tophat_align{
 
 process uroborus{
 
-    publishDir "${params.outdir}/circrna_discovery/uroborus", mode:'copy'
+    publishDir "${params.outdir}/circrna_discovery/uroborus", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
@@ -1674,7 +1678,7 @@ if(tools_selected > 1){
 
    process get_counts_combined{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode:'copy'
+       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode: params.publish_dir_mode
 
        input:
            file(bed) from sample_counts.collect()
@@ -1695,7 +1699,7 @@ if(tools_selected > 1){
 
    process get_counts_single{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode:'copy'
+       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode: params.publish_dir_mode
 
        input:
            file(bed) from single_tool.collect()
@@ -1741,8 +1745,8 @@ process remove_unwanted_biotypes{
 
 process get_mature_seq{
 
-    publishDir "${params.outdir}/circrna_discovery", mode:'copy', pattern: 'bed12/*.bed'
-    publishDir "${params.outdir}/circrna_discovery", mode:'copy', pattern: 'fasta/*.fa'
+    publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'bed12/*.bed'
+    publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'fasta/*.fa'
 
     input:
         file(fasta) from ch_fasta
@@ -1851,7 +1855,8 @@ process annotate_circrnas{
 
 process master_annotate{
 
-    publishDir "${params.outdir}/circrna_discovery/annotated", mode: 'copy'
+    publishDir "${params.outdir}/circrna_discovery/annotated", mode: params.publish_dir_mode
+
 
     input:
         file(annotated) from circrna_annotated.collect()
@@ -1878,7 +1883,7 @@ process master_annotate{
 
 process miRanda{
 
-    publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode:'copy'
+    publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode: params.publish_dir_mode
 
     input:
         file(mirbase) from miranda_miRs
@@ -1900,7 +1905,7 @@ process miRanda{
 
 process targetscan{
 
-    publishDir "${params.outdir}/mirna_prediction/targetscan", mode:'copy'
+    publishDir "${params.outdir}/mirna_prediction/targetscan", mode: params.publish_dir_mode
 
     input:
         file(miR) from targetscan_miRs
@@ -1929,8 +1934,8 @@ ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(pa
 
 process circos_plots{
 
-    publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: 'copy'
-    publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: 'copy'
+    publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: params.publish_dir_mode
 
     input:
         tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_circos_plot
@@ -2009,10 +2014,10 @@ ch_phenotype = params.phenotype ? file(params.phenotype) : ''
 
 process diff_exp{
 
-    publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode:'copy'
-    publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode:'copy'
-    publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode:'copy'
-    publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode:'copy'
+    publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
 
     input:
         file(gtf_dir) from stringtie_dir.collect()
@@ -2042,7 +2047,7 @@ process diff_exp{
 ================================================================================
                          Functions
 ================================================================================
-*/
+*
 
 // Check parameter existence
 def checkParameterExistence(it, list) {
@@ -2155,10 +2160,10 @@ def extract_data(csvFile){
            [ samples, [read1, read2] ]
         }else{
            [ samples, bam ]
-        }
 
         }
 
+        }
 }
 
 // If no input CSV provided, parse input directory containing files.
@@ -2203,6 +2208,7 @@ def retrieve_input_paths(input, type){
                   }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
 }
+
 
 // Check input phenotype file
 
@@ -2254,4 +2260,138 @@ def nfcoreHeader() {
     ${c_purple}  nf-core/circrna v${workflow.manifest.version}${c_reset}
     -${c_dim}--------------------------------------------------${c_reset}-
     """.stripIndent()
+}
+
+if (params.validate_params) {
+    NfcoreSchema.validateParameters(params, json_schema, log)
+}
+
+/*
+ * Completion e-mail notification
+ */
+workflow.onComplete {
+
+    // Set up the e-mail variables
+    def subject = "[nf-core/circrna] Successful: $workflow.runName"
+    if (!workflow.success) {
+        subject = "[nf-core/circrna] FAILED: $workflow.runName"
+    }
+    def email_fields = [:]
+    email_fields['version'] = workflow.manifest.version
+    email_fields['runName'] = workflow.runName
+    email_fields['success'] = workflow.success
+    email_fields['dateComplete'] = workflow.complete
+    email_fields['duration'] = workflow.duration
+    email_fields['exitStatus'] = workflow.exitStatus
+    email_fields['errorMessage'] = (workflow.errorMessage ?: 'None')
+    email_fields['errorReport'] = (workflow.errorReport ?: 'None')
+    email_fields['commandLine'] = workflow.commandLine
+    email_fields['projectDir'] = workflow.projectDir
+    email_fields['summary'] = summary
+    email_fields['summary']['Date Started'] = workflow.start
+    email_fields['summary']['Date Completed'] = workflow.complete
+    email_fields['summary']['Pipeline script file path'] = workflow.scriptFile
+    email_fields['summary']['Pipeline script hash ID'] = workflow.scriptId
+    if (workflow.repository) email_fields['summary']['Pipeline repository Git URL'] = workflow.repository
+    if (workflow.commitId) email_fields['summary']['Pipeline repository Git Commit'] = workflow.commitId
+    if (workflow.revision) email_fields['summary']['Pipeline Git branch/tag'] = workflow.revision
+    email_fields['summary']['Nextflow Version'] = workflow.nextflow.version
+    email_fields['summary']['Nextflow Build'] = workflow.nextflow.build
+    email_fields['summary']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
+
+    // Check if we are only sending emails on failure
+    email_address = params.email
+    if (!params.email && params.email_on_fail && !workflow.success) {
+        email_address = params.email_on_fail
+    }
+
+    // Render the TXT template
+    def engine = new groovy.text.GStringTemplateEngine()
+    def tf = new File("$projectDir/assets/email_template.txt")
+    def txt_template = engine.createTemplate(tf).make(email_fields)
+    def email_txt = txt_template.toString()
+
+    // Render the HTML template
+    def hf = new File("$projectDir/assets/email_template.html")
+    def html_template = engine.createTemplate(hf).make(email_fields)
+    def email_html = html_template.toString()
+
+    // Render the sendmail template
+    def smail_fields = [ email: email_address, subject: subject, email_txt: email_txt, email_html: email_html, projectDir: "$projectDir", mqcFile: mqc_report, mqcMaxSize: params.max_multiqc_email_size.toBytes() ]
+    def sf = new File("$projectDir/assets/sendmail_template.txt")
+    def sendmail_template = engine.createTemplate(sf).make(smail_fields)
+    def sendmail_html = sendmail_template.toString()
+
+    // Send the HTML e-mail
+    if (email_address) {
+        try {
+            if (params.plaintext_email) { throw GroovyException('Send plaintext e-mail, not HTML') }
+            // Try to send HTML e-mail using sendmail
+            [ 'sendmail', '-t' ].execute() << sendmail_html
+            log.info "[nf-core/circrna] Sent summary e-mail to $email_address (sendmail)"
+        } catch (all) {
+            // Catch failures and try with plaintext
+            def mail_cmd = [ 'mail', '-s', subject, '--content-type=text/html', email_address ]
+            if ( mqc_report.size() <= params.max_multiqc_email_size.toBytes() ) {
+              mail_cmd += [ '-A', mqc_report ]
+            }
+            mail_cmd.execute() << email_html
+            log.info "[nf-core/circrna] Sent summary e-mail to $email_address (mail)"
+        }
+    }
+
+    // Write summary e-mail HTML to a file
+    def output_d = new File("${params.outdir}/pipeline_info/")
+    if (!output_d.exists()) {
+        output_d.mkdirs()
+    }
+    def output_hf = new File(output_d, "pipeline_report.html")
+    output_hf.withWriter { w -> w << email_html }
+    def output_tf = new File(output_d, "pipeline_report.txt")
+    output_tf.withWriter { w -> w << email_txt }
+
+    c_green = params.monochrome_logs ? '' : "\033[0;32m";
+    c_purple = params.monochrome_logs ? '' : "\033[0;35m";
+    c_red = params.monochrome_logs ? '' : "\033[0;31m";
+    c_reset = params.monochrome_logs ? '' : "\033[0m";
+
+    if (workflow.stats.ignoredCount > 0 && workflow.success) {
+        log.info "-${c_purple}Warning, pipeline completed, but with errored process(es) ${c_reset}-"
+        log.info "-${c_red}Number of ignored errored process(es) : ${workflow.stats.ignoredCount} ${c_reset}-"
+        log.info "-${c_green}Number of successfully ran process(es) : ${workflow.stats.succeedCount} ${c_reset}-"
+    }
+
+    if (workflow.success) {
+        log.info "-${c_purple}[nf-core/circrna]${c_green} Pipeline completed successfully${c_reset}-"
+    } else {
+        checkHostname()
+        log.info "-${c_purple}[nf-core/circrna]${c_red} Pipeline completed with errors${c_reset}-"
+    }
+
+}
+
+workflow.onError {
+    // Print unexpected parameters - easiest is to just rerun validation
+    NfcoreSchema.validateParameters(params, json_schema, log)
+}
+
+def checkHostname() {
+    def c_reset = params.monochrome_logs ? '' : "\033[0m"
+    def c_white = params.monochrome_logs ? '' : "\033[0;37m"
+    def c_red = params.monochrome_logs ? '' : "\033[1;91m"
+    def c_yellow_bold = params.monochrome_logs ? '' : "\033[1;93m"
+    if (params.hostnames) {
+        def hostname = 'hostname'.execute().text.trim()
+        params.hostnames.each { prof, hnames ->
+            hnames.each { hname ->
+                if (hostname.contains(hname) && !workflow.profile.contains(prof)) {
+                    log.error '====================================================\n' +
+                            "  ${c_red}WARNING!${c_reset} You are running with `-profile $workflow.profile`\n" +
+                            "  but your machine hostname is ${c_white}'$hostname'${c_reset}\n" +
+                            "  ${c_yellow_bold}It's highly recommended that you use `-profile $prof${c_reset}`\n" +
+                            '============================================================'
+                }
+            }
+        }
+    }
 }
