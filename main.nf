@@ -2276,13 +2276,7 @@ def nfcoreHeader() {
     """.stripIndent()
 }
 
-if (params.validate_params) {
-    NfcoreSchema.validateParameters(params, json_schema, log)
-}
-
-/*
- * Completion e-mail notification
- */
+// Completion e-mail notification
 workflow.onComplete {
 
     // Set up the e-mail variables
@@ -2292,7 +2286,7 @@ workflow.onComplete {
     }
     def email_fields = [:]
     email_fields['version'] = workflow.manifest.version
-    email_fields['runName'] = workflow.runName
+    email_fields['runName'] = custom_runName ?: workflow.runName
     email_fields['success'] = workflow.success
     email_fields['dateComplete'] = workflow.complete
     email_fields['duration'] = workflow.duration
@@ -2364,10 +2358,10 @@ workflow.onComplete {
     def output_tf = new File(output_d, "pipeline_report.txt")
     output_tf.withWriter { w -> w << email_txt }
 
-    c_green = params.monochrome_logs ? '' : "\033[0;32m";
+    c_green  = params.monochrome_logs ? '' : "\033[0;32m";
     c_purple = params.monochrome_logs ? '' : "\033[0;35m";
-    c_red = params.monochrome_logs ? '' : "\033[0;31m";
-    c_reset = params.monochrome_logs ? '' : "\033[0m";
+    c_red    = params.monochrome_logs ? '' : "\033[0;31m";
+    c_reset  = params.monochrome_logs ? '' : "\033[0m";
 
     if (workflow.stats.ignoredCount > 0 && workflow.success) {
         log.info "-${c_purple}Warning, pipeline completed, but with errored process(es) ${c_reset}-"
@@ -2381,12 +2375,6 @@ workflow.onComplete {
         checkHostname()
         log.info "-${c_purple}[nf-core/circrna]${c_red} Pipeline completed with errors${c_reset}-"
     }
-
-}
-
-workflow.onError {
-    // Print unexpected parameters - easiest is to just rerun validation
-    NfcoreSchema.validateParameters(params, json_schema, log)
 }
 
 def checkHostname() {
