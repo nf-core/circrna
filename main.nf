@@ -406,6 +406,98 @@ if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq &
 
 /*
 ================================================================================
+                                PRINTING SUMMARY
+================================================================================
+*/
+
+// Has the run name been specified by the user?
+// This has the bonus effect of catching both -name and --name
+custom_runName = params.name
+if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
+
+log.info nfcoreHeader()
+def summary = [:]
+if (workflow.revision)          summary['Pipeline Release']    = workflow.revision
+summary['Run Name']          = custom_runName ?: workflow.runName
+if (workflow.containerEngine)   summary['Container']         = "${workflow.containerEngine} - ${workflow.container}"
+summary['Max Resources']     = "${params.max_memory} memory, ${params.max_cpus} cpus, ${params.max_time} time per job"
+summary['Config Files']   = workflow.configFiles.join(', ')
+summary['Launch dir']  = workflow.launchDir
+summary['Output dir']  = params.outdir
+summary['Working dir'] = workflow.workDir
+summary['Script dir']  = workflow.projectDir
+summary['User']        = workflow.userName
+
+summary['Input']             = params.input
+summary['Input type']        = params.input_type
+summary['circRNA tool(s)']   = params.tool
+summary['modules']           = params.module
+if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
+
+summary['Genome version'] = params.genome_version
+if(params.fasta)           summary['Reference FASTA']   = params.fasta
+if(params.gencode_gtf)     summary['Reference GTF']     = params.gencode_gtf
+if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
+if(params.bowtie_index)    summary['Bowtie indices']    = params.bowtie_index
+if(params.bowtie2_index)   summary['Bowtie2 indices']   = params.bowtie2_index
+if(params.bwa_index)       summary['BWA indices']       = params.bwa_index
+if(params.fasta_fai)       summary['SAMtools index']    = params.fasta_fai
+if(params.hisat2_index)    summary['HISAT2 indices']    = params.hisat2_index
+if(params.star_index)      summary ['STAR indices']     = params.star_index
+
+if(params.skip_trim == 'false'){
+                           summary['BBDUK']             = "Enabled"
+if(params.adapters)        summary['Adapter file']      = params.adapters
+if(params.k)               summary['k']                 = params.k
+if(params.ktrim)           summary['ktrim']             = params.ktrim
+if(params.hdist)           summary['hdist']             = params.hdist
+if(params.trimq)           summary['trimq']             = params.trimq
+if(params.qtrim)           summary['qtrim']             = params.qtrim
+if(params.minlen)          summary['minlen']            = params.minlen
+}
+
+if('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool){
+if(params.alignIntronMax)                      summary['alignIntronMax']               = params.alignIntronMax
+if(params.alignIntronMin)                      summary['alignIntronMin']               = params.alignIntronMin
+if(params.alignMatesGapMax)                    summary['alignMatesGapMax']             = params.alignMatesGapMax
+if(params.alignSJDBoverhangMin)                summary['alignSJDBoverhangMin']         = params.alignSJDBoverhangMin
+if(params.alignSJoverhangMin)                  summary['alignSJoverhangMin']           = params.alignSJoverhangMin
+if(params.alignSoftClipAtReferenceEnds)        summary['alignSoftClipAtReferenceEnds'] = params.alignSoftClipAtReferenceEnds
+if(params.alignTranscriptsPerReadNmax)         summary['alignTranscriptsPerReadNmax']  = params.alignTranscriptsPerReadNmax
+if(params.chimJunctionOverhangMin)             summary['chimJunctionOverhangMin']      = params.chimJunctionOverhangMin
+if(params.chimScoreMin)                        summary['chimScoreMin']                 = params.chimScoreMin
+if(params.chimScoreSeparation)                 summary['chimScoreSeparation']          = params.chimScoreSeparation
+if(params.chimSegmentMin)                      summary['chimSegmentMin']               = params.chimSegmentMin
+if(params.genomeLoad)                          summary['genomeLoad']                   = params.genomeLoad
+if(params.limitSjdbInsertNsj)                  summary['limitSjdbInsertNsj']           = params.limitSjdbInsertNsj
+if(params.outFilterMatchNminOverLread)         summary['outFilterMatchNminOverLread']  = params.outFilterMatchNminOverLread
+if(params.outFilterMismatchNoverLmax)          summary['outFilterMismatchNoverLmax']   = params.outFilterMismatchNoverLmax
+if(params.outFilterMultimapNmax)               summary['outFilterMultimapNmax']        = params.outFilterMultimapNmax
+if(params.outFilterMultimapScoreRange)         summary['outFilterMultimapScoreRange']  = params.outFilterMultimapScoreRange
+if(params.outFilterScoreMinOverLread)          summary['outFilterScoreMinOverLread']   = params.outFilterScoreMinOverLread
+if(params.outSJfilterOverhangMin)              summary['outSJfilterOverhangMin']       = params.outSJfilterOverhangMin
+if(params.sjdbOverhang)                        summary['sjdbOverhang']                 = params.sjdbOverhang
+if(params.sjdbScore)                           summary['sjdbScore']                    = params.sjdbScore
+if(params.winAnchorMultimapNmax)               summary['winAnchorMultimapNmax']        = params.winAnchorMultimapNmax
+}
+
+if(workflow.profile.contains('awsbatch')){
+    summary['AWS Region'] = params.awsregion
+    summary['AWS Queue']  = params.awsqueue
+    summary['AWS CLI']    = params.awscli
+}
+
+if(params.email || params.email_on_fail){
+    summary['E-mail Address']    = params.email
+    summary['E-mail on failure'] = params.email_on_fail
+    summary['MultiQC maxsize']   = params.max_multiqc_email_size
+}
+
+log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
+log.info "\033[2m----------------------------------------------------\033[0m"
+
+/*
+================================================================================
                           Begin Workflow
 ================================================================================
 */
