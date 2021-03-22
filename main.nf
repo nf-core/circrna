@@ -2062,7 +2062,7 @@ process diff_exp{
 ================================================================================
                          Functions
 ================================================================================
-*
+*/
 
 // Check parameter existence
 def checkParameterExistence(it, list) {
@@ -2175,7 +2175,6 @@ def extract_data(csvFile){
            [ samples, [read1, read2] ]
         }else{
            [ samples, bam ]
-
         }
 
         }
