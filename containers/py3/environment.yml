@@ -1,0 +1,9 @@
+name: py3
+channels:
+  - agbiome
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - fastqc
+  - multiqc
