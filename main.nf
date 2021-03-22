@@ -364,10 +364,10 @@ if(params.star_index){
 
 // Check it is a valid file & stage path:
 pheno_path = null
-if('differential_expression' in module && params.phenotype && (has_extension(params.phenotype, ".csv"))){
+if(params.phenotype && (has_extension(params.phenotype, ".csv"))){
    pheno_path = params.phenotype
 }else{
-   exit 1, "[nf-core/circrna] error: Attempting to run differential expression analysis but the input phenotype file is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
+   exit 1, "[nf-core/circrna] error: Input phenotype file is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
 }
 
 // Check 'condition' is a col name, and that it contains 'control'.
