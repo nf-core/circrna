@@ -2276,6 +2276,9 @@ def nfcoreHeader() {
     """.stripIndent()
 }
 
+// handle multiqc_channels
+ch_multiqc_report = params.skip_trim == 'no' ? multiqc_raw : multiqc_trim 
+
 // Completion e-mail notification
 workflow.onComplete {
 
@@ -2306,6 +2309,21 @@ workflow.onComplete {
     email_fields['summary']['Nextflow Version'] = workflow.nextflow.version
     email_fields['summary']['Nextflow Build'] = workflow.nextflow.build
     email_fields['summary']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
+
+    // TODO nf-core: If not using MultiQC, strip out this code (including params.max_multiqc_email_size)
+    // On success try attach the multiqc report
+    def mqc_report = null
+    try {
+        if (workflow.success) {
+            mqc_report = ch_multiqc_report.getVal()
+            if (mqc_report.getClass() == ArrayList) {
+                log.warn "[nf-core/chipseq] Found multiple reports from process 'multiqc', will use only one"
+                mqc_report = mqc_report[0]
+            }
+        }
+    } catch (all) {
+        log.warn "[nf-core/chipseq] Could not attach MultiQC report to summary email"
+    }
 
     // Check if we are only sending emails on failure
     email_address = params.email
@@ -2376,6 +2394,8 @@ workflow.onComplete {
         log.info "-${c_purple}[nf-core/circrna]${c_red} Pipeline completed with errors${c_reset}-"
     }
 }
+
+
 
 def checkHostname() {
     def c_reset = params.monochrome_logs ? '' : "\033[0m"
