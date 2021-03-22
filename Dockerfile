@@ -1,4 +1,4 @@
-FROM nfcore/base:1.12.1
+FROM nfcore/base:1.13.1
 LABEL authors="Barry Digby" \
       description="Docker image containing all software requirements for the nf-core/circrna pipeline"
 

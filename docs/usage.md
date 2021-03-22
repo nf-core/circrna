@@ -1,31 +1,34 @@
 # nf-core/circrna: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/circrna/usage](https://nf-co.re/circrna/usage)
+It is recommended that first time users run `nf-core/circrna` with the minimal test dataset either locally or on a HPC, referring to the [output documentation](https://nf-co.re/circrna/dev/output) before running a full analysis.
 
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+```bash
+nextflow run nf-core/circrna -profile test
+```
 
-## Introduction
+Run the test dataset on a HPC:
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+```bash
+nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
+```
 
 ## Running the pipeline
 
-The typical command for running the pipeline is as follows:
+A typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt'
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+This will launch the pipeline and perform all 3 analysis modules: `circrna_discovery`, `mirna_prediction` and `differential_expression`.
 
-Note that the pipeline will create the following files in your working directory:
+Input data `samples.csv` & `phenotype.txt` are described in detail in the [input specifications documentation](https://nf-co.re/circrna/dev/usage#input-specifications).
 
-```bash
-work            # Directory containing the nextflow working files
-results         # Finished results (configurable, see below)
-.nextflow_log   # Log file from Nextflow
-# Other nextflow hidden files, eg. history of pipeline runs and old logs.
-```
+Profile configurations are described in the [profile documentation](https://nf-co.re/circrna/dev/usage#profile).
 
 ### Updating the pipeline
 
@@ -43,6 +46,77 @@ First, go to the [nf-core/circrna releases page](https://github.com/nf-core/circ
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
 
+## Input specifications
+
+Input data can be passed to `nf-core/circrna` in two possible ways using the `--input` parameter.
+
+### Input `path`
+
+The simplest way to pass input data to `nf-core/circrna` is by providing the path to the input data with a suitable wildcard glob pattern:
+
+#### fastq
+
+```bash
+--input "/data/*_r{1,2}.fastq.gz"
+```
+
+##### bam
+
+```bash
+--input "/data/*.bam"
+```
+
+### Input `CSV file`
+
+Alternatively the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
+
+The headers of the CSV file must be: `Sample_ID,Read1,Read2,Bam`.
+
+> This approach is recommended for most real life situations, where in-house sequencing facilities file naming convention requires the user to manually match file names to metadata. The below input files use `TCGA` identifiers as proof of concept.
+
+Valid examples for fastq/bam input data in a CSV file is given below:
+
+| Sample_ID        | Read1                                                        | Read2                                                        | Bam  |
+| ---------------- | :----------------------------------------------------------- | ------------------------------------------------------------ | ---- |
+| TCGA-EJ-7783-11A | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R1.fastq.gz | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-G9-6365-11A | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R1.fastq.gz | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-7782-11A | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R1.fastq.gz | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-CH-5772-01A | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R1.fastq.gz | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-5518-01A | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R1.fastq.gz | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-KK-A8I4-01A | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R1.fastq.gz | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R2.fastq.gz | NA   |
+
+***
+
+| Sample_ID        | Read1 | Read2 | Bam                                                          |
+| :--------------- | ----- | ----- | :----------------------------------------------------------- |
+| TCGA-EJ-7783-11A | NA    | NA    | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead.bam |
+| TCGA-G9-6365-11A | NA    | NA    | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead.bam |
+| TCGA-EJ-7782-11A | NA    | NA    | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead.bam |
+| TCGA-CH-5772-01A | NA    | NA    | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead.bam |
+| TCGA-EJ-5518-01A | NA    | NA    | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead.bam |
+| TCGA-KK-A8I4-01A | NA    | NA    | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead.bam |
+
+> Do not leave any cell empty in the CSV file.
+
+### Differential expression analysis
+
+When running the differential expression analysis module, an input `phenotype.csv` file is required.
+
+It is recommended to use an input CSV file in conjunction with the `phenotype.csv` file as the `Sample_ID` **must match** the first column of the `phenotype.txt` file.
+
+A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
+
+| samples          | condition |
+| ---------------- | --------- |
+| TCGA-EJ-7783-11A | control   |
+| TCGA-G9-6365-11A | control   |
+| TCGA-EJ-7782-11A | control   |
+| TCGA-CH-5772-01A | tumor     |
+| TCGA-EJ-5518-01A | tumor     |
+| TCGA-KK-A8I4-01A | tumor     |
+
+> The response variable must be named `condition` and wild type/control/normal samples must be named `control`. These values are hard coded within the automated differential expression analysis script!
+
 ## Core Nextflow arguments
 
 > **NB:** These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
@@ -51,7 +125,7 @@ This version number will be logged in reports when you run the pipeline, so that
 
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
-Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Conda) - see below.
+Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Conda) - see below.
 
 > We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
 
@@ -71,8 +145,14 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 * `podman`
   * A generic configuration profile to be used with [Podman](https://podman.io/)
   * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+* `shifter`
+  * A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
+  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+* `charliecloud`
+  * A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `conda`
-  * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity or Podman.
+  * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
   * A generic configuration profile to be used with [Conda](https://conda.io/docs/)
   * Pulls most software from [Bioconda](https://bioconda.github.io/)
 * `test`
@@ -102,6 +182,8 @@ process {
   }
 }
 ```
+
+To find the exact name of a process you wish to modify the compute resources, check the live-status of a nextflow run displayed on your terminal or check the nextflow error for a line like so: `Error executing process > 'bwa'`. In this case the name to specify in the custom config file is `bwa`.
 
 See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information.
 

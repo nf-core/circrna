@@ -1,7 +1,0 @@
-Sample_ID,Read1,Read2,Bam
-normal_rep1,NA,NA,normal_rep1.bam
-normal_rep2,NA,NA,normal_rep2.bam
-normal_rep3,NA,NA,normal_rep3.bam
-tumor_rep1,NA,NA,tumor_rep1.bam
-tumor_rep2,NA,NA,tumor_rep2.bam
-tumor_rep3,NA,NA,tumor_rep3.bam
