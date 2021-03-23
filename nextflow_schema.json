@@ -597,6 +597,10 @@
         "bsj_reads": {
           "type": "integer",
           "hidden": true
+        },
+        "tool_filter": {
+          "type": "string",
+          "hidden": true
         }
     }
 }
