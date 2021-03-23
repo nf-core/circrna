@@ -396,7 +396,7 @@
                     "default": true,
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
-                },               
+                },
                 "name": {
                     "type": "string",
                     "description": "Workflow name.",
@@ -591,6 +591,10 @@
             "hidden": true
         },
         "threads": {
+          "type": "integer",
+          "hidden": true
+        },
+        "bsj_reads": {
           "type": "integer",
           "hidden": true
         }

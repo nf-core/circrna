@@ -1222,7 +1222,7 @@ process circexplorer2_star{
 
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
-    awk '{if(\$13 > 1) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
+    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
     """
 }
 
@@ -1246,7 +1246,7 @@ process circrna_finder{
     """
     postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ./
 
-    awk '{if(\$5 > 1) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
     """
 }
 
@@ -1386,9 +1386,16 @@ process dcc{
     printf "mate1/${base}.${COJ}" > mate1file
     printf "mate2/${base}.${COJ}" > mate2file
     DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${params.threads}
+
+    ## Add strand to counts
     awk '{print \$6}' CircCoordinates >> strand
     paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
-    bash ${projectDir}/bin/filter_DCC.sh ${base}_dcc.txt
+
+    ## filter reads
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_dcc.txt > ${base}_dcc.filtered
+
+    ## fix start position (+1)
+    awk -v OFS="\t" '{\$2-=1;print}' ${base}_dcc.filtered > ${base}_dcc.bed
 
     mv CircCoordinates ${base}.CircCoordinates
     mv CircRNACount ${base}.CircRNACount
@@ -1447,11 +1454,8 @@ process find_circ{
     bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
-    echo "# chrom:start:end:name:n_reads:strand:n_uniq:best_qual_A:best_qual_B:spliced_at_begin:spliced_at_end:tissues:tiss_counts:edits:anchor_overlap:breakpoints" > tmp.txt
-
-    cat tmp.txt | tr ':' '\t' > ${base}.bed
-
-    grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 2 | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
+    ## filtering
+    grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
     tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
     """
@@ -1484,10 +1488,21 @@ process ciriquant{
     -o ${base} \
     -p ${base}
 
-    cp ${base}/${base}.gtf ${base}_ciriquant.gtf
+    cp ${base}/${base}.gtf .
 
-    bash filter_CIRIquant.sh ${base}_ciriquant.gtf
-    mv ${base}_ciriquant.gtf ${base}.gtf
+    ## extract counts (convert float to int)
+    grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
+    grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
+    paste ${base}.tmp counts > ${base}_unfilt.bed
+
+    ## filter
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_unfilt.bed > ${base}_filt.bed
+    grep -v '^\$' ${base}_filt.bed > ${base}_ciriquant
+
+    ## correct offset bp position
+    awk -v OFS="\t" '{\$2-=1;print}' ${base}_ciriquant > ${base}_ciriquant.bed
+
+    rm ${base}.gtf
     """
 }
 
@@ -1580,7 +1595,7 @@ process mapsplice_parse{
 
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}.mapsplice.junction.bed -o ${base}.txt
 
-    awk '{if(\$13 > 1) print \$0}' ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
     """
 }
 
@@ -2060,7 +2075,7 @@ process diff_exp{
 
 /*
 ================================================================================
-                         Functions
+                           Auxiliary functions
 ================================================================================
 */
 
@@ -2253,6 +2268,12 @@ def examine_phenotype(pheno){
         .toList()
 }
 
+/*
+================================================================================
+                           nf-core functions
+================================================================================
+*/
+
 def nfcoreHeader() {
     // Log colors ANSI codes
     c_black = params.monochrome_logs ? '' : "\033[0;30m";
@@ -2277,7 +2298,11 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-ch_multiqc_report = params.skip_trim == 'no' ? multiqc_raw : multiqc_trim 
+if(params.skip_trim == 'no'){
+    ch_multiqc_report = multiqc_trim_out
+}else{
+    ch_multiqc_report = multiqc_raw_out
+}
 
 // Completion e-mail notification
 workflow.onComplete {
