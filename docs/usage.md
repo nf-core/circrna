@@ -24,11 +24,8 @@ nextflow run nf-core/circrna \
   --phenotype 'phenotype.txt'
 ```
 
-This will launch the pipeline and perform all 3 analysis modules: `circrna_discovery`, `mirna_prediction` and `differential_expression`.
+Where input files are specified via the command line and analysis-specific parameters are passed to the workflow via configuration profiles, further described in the profile [documentation](https://nf-co.re/circrna/dev/usage#profile).
 
-Input data `samples.csv` & `phenotype.txt` are described in detail in the [input specifications documentation](https://nf-co.re/circrna/dev/usage#input-specifications).
-
-Profile configurations are described in the [profile documentation](https://nf-co.re/circrna/dev/usage#profile).
 
 ### Updating the pipeline
 
@@ -50,7 +47,7 @@ This version number will be logged in reports when you run the pipeline, so that
 
 Input data can be passed to `nf-core/circrna` in two possible ways using the `--input` parameter.
 
-### Input `path`
+### `--input "<path>"`
 
 The simplest way to pass input data to `nf-core/circrna` is by providing the path to the input data with a suitable wildcard glob pattern:
 
@@ -66,7 +63,9 @@ The simplest way to pass input data to `nf-core/circrna` is by providing the pat
 --input "/data/*.bam"
 ```
 
-### Input `CSV file`
+> Beware that providing a path to input data will result in samples being named according to the common tuple key based on the glob pattern supplied (i.e Channel.fromFilePairs("*_r{1,2}.fq.gz")). Take this into consideration when designing your phenotype file for differential expression analysis.
+
+### `--input samples.csv`
 
 Alternatively the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
 
@@ -98,11 +97,11 @@ Valid examples for fastq/bam input data in a CSV file is given below:
 
 > Do not leave any cell empty in the CSV file.
 
-### Differential expression analysis
+### `--phenotype`
 
 When running the differential expression analysis module, an input `phenotype.csv` file is required.
 
-It is recommended to use an input CSV file in conjunction with the `phenotype.csv` file as the `Sample_ID` **must match** the first column of the `phenotype.txt` file.
+It is recommended to use a `samples.csv` input CSV file in conjunction with a `phenotype.csv` file as the `Sample_ID` column **must match** the first column of the `phenotype.txt` file.
 
 A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
 
@@ -116,6 +115,115 @@ A valid example of a `phenotype.csv` file (matching the input CSV files above) i
 | TCGA-KK-A8I4-01A | tumor     |
 
 > The response variable must be named `condition` and wild type/control/normal samples must be named `control`. These values are hard coded within the automated differential expression analysis script!
+
+## Analysis modules
+`nf-core/circrna` provides 3 analysis modules to the user:
+
+1. circRNA quantification & annotation.
+2. miRNA target prediction.
+3. Differential circRNA expression analysis.
+
+### circRNA discovery
+The core module of `nf-core/circrna`, the user can utilise the most popular circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` & `MapSplice` however the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
+
+To invoke the `circrna_discovery` analysis module, specify the configuration profile parameter `--module` or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#circrna-quantification).
+
+> Please note that this module must be included for every run of the workflow
+
+#### Tool selection
+The user may use one, all or any combination of circRNA quantification tools listed above in the analysis. To select which tools to use for the analysis, specify the `--tool` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ'
+```
+
+> When providing multiple tools, separate each entry with a comma and surround with single quotes.
+
+#### circRNA filtering
+`nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.  
+
+##### BSJ reads
+The user can specify the minimum number of reads spanning the back-splice junction site required for a circRNA to be considered for further analysis. circRNAs with counts below this value will be filtered to remove from the dataset.
+
+To apply this filtering method, specify the `--bsj_reads` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ' \
+  --bsj_reads 2
+```
+
+Disable the filter by setting the value to 0.
+
+##### Multiple tool filtering
+When more than one tool has been provided using the `--tool` parameter, the user can specify the filtering method to perform on the set of called circRNAs by each tool. `nf-core/circrna` offers either the `union`, using all circRNAs called by each tool, or the `intersection` which will require that a circRNA has been called by each tool selected.
+
+To apply this filtering method, specify the `--tool_filter` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ' \
+  --tool_filter 'union/intersection'
+```
+
+### miRNA prediction
+The second module of `nf-core/circrna`, `mirna_prediction` analyses the mature spliced sequences of circRNAs to test for the presence of miRNA response elements using both `miRanda` and `TargetScan`. Results from both tools are consolidated and filtering methods are applied to produce robust miRNA target predictions of circRNAs in the dataset.
+
+To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery, mirna_prediction'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
+
+### Differential circRNA analysis
+The third and final module of `nf-core/circrna` performs differential expression analysis of circRNAs, returning `DESeq2` result outputs, plots and diagnostic plots for the user. In order to run this module, it is essential that your `phenotype.csv` file is in the correct format - please refer to the input [specifications](https://nf-co.re/circrna/dev/usage#differential-expression-analysis).
+
+To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.txt' \
+  --module 'circrna_discovery, differential_expression'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#differential-expression-analysis).
 
 ## Core Nextflow arguments
 

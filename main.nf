@@ -68,6 +68,15 @@ def helpMessage() {
                                             The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
                                             Please see online documentation for examples of a valid phenotype.csv file.
 
+    circRNA filtering
+      --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
+                                            circRNAs with counts below [int] are discarded.
+                                            Default: ${params.bsj_reads}
+
+      --tool_filter                [string] Set filtering method applied when mutliple circRNA tools selected.
+                                            Avaialable: union, intersection.
+                                            Default: ${params.tool_filter}
+
     Reference files
       --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
                                             Gencode reference Fasta, GTF and annotation text files will be automatically generated.
@@ -407,6 +416,27 @@ if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq &
    exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
 }
 
+// Check filtering params
+tools_selected = tool.size()
+
+if(tools_selected > 1){
+    setlist = defineSetList()
+
+    Channel
+          .value(params.tool_filter)
+          .map{ it ->
+
+                if(!setlist.contains(it)){
+                   exit 1, "[nf-core/circrna] error: User selected multiple quantification tools but the tool filtering parameter `--tool_filter` (${params.tool_filter}) is incorrect. Please choose 'union' or 'intersection'.\n\nPlease check the help documentation."
+                }
+          }
+}
+
+// Check BSJ reads param
+if(!isValidInteger(params.bsj_reads)){
+exit 1, "[nf-core/circrna] error: The parameter `--bsj_reads` ($params.bsj_reads) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
+}
+
 /*
 ================================================================================
                                 PRINTING SUMMARY
@@ -437,6 +467,8 @@ summary['Input type']        = params.input_type
 summary['circRNA tool(s)']   = params.tool
 summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
+summary['BSJ filter']        = params.bsj_reads
+if(tools_selected > 1) summary['Tool filtering'] = params.tool_filter
 
 summary['Genome version'] = params.genome_version
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
@@ -1667,9 +1699,6 @@ process uroborus{
  * (circRNAs with read counts < 1 have already been removed during aligner processes)
  */
 
-// check the length of the tool list
-tools_selected = tool.size()
-
 if(tools_selected > 1){
 
    // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
@@ -2101,6 +2130,19 @@ process diff_exp{
                            Auxiliary functions
 ================================================================================
 */
+
+// Check integer
+def isValidInteger(value){
+    value instanceof Integer
+}
+
+// Check tool filtering params
+def defineSetList() {
+    return [
+    'union',
+    'intersection'
+    ]
+}
 
 // Check parameter existence
 def checkParameterExistence(it, list) {
