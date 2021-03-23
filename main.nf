@@ -2299,9 +2299,9 @@ def nfcoreHeader() {
 
 // handle multiqc_channels
 if(params.skip_trim == 'no'){
-    ch_multiqc_report = multiqc_trim
+    ch_multiqc_report = multiqc_trim_out
 }else{
-    ch_multiqc_report = multiqc_raw
+    ch_multiqc_report = multiqc_raw_out
 }
 
 // Completion e-mail notification
