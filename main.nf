@@ -1688,6 +1688,7 @@ if(tools_selected > 1){
        when: 'circrna_discovery' in module
 
        script:
+       if(params.tool_filter == 'intersection'){
        """
        ## make tool output csv file
        files=\$(ls *.bed)
@@ -1700,27 +1701,47 @@ if(tools_selected > 1){
        bash ${projectDir}/bin/check_empty.sh
 
        ## Bring forward circRNAs called by at least 2 tools
-       Rscript ${projectDir}/bin/consolidate_algorithms.R samples.csv
+       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv
 
        mv combined_counts.bed ${base}.bed
        """
+       }else if(params.tool_filter == 'union'){
+       """
+       ## make tool output csv file
+       files=\$(ls *.bed)
+
+       for i in \$files; do
+           printf "\$i\n" >> samples.csv
+       done
+
+       ## Add catch for empty file in tool output
+       bash ${projectDir}/bin/check_empty.sh
+
+       ## Bring forward circRNAs called by at least 2 tools
+       Rscript ${projectDir}/bin/consolidate_algorithms_union.R samples.csv
+
+       mv combined_counts.bed ${base}.bed
+       """
+       }
    }
 
    process get_counts_combined{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode: params.publish_dir_mode
+       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
        input:
            file(bed) from sample_counts.collect()
 
        output:
            file("circRNA_matrix.txt") into circRNA_counts
+           file("matrix.txt") into matrix
 
        when: 'circrna_discovery' in module
 
        script:
        """
        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+       Rscript ${projectDir}/bin/reformat_count_matrix.R
        """
    }
 }else{
@@ -1729,7 +1750,7 @@ if(tools_selected > 1){
 
    process get_counts_single{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", mode: params.publish_dir_mode
+       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
        input:
            file(bed) from single_tool.collect()
@@ -1737,6 +1758,7 @@ if(tools_selected > 1){
 
        output:
            file("circRNA_matrix.txt") into circRNA_counts
+           file("matrix.txt") into matrix
 
        when: 'circrna_discovery' in module
 
@@ -1749,6 +1771,7 @@ if(tools_selected > 1){
        done
 
        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+       Rscript ${projectDir}/bin/reformat_count_matrix.R
        """
     }
 }
