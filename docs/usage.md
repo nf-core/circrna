@@ -117,6 +117,7 @@ A valid example of a `phenotype.csv` file (matching the input CSV files above) i
 > The response variable must be named `condition` and wild type/control/normal samples must be named `control`. These values are hard coded within the automated differential expression analysis script!
 
 ## Analysis modules
+
 `nf-core/circrna` provides 3 analysis modules to the user:
 
 1. circRNA quantification & annotation.
@@ -124,6 +125,7 @@ A valid example of a `phenotype.csv` file (matching the input CSV files above) i
 3. Differential circRNA expression analysis.
 
 ### circRNA discovery
+
 The core module of `nf-core/circrna`, the user can utilise the most popular circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` & `MapSplice` however the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
 
 To invoke the `circrna_discovery` analysis module, specify the configuration profile parameter `--module` or pass it via the command line when running the workflow:
@@ -142,6 +144,7 @@ To view the outputs of the module, please see the output [documentation](https:/
 > Please note that this module must be included for every run of the workflow
 
 #### Tool selection
+
 The user may use one, all or any combination of circRNA quantification tools listed above in the analysis. To select which tools to use for the analysis, specify the `--tool` parameter in the configuration profile or pass it via the command line when running the workflow:
 
 ```bash
@@ -157,9 +160,11 @@ nextflow run nf-core/circrna \
 > When providing multiple tools, separate each entry with a comma and surround with single quotes.
 
 #### circRNA filtering
+
 `nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.  
 
 ##### BSJ reads
+
 The user can specify the minimum number of reads spanning the back-splice junction site required for a circRNA to be considered for further analysis. circRNAs with counts below this value will be filtered to remove from the dataset.
 
 To apply this filtering method, specify the `--bsj_reads` parameter in the configuration profile or pass it via the command line when running the workflow:
@@ -178,6 +183,7 @@ nextflow run nf-core/circrna \
 Disable the filter by setting the value to 0.
 
 ##### Multiple tool filtering
+
 When more than one tool has been provided using the `--tool` parameter, the user can specify the filtering method to perform on the set of called circRNAs by each tool. `nf-core/circrna` offers either the `union`, using all circRNAs called by each tool, or the `intersection` which will require that a circRNA has been called by each tool selected.
 
 To apply this filtering method, specify the `--tool_filter` parameter in the configuration profile or pass it via the command line when running the workflow:
@@ -194,6 +200,7 @@ nextflow run nf-core/circrna \
 ```
 
 ### miRNA prediction
+
 The second module of `nf-core/circrna`, `mirna_prediction` analyses the mature spliced sequences of circRNAs to test for the presence of miRNA response elements using both `miRanda` and `TargetScan`. Results from both tools are consolidated and filtering methods are applied to produce robust miRNA target predictions of circRNAs in the dataset.
 
 To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
@@ -210,6 +217,7 @@ nextflow run nf-core/circrna \
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
 
 ### Differential circRNA analysis
+
 The third and final module of `nf-core/circrna` performs differential expression analysis of circRNAs, returning `DESeq2` result outputs, plots and diagnostic plots for the user. In order to run this module, it is essential that your `phenotype.csv` file is in the correct format - please refer to the input [specifications](https://nf-co.re/circrna/dev/usage#differential-expression-analysis).
 
 To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
