@@ -66,6 +66,30 @@
             }
           }
         },
+        "circrna_filtering" : {
+          "title": "circRNA filtering options",
+          "type": "object",
+          "fa-icon": "fas fa-filter",
+          "description": "Filtering options for circRNAs called by workflow.",
+          "required": [
+            "bsj_reads"
+          ],
+          "properties": {
+            "bsj_reads":{
+              "type": "integer",
+              "fa_icon": "fas fa-circle-notch",
+              "description": "Minimum number of required reads spanning circRNA back-splice junction for circRNA to be considered for analysis.",
+              "help_text": "Remove low confidence circRNAs by filtering circRNAs with read counts below specified value. To disable, set value to 0.",
+              "default": 2
+            },
+            "tool_filter":{
+              "type": "string",
+              "fa_icon": "fas fa-intersection",
+              "description": "Set filtering method performed when mutliple quantification tools selected.",
+              "help_text": "When mutliple tools are provided to `--tool`, the user may use all circRNAs called by specifiying `union`. To increase the confidence in circRNAs returned by the workflow, the user may wish to keep circRNAs called by each tool by specifying `intersection`."
+            }
+          }
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -563,6 +587,9 @@
             "$ref": "#/definitions/pipeline_options"
         },
         {
+            "$ref": "#/definitions/circrna_filtering"
+        },
+        {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
@@ -591,10 +618,6 @@
             "hidden": true
         },
         "threads": {
-          "type": "integer",
-          "hidden": true
-        },
-        "bsj_reads": {
           "type": "integer",
           "hidden": true
         }
