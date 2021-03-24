@@ -71,10 +71,11 @@ def helpMessage() {
     circRNA filtering
       --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
                                             circRNAs with counts below [int] are discarded.
+                                            Disable by setting to 0.
                                             Default: ${params.bsj_reads}
 
-      --tool_filter                [string] Set filtering method applied when mutliple circRNA tools selected.
-                                            Avaialable: union, intersection.
+      --tool_filter                   [int] Specify the minimum number of tools circRNAs must be called by.
+                                            Disable by setting to 0/1 (i.e take the union, do not apply filter).
                                             Default: ${params.tool_filter}
 
     Reference files

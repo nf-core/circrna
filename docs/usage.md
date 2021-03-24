@@ -183,7 +183,7 @@ Disable the filter by setting the value to 0.
 
 ##### Multiple tool filtering
 
-When more than one tool has been provided using the `--tool` parameter, the user can specify the filtering method to perform on the set of called circRNAs by each tool. `nf-core/circrna` offers either the `union`, using all circRNAs called by each tool, or the `intersection` which will require that a circRNA has been called by each tool selected.
+When more than one tool has been provided using the `--tool` parameter, the user can specify the minimum number of tools circRNAs must be called by using `--tool_filter`. Setting this parameter to 0 or 1 will result in the union being output, i.e no filtering is applied. Setting this parameter to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.
 
 To apply this filtering method, specify the `--tool_filter` parameter in the configuration profile or pass it via the command line when running the workflow:
 
@@ -195,8 +195,10 @@ nextflow run nf-core/circrna \
   --phenotype 'phenotype.txt' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ' \
-  --tool_filter 'union/intersection'
+  --tool_filter 2
 ```
+
+> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`.
 
 ### miRNA prediction
 
