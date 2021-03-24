@@ -21,7 +21,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt'
+  --phenotype 'phenotype.csv'
 ```
 
 Where input files are specified via the command line and analysis-specific parameters are passed to the workflow via configuration profiles, further described in the profile [documentation](https://nf-co.re/circrna/dev/usage#profile).
@@ -100,7 +100,7 @@ Valid examples for fastq/bam input data in a CSV file is given below:
 
 When running the differential expression analysis module, an input `phenotype.csv` file is required.
 
-It is recommended to use a `samples.csv` input CSV file in conjunction with a `phenotype.csv` file as the `Sample_ID` column **must match** the first column of the `phenotype.txt` file.
+It is recommended to use a `samples.csv` input CSV file in conjunction with a `phenotype.csv` file as the `Sample_ID` column **must match** the first column of the `phenotype.csv` file.
 
 A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
 
@@ -134,7 +134,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery'
 ```
 
@@ -151,7 +151,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ'
 ```
@@ -173,7 +173,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ' \
   --bsj_reads 2
@@ -192,9 +192,10 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ' \
+  --bsj_reads 2 \
   --tool_filter 2
 ```
 
@@ -211,7 +212,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery, mirna_prediction'
 ```
 
@@ -228,7 +229,7 @@ nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.txt' \
+  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery, differential_expression'
 ```
 

@@ -327,15 +327,15 @@
                   "fa_icon": "fas fa-sliders-h"
                 },
                 "outFilterMatchNminOverLread": {
-                  "type": "string",
-                  "default": "0.33",
+                  "type": "number",
+                  "default": 0.33,
                   "description": "Alignment output if ratio of matched bases relative to read length is equal to or higher than this value",
                   "fa_icon": "fas fa-sliders-h",
                   "help_text": "Consider 75bp paired end reads with sum matched bases of 120bp. Matched bp is summmed over combined read length (120/150 = 0.8). Simply put, lowering this ratio reduces the number of required matches in reads.\n\n`outFilterMatchNminOverLread` is preferred over `outFilterMatchNmin` as it considers read length, suitable for experiments with varying read length."
                 },
                 "outFilterMismatchNoverLmax": {
-                  "type": "string",
-                  "default": "0.05",
+                  "type": "number",
+                  "default": 0.05,
                   "description": "Alignment output if ratio of mismatched bases relative to **mapped** read length is lower than value",
                   "fa_icon": "fas fa-sliders-h",
                   "help_text": "For example, for reads <20b no mismatches are allowed (1/19 = 0.0526), 20-39b: 1 mismatch, 40-59b 2 mismatches and so on. Simply put, increasing this value will allow for more mismatches in the mapped reads.\n\n`outFilterMismatchNoverLmax` is preferred over `outFilterMismatchNmax` as it considers the mapped read length, suitable for experiments with varying read length."
@@ -353,8 +353,8 @@
                   "fa_icon": "fas fa-sliders-h"
                 },
                 "outFilterScoreMinOverLread": {
-                  "type": "string",
-                  "default": "0.33",
+                  "type": "number",
+                  "default": 0.33,
                   "description": "Alignment will be output only if its score relative to read length is higher than or equal to this value",
                   "fa_icon": "fas fa-sliders-h"
                 },
