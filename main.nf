@@ -224,6 +224,17 @@ println ""
 ================================================================================
 */
 
+def json_schema = "$projectDir/nextflow_schema.json"
+if (params.help) {
+    def command = "nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker"
+    log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
+    exit 0
+}
+
+if (params.validate_params) {
+    NfcoreSchema.validateParameters(params, json_schema, log)
+}
+
 // Check Tools selected
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
@@ -377,7 +388,7 @@ pheno_path = null
 if(params.phenotype && (has_extension(params.phenotype, ".csv"))){
    pheno_path = params.phenotype
 }else{
-   exit 1, "[nf-core/circrna] error: Input phenotype file is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
+   exit 1, "[nf-core/circrna] error: Input phenotype file (${params.phenotype}) is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
 }
 
 // Check 'condition' is a col name, and that it contains 'control'.
@@ -400,7 +411,7 @@ if(pheno_path){
 // Check adapters
 if(params.skip_trim == 'no'){
    if(!has_extension(params.adapters, ".fa") && !has_extension(params.adapters, ".fasta")){
-      exit 1, "[nf-core/circrna] error: --adapters file provied (${params.adapters}) must be a fasta file."
+      exit 1, "[nf-core/circrna] error: Adapters file provied (${params.adapters}) is not valid, Fasta files must have the extension '*.fa' or '*.fasta'."
    }
    if(params.adapters){
       adapters = file(params.adapters, checkIfExists: true)
@@ -409,7 +420,7 @@ if(params.skip_trim == 'no'){
 
 // Check all adapter trimming flags are provided
 if(params.skip_trim == 'no' && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
-   exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.\n\nPlease check the parameter documentation online."
+   exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
 }
 
 // Check all quality trimming flags are provided
@@ -2304,6 +2315,11 @@ def examine_phenotype(pheno){
                            nf-core functions
 ================================================================================
 */
+
+workflow.onError {
+    // Print unexpected parameters - easiest is to just rerun validation
+    NfcoreSchema.validateParameters(params, json_schema, log)
+}
 
 def nfcoreHeader() {
     // Log colors ANSI codes
