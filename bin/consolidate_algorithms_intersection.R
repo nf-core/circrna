@@ -1,98 +1,103 @@
 #!/usr/bin/Rscript
 
 get_args <- function(){
-	
-	argp <- arg_parser(
-		description="Script to take tool outputs and bring forward circRNAs called by at least 2 tools",
-		hide.opts=TRUE)
 
-	argp <- add_argument(
-		parser=argp,
-		arg="samples",
-		short="s",
-		help="csv file listing tool output files that are not empty",
-		default="samples.csv")
-	argv <- parse_args(
-		parser=argp,
-		argv=commandArgs(trailingOnly=TRUE))
+  argp <- arg_parser(
+    description="Script to take tool outputs and bring forward circRNAs called by at least n tools",
+    hide.opts=TRUE)
 
+  argp <- add_argument(
+    parser=argp,
+    arg="samples",
+    short="s",
+    help="csv file listing tool output files that are not empty",
+    default="samples.csv")
 
-	return(argv)
+  argp <- add_argument(
+    parser=argp,
+    arg="n_tools",
+    short="n",
+    help="number of tools circrna must be called by")
+
+  argv <- parse_args(
+    parser=argp,
+    argv=commandArgs(trailingOnly=TRUE))
+
+  return(argv)
 }
 
 giveError <- function(message){
-	cat(paste("\n", message, sep=""))
-	quit()
+  cat(paste("\n", message, sep=""))
+  quit()
 }
 
-usage <- function(){giveError("Usage: consolidate_algorithms.R samples.csv")}
+usage <- function(){giveError("Usage: consolidate_algorithms.R samples.csv ${params.n_tools}")}
 
 ## script body
 
-stage_data <- function(samples){
+stage_data <- function(samples, n_tools){
 
-	inputdata <- list()
+  inputdata <- list()
 
-	samples <- read.csv(samples, sep="\t", header=F, stringsAsFactors=FALSE)
-	names <- gsub(".bed", "", samples$V1)	
-
-
-	inputdata$samples <- samples
-	inputdata$names <- names
+  samples <- read.csv(samples, sep="\t", header=F, stringsAsFactors=FALSE)
+  inputdata$samples <- samples
+	inputdata$n_tools <- n_tools
 
 	return(inputdata)
 }
 
 
-## read in files and make circRNA IDs. 
+## read in files and make circRNA IDs.
 
 main <- function(inputdata){
 
-	dir.create("tool_id")
-	samples <- inputdata$samples
-	dflist <- list()
+  samples <- inputdata$samples
+	n_tools <- inputdata$n_tools
 
-	for(i in 1:nrow(samples)){
-		
-		file_handle <- file.path(paste("./", samples$V1[i], sep=""))
-		df <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
-		dflist[[i]] <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
-		circ_id <- with(df, paste0(V1, sep="_", V2, sep="_", V3, sep="_", V4))
-		outfile <- gsub(".bed", ".txt", file_handle)
-		write.table(circ_id, paste0("tool_id/", outfile, sep=""), row.names=F, quote=F, sep="\t")
-	}
-	
-	id_list <- list.files(path="tool_id", pattern=".txt")
-	id_list[] <- lapply(id_list, function(x) paste("tool_id/", x, sep=""))
-	
-	# create bash command
-	vec <- unlist(id_list)
-	string <- paste(vec, collapse=" ")
-	
-	bash <- paste("cat", string, "| sort | uniq -cd | grep -v \'x\' | awk \'{OFS=\"\t\"; print $2}\' > filteredcirc.txt", sep=" ")
-	system(bash)
+  ## intit lists
+  dflist <- list()
+  idlist <- list()
 
-	filtered <- read.table("filteredcirc.txt", header=F, sep="\t")
-	
-	mat <- do.call("rbind", dflist)
-	mat$id <- with(mat, paste0(V1, sep="_", V2, sep="_", V3, sep="_", V4))
-	mat <- mat[which(mat$id %in% filtered$V1),]
-	mat1 <- mat[order(mat[,6], -abs(mat[,5])),]
-	mat1 <- mat1[!duplicated(mat1$id),]
+  # loop over samples, append to counts mat and IDs to respective lists
+  for(i in 1:nrow(samples)){
+    file_handle <- file.path(paste("./", samples$V1[i], sep=""))
+    df <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
+    dflist[[i]] <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
+    idlist[[i]] <- with(df, paste0(V1, sep="-", V2, sep=":", V3, sep="-", V4))
+}
 
-	mat1 <- mat1[,1:5]
+  # place all ids in a vector
+  vec <- unlist(idlist)
 
-	write.table(mat1, "combined_counts.bed", sep="\t", row.names = F, col.names = F, quote = F)
-	
+  # make table to get ID ocurrence count
+  tab <- table(vec)
+
+  # now filter by ocurrence i.e must have been in "n" tools
+  filt_id <- names(tab)[tab >= n_tools]
+
+  # make matser df, append ID
+  mat <- do.call("rbind", dflist)
+  mat$ID <- with(mat, paste0(V1, sep="-", V2, sep=":", V3, sep="-", V4))
+
+  # extract circrnas called by n tools
+  mat <- subset(mat, mat$ID %in% filt_id)
+
+  # we have duplicates, so take highest count value like in union call
+  mat <- mat[order(mat$ID, -abs(mat$V5)),]
+  mat <- mat[!duplicated(mat$ID),]
+  mat <- subset(mat, select=-c(ID))
+
+  write.table(mat, "combined_counts.bed", sep="\t", row.names = F, col.names = F, quote = F)
+
 }
 
 ## error messages, library load
 options(error=function()traceback(2))
 suppressPackageStartupMessages(library("argparser"))
 
-## initiate script 
+## initiate script
 arg <- get_args()
 
-inputdata <- stage_data(arg$samples)
+inputdata <- stage_data(arg$samples, arg$n_tools)
 
 x <- main(inputdata)

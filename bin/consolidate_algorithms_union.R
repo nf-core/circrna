@@ -2,81 +2,71 @@
 
 get_args <- function(){
 
-	argp <- arg_parser(
-		description="Script to take tool outputs and bring forward circRNAs called by at least 2 tools",
-		hide.opts=TRUE)
+  argp <- arg_parser(
+    description="Script to take union of quant tools. If duplicate IDs, takes highest count.",
+    hide.opts=TRUE)
 
-	argp <- add_argument(
-		parser=argp,
-		arg="samples",
-		short="s",
-		help="csv file listing tool output files that are not empty",
-		default="samples.csv")
-	argv <- parse_args(
-		parser=argp,
-		argv=commandArgs(trailingOnly=TRUE))
+  argp <- add_argument(
+    parser=argp,
+    arg="samples",
+    short="s",
+    help="csv file listing tool output files that are not empty",
+    default="samples.csv")
+  argv <- parse_args(
+    parser=argp,
+    argv=commandArgs(trailingOnly=TRUE))
 
 
-	return(argv)
+  return(argv)
 }
 
 giveError <- function(message){
-	cat(paste("\n", message, sep=""))
-	quit()
+  cat(paste("\n", message, sep=""))
+  quit()
 }
 
 usage <- function(){giveError("Usage: consolidate_algorithms.R samples.csv")}
 
-## script body
+##
+## Strategy for union:
+## 1. read in non empty bed files using samples.csv loop
+## 2. append each tool output to dflist
+## 3. convert to master DF (rbind)
+## 4. make circ ID column
+## 5. sort by ID and abs count value
+## 6. remove duplicate IDs (keep highest count due to sort)
+## 7. remove ID column, write to file.
 
 stage_data <- function(samples){
 
-	inputdata <- list()
-
-	samples <- read.csv(samples, sep="\t", header=F, stringsAsFactors=FALSE)
-	names <- gsub(".bed", "", samples$V1)
-
-
-	inputdata$samples <- samples
-	inputdata$names <- names
-
-	return(inputdata)
+  inputdata <- list()
+  samples <- read.csv(samples, sep="\t", header=F, stringsAsFactors=FALSE)
+  inputdata$samples <- samples
+  return(inputdata)
 }
-
-
-## read in files and make circRNA IDs.
-
 main <- function(inputdata){
 
-	dir.create("tool_id")
-	samples <- inputdata$samples
-	dflist <- list()
+  samples <- inputdata$samples
+  dflist <- list()
 
-	for(i in 1:nrow(samples)){
+  for(i in 1:nrow(samples)){
 
-		file_handle <- file.path(paste("./", samples$V1[i], sep=""))
-		df <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
-		dflist[[i]] <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
-		circ_id <- with(df, paste0(V1, sep="_", V2, sep="_", V3, sep="_", V4))
-		outfile <- gsub(".bed", ".txt", file_handle)
-		write.table(circ_id, paste0("tool_id/", outfile, sep=""), row.names=F, quote=F, sep="\t")
-	}
+    file_handle <- file.path(paste("./", samples$V1[i], sep=""))
+    df <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
+    dflist[[i]] <- read.table(file_handle, sep="\t", header=F, stringsAsFactors=FALSE)
 
-	id_list <- list.files(path="tool_id", pattern=".txt")
-	id_list[] <- lapply(id_list, function(x) paste("tool_id/", x, sep=""))
+  }
 
-	# create bash command
-	vec <- unlist(id_list)
-	string <- paste(vec, collapse=" ")
+  master <- do.call("rbind", dflist)
+  master$ID <- with(master, paste0(V1, sep="-", V2, sep=":", V3, sep="-", V4))
 
-	bash <- paste("cat", string, "| sort | uniq -cd | grep -v \'x\' | awk \'{OFS=\"\t\"; print $2}\' > filteredcirc.txt", sep=" ")
-	system(bash)
+  master_sort <- master[order(master$ID, -abs(master$V5) ), ]
+  master_sort <- master_sort[ !duplicated(master_sort$ID), ]
 
-	filtered <- read.table("filteredcirc.txt", header=F, sep="\t")
+  # drop ID column and write to file
+  master_union <- subset(master_sort, select=-c(ID))
 
-	mat <- do.call("rbind", dflist)
-
-	write.table(mat, "combined_counts.bed", sep="\t", row.names = F, col.names = F, quote = F)
+  write.table(master_union, "combined_counts.bed", sep="\t", row.names = F, col.names = F, quote = F)
 
 }
 
