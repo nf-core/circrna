@@ -71,10 +71,11 @@ def helpMessage() {
     circRNA filtering
       --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
                                             circRNAs with counts below [int] are discarded.
+                                            Disable by setting to 0.
                                             Default: ${params.bsj_reads}
 
-      --tool_filter                [string] Set filtering method applied when mutliple circRNA tools selected.
-                                            Avaialable: union, intersection.
+      --tool_filter                   [int] Specify the minimum number of tools circRNAs must be called by.
+                                            Disable by setting to 0/1 (i.e take the union, do not apply filter).
                                             Default: ${params.tool_filter}
 
     Reference files
@@ -419,23 +420,21 @@ if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq &
 // Check filtering params
 tools_selected = tool.size()
 
-if(tools_selected > 1){
-    setlist = defineSetList()
+// Check it is an integer
+if(tools_selected > 1 && !isValidInteger(params.tool_filter)){
+  exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' ($params.tool_filter) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
+}
 
-    Channel
-          .value(params.tool_filter)
-          .map{ it ->
-
-                if(!setlist.contains(it)){
-                   exit 1, "[nf-core/circrna] error: User selected multiple quantification tools but the tool filtering parameter `--tool_filter` (${params.tool_filter}) is incorrect. Please choose 'union' or 'intersection'.\n\nPlease check the help documentation."
-                }
-          }
+// Check it does not exceed number of tools selected
+if(tools_selected > 1 && params.tool_filter > tools_selected){
+  exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' (${params.tool_filter}) exceeds the number of tools selected (${params.tool}). Please select a value less than or equal to the number of quantification tools selected ($tools_selected).\n\nPlease check the help documentation."
 }
 
 // Check BSJ reads param
 if(!isValidInteger(params.bsj_reads)){
-exit 1, "[nf-core/circrna] error: The parameter `--bsj_reads` ($params.bsj_reads) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
+exit 1, "[nf-core/circrna] error: The parameter '--bsj_reads' ($params.bsj_reads) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
 }
+
 
 /*
 ================================================================================
@@ -450,9 +449,9 @@ if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
 
 log.info nfcoreHeader()
 def summary = [:]
-if (workflow.revision)          summary['Pipeline Release']    = workflow.revision
+if (workflow.revision)        summary['Pipeline Release']    = workflow.revision
 summary['Run Name']          = custom_runName ?: workflow.runName
-if (workflow.containerEngine)   summary['Container']         = "${workflow.containerEngine} - ${workflow.container}"
+if (workflow.containerEngine) summary['Container'] = "${workflow.containerEngine} - ${workflow.container}"
 summary['Max Resources']     = "${params.max_memory} memory, ${params.max_cpus} cpus, ${params.max_time} time per job"
 summary['Config Files']   = workflow.configFiles.join(', ')
 summary['Launch dir']  = workflow.launchDir
@@ -468,7 +467,7 @@ summary['circRNA tool(s)']   = params.tool
 summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
-if(tools_selected > 1) summary['Tool filtering'] = params.tool_filter
+if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
 
 summary['Genome version'] = params.genome_version
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
@@ -1692,13 +1691,6 @@ process uroborus{
 ================================================================================
 */
 
-/*
- * CONSOLIDATION OF TOOLS
- * Keep circRNAs that have been called by at least 2 tools (if tools_selected > 1)
- * circRNA tool outputs converted to count matrix to facilitate filtering
- * (circRNAs with read counts < 1 have already been removed during aligner processes)
- */
-
 if(tools_selected > 1){
 
    // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
@@ -1717,7 +1709,6 @@ if(tools_selected > 1){
        when: 'circrna_discovery' in module
 
        script:
-       if(params.tool_filter == 'intersection'){
        """
        ## make tool output csv file
        files=\$(ls *.bed)
@@ -1729,29 +1720,12 @@ if(tools_selected > 1){
        ## Add catch for empty file in tool output
        bash ${projectDir}/bin/check_empty.sh
 
-       ## Bring forward circRNAs called by at least 2 tools
-       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv
+       ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
+       ## remove duplicate IDs, keep highest count.
+       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
 
        mv combined_counts.bed ${base}.bed
        """
-       }else if(params.tool_filter == 'union'){
-       """
-       ## make tool output csv file
-       files=\$(ls *.bed)
-
-       for i in \$files; do
-           printf "\$i\n" >> samples.csv
-       done
-
-       ## Add catch for empty file in tool output
-       bash ${projectDir}/bin/check_empty.sh
-
-       ## Bring forward circRNAs called by at least 2 tools
-       Rscript ${projectDir}/bin/consolidate_algorithms_union.R samples.csv
-
-       mv combined_counts.bed ${base}.bed
-       """
-       }
    }
 
    process get_counts_combined{
@@ -2134,14 +2108,6 @@ process diff_exp{
 // Check integer
 def isValidInteger(value){
     value instanceof Integer
-}
-
-// Check tool filtering params
-def defineSetList() {
-    return [
-    'union',
-    'intersection'
-    ]
 }
 
 // Check parameter existence

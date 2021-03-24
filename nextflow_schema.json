@@ -72,21 +72,23 @@
           "fa-icon": "fas fa-filter",
           "description": "Filtering options for circRNAs called by workflow.",
           "required": [
-            "bsj_reads"
+            "bsj_reads",
+            "tool_filter"
           ],
           "properties": {
             "bsj_reads":{
               "type": "integer",
               "fa_icon": "fas fa-circle-notch",
               "description": "Minimum number of required reads spanning circRNA back-splice junction for circRNA to be considered for analysis.",
-              "help_text": "Remove low confidence circRNAs by filtering circRNAs with read counts below specified value. To disable, set value to 0.",
+              "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below specified value. To disable, set value to 0.",
               "default": 2
             },
             "tool_filter":{
-              "type": "string",
+              "type": "integer",
               "fa_icon": "fas fa-intersection",
-              "description": "Set filtering method performed when mutliple quantification tools selected.",
-              "help_text": "When mutliple tools are provided to `--tool`, the user may use all circRNAs called by specifiying `union`. To increase the confidence in circRNAs returned by the workflow, the user may wish to keep circRNAs called by each tool by specifying `intersection`."
+              "description": "Specify the minimum number of tools circRNAs must be called by.",
+              "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, the user can set a filtering method whereby a circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\n> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`. ",
+              "default": 2
             }
           }
         },
