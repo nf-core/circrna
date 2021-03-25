@@ -928,7 +928,7 @@ if(csv_path){
 
    csv_file = file(csv_path)
    println csv_file
-   if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one csv file per run."
+   if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one CSV file per run."
    if(!csv_file.exists()) exit 1, "[nf-core/circrna] error: input CSV file could not be found using the path provided: ${params.input}"
 
    ch_input_sample = extract_data(csv_path)
@@ -936,8 +936,10 @@ if(csv_path){
 }else if(params.input && !has_extension(params.input, "csv")){
 
    log.info ""
-   log.info "No CSV file provided, reading input files from directory provided"
-   log.info "Reading path: ${params.input}\n"
+   log.info "Input data log info:"
+   log.info "No input sample CSV file provided, attempting to read from path instead."
+   log.info "Reading input data from path: ${params.input}\n"
+   log.info ""
    inputSample = retrieve_input_paths(params.input, params.input_type)
    ch_input_sample = inputSample
 
