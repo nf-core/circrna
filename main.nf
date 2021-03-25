@@ -822,7 +822,7 @@ process star_index{
     """
     STAR \
     --runMode genomeGenerate \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbOverhang ${params.sjdbOverhang} \
     --sjdbGTFfile $gtf \
     --genomeDir STAR/ \
@@ -1006,7 +1006,7 @@ if(params.input_type == 'bam'){
 
         script:
         """
-        picard -Xmx8g \
+        picard "-Xmx${task.memory.toGiga()}g" \
         SamToFastq \
         I=$bam \
         F=${base}_R1.fq.gz \
@@ -1093,7 +1093,7 @@ if(params.skip_trim == 'no'){
        def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
        """
-       bbduk.sh -Xmx4g \
+       bbduk.sh "-Xmx${task.memory.toGiga()}g" \
        in1=${fastq[0]} \
        in2=${fastq[1]} \
        out1=${base}_R1.trim.fq.gz \
@@ -1210,7 +1210,7 @@ process STAR_1PASS{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
@@ -1284,7 +1284,7 @@ process STAR_2PASS{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1394,7 +1394,7 @@ process dcc_mate1{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1447,7 +1447,7 @@ process dcc_mate2{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1481,7 +1481,7 @@ process dcc{
     printf "${base}/${base}.${COJ}" > samplesheet
     printf "mate1/${base}.${COJ}" > mate1file
     printf "mate2/${base}.${COJ}" > mate2file
-    DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${params.threads}
+    DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${task.cpus}
 
     ## Add strand to counts
     awk '{print \$6}' CircCoordinates >> strand
@@ -1518,9 +1518,9 @@ process find_anchors{
 
     script:
     """
-    bowtie2 -p ${params.threads} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
+    bowtie2 -p ${task.cpus} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
     -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \
-    | samtools view -hbuS - | samtools sort --threads ${params.threads} -m 2G - > ${base}.bam
+    | samtools view -hbuS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
 
     samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
 
@@ -1547,7 +1547,7 @@ process find_circ{
 
     script:
     """
-    bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
+    bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
     ## filtering
@@ -1576,7 +1576,7 @@ process ciriquant{
 
     script:
     """
-    CIRIquant -t ${params.threads} \
+    CIRIquant -t ${task.cpus} \
     -1 ${fastq[0]} \
     -2 ${fastq[1]} \
     --config $ciriquant_yml \
@@ -1635,7 +1635,7 @@ process mapsplice_align{
        -x $prefix \
        -1 ${strip1} \
        -2 ${strip2} \
-       -p ${params.threads} \
+       -p ${task.cpus} \
        --bam \
        --seglen 25 \
        --min-intron ${params.alignIntronMin} \
@@ -1654,7 +1654,7 @@ process mapsplice_align{
        -x $prefix \
        -1 ${fastq[0]} \
        -2 ${fastq[1]} \
-       -p ${params.threads} \
+       -p ${task.cpus} \
        --bam \
        --seglen 25 \
        --min-intron ${params.alignIntronMin} \
@@ -1712,7 +1712,7 @@ process tophat_align{
 
     script:
     """
-    tophat -p ${params.threads} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
+    tophat -p ${task.cpus} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
     mv ${base}/unmapped.bam ./
     mv ${base}/accepted_hits.bam ./
     """
@@ -2108,7 +2108,7 @@ process Hisat2_align{
 
     script:
     """
-    hisat2 -p 2 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 2 -m 2G - > ${base}.bam
+    hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
     """
 }
 
@@ -2127,7 +2127,7 @@ process StringTie{
     script:
     """
     mkdir ${base}/
-    stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 2 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+    stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p ${task.cpus} -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
     """
 }
 

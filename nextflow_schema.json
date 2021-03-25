@@ -611,14 +611,6 @@
         }
     ],
     "properties": {
-        "fasta_chr": {
-            "type": "string",
-            "hidden": true
-        },
-        "ciriquant_yml": {
-            "type": "string",
-            "hidden": true
-        },
         "threads": {
           "type": "integer",
           "hidden": true
