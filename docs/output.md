@@ -429,7 +429,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 <summary>Output files</summary>
 
 * `circrna_discovery/count_matrix/`
-  * `circRNA_matrix.txt`: Raw circRNA read counts for all samples in matrix format.
+  * `matrix.txt`: Raw circRNA read counts for all samples in matrix format.
 
 </details>
 

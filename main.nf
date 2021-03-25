@@ -542,20 +542,65 @@ if(params.email || params.email_on_fail){
 log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
 log.info "\033[2m----------------------------------------------------\033[0m"
 
+// Check the hostnames against configured profiles
+checkHostname()
+
+Channel.from(summary.collect{ [it.key, it.value] })
+    .map { k,v -> "<dt>$k</dt><dd><samp>${v ?: '<span style=\"color:#999999;\">N/A</a>'}</samp></dd>" }
+    .reduce { a, b -> return [a, b].join("\n            ") }
+    .map { x -> """
+    id: 'nf-core-circrna-summary'
+    description: " - this information is collected when the pipeline is started."
+    section_name: 'nf-core/circrna Workflow Summary'
+    section_href: 'https://github.com/nf-core/circrna'
+    plot_type: 'html'
+    data: |
+        <dl class=\"dl-horizontal\">
+            $x
+        </dl>
+    """.stripIndent() }
+    .set { ch_workflow_summary }
+
 /*
 ================================================================================
                           Export software versions
 ================================================================================
 */
 
-process get_software_versions{
+process get_software_versions {
+    publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
+        saveAs: {it.indexOf(".csv") > 0 ? it : null}
+
+    output:
+        file 'software_versions_mqc.yaml' into ch_software_versions_yaml
+        file "software_versions.csv"
 
     script:
     """
-    echo "foo"
+    echo $workflow.manifest.version > v_pipeline.txt
+    echo $workflow.nextflow.version > v_nextflow.txt
+    bbduk.sh | grep 'Last modified' | cut -d' ' -f 3-99 &> v_bbduk.txt 2>&1 || true
+    bedtools --version &> v_bedtools.txt 2>&1 || true
+    bowtie --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie.txt 2>&1 || true
+    bowtie2 --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie2.txt 2>&1 || true
+    echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' &> v_bwa.txt 2>&1 || true
+    CIRCexplorer2 --version &> v_circexplorer2.txt 2>&1 || true
+    hisat2 --version &> v_hisat2.txt 2>&1 || true
+    java --version &> v_java.txt 2>&1 || true
+    mapsplice.py --version &> v_mapsplice.txt 2>&1 || true
+    miranda -v | grep 'Algorithm' | cut -d' ' -f 1,2 &> v_miranda.txt 2>&1 || true
+    perl --version | grep 'x86' | cut -d' ' -f1-9 &> v_perl.txt 2>&1 || true
+    picard SamToFastq --version &> v_picard.txt 2>&1 || true
+    pip --version | cut -d' ' -f 1,2,5,6 &> v_pip.txt 2>&1 || true
+    python --version &> v_python.txt 2>&1 || true
+    R --version | head -n 1 &> v_R.txt || true
+    samtools --version &> v_samtools.txt 2>&1 || true
+    STAR --version &> v_star.txt 2>&1 || true
+    stringtie --version &> v_stringtie.txt 2>&1 || true
+    RNAfold --version | cut -d' ' -f2 &> v_viennarna.txt || true
+    scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
-
 
 /*
 ================================================================================
@@ -1000,6 +1045,9 @@ process FastQC {
 
 // MultiQC of the Raw Data
 
+// collect software_versions, workflow summary
+(software_versions_raw, software_versions_trim) = ch_software_versions_yaml.into(2)
+(workflow_summary_raw, workflow_summary_trim) = ch_workflow_summary.into(2)
 process multiqc_raw {
 
     publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
@@ -1008,6 +1056,8 @@ process multiqc_raw {
 
     input:
         file(htmls) from fastqc_raw.collect()
+        file ('software_versions/*') from ch_software_versions_raw.collect()
+        file workflow_summary from workflow_summary_raw.collectFile(name: "workflow_summary_mqc.yaml")
 
     output:
         file("Raw_Reads_MultiQC.html") into multiqc_raw_out
@@ -1088,6 +1138,8 @@ if(params.skip_trim == 'no'){
        input:
            file(htmls) from fastqc_trimmed.collect()
            file(bbduk_stats) from bbduk_stats_ch.collect()
+           file ('software_versions/*') from ch_software_versions_trim.collect()
+           file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
 
        output:
            file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
