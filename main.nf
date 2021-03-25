@@ -1056,7 +1056,7 @@ process multiqc_raw {
 
     input:
         file(htmls) from fastqc_raw.collect()
-        file ('software_versions/*') from ch_software_versions_raw.collect()
+        file ('software_versions/*') from software_versions_raw.collect()
         file workflow_summary from workflow_summary_raw.collectFile(name: "workflow_summary_mqc.yaml")
 
     output:
@@ -1138,7 +1138,7 @@ if(params.skip_trim == 'no'){
        input:
            file(htmls) from fastqc_trimmed.collect()
            file(bbduk_stats) from bbduk_stats_ch.collect()
-           file ('software_versions/*') from ch_software_versions_trim.collect()
+           file ('software_versions/*') from software_versions_trim.collect()
            file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
 
        output:
