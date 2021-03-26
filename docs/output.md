@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This documentation describes the output of `nf-core/circrna` for an extended version of the test dataset which runs all 3 modules in the workflow: `circRNA discovery` , `miRNA prediction` and `differential expression` analysis of circular RNAs in RNA-Seq data.  
+This documentation describes the output of `nf-core/circrna` for the test dataset which runs all 3 modules in the workflow: `circRNA discovery` , `miRNA prediction` and `differential expression` analysis of circular RNAs in RNA-Seq data.  
 
 The processes listed below will fall into one of 4 output directories produced by `nf-core/circrna`:
 
