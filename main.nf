@@ -585,6 +585,7 @@ process get_software_versions {
     bowtie2 --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie2.txt 2>&1 || true
     echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' &> v_bwa.txt 2>&1 || true
     CIRCexplorer2 --version &> v_circexplorer2.txt 2>&1 || true
+    CIRIquant --version &> v_ciriquant.txt 2>&1 || true
     hisat2 --version &> v_hisat2.txt 2>&1 || true
     java --version &> v_java.txt 2>&1 || true
     mapsplice.py --version &> v_mapsplice.txt 2>&1 || true
@@ -594,10 +595,11 @@ process get_software_versions {
     pip --version | cut -d' ' -f 1,2,5,6 &> v_pip.txt 2>&1 || true
     python --version &> v_python.txt 2>&1 || true
     R --version | head -n 1 &> v_R.txt || true
+    RNAfold --version | cut -d' ' -f2 &> v_viennarna.txt || true
     samtools --version &> v_samtools.txt 2>&1 || true
     STAR --version &> v_star.txt 2>&1 || true
     stringtie --version &> v_stringtie.txt 2>&1 || true
-    RNAfold --version | cut -d' ' -f2 &> v_viennarna.txt || true
+    targetscan_70.pl --version &> v_targetscan.txt 2>&1 || true
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
