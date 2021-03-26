@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data, sample metadata and save output data.",
+            "description": "Define where the pipeline should find input data and write output data.",
             "required": [
                 "input",
                 "input_type"
@@ -18,8 +18,8 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-dna",
-                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the path or URL to FASTQ/BAM files.",
-                    "help_text": "There are two ways to supply data to `nf-core/circrna`:\n\n 1. Provide the path to the directory containing either FASTQ/BAM files. The path must contain a wildcard glob ('*') and the string must be enclosed by single or double quotes (e.g for paired end data: `--input '/<path to fastq>/*_R{1,2}.fq.gz'`).\n 2. Provide a CSV file containing the paths or URLs to FASTQ/BAM files. The CSV must contain the following headers: `Sample_ID`, `Read1`, `Read2`, `BAM`. If you are using FASTQ files, set the BAM column to `NA`. Similarly, if you are using BAM files, set the `Read1`, `Read2` columns to `NA`."
+                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the absolute path to FASTQ/BAM files.",
+                    "help_text": "There are two ways to supply input data to `nf-core/circrna`:\n\n1. Provide the path to the directory containing FASTQ or BAM files, with the appropriate wildcard glob pattern *e.g:*\n```bash\n--input \"/data/*_r{1,2}.fastq.gz\"\n```\n2. Provide a CSV file containing the absolute paths to FASTQ or BAM files *e.g:*\n\n| Sample_ID    | Read1                          | Read2                          | Bam  |\n|------------- |------------------------------- |------------------------------- |----- |\n| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |\n| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |\n| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |\n| tumor_rep1   | /data/tumor_rep1_r1.fastq.gz   | /data/tumor_rep1_r2.fastq.gz   | NA   |\n| tumor_rep2   | /data/tumor_rep2_r1.fastq.gz   | /data/tumor_rep2_r2.fastq.gz   | NA   |\n| tumor_rep3   | /data/tumor_rep3_r1.fastq.gz   | /data/tumor_rep3_r2.fastq.gz   | NA   |\n When supplying BAM files to the CSV file, set Read1 & Read2 columns to 'NA'."
                 },
                 "input_type": {
                     "type": "string",
@@ -31,15 +31,21 @@
                     "description": "The output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "phenotype":{
+                  "type": "string",
+                  "description": "Phenotype CSV file specifying the experimental design for `DESeq2`.",
+                  "fa_icon": "far fa-file-alt",
+                  "help_text": "The response variable containing the phenotypes of primary interest in the experiment must have the column name `condition`. Furthermore, `wild-type`/`normal`/`control` samples must be called `control`. An example phenotype file is given below:\n\n| samples | condition | replicates |\n|---------|-----------|------------|\n| ctrl_1  | control   | 1          |\n| ctrl_2  | control   | 2          |\n| ctrl_3  | control   | 3          |\n| A549_1  | lung      | 1          |\n| A549_2  | lung      | 2          |\n| A549_3  | lung      | 3          |\n| A375_1  | melanoma  | 1          |\n| A375_2  | melanoma  | 2          |\n| A375_3  | melanoma  | 3          |\n\nThis will produce the `DESeq2` design formula `~ replicates + condition` i.e all columns not named `condition` will be controlled for in the linear mixed model."
                 }
-            },
-            "help_text": "This text appears when user clicks help beside the title - Input/output options"
+            }
         },
         "pipeline_options": {
           "title": "Pipeline Options",
           "type": "object",
           "fa-icon": "fas fa-cog",
-          "description": "Options for [nf-core/circrna] deployment",
+          "description": "Mandatory options for `nf-core/circrna` deployment",
+          "help_text": "Documentation for selecting circRNA quantification tools and analysis modules.",
           "required": [
             "module",
             "tool"
@@ -47,33 +53,75 @@
           "properties":{
             "tool":{
               "type":"string",
-              "fa_icon": "fas fa-sliders",
-              "description": "Comma separated list of circRNA quantification tools to use. The user can select one or a combination of tools. Supported tools: `CIRIquant`, `CIRCexplorer2`, `find_circ`, `circRNA_finder`, `MapSplice`, `DCC`."
+              "fa_icon": "fas fa-wrench",
+              "description": "Comma separated list of circRNA quantification tools to use. Supported tools: `CIRIquant`, `CIRCexplorer2`, `find_circ`, `circRNA_finder`, `MapSplice`, `DCC`.",
+              "help_text": "Select one or a combination of circRNA quantification tools for the pipeline *e.g:*\n```bash\n--tool \"circexplorer2, ciriquant, find_circ\"\n```\n\n*N.B:* Selecting more than one circRNA quantification tool will trigger a circRNA filtering method whereby circRNAs called by only one tool are discarded."
             },
             "module": {
               "type": "string",
-              "fa_icon": "fas fa-sliders",
-              "description": "Comma separated list of modules to run: `'circrna_discovery'` (mandatory), '`mirna_prediction`' & `'differential_expression'`."
+              "fa_icon": "fas fa-sliders-h",
+              "description": "Comma separated list of modules to run: `'circrna_discovery'`, '`mirna_prediction`' & `'differential_expression'`.",
+              "mandatory": "circrna_discovery",
+              "help_text": "The `circrna_discovery` module is mandatory. After circRNA quantification, the user can select `mirna_prediction`, `differential_expression` or both to deploy additional analyses *e.g:*\n```bash\n--module \"circrna_discovery, mirna_prediction, differential_expression\"\n```"
             }
-          },
-          "help_text": "This text appears when user click help beside Pipeline Options"
+          }
+        },
+        "circrna_filtering" : {
+          "title": "circRNA filtering options",
+          "type": "object",
+          "fa-icon": "fas fa-filter",
+          "description": "Filtering options for circRNAs called by workflow.",
+          "required": [
+            "bsj_reads",
+            "tool_filter"
+          ],
+          "properties": {
+            "bsj_reads":{
+              "type": "integer",
+              "fa_icon": "fas fa-circle-notch",
+              "description": "Minimum number of required reads spanning circRNA back-splice junction for circRNA to be considered for analysis.",
+              "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below specified value. To disable, set value to 0.",
+              "default": 2
+            },
+            "tool_filter":{
+              "type": "integer",
+              "fa_icon": "fas fa-intersection",
+              "description": "Specify the minimum number of tools circRNAs must be called by.",
+              "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, the user can set a filtering method whereby a circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\n> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`. ",
+              "default": 2
+            }
+          }
         },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Options for the reference genome indices used to align reads.",
+            "description": "Reference genome options used in the analysis.",
+            "help_text": "`nf-core/circrna` will automatically download reference files if none are provided and generate genome index files based on the tools selected by the user.",
             "properties": {
                 "fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-font",
                     "description": "Path to gencode FASTA genome file.",
-                    "help_text": "[nf-core/circrna] has been developed using gencode reference FASTA files, users can provide alternative reference FASTA files (UCSC, ENSEMBL) at their own risk.\n\n When running the pipeline for the first time, the user can leave `--fasta` empty and specify the genome version to use."
+                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash\n--fasta \"/reference/GRCh38.fa\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "genome_version": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`."
+                    "description": "Genome version to use, options: `GRCh37`, `GRCh38`",
+                    "help_text": "Required if `--fasta`, `--gencode_gtf`, `--gene_annotation` are left empty."
+                },
+                "gencode_gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to gencode reference GTF file.",
+                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gencode_gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                },
+                "gene_annotation": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to custom annotation text file.",
+                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the customised annotation text file will be automatically generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for [CIRCexplorer2 compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -92,43 +140,252 @@
                 "fasta_fai": {
                     "type": "string",
                     "fa_icon" : "fas fa-address-book",
-                    "description": "Path to samtools genome index file (`.fai`).",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the FASTA `.fai` file to save compute resources."
+                    "description": "Path to SAMtools index file.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file. When re-running the pipeline, provide the absolute path to the SAMtools index file *e.g:*\n```bash\n--fasta_fai \"/data/results/circrna_discovery/index/GRCh38.fa.fai\"\n```"
                 },
                 "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bowtie index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie_index '/<path>/<bowtie_index>/*'`.\n\n Quantification tool dependency: `mapsplice`."
+                    "description": "Path to Bowtie index files.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory *e.g:*\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bowtie2 index files. Path must be enclosed with quotes and use a wildcard glob ('*') pattern.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bowtie indices to save compute resources e.g `--bowtie2_index '/<path>/<bowtie2_index>/*'`.\n\n Quantification tool dependency: `find_circ`."
+                    "description": "Path to Bowtie2 index files.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory *e.g:*\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
                 },
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to bwa index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to bwa indices to save compute resources e.g `--bwa_index '/<path>/<bwa_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+                    "description": "Path to BWA index directory.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"/data/results/circrna_discovery/index/bwa\"\n```"
 
                 },
                 "hisat2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to Hisat 2 index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to hisat2 indices to save compute resources e.g `--hisat2_index '/<path>/<hisat2_index>/'`.\n\n Quantification tool dependency: `CIRIquant`."
+                    "description": "Path to HISAT2 index directory.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
 
                 },
                 "star_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to STAR index files.",
-                    "help_text": "Automatically generated if none supplied. If re-running the pipeline provide the path to STAR indices to save compute resources e.g `--star_index '/<path>/<star_index>/'`.\n\n Quantification tool dependency: `CIRCexplorer2, circRNA_finder, DCC`."
+                    "description": "Path to STAR index directory.",
+                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to STAR indices directory *e.g:*\n```bash\n--star_index \"/data/results/circrna_discovery/index/STAR\"\n```"
+                }
+            }
+        },
+        "read_trimming_and_adapter_removal":{
+          "title": "Read trimming & adapter removal",
+          "type": "object",
+          "fa_icon": "fas fa-cut",
+          "description": "Parameters for BBDUK",
+          "help_text": "BBDUK read filtering is deployed when `--skip_trim 'false'`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+          "properties": {
+            "skip_trim":{
+              "type": "string",
+              "fa_icon": "fas fa-fast-forward",
+              "description": "Skip BBDUK?",
+              "help_text": "If set to `no`, the BBDUK process is executed, otherwise it is skipped and raw reads will be supplied to circRNA quantification tools."
+            },
+            "adapters":{
+              "type": "string",
+              "fa_icon": "fas fa-file-alt",
+              "description": "Reference adapter file supplied to BBDUK",
+              "deafult": "adapters.fa",
+              "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The `adapters.fa` file is located at `${projectDir}/bin/adapters.fa` should the user wish to modify the file. Make sure to specify the **absolute path** to the `adapters.fa` file if modified."
+            },
+            "k":{
+              "type": "integer",
+              "fa_icon": "fab fa-kickstarter",
+              "description": "Specifies K-mer size to use for adapter removal",
+              "default": 12,
+              "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k \"32\"` removes all reads that have a 32 kmer match with the adapter sequences provided."
+            },
+            "ktrim":{
+              "type": "string",
+              "fa_icon": "fas fa-exchange-alt",
+              "description": "Which end of reads to perform kmer trimming",
+              "default": "r",
+              "help_text": "Specify which end of the reads to perform kmer trimming on. Options are `'r'`, `'l'`, and `'f'` (right, left, don't trim)."
+            },
+            "hdist":{
+              "type": "integer",
+              "fa_icon": "fas fa-ruler-horizontal",
+              "description": "Maximum Hamming distance for reference kmers",
+              "default": 1,
+              "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n*Warning:* setting `--hdist` to values higher than 1 will result in high memory usage."
+            },
+            "trimq":{
+              "type": "integer",
+              "fa_icon": "fas fa-award",
+              "description": "Trimming performed on regions in reads with an average Phred score below specified value",
+              "default": 20,
+              "help_text": "*N.B:* This action is performed after adapter removal, if specified."
+            },
+            "qtrim":{
+              "type": "string",
+              "fa_icon": "fas fa-exchange-alt",
+              "description": "Which end of reads to perform quality trimming",
+              "default": "r",
+              "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are `'r'`, `'l'` and `'rl'` (right, left, both)."
+            },
+            "minlen":{
+              "type": "integer",
+              "fa_icon": "fas fa-ruler-horizontal",
+              "description": "Remove reads below length *n*",
+              "default": 30
+            }
+          }
+        },
+        "star_general": {
+            "title": "STAR",
+            "type": "object",
+            "description": "Define parameters for STAR 2 pass mode",
+            "help_text": "STAR 2 pass mode is performed to identify novel splice sites in *all* samples. STAR takes the novel splice sites into account when performig re-alignment during the second pass. STAR is used for CIRCexplorer2, circRNA_finder & DCC",
+            "properties": {
+              "alignIntronMax": {
+                  "type": "integer",
+                  "default": 1000000,
+                  "description": "The maximum intron length is set to 1,000,000",
+                  "fa_icon": "fas fa-sliders-h"
+              },
+              "alignIntronMin": {
+                  "type": "integer",
+                  "default": 20,
+                  "description": "The minimum intron length is set to 20. If the genomic gap is smaller than this value, it is considered as a deletion",
+                  "fa_icon": "fas fa-sliders-h"
+              },
+              "alignMatesGapMax": {
+                  "type": "integer",
+                  "default": 1000000,
+                  "description": "The maximum genomic distance between mates is 1,000,000",
+                  "fa_icon": "fas fa-sliders-h"
+              },
+              "alignSJDBoverhangMin": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "The number of minimum overhang for annotated junctions",
+                  "fa_icon": "fas fa-sliders-h"
+              },
+              "alignSJoverhangMin": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "The number of minimum overhang for unannotated junctions",
+                  "fa_icon": "fas fa-sliders-h"
+              },
+                "alignSoftClipAtReferenceEnds": {
+                  "type": "string",
+                  "default": "No",
+                  "description": "Allow the soft-clipping of the alignments past the end of chromosomes",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "alignTranscriptsPerReadNmax": {
+                  "type" : "integer",
+                  "default" : 10000,
+                  "description": "Max number of different alignments per read to consider",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "chimJunctionOverhangMin": {
+                  "type": "integer",
+                  "default": 15,
+                  "description": "Minimum overhang for a chimeric junction",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "chimScoreMin": {
+                  "type": "integer",
+                  "default": 15,
+                  "description": "Minimum total (summed) score of the chimeric segments",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "chimScoreSeparation": {
+                  "type": "integer",
+                  "default": 15,
+                  "description": "Minimum difference (separation) between the best chimeric score and the next one",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "chimSegmentMin": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": " Minimum length of chimeric segment length, if == 0, no chimeric output",
+                  "fa_icon" :"fas fa-sliders-h",
+                  "help_text": "Do not set to 0, this will disable outputs compatible with circRNA quantification."
+                },
+                "genomeLoad": {
+                  "type": "string",
+                  "default": "NoSharedMemory",
+                  "description": "Mode of shared memory usage for the genome files",
+                  "fa_icon": "fas fa-sliders-h",
+                  "help_text": "Users can select a variety of options depending on their resource configuration:\n\n1. `LoadAndKeep`: load genome into shared and keep it in memory after run\n2. `LoadAndRemove`: load genome into shared but remove it after run\n3. `LoadAndExit`: load genome into shared memory and exit, keeping the genome in memory for future runs\n4. `Remove`: do not map anything, just remove loaded genome from memory\n5. `NoSharedMemory`: do not use shared memory, each job will have its own private copy of the genome"
+                },
+                "limitSjdbInsertNsj": {
+                  "type": "integer",
+                  "default": 1000000,
+                  "description": "Maximum number of junction to be inserted to the genome on the fly at the mapping stage, including those from annotations and those detected in the 1st step of the 2-pass run",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterMatchNminOverLread": {
+                  "type": "number",
+                  "default": 0.33,
+                  "description": "Alignment output if ratio of matched bases relative to read length is equal to or higher than this value",
+                  "fa_icon": "fas fa-sliders-h",
+                  "help_text": "Consider 75bp paired end reads with sum matched bases of 120bp. Matched bp is summmed over combined read length (120/150 = 0.8). Simply put, lowering this ratio reduces the number of required matches in reads.\n\n`outFilterMatchNminOverLread` is preferred over `outFilterMatchNmin` as it considers read length, suitable for experiments with varying read length."
+                },
+                "outFilterMismatchNoverLmax": {
+                  "type": "number",
+                  "default": 0.05,
+                  "description": "Alignment output if ratio of mismatched bases relative to **mapped** read length is lower than value",
+                  "fa_icon": "fas fa-sliders-h",
+                  "help_text": "For example, for reads <20b no mismatches are allowed (1/19 = 0.0526), 20-39b: 1 mismatch, 40-59b 2 mismatches and so on. Simply put, increasing this value will allow for more mismatches in the mapped reads.\n\n`outFilterMismatchNoverLmax` is preferred over `outFilterMismatchNmax` as it considers the mapped read length, suitable for experiments with varying read length."
+                },
+                "outFilterMultimapNmax": {
+                  "type": "integer",
+                  "default": 20,
+                  "description": "Max number of multiple alignments allowed for a read: if exceeded, the read is considered unmapped",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterMultimapScoreRange": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": " Score range below the maximum score for multimapping alignments",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterScoreMinOverLread": {
+                  "type": "number",
+                  "default": 0.33,
+                  "description": "Alignment will be output only if its score relative to read length is higher than or equal to this value",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "outSJfilterOverhangMin": {
+                  "type": "string",
+                  "default": "15 15 15 15",
+                  "description": "Minimum overhang length for novel splice junctions",
+                  "fa_icon": "fas fa-sliders-h",
+                  "help_text": "4 integers: minimum overhang length for splice junctions on both sides for:\n1. non-canonical motifs\n2. GT/AG and CT/AC motif\n3. GC/AG and CT/GC motif\n4. AT/AC and GT/AT motif\n\n-1 means no output for that motif"
+                },
+                "sjdbOverhang": {
+                  "type": "integer",
+                  "default": 100,
+                  "description": "Option to specify the length of the donor/acceptor sequence on each side of the junctions used in constructing the splice junctions database",
+                  "fa_icon": "fas fa-sliders-h",
+                  "help_text": "By default the option is set to 100. However, we recommend setting a value depending on the read length: read/mate length - 1"
+                },
+                "sjdbScore": {
+                  "type": "integer",
+                  "default": 2,
+                  "description": "Alignment score for alignmets that cross database junctions",
+                  "fa_icon": "fas fa-sliders-h"
+                },
+                "winAnchorMultimapNmax": {
+                    "type": "integer",
+                    "default": 999,
+                    "description": "The maximum number of loci anchors that are allowed to map. By default, the pipeline uses a large number 999 to switch this filter off.",
+                    "fa_icon": "fas fa-sliders-h"
                 }
             },
-            "help_text": "displayed whe user clicks help beside reference genome options."
+            "fa_icon": "fas fa-star"
         },
         "generic_options": {
             "title": "Generic options",
@@ -143,6 +400,29 @@
                     "hidden": true,
                     "fa_icon": "fas fa-question-circle"
                 },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "hidden": true,
+                    "description": "Method used to save pipeline results to output directory.",
+                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
+                    "fa_icon": "fas fa-copy",
+                    "enum": [
+                        "symlink",
+                        "rellink",
+                        "link",
+                        "copy",
+                        "copyNoFollow",
+                        "move"
+                    ]
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
+                    "hidden": true
+                },
                 "name": {
                     "type": "string",
                     "description": "Workflow name.",
@@ -154,6 +434,7 @@
                     "type": "string",
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
+                    "hidden": true,
                     "help_text": "An email address to send a summary email to when the pipeline is completed.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
@@ -199,6 +480,13 @@
                     "default": "${params.outdir}/pipeline_info",
                     "fa_icon": "fas fa-cogs",
                     "hidden": true
+                },
+                "show_hidden_params": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-eye-slash",
+                    "description": "Show all params when using `--help`",
+                    "hidden": true,
+                    "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
                 }
             }
         },
@@ -222,6 +510,7 @@
                     "description": "Maximum amount of memory that can be requested for any single job.",
                     "default": "128.GB",
                     "fa_icon": "fas fa-memory",
+                    "pattern": "^[\\d\\.]+\\s*.(K|M|G|T)?B$",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
                 },
@@ -230,6 +519,7 @@
                     "description": "Maximum amount of time that can be requested for any single job.",
                     "default": "240.h",
                     "fa_icon": "far fa-clock",
+                    "pattern": "^[\\d\\.]+\\.*(s|m|h|d)$",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
                 }
@@ -264,6 +554,12 @@
                     "hidden": true,
                     "fa_icon": "fas fa-users-cog"
                 },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
                 "config_profile_description": {
                     "type": "string",
                     "description": "Institutional config description.",
@@ -290,10 +586,19 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
+            "$ref": "#/definitions/pipeline_options"
+        },
+        {
+            "$ref": "#/definitions/circrna_filtering"
+        },
+        {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
-            "$ref": "#/definitions/pipeline_options"
+            "$ref": "#/definitions/read_trimming_and_adapter_removal"
+        },
+        {
+            "$ref": "#/definitions/star_general"
         },
         {
             "$ref": "#/definitions/generic_options"
@@ -304,46 +609,5 @@
         {
             "$ref": "#/definitions/institutional_config_options"
         }
-    ],
-    "properties": {
-        "gencode_gtf": {
-            "type": "string"
-        },
-        "gene_annotation": {
-            "type": "string"
-        },
-        "fasta_chr": {
-            "type": "string"
-        },
-        "ciriquant_yml": {
-            "type": "string"
-        },
-        "adapters": {
-            "type": "string"
-        },
-        "phenotype": {
-            "type": "string"
-        },
-        "trimming": {
-            "type": "string"
-        },
-        "minlen": {
-            "type": "integer"
-        },
-        "ktrim": {
-            "type": "string"
-        },
-        "k": {
-            "type": "string"
-        },
-        "qtrim": {
-          "type": "string"
-        },
-        "trimq": {
-          "type": "integer"
-        },
-        "threads": {
-          "type": "integer"
-        }
-    }
+    ]
 }

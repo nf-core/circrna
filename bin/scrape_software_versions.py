@@ -3,18 +3,55 @@ from __future__ import print_function
 from collections import OrderedDict
 import re
 
-# TODO nf-core: Add additional regexes for new tools in process get_software_versions
 regexes = {
     "nf-core/circrna": ["v_pipeline.txt", r"(\S+)"],
     "Nextflow": ["v_nextflow.txt", r"(\S+)"],
-    "FastQC": ["v_fastqc.txt", r"FastQC v(\S+)"],
-    "MultiQC": ["v_multiqc.txt", r"multiqc, version (\S+)"],
+    "BBDUK": ["v_bbduk.txt", r"(\S+)"],
+    "BEDTools": ["v_bedtools.txt", r"(\S+)"],
+    "Bowtie": ["v_bowtie.txt", r"(\S+)"],
+    "Bowtie2": ["v_bowtie2.txt", r"(\S+)"],
+    "BWA": ["v_bwa.txt", r"(\S+)"],
+    "CIRCexplorer2": ["v_circexplorer2.txt", r"(\S+)"],
+    "CIRIquant": ["v_ciriquant.txt", r"(\S+)"],
+    "HISAT2": ["v_hisat2.txt", r"(\S+)"],
+    "Java": ["v_java.txt", r"(\S+)"],
+    "MapSplice": ["v_mapsplice.txt", r"(\S+)"],
+    "miRanda": ["v_miranda.txt", r"(\S+)"],
+    "Perl": ["v_perl.txt", r"(\S+)"],
+    "Picard": ["v_picard.txt", r"(\S+)"],
+    "Pip": ["v_pip.txt", r"(\S+)"],
+    "Python": ["v_python.txt", r"(\S+)"],
+    "R": ["v_R.txt", r"(\S+)"],
+    "ViennaRNA": ["v_viennarna.txt", r"(\S+)"],
+    "SAMtools": ["v_samtools.txt", r"(\S+)"],
+    "STAR": ["v_star.txt", r"(\S+)"],
+    "StringTie": ["v_stringtie.txt", r"(\S+)"],
+    "TargetScan": ["v_targetscan.txt", r"(\S+)"]
 }
 results = OrderedDict()
 results["nf-core/circrna"] = '<span style="color:#999999;">N/A</span>'
 results["Nextflow"] = '<span style="color:#999999;">N/A</span>'
-results["FastQC"] = '<span style="color:#999999;">N/A</span>'
-results["MultiQC"] = '<span style="color:#999999;">N/A</span>'
+results["BBDUK"] = '<span style="color:#999999;">N/A</span>'
+results["BEDtools"] = '<span style="color:#999999;">N/A</span>'
+results["Bowtie"] = '<span style="color:#999999;">N/A</span>'
+results["Bowtie2"] = '<span style="color:#999999;">N/A</span>'
+results["BWA"] = '<span style="color:#999999;">N/A</span>'
+results["CIRCexplorer2"] = '<span style="color:#999999;">N/A</span>'
+results["CIRIquant"] = '<span style="color:#999999;">N/A</span>'
+results["HISAT2"] = '<span style="color:#999999;">N/A</span>'
+results["Java"] = '<span style="color:#999999;">N/A</span>'
+results["MapSplice"] = '<span style="color:#999999;">N/A</span>'
+results["miRanda"] = '<span style="color:#999999;">N/A</span>'
+results["Perl"] = '<span style="color:#999999;">N/A</span>'
+results["Picard"] = '<span style="color:#999999;">N/A</span>'
+results["Pip"] = '<span style="color:#999999;">N/A</span>'
+results["Python"] = '<span style="color:#999999;">N/A</span>'
+results["R"] = '<span style="color:#999999;">N/A</span>'
+results["ViennaRNA"] = '<span style="color:#999999;">N/A</span>'
+results["SAMtools"] = '<span style="color:#999999;">N/A</span>'
+results["STAR"] = '<span style="color:#999999;">N/A</span>'
+results["StringTie"] = '<span style="color:#999999;">N/A</span>'
+results["TargetScan"] = '<span style="color:#999999;">N/A</span>'
 
 # Search each file using its regex
 for k, v in regexes.items():
