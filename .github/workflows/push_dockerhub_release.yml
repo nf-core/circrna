@@ -19,11 +19,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build new docker image
-        run: docker build --no-cache . -t nfcore/circrna:latest
+        run: docker build --no-cache . -t nfcore/circrna:dev
 
       - name: Push Docker image to DockerHub (release)
         run: |
           echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          docker push nfcore/circrna:latest
-          docker tag nfcore/circrna:latest nfcore/circrna:${{ github.event.release.tag_name }}
+          docker push nfcore/circrna:dev
+          docker tag nfcore/circrna:dev nfcore/circrna:${{ github.event.release.tag_name }}
           docker push nfcore/circrna:${{ github.event.release.tag_name }}
