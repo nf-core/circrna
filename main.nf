@@ -892,7 +892,7 @@ process split_fasta{
 
     output:
         path("*.fa", includeInputs:true) into split_fasta
-        val("${launchDir}/${params.outdir}/circrna_discovery/reference/chromosomes") into split_fasta_path
+        val("${launchDir}/${params.outdir}/circrna_discovery/reference/chromosomes") into ch_fasta_chr
 
     when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
@@ -911,8 +911,6 @@ process split_fasta{
     '''
 }
 
-ch_fasta_chr = params.fasta_chr ? Channel.value(params.fasta_chr) : split_fasta_path
-
 process ciriquant_yml{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
@@ -924,9 +922,9 @@ process ciriquant_yml{
         val(hisat2_path) from ch_hisat2_index
 
     output:
-        file("travis.yml") into yml_built
+        file("travis.yml") into ch_ciriquant_yml
 
-    when: !(params.ciriquant_yml) && 'ciriquant' in tool && 'circrna_discovery' in module
+    when: 'ciriquant' in tool && 'circrna_discovery' in module
 
     script:
     index_prefix = fasta.toString() - ~/.fa/
@@ -952,8 +950,6 @@ process ciriquant_yml{
      hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
     """
 }
-
-ch_ciriquant_yml = params.ciriquant_yml ? Channel.value(file(params.ciriquant_yml)) : yml_built
 
 /*
 ================================================================================
