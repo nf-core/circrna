@@ -542,20 +542,67 @@ if(params.email || params.email_on_fail){
 log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
 log.info "\033[2m----------------------------------------------------\033[0m"
 
+// Check the hostnames against configured profiles
+checkHostname()
+
+Channel.from(summary.collect{ [it.key, it.value] })
+    .map { k,v -> "<dt>$k</dt><dd><samp>${v ?: '<span style=\"color:#999999;\">N/A</a>'}</samp></dd>" }
+    .reduce { a, b -> return [a, b].join("\n            ") }
+    .map { x -> """
+    id: 'nf-core-circrna-summary'
+    description: " - this information is collected when the pipeline is started."
+    section_name: 'nf-core/circrna Workflow Summary'
+    section_href: 'https://github.com/nf-core/circrna'
+    plot_type: 'html'
+    data: |
+        <dl class=\"dl-horizontal\">
+            $x
+        </dl>
+    """.stripIndent() }
+    .set { ch_workflow_summary }
+
 /*
 ================================================================================
                           Export software versions
 ================================================================================
 */
 
-process get_software_versions{
+process get_software_versions {
+    publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
+        saveAs: {it.indexOf(".csv") > 0 ? it : null}
+
+    output:
+        file 'software_versions_mqc.yaml' into ch_software_versions_yaml
+        file "software_versions.csv"
 
     script:
     """
-    echo "foo"
+    echo $workflow.manifest.version > v_pipeline.txt
+    echo $workflow.nextflow.version > v_nextflow.txt
+    bbduk.sh | grep 'Last modified' | cut -d' ' -f 3-99 &> v_bbduk.txt 2>&1 || true
+    bedtools --version &> v_bedtools.txt 2>&1 || true
+    bowtie --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie.txt 2>&1 || true
+    bowtie2 --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie2.txt 2>&1 || true
+    echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' &> v_bwa.txt 2>&1 || true
+    CIRCexplorer2 --version &> v_circexplorer2.txt 2>&1 || true
+    CIRIquant --version &> v_ciriquant.txt 2>&1 || true
+    hisat2 --version &> v_hisat2.txt 2>&1 || true
+    java --version &> v_java.txt 2>&1 || true
+    mapsplice.py --version &> v_mapsplice.txt 2>&1 || true
+    miranda -v | grep 'Algorithm' | cut -d' ' -f 1,2 &> v_miranda.txt 2>&1 || true
+    perl --version | grep 'x86' | cut -d' ' -f1-9 &> v_perl.txt 2>&1 || true
+    picard SamToFastq --version &> v_picard.txt 2>&1 || true
+    pip --version | cut -d' ' -f 1,2,5,6 &> v_pip.txt 2>&1 || true
+    python --version &> v_python.txt 2>&1 || true
+    R --version | head -n 1 &> v_R.txt || true
+    RNAfold --version | cut -d' ' -f2 &> v_viennarna.txt || true
+    samtools --version &> v_samtools.txt 2>&1 || true
+    STAR --version &> v_star.txt 2>&1 || true
+    stringtie --version &> v_stringtie.txt 2>&1 || true
+    targetscan_70.pl --version &> v_targetscan.txt 2>&1 || true
+    scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
-
 
 /*
 ================================================================================
@@ -777,7 +824,7 @@ process star_index{
     """
     STAR \
     --runMode genomeGenerate \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbOverhang ${params.sjdbOverhang} \
     --sjdbGTFfile $gtf \
     --genomeDir STAR/ \
@@ -928,7 +975,7 @@ if(csv_path){
 
    csv_file = file(csv_path)
    println csv_file
-   if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one csv file per run."
+   if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one CSV file per run."
    if(!csv_file.exists()) exit 1, "[nf-core/circrna] error: input CSV file could not be found using the path provided: ${params.input}"
 
    ch_input_sample = extract_data(csv_path)
@@ -936,8 +983,10 @@ if(csv_path){
 }else if(params.input && !has_extension(params.input, "csv")){
 
    log.info ""
-   log.info "No CSV file provided, reading input files from directory provided"
-   log.info "Reading path: ${params.input}\n"
+   log.info "Input data log info:"
+   log.info "No input sample CSV file provided, attempting to read from path instead."
+   log.info "Reading input data from path: ${params.input}\n"
+   log.info ""
    inputSample = retrieve_input_paths(params.input, params.input_type)
    ch_input_sample = inputSample
 
@@ -959,7 +1008,7 @@ if(params.input_type == 'bam'){
 
         script:
         """
-        picard -Xmx8g \
+        picard "-Xmx${task.memory.toGiga()}g" \
         SamToFastq \
         I=$bam \
         F=${base}_R1.fq.gz \
@@ -998,6 +1047,9 @@ process FastQC {
 
 // MultiQC of the Raw Data
 
+// collect software_versions, workflow summary
+(software_versions_raw, software_versions_trim) = ch_software_versions_yaml.into(2)
+(workflow_summary_raw, workflow_summary_trim) = ch_workflow_summary.into(2)
 process multiqc_raw {
 
     publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
@@ -1006,6 +1058,8 @@ process multiqc_raw {
 
     input:
         file(htmls) from fastqc_raw.collect()
+        file ('software_versions/*') from software_versions_raw.collect()
+        file workflow_summary from workflow_summary_raw.collectFile(name: "workflow_summary_mqc.yaml")
 
     output:
         file("Raw_Reads_MultiQC.html") into multiqc_raw_out
@@ -1041,7 +1095,7 @@ if(params.skip_trim == 'no'){
        def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
        """
-       bbduk.sh -Xmx4g \
+       bbduk.sh "-Xmx${task.memory.toGiga()}g" \
        in1=${fastq[0]} \
        in2=${fastq[1]} \
        out1=${base}_R1.trim.fq.gz \
@@ -1086,6 +1140,8 @@ if(params.skip_trim == 'no'){
        input:
            file(htmls) from fastqc_trimmed.collect()
            file(bbduk_stats) from bbduk_stats_ch.collect()
+           file ('software_versions/*') from software_versions_trim.collect()
+           file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
 
        output:
            file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
@@ -1156,7 +1212,7 @@ process STAR_1PASS{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
@@ -1230,7 +1286,7 @@ process STAR_2PASS{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1340,7 +1396,7 @@ process dcc_mate1{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1393,7 +1449,7 @@ process dcc_mate2{
     --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
     ${readFilesCommand} \
     --readFilesIn ${reads} \
-    --runThreadN ${params.threads} \
+    --runThreadN ${task.cpus} \
     --sjdbFileChrStartEnd ${sjdbfile} \
     --sjdbScore ${params.sjdbScore} \
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
@@ -1427,7 +1483,7 @@ process dcc{
     printf "${base}/${base}.${COJ}" > samplesheet
     printf "mate1/${base}.${COJ}" > mate1file
     printf "mate2/${base}.${COJ}" > mate2file
-    DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${params.threads}
+    DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${task.cpus}
 
     ## Add strand to counts
     awk '{print \$6}' CircCoordinates >> strand
@@ -1464,9 +1520,9 @@ process find_anchors{
 
     script:
     """
-    bowtie2 -p ${params.threads} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
+    bowtie2 -p ${task.cpus} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
     -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \
-    | samtools view -hbuS - | samtools sort --threads ${params.threads} -m 2G - > ${base}.bam
+    | samtools view -hbuS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
 
     samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
 
@@ -1493,7 +1549,7 @@ process find_circ{
 
     script:
     """
-    bowtie2 -p ${params.threads} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
+    bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
     ## filtering
@@ -1522,7 +1578,7 @@ process ciriquant{
 
     script:
     """
-    CIRIquant -t ${params.threads} \
+    CIRIquant -t ${task.cpus} \
     -1 ${fastq[0]} \
     -2 ${fastq[1]} \
     --config $ciriquant_yml \
@@ -1581,7 +1637,7 @@ process mapsplice_align{
        -x $prefix \
        -1 ${strip1} \
        -2 ${strip2} \
-       -p ${params.threads} \
+       -p ${task.cpus} \
        --bam \
        --seglen 25 \
        --min-intron ${params.alignIntronMin} \
@@ -1600,7 +1656,7 @@ process mapsplice_align{
        -x $prefix \
        -1 ${fastq[0]} \
        -2 ${fastq[1]} \
-       -p ${params.threads} \
+       -p ${task.cpus} \
        --bam \
        --seglen 25 \
        --min-intron ${params.alignIntronMin} \
@@ -1658,7 +1714,7 @@ process tophat_align{
 
     script:
     """
-    tophat -p ${params.threads} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
+    tophat -p ${task.cpus} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
     mv ${base}/unmapped.bam ./
     mv ${base}/accepted_hits.bam ./
     """
@@ -2054,7 +2110,7 @@ process Hisat2_align{
 
     script:
     """
-    hisat2 -p 2 --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads 2 -m 2G - > ${base}.bam
+    hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
     """
 }
 
@@ -2073,7 +2129,7 @@ process StringTie{
     script:
     """
     mkdir ${base}/
-    stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p 2 -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+    stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p ${task.cpus} -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
     """
 }
 
@@ -2382,7 +2438,6 @@ workflow.onComplete {
     email_fields['summary']['Nextflow Build'] = workflow.nextflow.build
     email_fields['summary']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
 
-    // TODO nf-core: If not using MultiQC, strip out this code (including params.max_multiqc_email_size)
     // On success try attach the multiqc report
     def mqc_report = null
     try {
