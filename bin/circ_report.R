@@ -188,8 +188,7 @@ make_boxplot <- function(circ_df, inputdata){
 
 	p1 <- ggboxplot(circ_df, x="condition", y="count",
 									fill="condition", palette = "npg",
-									title = paste(circ_id),
-									ylab = "normalized counts", xlab="",
+									ylab = paste0(circ_id), xlab="",
           				add = c("dotplot"),
 									add.params = list(size=0.5, jitter=0.1),
 									legend = "none",
@@ -197,11 +196,11 @@ make_boxplot <- function(circ_df, inputdata){
           				bxp.errorbar.width = 0.2, width=0.3,
 									ggtheme = theme_classic()) +
           				rotate_x_text(angle = 0) +
-									theme(plot.title = element_text(face = "bold", size=16, hjust = 0.5)) +
-					  			theme(axis.text.x = element_text( colour = "black", size=14)) +
-					  			theme(axis.title.y = element_text(size=14, face = "italic")) +
-					  			theme(axis.title.x = element_blank()) +
-					  			theme(axis.text.y = element_text(color = "black", size=10))
+          				labs(x="") +
+          				theme(axis.title.x = element_text( colour = "black", size=14)) +
+          				theme(axis.text.x = element_text( colour = "black", size=14)) +
+          				theme(axis.text.y = element_text( color="black", size=10)) +
+          				theme(axis.title.y = element_text( colour = "black", size=14, face="bold"))
 
   pdf(paste(circ_id, "boxplot.pdf", sep="_"))
   plot(p1)

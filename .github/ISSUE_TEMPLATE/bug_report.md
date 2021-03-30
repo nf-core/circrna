@@ -13,13 +13,6 @@ Thanks for telling us about a problem with the pipeline.
 Please delete this text and anything that's not relevant from the template below:
 -->
 
-## Check Documentation
-
-I have checked the following places for your error:
-
-- [ ] [nf-core website: troubleshooting](https://nf-co.re/usage/troubleshooting)
-- [ ] [nf-core/circrna pipeline documentation](https://nf-co.re/nf-core/circrna/usage)
-
 ## Description of the bug
 
 <!-- A clear and concise description of what the bug is. -->
@@ -35,13 +28,6 @@ Steps to reproduce the behaviour:
 
 <!-- A clear and concise description of what you expected to happen. -->
 
-## Log files
-
-Have you provided the following extra information/files:
-
-- [ ] The command used to run the pipeline
-- [ ] The `.nextflow.log` file <!-- this is a hidden file in the directory where you launched the pipeline -->
-
 ## System
 
 - Hardware: <!-- [e.g. HPC, Desktop, Cloud...] -->
@@ -55,7 +41,7 @@ Have you provided the following extra information/files:
 
 ## Container engine
 
-- Engine: <!-- [e.g. Conda, Docker, Singularity, Podman, Shifter or Charliecloud] -->
+- Engine: <!-- [e.g. Conda, Docker, Singularity or Podman] -->
 - version: <!-- [e.g. 1.0.0] -->
 - Image tag: <!-- [e.g. nfcore/circrna:1.0.0] -->
 

@@ -12,7 +12,7 @@ jobs:
   test:
     name: Run workflow tests
     # Only run on push if this is the nf-core dev branch (merged PRs)
-    if: ${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/circrna') }}
+    if: ${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'BarryDigby/test') }}
     runs-on: ubuntu-latest
     env:
       NXF_VER: ${{ matrix.nxf_ver }}
@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
-        nxf_ver: ['20.04.0', '21.03.0-edge']
+        nxf_ver: ['20.04.0', '']
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
@@ -34,13 +34,13 @@ jobs:
 
       - name: Build new docker image
         if: env.MATCHED_FILES
-        run: docker build --no-cache . -t nfcore/circrna:1.0.0
+        run: docker build --no-cache . -t barryd237/circrna:dev
 
       - name: Pull docker image
         if: ${{ !env.MATCHED_FILES }}
         run: |
-          docker pull nfcore/circrna:dev
-          docker tag nfcore/circrna:dev nfcore/circrna:1.0.0
+          docker pull barryd237/circrna:dev
+          docker tag barryd237/circrna:dev barryd237/circrna:dev
 
       - name: Install Nextflow
         env:

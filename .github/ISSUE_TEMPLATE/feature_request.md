@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for the nf-core/circrna pipeline
+about: Suggest an idea for the nf-core website
 labels: enhancement
 ---
 
