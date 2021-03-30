@@ -1,4 +1,4 @@
-name: nf-core-circrna-1.0.0dev
+name: nf-core-circrna-1.0.0
 channels:
   - bioconda
   - agbiome
