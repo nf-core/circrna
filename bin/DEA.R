@@ -459,6 +459,9 @@ volcano_plot <- function(res, contrast, outdir){
 
     min_width <- min(res$log2FoldChange)
     max_width <- max(res$log2FoldChange)
+    symmetric_plot <- max(max_width, abs(min_width))
+    min_width <- symmetric_plot * -1
+    max_width <- symmetric_plot
     max_height <- -log10(min(res[res$pvalue>0, 5]))
 
     up <- subset(res, res$log2FoldChange > 1 & res$pvalue <= 0.05)
