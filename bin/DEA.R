@@ -238,8 +238,8 @@ DESeq2 <- function(inputdata, data_type){
             for(var in contrasts){
                 contrast <- paste(var, "vs", reference, sep="_")
                 DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+                return(DEG)
             }
-            return(DEG)
         }
     }else if(data_type == "circRNA"){
         outdir <- "circRNA/"
@@ -272,8 +272,8 @@ DESeq2 <- function(inputdata, data_type){
             for(var in contrasts){
                 contrast <- paste(var, "vs", reference, sep="_")
                 DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+                return(DEG)
             }
-            return(DEG)
         }
     }else{
         giveError("Data type not provided correctly, check end of script")
