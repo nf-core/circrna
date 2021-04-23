@@ -312,8 +312,10 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
         down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
     }
 
-    write.table(up_regulated, file.path(outdir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
-    write.table(down_regulated, file.path(outdir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    write.table(up_regulated, file.path(dir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
+    write.table(down_regulated, file.path(dir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
 
     res_df <- as.data.frame(res)
 
@@ -325,19 +327,19 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
 
     volcano_plot(ann_res, contrast, outdir)
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "fold_change_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "fold_change_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$log2FoldChange, breaks=50, col="seagreen", xlab=paste("(Fold change)", contrast, sep=" "), main="Distribution of differential expression fold change")
     abline(v=c(-1,1), col="black", lwd=2, lty=2)
     legend("topright", "Fold change <-1 and >1", lwd=2, lty=2)
     dev.off()
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "pvalue_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "pvalue_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$pvalue, breaks=50, col="seagreen", xlab=paste("P-Value (Fold change)", contrast, sep=" "), main="Distribution of P-Values")
     abline(v=c(0.05),col="black",lwd=2,lty=2)
     legend("topright", "P-Value <0.05",lwd=2,lty=2)
     dev.off()
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "Adj_pvalue_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "Adj_pvalue_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$padj, breaks=50, col="seagreen", xlab=paste("P-Adj (Fold change)", contrast, sep=" "), main="Distribution of AdjP-Values")
     abline(v=c(0.05),col="black",lwd=2,lty=2)
     legend("top", "P-Adj <0.05",lwd=2,lty=2)
@@ -468,7 +470,10 @@ volcano_plot <- function(res, contrast, outdir){
     down_list <- head(rownames(down), n=10L)
 
     plot_top_20 <- c(up_list, down_list)
-    pdf(file.path(outdir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
+
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
     p <- EnhancedVolcano(res,
                         lab=rownames(res),
                         x="log2FoldChange",
@@ -507,7 +512,10 @@ global_heatmap <- function(de, log2, contrast, outdir){
     mat <- t(mat)
     mat <- scale(mat, center=T)
     mat <- t(mat)
-    pdf(file.path(outdir, paste("DESeq2", contrast, "heatmap.pdf", sep="_")))
+
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "heatmap.pdf", sep="_")))
     pheatmap(mat,
             annotation_col=pheno_subset,
             color=greenred(75),
