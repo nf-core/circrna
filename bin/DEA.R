@@ -229,7 +229,7 @@ DESeq2 <- function(inputdata, data_type){
         DESeq2_plots(dds, outdir)
 
         levels <- as.character(unique(inputdata$pheno$condition))
-        for(level in levsls){
+        for(level in levels){
             reference <- level
             contrasts <- levels[levels != paste0(reference)]
             dds$condition <- relevel(dds$condition, ref = paste0(reference))
@@ -261,7 +261,7 @@ DESeq2 <- function(inputdata, data_type){
         DESeq2_plots(dds, outdir)
 
         levels <- as.character(unique(inputdata$pheno$condition))
-        for(level in levsls){
+        for(level in levels){
             reference <- level
             contrasts <- levels[levels != paste0(reference)]
             dds$condition <- relevel(dds$condition, ref = paste0(reference))
