@@ -379,8 +379,9 @@ DESeq2_plots <- function(dds, outdir){
 
 
 ma_plot <- function(res, contrast, outdir){
-
-    pdf(file.path(outdir, paste("DESeq2", contrast, "MA_plot.pdf", sep="_")), width=8, height=8)
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "MA_plot.pdf", sep="_")), width=8, height=8)
     plotMA(res)
     dev.off()
 
