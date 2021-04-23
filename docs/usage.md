@@ -113,7 +113,7 @@ A valid example of a `phenotype.csv` file (matching the input CSV files above) i
 | TCGA-EJ-5518-01A | tumor     |
 | TCGA-KK-A8I4-01A | tumor     |
 
-> The response variable must be named `condition` and wild type/control/normal samples must be named `control`. These values are hard coded within the automated differential expression analysis script!
+> The response variable must be named `condition`, as these values are hard coded within the automated differential expression analysis script!
 
 ## Analysis modules
 
@@ -156,7 +156,7 @@ nextflow run nf-core/circrna \
   --tool 'ciriquant, dcc, find_circ'
 ```
 
-> When providing multiple tools, separate each entry with a comma and surround with single quotes.
+> When providing multiple tools, separate each entry with a comma.
 
 #### circRNA filtering
 
