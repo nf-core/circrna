@@ -226,10 +226,20 @@ DESeq2 <- function(inputdata, data_type){
         colData=inputdata$pheno,
         design = inputdata$design)
 
-        dds$condition <- relevel(dds$condition, ref="control")
-        dds <- DESeq(dds, quiet=TRUE)
-        contrasts <- levels(dds$condition)
+        DESeq2_plots(dds, outdir)
 
+        levels <- as.character(unique(inputdata$pheno$condition))
+        for(level in levsls){
+            reference <- level
+            contrasts <- levels[levels != paste0(reference)]
+            dds$condition <- relevel(dds$condition, ref = paste0(reference))
+            dds <- DESeq(dds, quiet=TRUE)
+            for(var in contrasts){
+                contrast <- paste(var, "vs", reference, sep="_")
+                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+            }
+            return(DEG)
+        }
     }else if(data_type == "circRNA"){
         outdir <- "circRNA/"
 
@@ -238,39 +248,40 @@ DESeq2 <- function(inputdata, data_type){
         countData=inputdata$gene,
         colData=inputdata$pheno,
         design = inputdata$design)
-        tmp$condition <- relevel(tmp$condition, ref="control")
         tmp <- DESeq(tmp, quiet=TRUE)
 
         sizefactors <- sizeFactors(tmp)
+        rm(tmp)
 
         dds <- DESeqDataSetFromMatrix(
         countData=inputdata$circ,
         colData=inputdata$pheno,
         design = inputdata$design)
 
-        dds$condition <- relevel(dds$condition, ref="control")
-        dds <- DESeq(dds, quiet=TRUE)
-        contrasts <- levels(dds$condition)
-        sizeFactors(dds) <- sizefactors
+        DESeq2_plots(dds, outdir)
+
+        levels <- as.character(unique(inputdata$pheno$condition))
+        for(level in levsls){
+            reference <- level
+            contrasts <- levels[levels != paste0(reference)]
+            dds$condition <- relevel(dds$condition, ref = paste0(reference))
+            dds <- DESeq(dds, quiet=TRUE)
+            sizeFactors(dds) <- sizefactors
+            for(var in contrasts){
+                contrast <- paste(var, "vs", reference, sep="_")
+                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+            }
+            return(DEG)
+        }
     }else{
         giveError("Data type not provided correctly, check end of script")
     }
-
-    DESeq2_plots(dds, outdir)
-
-    for(group in contrasts[contrasts != "control"]){
-        DEG <- getDESeqDEAbyContrast(dds, group, outdir)
-    }
-
-    return(DEG)
-
 }
 
 
-getDESeqDEAbyContrast <- function(dds, group, outdir) {
+getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
 
-    contrast <- paste("control_vs_", group, sep="")
-    res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", group, "control"))
+    res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", var, reference))
     cat('\n\nSummary data from DESeq2 for ', contrast, ':', sep="")
     summary(res)
 
