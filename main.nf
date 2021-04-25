@@ -1090,8 +1090,6 @@ if(params.skip_trim == 'no'){
        def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
        """
-       #uncoment for nf-core, NUIG slurm does not have memory param
-       #bbduk.sh -Xmx${task.memory.toGiga()}g \
        bbduk.sh -Xmx4g \
        threads=${task.cpus} \
        in1=${fastq[0]} \
