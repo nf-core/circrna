@@ -2070,7 +2070,7 @@ process circos_plots{
     bash ${projectDir}/bin/prep_circos.sh $bed
 
     # remove 6mers from TargetScan
-    grep -v "6mer" $targetscan > targetscan_filt.txt
+    #grep -v "6mer" $targetscan > targetscan_filt.txt
 
     # Make plots and generate circRNA info
     Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
