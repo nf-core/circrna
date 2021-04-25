@@ -391,7 +391,7 @@ if(params.phenotype && (has_extension(params.phenotype, ".csv"))){
    exit 1, "[nf-core/circrna] error: Input phenotype file (${params.phenotype}) is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
 }
 
-// Check 'condition' is a col name, and that it contains 'control'.
+// Check 'condition' is a column name.
 ch_phenotype = Channel.empty()
 if(pheno_path){
 
@@ -401,8 +401,6 @@ if(pheno_path){
    if(!pheno_file.exists()) exit 1, "[nf-core/circrna] error: input phenotype file could not be found using the path provided: ${params.phenotype}"
 
    ch_phenotype = examine_phenotype(pheno_file)
-   ch_phenotype.filter{ it =~/control/ }
-               .ifEmpty{ exit 1, "[nf-core/circrna] error: There are no samples named control in your condition column. Please rename the wild-type/normal samples control"}
 
 }
 

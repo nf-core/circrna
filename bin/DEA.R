@@ -226,10 +226,20 @@ DESeq2 <- function(inputdata, data_type){
         colData=inputdata$pheno,
         design = inputdata$design)
 
-        dds$condition <- relevel(dds$condition, ref="control")
-        dds <- DESeq(dds, quiet=TRUE)
-        contrasts <- levels(dds$condition)
+        levels <- as.character(unique(inputdata$pheno$condition))
+        for(level in levels){
+            reference <- level
+            contrasts <- levels[levels != paste0(reference)]
+            dds$condition <- relevel(dds$condition, ref = paste0(reference))
+            dds <- DESeq(dds, quiet=TRUE)
 
+            DESeq2_plots(dds, outdir)
+
+            for(var in contrasts){
+                contrast <- paste(var, "vs", reference, sep="_")
+                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+            }
+        }
     }else if(data_type == "circRNA"){
         outdir <- "circRNA/"
 
@@ -238,39 +248,41 @@ DESeq2 <- function(inputdata, data_type){
         countData=inputdata$gene,
         colData=inputdata$pheno,
         design = inputdata$design)
-        tmp$condition <- relevel(tmp$condition, ref="control")
         tmp <- DESeq(tmp, quiet=TRUE)
 
         sizefactors <- sizeFactors(tmp)
+        rm(tmp)
 
         dds <- DESeqDataSetFromMatrix(
         countData=inputdata$circ,
         colData=inputdata$pheno,
         design = inputdata$design)
 
-        dds$condition <- relevel(dds$condition, ref="control")
-        dds <- DESeq(dds, quiet=TRUE)
-        contrasts <- levels(dds$condition)
-        sizeFactors(dds) <- sizefactors
+        levels <- as.character(unique(inputdata$pheno$condition))
+        for(level in levels){
+            reference <- level
+            contrasts <- levels[levels != paste0(reference)]
+            dds$condition <- relevel(dds$condition, ref = paste0(reference))
+            dds <- DESeq(dds, quiet=TRUE)
+            sizeFactors(dds) <- sizefactors
+
+            DESeq2_plots(dds, outdir)
+
+            for(var in contrasts){
+                contrast <- paste(var, "vs", reference, sep="_")
+                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+            }
+        }
     }else{
         giveError("Data type not provided correctly, check end of script")
     }
-
-    DESeq2_plots(dds, outdir)
-
-    for(group in contrasts[contrasts != "control"]){
-        DEG <- getDESeqDEAbyContrast(dds, group, outdir)
-    }
-
     return(DEG)
-
 }
 
 
-getDESeqDEAbyContrast <- function(dds, group, outdir) {
+getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
 
-    contrast <- paste("control_vs_", group, sep="")
-    res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", group, "control"))
+    res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", var, reference))
     cat('\n\nSummary data from DESeq2 for ', contrast, ':', sep="")
     summary(res)
 
@@ -300,8 +312,10 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
         down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
     }
 
-    write.table(up_regulated, file.path(outdir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
-    write.table(down_regulated, file.path(outdir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    write.table(up_regulated, file.path(dir, paste("DESeq2", contrast, "up_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
+    write.table(down_regulated, file.path(dir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
 
     res_df <- as.data.frame(res)
 
@@ -313,19 +327,19 @@ getDESeqDEAbyContrast <- function(dds, group, outdir) {
 
     volcano_plot(ann_res, contrast, outdir)
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "fold_change_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "fold_change_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$log2FoldChange, breaks=50, col="seagreen", xlab=paste("(Fold change)", contrast, sep=" "), main="Distribution of differential expression fold change")
     abline(v=c(-1,1), col="black", lwd=2, lty=2)
     legend("topright", "Fold change <-1 and >1", lwd=2, lty=2)
     dev.off()
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "pvalue_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "pvalue_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$pvalue, breaks=50, col="seagreen", xlab=paste("P-Value (Fold change)", contrast, sep=" "), main="Distribution of P-Values")
     abline(v=c(0.05),col="black",lwd=2,lty=2)
     legend("topright", "P-Value <0.05",lwd=2,lty=2)
     dev.off()
 
-    pdf(file.path(outdir, paste("DESeq2", contrast, "Adj_pvalue_distribution.pdf", sep="_")), width=8, height=8)
+    pdf(file.path(dir, paste("DESeq2", contrast, "Adj_pvalue_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$padj, breaks=50, col="seagreen", xlab=paste("P-Adj (Fold change)", contrast, sep=" "), main="Distribution of AdjP-Values")
     abline(v=c(0.05),col="black",lwd=2,lty=2)
     legend("top", "P-Adj <0.05",lwd=2,lty=2)
@@ -367,8 +381,9 @@ DESeq2_plots <- function(dds, outdir){
 
 
 ma_plot <- function(res, contrast, outdir){
-
-    pdf(file.path(outdir, paste("DESeq2", contrast, "MA_plot.pdf", sep="_")), width=8, height=8)
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "MA_plot.pdf", sep="_")), width=8, height=8)
     plotMA(res)
     dev.off()
 
@@ -444,6 +459,9 @@ volcano_plot <- function(res, contrast, outdir){
 
     min_width <- min(res$log2FoldChange)
     max_width <- max(res$log2FoldChange)
+    symmetric_plot <- max(max_width, abs(min_width))
+    min_width <- symmetric_plot * -1
+    max_width <- symmetric_plot
     max_height <- -log10(min(res[res$pvalue>0, 5]))
 
     up <- subset(res, res$log2FoldChange > 1 & res$pvalue <= 0.05)
@@ -455,7 +473,10 @@ volcano_plot <- function(res, contrast, outdir){
     down_list <- head(rownames(down), n=10L)
 
     plot_top_20 <- c(up_list, down_list)
-    pdf(file.path(outdir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
+
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "volcano_plot.pdf", sep="_")))
     p <- EnhancedVolcano(res,
                         lab=rownames(res),
                         x="log2FoldChange",
@@ -494,7 +515,10 @@ global_heatmap <- function(de, log2, contrast, outdir){
     mat <- t(mat)
     mat <- scale(mat, center=T)
     mat <- t(mat)
-    pdf(file.path(outdir, paste("DESeq2", contrast, "heatmap.pdf", sep="_")))
+
+    dir <- paste(outdir, contrast, sep="")
+    dir.create(dir)
+    pdf(file.path(dir, paste("DESeq2", contrast, "heatmap.pdf", sep="_")))
     pheatmap(mat,
             annotation_col=pheno_subset,
             color=greenred(75),

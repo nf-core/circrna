@@ -513,23 +513,23 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 ## Differential Expression Analysis
 
-`nf-core/circrna` will perform differential expression analysis of `control` vs. all factors in the response variable:
+`nf-core/circrna` will perform differential expression analysis by contrasting every variable within the `condition` column i.e the response variable.
 
 | samples | condition |
 |---------|-----------|
-| ctrl_1  | control   |
-| ctrl_2  | control   |
-| ctrl_3  | control   |
-| A549_1  | lung      |
-| A549_2  | lung      |
-| A549_3  | lung      |
-| A375_1  | melanoma  |
-| A375_2  | melanoma  |
-| A375_3  | melanoma  |
+| control_rep1  | control   |
+| control_rep2  | control   |
+| control_rep3  | control   |
+| lung_rep1  | lung      |
+| lung_rep2  | lung      |
+| lung_rep3  | lung      |
+| melanoma_rep1  | melanoma  |
+| melanoma_rep2  | melanoma  |
+| melanoma_rep3  | melanoma  |
 
-The above experimental design will produce the `DESeq2` design formula `~ condition` and loop through the nested factors within `condition` producing outputs for `control_vs_lung` and `control_vs_melanoma` whereby upregulated circRNAs correspond to upregulated circRNAs in the experimental condition with respect to `control`.
+The above experimental design will produce the `DESeq2` design formula `~ condition` and loop through the nested factors within `condition` producing outputs for `control_vs_lung`, `control_vs_melanoma`, `lung_vs_control`, `lung_vs_melanoma`, `melanoma_vs_control` and `melanoma_vs_lung`, capturing every possible contrast.
 
-*N.B:* In the phenotype file the response variable must be called `condition`, and the wild-type samples must be called `control`. These values are hard-coded in the automated differential expression analysis R script.
+*N.B:* In the phenotype file the response variable must be called `condition`, these values are hard-coded in the automated differential expression analysis R script.
 
 ### circRNA
 
@@ -542,43 +542,45 @@ The above experimental design will produce the `DESeq2` design formula `~ condit
 
   * `DESeq2_normalized_counts.txt`: Normalised circRNA counts.
 
-  * `DESeq2_{control_vs_condition}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
-  </p>
+  * `control_vs_lung/`
 
-  * `DESeq2_{control_vs_condition}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated circRNAs (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
+    * `DESeq2_{control_vs_lung}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (padj <= 0.05).
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_lung_fold_change_distribution.png" alt="circRNA FC histogram" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated circRNAs (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
 
-  * `DESeq2_{control_vs_condition}_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_lung_heatmap.png" alt="circRNA heatmap" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed circRNAs.
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_lung_fold_change_distribution.png" alt="circRNA FC histogram" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_MA_plot.pdf`: Plot of the relationship between intensity and difference between the contrast made by `DESeq2`.
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_lung_MA_plot.png" alt="circRNA heatmap" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_heatmap.pdf`: Heatmap of all differentially expressed circRNAs.
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_lung_heatmap.png" alt="circRNA heatmap" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_pvalue_distribution.png" alt="circRNA pval dist" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_MA_plot.pdf`: Plot of the relationship between intensity and difference between the contrast made by `DESeq2`.
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_lung_MA_plot.png" alt="circRNA heatmap" width="500">
+    </p>
 
-  * `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include up regulated circRNAs (fold change >= 1, pvalue <= 0.05) in `condition` with respect to `control`.
+    * `DESeq2_{control_vs_lung}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of circRNAs that reject the null hypothesis (pvalue <= 0.05).
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_melanoma_pvalue_distribution.png" alt="circRNA pval dist" width="500">
+    </p>
 
-  * `DESeq2_{condition_vs_control}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
-  <p markdown="1" align="center">
-  <img src="images/output/de/circRNA/DESeq2_control_vs_lung_volcano_plot.png" alt="circRNA volcano" width="500">
-  </p>
+    * `DESeq2_{condition_vs_lung}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include up regulated circRNAs (fold change >= 1, pvalue <= 0.05) in `condition` with respect to `control`.
+
+    * `DESeq2_{condition_vs_lung}_volcano_plot.pdf`: Volcano plot of differentially expressed circRNAs from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+    <p markdown="1" align="center">
+    <img src="images/output/de/circRNA/DESeq2_control_vs_lung_volcano_plot.png" alt="circRNA volcano" width="500">
+    </p>
 
 </details>
 
-Output directory of DESeq2 circRNA differential expression analysis results. Up regulated, down regulated circRNAs and corresponding plots displaying expression patterns between the phenotypes in `condition` are written to this directory.
+Sample outputs from `control_vs_lung` are given below, one of 6 `DESeq2` results folders returned by the experimental design given above.
 
 *Note:* The test dataset produces sparsely populated plots due to aggressive subsampling.
 
@@ -602,7 +604,7 @@ Output directory of DESeq2 circRNA differential expression analysis results. Up 
 
 </details>
 
-`nf-core/circrna` will produce boxplots of differentially expressed circRNAs (normalised expression) between phenotypes given in `condition`, creating a directory for each comparison vs `control`.
+`nf-core/circrna` will produce boxplots of differentially expressed circRNAs (normalised expression) between all contrasts available in `condition`.
 
 *Note:* The output files give examples for `control_vs_lung` and `control_vs_melanoma`.
 
@@ -617,42 +619,44 @@ Output directory of DESeq2 circRNA differential expression analysis results. Up 
 
   * `DESeq2_normalized_counts.txt`: Normalised RNA-Seq counts.
 
-  * `DESeq2_{control_vs_condition}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
-  </p>
+  * `control_vs_lung/`
 
-  * `DESeq2_{control_vs_condition}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated genes (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
+    * `DESeq2_{control_vs_lung}_Adj_pvalue_distribution.pdf`: Histogram of Adj pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (padj <= 0.05).
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_Adj_pvalue_distribution.png" alt="circRNA adj-p histogram" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed genes.
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_fold_change_distribution.png" alt="circRNA FC histogram" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_down_regulated_differential_expression.txt`: DESeq2 `results()` output filtered to include down regulated genes (fold change <= -1, pvalue <= 0.05) in `condition` with respect to `control`.
 
-  * `DESeq2_{control_vs_condition}_heatmap.pdf`: Heatmap of all differentially expressed genes.
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_heatmap.png" alt="circRNA heatmap" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_fold_change_distribution.pdf`: Histogram of fold-change values for differentially expressed genes.
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_fold_change_distribution.png" alt="circRNA FC histogram" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_MA_plot.pdf`: Plot of the relationship between intensity and difference between the contrast made by `DESeq2`.
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_MA_plot.png" alt="circRNA heatmap" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_heatmap.pdf`: Heatmap of all differentially expressed genes.
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_melanoma_heatmap.png" alt="circRNA heatmap" width="500">
+    </p>
 
-  * `DESeq2_{control_vs_condition}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (pvalue <= 0.05).
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_pvalue_distribution.png" alt="circRNA pval dist" width="500">
-  </p>
+    * `DESeq2_{control_vs_lung}_MA_plot.pdf`: Plot of the relationship between intensity and difference between the contrast made by `DESeq2`.
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_MA_plot.png" alt="circRNA heatmap" width="500">
+    </p>
 
-  * `DESeq2_{condition_vs_control}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include up regulated genes (fold change >= 1, pvalue <= 0.05) in `condition` with respect to `control`.
+    * `DESeq2_{control_vs_lung}_pvalue_distribution.pdf`: Histogram of pvalues from `results(dds)` displaying the distribution of genes that reject the null hypothesis (pvalue <= 0.05).
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_pvalue_distribution.png" alt="circRNA pval dist" width="500">
+    </p>
 
-  * `DESeq2_{condition_vs_control}_volcano_plot.pdf`: Volcano plot of differentially expressed genes from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
-  <p markdown="1" align="center">
-  <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_volcano_plot.png" alt="circRNA volcano" width="500">
-  </p>
+    * `DESeq2_{condition_vs_lung}_up_regulated_differential_expression.txt`: DEseq2 `results()` ouput filtered to include up regulated genes (fold change >= 1, pvalue <= 0.05) in `condition` with respect to `control`.
+
+    * `DESeq2_{condition_vs_lung}_volcano_plot.pdf`: Volcano plot of differentially expressed genes from DESeq2 `results()` using [EnhancedVolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html).
+    <p markdown="1" align="center">
+    <img src="images/output/de/RNA-Seq/DESeq2_control_vs_lung_volcano_plot.png" alt="circRNA volcano" width="500">
+    </p>
 
 </details>
 
-Output directory of DESeq2 RNA-Seq differential expression analysis results. Up regulated, down regulated circRNAs and corresponding plots displaying expression patterns between the phenotypes in `condition` are written to this directory.
+Sample outputs from `control_vs_lung` are given below, one of 6 `DESeq2` results folders returned by the experimental design given above.
 
 *Note:* The test dataset produces sparsely populated plots due to aggressive subsampling.
