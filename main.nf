@@ -746,6 +746,8 @@ process download_targetscan{
 
 process samtools_index{
 
+    label 'process_low'
+    
     publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode
 
     input:
@@ -766,6 +768,8 @@ ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_bu
 
 process bwa_index{
 
+    label 'process_medium'
+
     publishDir "${params.outdir}/circrna_discovery/index/bwa", mode: params.publish_dir_mode
 
     input:
@@ -779,13 +783,18 @@ process bwa_index{
 
     script:
     """
-    bwa index -a bwtsw $fasta -p ${fasta.baseName}
+    bwa index \
+    -a bwtsw \
+    $fasta -p \
+    ${fasta.baseName}
     """
 }
 
 ch_bwa_index = params.bwa_index ? Channel.value(params.bwa_index) : bwa_path
 
 process hisat2_index{
+
+    label 'process_medium'
 
     publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: params.publish_dir_mode
 
@@ -800,13 +809,18 @@ process hisat2_index{
 
     script:
     """
-    hisat2-build $fasta ${fasta.baseName}
+    hisat2-build \
+    -p ${task.cpus} \
+    $fasta \
+    ${fasta.baseName}
     """
 }
 
 ch_hisat2_index = params.hisat2_index ? Channel.value(params.hisat2_index) : hisat2_path
 
 process star_index{
+
+    label 'process_medium'
 
     publishDir "${params.outdir}/circrna_discovery/index", mode: params.publish_dir_mode
 
@@ -835,6 +849,8 @@ ch_star_index = params.star_index ? Channel.value(file(params.star_index)) : sta
 
 process bowtie_index{
 
+    label 'process_medium'
+
     publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode: params.publish_dir_mode
 
     input:
@@ -847,7 +863,10 @@ process bowtie_index{
 
     script:
     """
-    bowtie-build $fasta ${fasta.baseName}
+    bowtie-build \
+    --threads ${task.cpus} \
+    $fasta \
+    ${fasta.baseName}
     """
 }
 
@@ -855,6 +874,8 @@ bowtie_path_files = params.bowtie_index + "/*"
 ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) : bowtie_built
 
 process bowtie2_index{
+
+    label 'process_medium'
 
     publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode: params.publish_dir_mode
 
@@ -868,7 +889,10 @@ process bowtie2_index{
 
     script:
     """
-    bowtie2-build $fasta ${fasta.baseName}
+    bowtie2-build \
+    --threads ${task.cpus} \
+    $fasta \
+    ${fasta.baseName}
     """
 }
 
@@ -993,6 +1017,8 @@ if(params.input_type == 'bam'){
 
    process bam_to_fq{
 
+        label 'process_low'
+
         publishDir "${params.outdir}/quality_control/preprocessing/bamtofastq", mode: params.publish_dir_mode
 
         input:
@@ -1003,7 +1029,7 @@ if(params.input_type == 'bam'){
 
         script:
         """
-        picard "-Xmx${task.memory.toGiga()}g" \
+        picard -Xmx${task.memory.toGiga()}g \
         SamToFastq \
         I=$bam \
         F=${base}_R1.fq.gz \
@@ -1047,9 +1073,9 @@ process FastQC {
 (workflow_summary_raw, workflow_summary_trim) = ch_workflow_summary.into(2)
 process multiqc_raw {
 
-    publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
-
     label 'py3'
+
+    publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
 
     input:
         file(htmls) from fastqc_raw.collect()
@@ -1070,6 +1096,8 @@ process multiqc_raw {
 if(params.skip_trim == 'no'){
 
    process bbduk {
+
+       label 'process_medium'
 
        publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: params.publish_dir_mode
 
@@ -1129,9 +1157,9 @@ if(params.skip_trim == 'no'){
 
    process multiqc_trim {
 
-       publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
-
        label 'py3'
+
+       publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
 
        input:
            file(htmls) from fastqc_trimmed.collect()
@@ -1163,6 +1191,8 @@ if(params.skip_trim == 'no'){
 // STAR 1st Pass
 
 process STAR_1PASS{
+
+    label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
@@ -1237,6 +1267,8 @@ process sjdbFile{
 
 process STAR_2PASS{
 
+    label 'process_high'
+
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
     input:
@@ -1293,6 +1325,8 @@ process STAR_2PASS{
 
 process circexplorer2_star{
 
+    label 'process_low'
+
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode: params.publish_dir_mode
 
@@ -1324,6 +1358,8 @@ process circexplorer2_star{
 
 process circrna_finder{
 
+    label 'process_low'
+
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode: params.publish_dir_mode
 
@@ -1347,6 +1383,8 @@ process circrna_finder{
 // DCC
 
 process dcc_mate1{
+
+    label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode: params.publish_dir_mode
 
@@ -1400,6 +1438,8 @@ process dcc_mate1{
 }
 
 process dcc_mate2{
+
+    label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode: params.publish_dir_mode
 
@@ -1457,6 +1497,7 @@ ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 process dcc{
 
     label 'py3'
+    label 'process_low'
 
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode: params.publish_dir_mode
@@ -1501,6 +1542,8 @@ process dcc{
 
 process find_anchors{
 
+    label 'process_high'
+
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode: params.publish_dir_mode
 
     input:
@@ -1527,6 +1570,8 @@ process find_anchors{
 }
 
 process find_circ{
+
+    label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: params.publish_dir_mode
@@ -1559,6 +1604,8 @@ process find_circ{
 
 process ciriquant{
 
+    label 'process_high'
+
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
 
@@ -1574,7 +1621,8 @@ process ciriquant{
 
     script:
     """
-    CIRIquant -t ${task.cpus} \
+    CIRIquant \
+    -t ${task.cpus} \
     -1 ${fastq[0]} \
     -2 ${fastq[1]} \
     --config $ciriquant_yml \
@@ -1584,7 +1632,7 @@ process ciriquant{
 
     cp ${base}/${base}.gtf .
 
-    ## extract counts (convert float to int)
+    ## extract counts (convert float to int [no loss of information])
     grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
     grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
     paste ${base}.tmp counts > ${base}_unfilt.bed
@@ -1604,6 +1652,8 @@ process ciriquant{
 // mapsplice
 
 process mapsplice_align{
+
+    label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode: params.publish_dir_mode
 
@@ -2002,6 +2052,8 @@ process master_annotate{
 
 process miRanda{
 
+    label 'process_low'
+
     publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode: params.publish_dir_mode
 
     input:
@@ -2023,6 +2075,8 @@ process miRanda{
 }
 
 process targetscan{
+
+    label 'process_low'
 
     publishDir "${params.outdir}/mirna_prediction/targetscan", mode: params.publish_dir_mode
 
@@ -2094,6 +2148,8 @@ ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_i
 
 process Hisat2_align{
 
+    label 'process_high'
+
     input:
         tuple val(base), file(fastq) from hisat2_reads
         file(hisat2_index) from ch_hisat2_index_files.collect()
@@ -2112,6 +2168,8 @@ process Hisat2_align{
 
 
 process StringTie{
+
+    label 'process_low'
 
     input:
         tuple val(base), file(bam) from hisat2_bam
