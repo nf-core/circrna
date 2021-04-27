@@ -102,7 +102,7 @@ def helpMessage() {
       --fasta_fai                    [file] Path to SAMtools genome index file.
 
     Adapter trimming
-      --skip_trim                     [str] Specify whether to skip BBDUK adapter/quality trimming. Available: 'no', 'yes'
+      --skip_trim                    [bool] Specify whether to skip BBDUK adapter/quality trimming. Available: true, false
 
       --adapters                     [file] Path to adapters file containing sequences to trim.
                                             Requires '--k', '--ktrim' and optionally '--hdist'.
@@ -407,7 +407,7 @@ if(pheno_path){
 // Check BBDUK params
 
 // Check adapters
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
    if(!has_extension(params.adapters, ".fa") && !has_extension(params.adapters, ".fasta")){
       exit 1, "[nf-core/circrna] error: Adapters file provied (${params.adapters}) is not valid, Fasta files must have the extension '*.fa' or '*.fasta'."
    }
@@ -417,12 +417,12 @@ if(params.skip_trim == 'no'){
 }
 
 // Check all adapter trimming flags are provided
-if(params.skip_trim == 'no' && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
+if(params.skip_trim == false && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
    exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
 }
 
 // Check all quality trimming flags are provided
-if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
+if(params.skip_trim == false && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
    exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
 }
 
@@ -490,7 +490,7 @@ if(params.hisat2_index)    summary['HISAT2 indices']    = params.hisat2_index
 if(params.star_index)      summary ['STAR indices']     = params.star_index
 
 summary['Skip BBDUK']     = params.skip_trim
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
@@ -1067,7 +1067,7 @@ process multiqc_raw {
 
 // BBDUK
 
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
 
    process bbduk {
 
@@ -1146,7 +1146,7 @@ if(params.skip_trim == 'no'){
        multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
        """
    }
-}else if(params.skip_trim == 'yes'){
+}else if(params.skip_trim == true){
    aligner_reads = raw_reads
 }
 
@@ -2396,7 +2396,7 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
     ch_multiqc_report = multiqc_trim_out
 }else{
     ch_multiqc_report = multiqc_raw_out
