@@ -603,16 +603,18 @@ process get_software_versions {
     """
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/* --                          Begin Workflow                              -- */
+////////////////////////////////////////////////////////////////////////////////
+
 /*
 ================================================================================
-                          Begin Workflow
+                            1. Download Files
 ================================================================================
 */
 
 /*
-================================================================================
-                          Download Files
-================================================================================
+  STEP 1.1: Download Gencode FASTA file
 */
 
 process download_fasta{
@@ -646,6 +648,10 @@ process download_fasta{
 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : fasta_downloaded
 
+/*
+  STEP 1.2: Download Gencode GTF file
+*/
+
 process download_gtf{
 
     publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
@@ -673,6 +679,10 @@ process download_gtf{
 
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : gtf_downloaded
 
+/*
+  STEP 1.3: Create customised gene annotation file
+*/
+
 process create_gene_annotation{
 
     publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
@@ -694,6 +704,10 @@ process create_gene_annotation{
 
 ch_gene_annotation = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : gene_annotation_created
 
+/*
+  STEP 1.4: Download mirbase miRNAs
+*/
+
 process download_mirbase{
 
     errorStrategy 'retry'
@@ -713,6 +727,10 @@ process download_mirbase{
     grep "sapiens" -A1 mature.fa | awk '!/--/' > hsa_mature.fa
     """
 }
+
+/*
+  STEP 1.5: Download TargetScan miRNAs
+*/
 
 process download_targetscan{
 
@@ -740,8 +758,12 @@ process download_targetscan{
 
 /*
 ================================================================================
-                          Create Genome Indices
+                          2. Create Genome Indices
 ================================================================================
+*/
+
+/*
+  STEP 2.1: Create SAMtools index
 */
 
 process samtools_index{
@@ -764,6 +786,10 @@ process samtools_index{
 
 ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_built
 
+/*
+  STEP 2.2: Create BWA index
+*/
+
 process bwa_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/bwa", mode: params.publish_dir_mode
@@ -785,6 +811,10 @@ process bwa_index{
 
 ch_bwa_index = params.bwa_index ? Channel.value(params.bwa_index) : bwa_path
 
+/*
+  STEP 2.3: Create HISAT2 index
+*/
+
 process hisat2_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: params.publish_dir_mode
@@ -805,6 +835,10 @@ process hisat2_index{
 }
 
 ch_hisat2_index = params.hisat2_index ? Channel.value(params.hisat2_index) : hisat2_path
+
+/*
+  STEP 2.4: Create STAR index
+*/
 
 process star_index{
 
@@ -833,6 +867,10 @@ process star_index{
 
 ch_star_index = params.star_index ? Channel.value(file(params.star_index)) : star_built
 
+/*
+  STEP 2.5: Create Bowtie index
+*/
+
 process bowtie_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode: params.publish_dir_mode
@@ -853,6 +891,10 @@ process bowtie_index{
 
 bowtie_path_files = params.bowtie_index + "/*"
 ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) : bowtie_built
+
+/*
+  STEP 2.6: Create Bowtie2 index
+*/
 
 process bowtie2_index{
 
@@ -877,10 +919,13 @@ ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)
 
 /*
 ================================================================================
-                       Misc. circRNA requirements
+                      3. Misc. circRNA requirements
 ================================================================================
 */
 
+/*
+  STEP 3.1: Generate individual chromosome FASTA files
+*/
 
 process split_fasta{
 
@@ -909,6 +954,10 @@ process split_fasta{
     fi
     '''
 }
+
+/*
+  STEP 3.2: Create CIRIquant .yml file
+*/
 
 process ciriquant_yml{
 
@@ -952,11 +1001,13 @@ process ciriquant_yml{
 
 /*
 ================================================================================
-                          Process Input Data
+                          4. Process Input Data
 ================================================================================
 */
 
-// Check inputs
+*/
+  STEP 4.1: Check Input files
+*/
 
 if(params.input == null){
    exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
@@ -987,7 +1038,9 @@ if(csv_path){
 
 }else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
 
-// Process bam file / stage fastq
+/*
+  STEP 4.2: Stage BAM/FASTQ files
+*/
 
 if(params.input_type == 'bam'){
 
@@ -1020,7 +1073,9 @@ if(params.input_type == 'bam'){
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
-// FASTQC on raw data
+/*
+  STEP 4.3: FastQC on raw data
+*/
 
 process FastQC {
 
@@ -1040,7 +1095,9 @@ process FastQC {
     """
 }
 
-// MultiQC of the Raw Data
+/*
+  STEP 4.4: MultiQC on raw data
+*/
 
 // collect software_versions, workflow summary
 (software_versions_raw, software_versions_trim) = ch_software_versions_yaml.into(2)
@@ -1065,7 +1122,15 @@ process multiqc_raw {
     """
 }
 
-// BBDUK
+/*
+================================================================================
+                           5. Fastq Trimming
+================================================================================
+*/
+
+/*
+  STEP 5.1: BBDUK
+*/
 
 if(params.skip_trim == false){
 
@@ -1108,6 +1173,10 @@ if(params.skip_trim == false){
    // trimmed reads into 2 channels:
    (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
+  /*
+    STEP 5.2: FastQC on trimmed reads
+  */
+
    process FastQC_trim {
 
        label 'py3'
@@ -1125,6 +1194,10 @@ if(params.skip_trim == false){
        fastqc -q $fastq
        """
    }
+
+  /*
+  STEP 5.3: MultiQC on trimmed reads
+  */
 
    process multiqc_trim {
 
@@ -1150,16 +1223,21 @@ if(params.skip_trim == false){
    aligner_reads = raw_reads
 }
 
-// Stage Aligner read channels
+/*
+  STEP 5.4: Stage reads for quantification
+*/
+
 (star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
-                             circRNA Discovery
+                           6. circRNA Discovery
 ================================================================================
 */
 
-// STAR 1st Pass
+/*
+  STEP 6.1.1: STAR 1st pass
+*/
 
 process STAR_1PASS{
 
@@ -1213,6 +1291,10 @@ process STAR_1PASS{
     """
 }
 
+/*
+  STEP 6.1.2: STAR SJDB file generation
+*/
+
 process sjdbFile{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode: params.publish_dir_mode
@@ -1233,6 +1315,10 @@ process sjdbFile{
 }
 
 (sjdbfile_pass2, sjdbfile_mate1, sjdbfile_mate2) = sjdbfile_ch.into(3)
+
+/*
+  STEP 6.1.3: STAR 2nd pass
+*/
 
 process STAR_2PASS{
 
@@ -1288,7 +1374,9 @@ process STAR_2PASS{
     """
 }
 
-// CIRCexplorer2
+/*
+  STEP 6.2: CIRCexplorer2 quantification
+*/
 
 process circexplorer2_star{
 
@@ -1319,7 +1407,9 @@ process circexplorer2_star{
     """
 }
 
-// circRNA_finder
+/*
+  STEP 6.3: circRNA finder quantification
+*/
 
 process circrna_finder{
 
@@ -1343,7 +1433,9 @@ process circrna_finder{
     """
 }
 
-// DCC
+/*
+  STEP 6.4.1: DCC mate 1 alignment
+*/
 
 process dcc_mate1{
 
@@ -1397,6 +1489,10 @@ process dcc_mate1{
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
+
+/*
+  STEP 6.4.2: DCC mate2 alignment
+*/
 
 process dcc_mate2{
 
@@ -1453,6 +1549,10 @@ process dcc_mate2{
 
 ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 
+/*
+  STEP 6.4.3: DCC quantification
+*/
+
 process dcc{
 
     label 'py3'
@@ -1496,7 +1596,9 @@ process dcc{
     """
 }
 
-// find_circ
+/*
+  STEP 6.5.1: find_circ extract back-splice anchors
+*/
 
 process find_anchors{
 
@@ -1524,6 +1626,10 @@ process find_anchors{
     unmapped2anchors.py ${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
     """
 }
+
+/*
+  STEP 6.5.2: find_circ qantification
+*/
 
 process find_circ{
 
@@ -1554,7 +1660,9 @@ process find_circ{
     """
 }
 
-// CIRIquant
+/*
+  STEP 6.6: CIRIquant quantification
+*/
 
 process ciriquant{
 
@@ -1599,8 +1707,9 @@ process ciriquant{
     """
 }
 
-
-// mapsplice
+/*
+  STEP 6.7.1: MapSplice alignment
+*/
 
 process mapsplice_align{
 
@@ -1665,6 +1774,9 @@ process mapsplice_align{
     }
 }
 
+/*
+  STEP 6.7.2: MapSplice quantification
+*/
 
 process mapsplice_parse{
 
@@ -1692,73 +1804,16 @@ process mapsplice_parse{
     """
 }
 
-// UROBORUS retry with py3 container.
-
-process tophat_align{
-
-    input:
-        tuple val(base), file(fastq) from uroborus_reads
-        file(bowtie2_index) from ch_bowtie2_index.collect()
-        file(fasta) from ch_fasta
-
-    output:
-        tuple val(base), file("unmapped.bam") into tophat_unmapped_bam
-        tuple val(base), file("accepted_hits.bam") into tophat_accepted_hits
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    tophat -p ${task.cpus} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
-    mv ${base}/unmapped.bam ./
-    mv ${base}/accepted_hits.bam ./
-    """
-}
-
-
-process uroborus{
-
-    publishDir "${params.outdir}/circrna_discovery/uroborus", mode: params.publish_dir_mode
-
-    input:
-        tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
-        tuple val(base), file(accepted_hits) from tophat_accepted_hits
-        file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gtf
-        val(uroborus_ref) from ch_fasta_chr
-        file(fasta) from ch_fasta
-
-    output:
-        file("${base}.txt") into uroborus_results
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    samtools view $unmapped_bam > unmapped.sam
-
-    perl /opt/conda/envs/circrna/bin/UROBORUS.pl \
-    -index ${fasta.baseName} \
-    -gtf $gtf \
-    -fasta $uroborus_ref \
-    unmapped.sam $accepted_hits &> uroborus_logs.txt
-
-    mv circRNA_list.txt ${base}.txt
-    """
-}
 
 /*
 ================================================================================
-                            Annotate circRNAs
+                            7. Annotate circRNAs
 ================================================================================
 */
 
 /*
-  Generate circRNA count matrix from tool outputs. If more than one quantification
-  tool selected, workflow intergrates params.tool_filter to carry forward circRNAs
-  called by at least n quantification tools.
+  STEP 7.1: Generate circRNA count matrix
 */
-
 
 if(tools_selected > 1){
 
@@ -1851,9 +1906,7 @@ if(tools_selected > 1){
 (circrna_matrix_mature_seq, circrna_matrix_parent_gene, circrna_matrix_diff_exp) = circRNA_counts.into(3)
 
 /*
-  For circRNA annotation using a customised reference based script,
-  biotypes incapable of producing circRNAs are removed from the GTF file. To edit
-  the list of biotypes, see /bin/unwanted_biotypes.txt
+  STEP 7.2: Remove features from GTF not involved in circRNA biogenesis.
 */
 
 process remove_unwanted_biotypes{
@@ -1875,16 +1928,7 @@ process remove_unwanted_biotypes{
 }
 
 /*
-  get_mature_seq.sh operates by attempting to overlap circRNAs with the remaining
-  biotypes in the filtered GTF file. If there are no overlapping features, the
-  circRNA is considered intronic (ciRNA). If the circRNA perfectly overlaps exon
-  boundaries, it is considered a circRNA. In the situation where a circRNA overlaps
-  features but does not perfectly overlap exon boundaries, 2 scenarios are tested:
-  1) Within 200nt of an exon boundary: attempt to fit as circRNA with the largest
-  transcript.
-  2) Falls outside of 200nt of an exon boundary: treated as an EI-circRNA.
-
-  The script returns circRNAs in BED12 format, for sequence extraction using bedtools.
+  STEP 7.3: Annotate circRNAs. Description: https://github.com/nf-core/circrna/tree/master/docs/get_mature_seq.md
 */
 
 process get_mature_seq{
@@ -1934,7 +1978,7 @@ process get_mature_seq{
 (fasta_mature_len, fasta_miranda) = miranda_sequences.into(2)
 
 /*
-  Bedtools is used to query the overlapping parental gene of circRNAs.
+  STEP 7.4: Annotate circRNA parent gene
 */
 
 process get_parent_gene{
@@ -1956,6 +2000,10 @@ process get_parent_gene{
     bash ${projectDir}/bin/get_parent_genes.sh
     """
 }
+
+/*
+  STEP 7.5: Annotate circRNA mature spliced length
+*/
 
 process get_mature_len{
 
@@ -1986,8 +2034,7 @@ ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 /*
-  Incorporating annotations calculated in the previous processes,
-  annotate_circs.R simply collects information (per circRNA).
+  STEP 7.6: Combine annotation information per circRNA
 */
 
 process annotate_circrnas{
@@ -2007,8 +2054,7 @@ process annotate_circrnas{
 }
 
 /*
-  All previous annotation steps were performed per called circRNA. master_annotate
-  combines all of the annotations from annotate_circrnas and outputs a master file.
+  STEP 7.7: Make master file outputting all circRNA annotations
 */
 
 process master_annotate{
@@ -2035,8 +2081,12 @@ process master_annotate{
 
 /*
 ================================================================================
-                         circRNA - miRNA prediction
+                        8. circRNA - miRNA prediction
 ================================================================================
+*/
+
+/*
+  STEP 8.1: Predict circRNA-miRNA targets using miRanda
 */
 
 process miRanda{
@@ -2060,6 +2110,10 @@ process miRanda{
     grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
     """
 }
+
+/*
+  STEP 8.2: Predict circRNA-miRNA targets using TargetScan
+*/
 
 process targetscan{
 
@@ -2091,10 +2145,7 @@ ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(parent_circos).join(mature_circos)
 
 /*
-  mirna_targets combines information from miRanda and TargetScan to produce the
-  union of results (subject to filtering of MFE >= -20.00Kcal/mol.). circRNA
-  BED12 files are incorporated to retrieve the exon numbers and locations within
-  the mature spliced sequence, to plot the MRE sites using a circos plot.
+  STEP 8.3: Apply filtering to miRanda, TargetScan outputs, generate circRNA MRE circos plot
 */
 
 process mirna_targets{
@@ -2124,14 +2175,13 @@ process mirna_targets{
 
 /*
 ================================================================================
-                          Differential Expression
+                        9. Differential Expression
 ================================================================================
 */
 
 /*
- * RNA-Seq quantification required to estimate RNA size factors
- * for circRNA library correction
- */
+  STEP 9.1: RNA-Seq alignment required to estimate size factors for circRNA library correction
+*/
 
 ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
 
@@ -2153,6 +2203,9 @@ process Hisat2_align{
     """
 }
 
+/*
+  STEP 9.2: StringTie RNA-Seq quantification
+*/
 
 process StringTie{
 
@@ -2173,6 +2226,10 @@ process StringTie{
 }
 
 ch_phenotype = params.phenotype ? file(params.phenotype) : ''
+
+/*
+  STEP 9.3: Perform circRNA, RNA-Seq differential expression analysis
+*/
 
 process diff_exp{
 
