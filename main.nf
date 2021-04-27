@@ -1753,6 +1753,13 @@ process uroborus{
 ================================================================================
 */
 
+/*
+  Generate circRNA count matrix from tool outputs. If more than one quantification
+  tool selected, workflow intergrates params.tool_filter to carry forward circRNAs
+  called by at least n quantification tools.
+*/
+
+
 if(tools_selected > 1){
 
    // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
@@ -1843,6 +1850,12 @@ if(tools_selected > 1){
 
 (circrna_matrix_mature_seq, circrna_matrix_parent_gene, circrna_matrix_diff_exp) = circRNA_counts.into(3)
 
+/*
+  For circRNA annotation using a customised reference based script,
+  biotypes incapable of producing circRNAs are removed from the GTF file. To edit
+  the list of biotypes, see /bin/unwanted_biotypes.txt
+*/
+
 process remove_unwanted_biotypes{
 
     input:
@@ -1860,6 +1873,19 @@ process remove_unwanted_biotypes{
     grep -vf unwanted_biotypes.txt $gtf > filt.gtf
     """
 }
+
+/*
+  get_mature_seq.sh operates by attempting to overlap circRNAs with the remaining
+  biotypes in the filtered GTF file. If there are no overlapping features, the
+  circRNA is considered intronic (ciRNA). If the circRNA perfectly overlaps exon
+  boundaries, it is considered a circRNA. In the situation where a circRNA overlaps
+  features but does not perfectly overlap exon boundaries, 2 scenarios are tested:
+  1) Within 200nt of an exon boundary: attempt to fit as circRNA with the largest
+  transcript.
+  2) Falls outside of 200nt of an exon boundary: treated as an EI-circRNA.
+
+  The script returns circRNAs in BED12 format, for sequence extraction using bedtools.
+*/
 
 process get_mature_seq{
 
@@ -1906,6 +1932,10 @@ process get_mature_seq{
 }
 
 (fasta_mature_len, fasta_miranda) = miranda_sequences.into(2)
+
+/*
+  Bedtools is used to query the overlapping parental gene of circRNAs.
+*/
 
 process get_parent_gene{
 
@@ -1955,6 +1985,11 @@ ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
 
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
+/*
+  Incorporating annotations calculated in the previous processes,
+  annotate_circs.R simply collects information (per circRNA).
+*/
+
 process annotate_circrnas{
 
     input:
@@ -1970,6 +2005,11 @@ process annotate_circrnas{
     Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
     """
 }
+
+/*
+  All previous annotation steps were performed per called circRNA. master_annotate
+  combines all of the annotations from annotate_circrnas and outputs a master file.
+*/
 
 process master_annotate{
 
@@ -2050,7 +2090,14 @@ ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 
 ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(parent_circos).join(mature_circos)
 
-process circos_plots{
+/*
+  mirna_targets combines information from miRanda and TargetScan to produce the
+  union of results (subject to filtering of MFE >= -20.00Kcal/mol.). circRNA
+  BED12 files are incorporated to retrieve the exon numbers and locations within
+  the mature spliced sequence, to plot the MRE sites using a circos plot.
+*/
+
+process mirna_targets{
 
     publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: params.publish_dir_mode
     publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: params.publish_dir_mode
@@ -2068,9 +2115,6 @@ process circos_plots{
     """
     # create file for circos plot
     bash ${projectDir}/bin/prep_circos.sh $bed
-
-    # remove 6mers from TargetScan
-    grep -v "6mer" $targetscan > targetscan_filt.txt
 
     # Make plots and generate circRNA info
     Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
