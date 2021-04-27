@@ -109,13 +109,13 @@
                     "type": "string",
                     "fa_icon": "fas fa-clone",
                     "description": "Genome version to use, options: `GRCh37`, `GRCh38`",
-                    "help_text": "Required if `--fasta`, `--gencode_gtf`, `--gene_annotation` are left empty."
+                    "help_text": "Required if `--fasta`, `--gtf`, `--gene_annotation` are left empty."
                 },
-                "gencode_gtf": {
+                "gtf": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to gencode reference GTF file.",
-                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gencode_gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "gene_annotation": {
                     "type": "string",

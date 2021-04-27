@@ -85,7 +85,7 @@ def helpMessage() {
 
       --fasta                        [file] Path to Gencode reference genome FASTA file. Must end with '.fa', '.fasta'.
 
-      --gencode_gtf                  [file] Path to Gencode reference GTF file. Must end with '.gtf'.
+      --gtf                          [file] Path to Gencode reference GTF file. Must end with '.gtf'.
 
       --gene_annotation              [file] Path to customised gene annotation file. Recommended to allow [nf-core/circrna] generate this file.
 
@@ -286,8 +286,8 @@ if(params.fasta && !has_extension(params.fasta, ".fa") && !has_extension(params.
 }
 
 // Check GTF
-if(params.gencode_gtf && !has_extension(params.gencode_gtf, ".gtf")){
-   exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gencode_gtf}) is not valid, GTF file should have the extension '.gtf'."
+if(params.gtf && !has_extension(params.gtf, ".gtf")){
+   exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gtf}) is not valid, GTF file should have the extension '.gtf'."
 }
 
 // Check Fasta fai
@@ -480,7 +480,7 @@ if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
 
 summary['Genome version'] = params.genome_version
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
-if(params.gencode_gtf)     summary['Reference GTF']     = params.gencode_gtf
+if(params.gtf)             summary['Reference GTF']     = params.gtf
 if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
 if(params.bowtie_index)    summary['Bowtie indices']    = params.bowtie_index
 if(params.bowtie2_index)   summary['Bowtie2 indices']   = params.bowtie2_index
@@ -653,7 +653,7 @@ process download_gtf{
     output:
         file("*.gtf") into gtf_downloaded
 
-    when: !params.gencode_gtf
+    when: !params.gtf
 
     shell:
     if(params.genome_version == 'GRCh37'){
@@ -671,14 +671,14 @@ process download_gtf{
     }
 }
 
-ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gtf_downloaded
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : gtf_downloaded
 
 process create_gene_annotation{
 
     publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
 
     input:
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("*.txt") into gene_annotation_created
@@ -812,7 +812,7 @@ process star_index{
 
     input:
         file(fasta) from ch_fasta
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("STAR") into star_built
@@ -915,7 +915,7 @@ process ciriquant_yml{
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
 
     input:
-        file(gencode_gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
         file(fasta) from ch_fasta
         val(bwa_path) from ch_bwa_index
         val(hisat2_path) from ch_hisat2_index
@@ -928,7 +928,7 @@ process ciriquant_yml{
     script:
     index_prefix = fasta.toString() - ~/.fa/
     fasta_path = fasta.toRealPath()
-    gencode_gtf_path = gencode_gtf.toRealPath()
+    gtf_path = gtf.toRealPath()
     """
     export bwa=`whereis bwa | cut -f2 -d':'`
     export hisat2=`whereis hisat2 | cut -f2 -d':'`
@@ -944,7 +944,7 @@ process ciriquant_yml{
      samtools: \$samtools\n\n\
     reference:\n\
      fasta: ${fasta_path}\n\
-     gtf: ${gencode_gtf_path}\n\
+     gtf: ${gtf_path}\n\
      bwa_index: ${bwa_path}/${index_prefix}\n\
      hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
     """
@@ -1462,7 +1462,7 @@ process dcc{
 
     input:
         tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
         file(fasta) from ch_fasta
 
     output:
@@ -1610,7 +1610,7 @@ process mapsplice_align{
         tuple val(base), file(fastq) from mapsplice_reads
         val(mapsplice_ref) from ch_fasta_chr
         file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
@@ -1724,7 +1724,7 @@ process uroborus{
         tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
         tuple val(base), file(accepted_hits) from tophat_accepted_hits
         file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
         val(uroborus_ref) from ch_fasta_chr
         file(fasta) from ch_fasta
 
@@ -1846,7 +1846,7 @@ if(tools_selected > 1){
 process remove_unwanted_biotypes{
 
     input:
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("filt.gtf") into ch_gtf_filtered
@@ -2114,7 +2114,7 @@ process StringTie{
 
     input:
         tuple val(base), file(bam) from hisat2_bam
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("${base}") into stringtie_dir

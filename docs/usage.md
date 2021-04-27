@@ -19,6 +19,7 @@ A typical command for running the pipeline is as follows:
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv'
@@ -132,6 +133,7 @@ To invoke the `circrna_discovery` analysis module, specify the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -149,6 +151,7 @@ The user may use one, all or any combination of circRNA quantification tools lis
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -171,6 +174,7 @@ To apply this filtering method, specify the `--bsj_reads` parameter in the confi
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -190,6 +194,7 @@ To apply this filtering method, specify the `--tool_filter` parameter in the con
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -210,6 +215,7 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -227,6 +233,7 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
