@@ -2168,7 +2168,7 @@ process mirna_targets{
     bash ${projectDir}/bin/prep_circos.sh $bed
 
     # Make plots and generate circRNA info
-    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
+    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt
     """
 }
 
