@@ -78,6 +78,10 @@ def helpMessage() {
                                             Disable by setting to 0/1 (i.e take the union, do not apply filter).
                                             Default: ${params.tool_filter}
 
+    miRNA filtering
+      --MFE                         [float] Specify the minimum free energy required for called miRNAs.
+                                            Default: ${params.MFE}
+
     Reference files
       --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
                                             Gencode reference Fasta, GTF and annotation text files will be automatically generated.
@@ -477,6 +481,7 @@ summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
+if('mirna_prediction' in module) summary['Minimum free energy'] = params.MFE
 
 summary['Genome version'] = params.genome_version
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
@@ -2168,7 +2173,7 @@ process mirna_targets{
     bash ${projectDir}/bin/prep_circos.sh $bed
 
     # Make plots and generate circRNA info
-    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt
+    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt $params.MFE
     """
 }
 

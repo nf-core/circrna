@@ -92,6 +92,21 @@
             }
           }
         },
+        "mirna_filtering" : {
+          "title": "miRNA filtering options",
+          "type": "object",
+          "fa-icon": "fas fa-filter",
+          "description": "Filtering options for miRNAs called by workflow.",
+          "properties": {
+            "MFE":{
+              "type": "number",
+              "fa_icon": "fas fa-bolt",
+              "description": "Minimum free energy required for miRNAs",
+              "help_text": "Filter miRNAs using the minimum free energy as calculated by ViennaRNA. Please note values are always negative.",
+              "default": -20.00
+            }
+          }
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -590,6 +605,9 @@
         },
         {
             "$ref": "#/definitions/circrna_filtering"
+        },
+        {
+            "$ref": "#/definitions/mirna_filtering"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
