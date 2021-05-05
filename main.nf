@@ -26,7 +26,7 @@ Dev version to nf-core Feb 2021.
 
 def json_schema = "$projectDir/nextflow_schema.json"
 if (params.help) {
-    def command = "nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker"
+    def command = "nextflow run nf-core/circrna -profile docker --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
     log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
     exit 0
 }
@@ -79,11 +79,6 @@ if(params.genome){
  * The below Reference Genome / index parameters are allowed to be empty (they will be generated if empty)
  * Mainly concerned about valid file extensions when provided.
  */
-
-// Check Fasta
-if(params.fasta && !has_extension(params.fasta, ".fa") && !has_extension(params.fasta, ".fasta")){
-   exit 1, "[nf-core/circrna] error: Reference Fasta file provided (${params.fasta}) is not valid, Fasta file should have the extension '.fa' or '.fasta'."
-}
 
 // Check GTF
 if(params.gtf && !has_extension(params.gtf, ".gtf")){

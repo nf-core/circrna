@@ -12,7 +12,8 @@
             "description": "Define where the pipeline should find input data and write output data.",
             "required": [
                 "input",
-                "input_type"
+                "input_type",
+                "outdir"
             ],
             "properties": {
                 "input": {
@@ -24,7 +25,15 @@
                 "input_type": {
                     "type": "string",
                     "fa_icon": "fas fa-dna",
-                    "description": "Input data type, `fastq` or `bam`."
+                    "description": "Input data type, `fastq` or `bam`.",
+                    "enum": [
+                        "FASTQ",
+                        "Fastq",
+                        "fastq",
+                        "BAM",
+                        "Bam",
+                        "bam"
+                    ]
                 },
                 "outdir": {
                     "type": "string",
@@ -55,7 +64,23 @@
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: `CIRIquant`, `CIRCexplorer2`, `find_circ`, `circRNA_finder`, `MapSplice`, `DCC`.",
-                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline *e.g:*\n```bash\n--tool \"circexplorer2, ciriquant, find_circ\"\n```\n\n*N.B:* Selecting more than one circRNA quantification tool will trigger a circRNA filtering method whereby circRNAs called by only one tool are discarded."
+                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline *e.g:*\n```bash\n--tool \"circexplorer2, ciriquant, find_circ\"\n```\n\n*N.B:* Selecting more than one circRNA quantification tool will trigger a circRNA filtering method whereby circRNAs called by only one tool are discarded.",
+                    "enum": [
+                        "CIRCexplorer2",
+                        "circexplorer2",
+                        "CIRIquant",
+                        "ciriquant",
+                        "dcc",
+                        "DCC",
+                        "MapSplice",
+                        "mapsplice",
+                        "find_circ",
+                        "Find_circ",
+                        "Find_Circ",
+                        "circrna_finder",
+                        "circRNA_Finder",
+                        "circRNA_finder"
+                    ]
                 },
                 "module": {
                     "type": "string",
@@ -64,7 +89,8 @@
                     "mandatory": "circrna_discovery",
                     "help_text": "The `circrna_discovery` module is mandatory. After circRNA quantification, the user can select `mirna_prediction`, `differential_expression` or both to deploy additional analyses *e.g:*\n```bash\n--module \"circrna_discovery, mirna_prediction, differential_expression\"\n```"
                 }
-            }
+            },
+            "fa_icon": "fas fa-terminal"
         },
         "circrna_filtering": {
             "title": "circRNA filtering options",
@@ -98,12 +124,12 @@
             "fa-icon": "fas fa-filter",
             "description": "Filtering options for miRNAs called by workflow.",
             "properties": {
-                "MFE": {
+                "mfe": {
                     "type": "number",
                     "fa_icon": "fas fa-bolt",
                     "description": "Minimum free energy required for miRNAs",
                     "help_text": "Filter miRNAs using the minimum free energy as calculated by ViennaRNA. Please note values are always negative.",
-                    "default": -20.0
+                    "default": -20
                 }
             }
         },
@@ -117,10 +143,10 @@
                 "fasta": {
                     "type": "string",
                     "fa_icon": "fas fa-font",
-                    "description": "Path to gencode FASTA genome file.",
-                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash\n--fasta \"/reference/GRCh38.fa\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "description": "Path to FASTA genome file.",
+                    "help_text": "If left empty, the parameter `--genome` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash\n--fasta \"/reference/GRCh38.fa\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested."
                 },
-                "genome_version": {
+                "genome": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
                     "description": "Genome version to use, options: `GRCh37`, `GRCh38`",
@@ -129,14 +155,14 @@
                 "gtf": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
-                    "description": "Path to gencode reference GTF file.",
-                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using gencode reference files, UCSC/ENSEMBL files have not been tested."
+                    "description": "Path to reference GTF file.",
+                    "help_text": "If left empty, the parameter `--genome` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested."
                 },
                 "gene_annotation": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
-                    "help_text": "If left empty, the parameter `--genome_version` must be supplied and the customised annotation text file will be automatically generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for [CIRCexplorer2 compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
+                    "help_text": "If left empty, the parameter `--genome` must be supplied and the customised annotation text file will be automatically generated.\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n*N.B:* The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for [CIRCexplorer2 compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to set to `null` unless re-running the pipeline."
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -156,37 +182,37 @@
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to SAMtools index file.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file. When re-running the pipeline, provide the absolute path to the SAMtools index file *e.g:*\n```bash\n--fasta_fai \"/data/results/circrna_discovery/index/GRCh38.fa.fai\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file. When re-running the pipeline, provide the absolute path to the SAMtools index file *e.g:*\n```bash\n--fasta_fai \"/data/results/circrna_discovery/index/GRCh38.fa.fai\"\n```"
                 },
                 "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie index files.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory *e.g:*\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory *e.g:*\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
                 },
                 "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie2 index files.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory *e.g:*\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory *e.g:*\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
                 },
                 "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to BWA index directory.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"/data/results/circrna_discovery/index/bwa\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to BWA indices directory *e.g:*\n```bash\n--bwa_index \"/data/results/circrna_discovery/index/bwa\"\n```"
                 },
                 "hisat2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to HISAT2 index directory.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory *e.g:*\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
                 },
                 "star_index": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to STAR index directory.",
-                    "help_text": "Automatically generated if left empty. Must be generated from a gencode reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to STAR indices directory *e.g:*\n```bash\n--star_index \"/data/results/circrna_discovery/index/STAR\"\n```"
+                    "help_text": "Automatically generated if left empty. Must be generated from a reference FASTA file.\nWhen re-running the pipeline, provide the absolute path to STAR indices directory *e.g:*\n```bash\n--star_index \"/data/results/circrna_discovery/index/STAR\"\n```"
                 }
             }
         },
