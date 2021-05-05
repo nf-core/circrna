@@ -19,6 +19,7 @@ A typical command for running the pipeline is as follows:
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv'
@@ -132,9 +133,9 @@ To invoke the `circrna_discovery` analysis module, specify the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery'
 ```
 
@@ -149,9 +150,9 @@ The user may use one, all or any combination of circRNA quantification tools lis
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ'
 ```
@@ -171,6 +172,7 @@ To apply this filtering method, specify the `--bsj_reads` parameter in the confi
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \
@@ -190,9 +192,9 @@ To apply this filtering method, specify the `--tool_filter` parameter in the con
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery' \
   --tool 'ciriquant, dcc, find_circ' \
   --bsj_reads 2 \
@@ -210,13 +212,31 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
   --module 'circrna_discovery, mirna_prediction'
 ```
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
+
+#### miRNA filtering
+
+##### Minimum free energy
+
+The user may wish to filter miRNAs predicted to bind the mature spliced sequence of called circRNAs by applying a minimum free energy (MFE) filter. MFE (Gibbs free energy) is an indicator of the stability of a biological system, thus miRNAs that have low MFE values will have less energy available to react in the future, resulting in systems with increased stability.
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery, mirna_prediction'
+  --mfe -20.00
+```
+
+> If the user is interested in a specific family of miRNAs then a more appropriate filter may be applied (e.g let-7 has a MFE of ~ 27 Kcal/mol.)
 
 ### Differential circRNA analysis
 
@@ -227,6 +247,7 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 ```bash
 nextflow run nf-core/circrna \
   -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
   --input 'samples.csv' \
   --input_type 'fastq' \
   --phenotype 'phenotype.csv' \

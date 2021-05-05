@@ -20,206 +20,6 @@ Dev version to nf-core Feb 2021.
 
 /*
 ================================================================================
-                                Help Flags
-================================================================================
-*/
-
-def helpMessage() {
-    log.info nfcoreHeader()
-    log.info"""
-    ====================================================
-                    circrna v${workflow.manifest.version}
-   ====================================================
-    Usage:
-
-    The typical command for running the pipeline is as follows:
-
-    nextflow run nf-core/circrna -profile <docker/singularity/institute> --input 'samples.csv' --input_type 'fastq' --module 'circrna_discovery' --tool 'circexplorer2'
-
-   Mandatory arguments:
-      -profile                        [str] Configuration profile to use. If selecting multiple, provide as a comma seperated list.
-                                            Note that later profiles overwrite earlier profiles, order is important!
-                                            Available: docker, singularity, <institute>
-
-      --module                        [str] Specify analysis module(s) to run. Can use multiple (comma separated), must include 'circrna_discovery'
-                                            Available: circrna_discovery, mirna_prediction, differential_expression.
-                                            Default: ${params.module}
-
-      --tool                          [str] Specify which circRNA quantification tool to use.
-                                            If selecting multiple tools, provide as a comma seperated list.
-                                            Available: circexplorer2, circrna_finder, ciriquant, dcc, find_circ, mapsplice.
-                                            Default: ${params.tool}
-
-      --input_type                    [str] Specify the input data type.
-                                            Avaialable: fastq or bam.
-                                            Default: ${params.input_type}
-
-      --input                        [file] Either paths to FASTQ/BAM data (must be surrounded with quotes).
-                                            Indicate multiple files with a suitable wildcard glob pattern i.e '*_{1,2}' for FASTQ paired end reads.
-
-                                            OR
-
-                                            A path to a CSV file (ending .csv) containing file URL/paths and sample IDs.
-                                            Please see online documentation for a template.
-
-      --phenotype                    [file] When differential_expression is provided to --module, a phenotype CSV file (ending .csv) must be provided.
-                                            Sample IDs and response + explanatory variables from metadata must be included. Do not include irrelavant metadata.
-                                            This file is used to construct the DESeq2 model design.
-                                            The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
-                                            Please see online documentation for examples of a valid phenotype.csv file.
-
-    circRNA filtering
-      --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
-                                            circRNAs with counts below [int] are discarded.
-                                            Disable by setting to 0.
-                                            Default: ${params.bsj_reads}
-
-      --tool_filter                   [int] Specify the minimum number of tools circRNAs must be called by.
-                                            Disable by setting to 0/1 (i.e take the union, do not apply filter).
-                                            Default: ${params.tool_filter}
-
-    Reference files
-      --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
-                                            Gencode reference Fasta, GTF and annotation text files will be automatically generated.
-                                            Available: 'GRCh37', 'GRCh38'.
-
-      --fasta                        [file] Path to Gencode reference genome FASTA file. Must end with '.fa', '.fasta'.
-
-      --gencode_gtf                  [file] Path to Gencode reference GTF file. Must end with '.gtf'.
-
-      --gene_annotation              [file] Path to customised gene annotation file. Recommended to allow [nf-core/circrna] generate this file.
-
-      --bowtie_index                  [dir] Path to directory containing bowtie indices.
-
-      --bowtie2_index                 [dir] Path to directory containing bowtie2 indices.
-
-      --bwa_index                     [dir] Path to directory containing BWA indices.
-
-      --hisat2_index                  [dir] Path to directory containing HISAT2 indices.
-
-      --star_index                    [dir] Path to directory containing STAR indices.
-
-      --fasta_fai                    [file] Path to SAMtools genome index file.
-
-    Adapter trimming
-      --skip_trim                     [str] Specify whether to skip BBDUK adapter/quality trimming. Available: 'no', 'yes'
-
-      --adapters                     [file] Path to adapters file containing sequences to trim.
-                                            Requires '--k', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.adapters}
-
-      --k                             [int] Specify k-mer size to use for sequence - adapter matching.
-                                            Requires '--adapters', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.k}
-
-      --ktrim                         [str] Specify which ends of reads to perform adapter trimming on.
-                                            Requires '--adapters', '--k' and optionally '--hdist'.
-                                            Default: ${params.ktrim}
-
-      --hdist                         [int] Specify maximin hamming distance for reference k-mers.
-                                            Default: ${params.hdist}
-
-      --trimq                         [int] Regions within reads that fall below this average Phred score are trimmed.
-                                            Requires '--qtrim'.
-                                            Default: ${params.trimq}
-
-      --qtrim                         [str] Specify which ends of reads to perform trimming on.
-                                            Requires '--trimq'.
-                                            Default: ${params.qtrim}
-
-      --minlen                        [int] Filter to remove trimmed reads with length below this value.
-                                            Default: ${params.minlen}
-
-    STAR alignment
-      --alignIntronMax                [int] Maximum length STAR considers for introns.
-                                            Default: ${params.alignIntronMax}
-
-      --alignIntronMin                [int] Minimum length STAR considers for introns (otherwise considered a deletion).
-                                            Default: ${params.alignIntronMin}
-
-      --alignMatesGapMax              [int] Maximum gap STAR considers between mates.
-                                            Default: ${params.alignMatesGapMax}
-
-      --alignSJDBoverhangMin          [int] Minimum overhang for annotated junctions.
-                                            Default: ${params.alignSJDBoverhangMin}
-
-      --alignSJoverhangMin            [int] Minimum overhang for unannotated junctions.
-                                            Default: ${params.alignSJoverhangMin}
-
-      --alignSoftClipAtReferenceEnds  [str] Allow soft-clipping of alignments past the ends of chromosomes.
-                                            Default: ${params.alignSoftClipAtReferenceEnds}
-
-      --alignTranscriptsPerReadNmax   [int] Max number of alignments per read to consider.
-                                            Default: ${params.alignTranscriptsPerReadNmax}
-
-      --chimJunctionOverhangMin       [int] Minimum overhang for a chimeric junction.
-                                            Default: ${params.chimJunctionOverhangMin}
-
-      --chimScoreMin                  [int] Minimum total score (summed) of chimeric segments.
-                                            Default: ${params.chimScoreMin}
-
-      --chimScoreSeparation           [int] Minimum difference between the best chimeric score and the next one.
-                                            Default: ${params.chimScoreSeparation}
-
-      --genomeLoad                    [str] Mode of shared memory usage for genome files.
-                                            Available: 'LoadAndKeep', 'LoadAndRemove', 'LoadAndExit', 'Remove', 'NoSharedMemory'.
-                                            Default: ${params.genomeLoad}
-
-      --limitSjdbInsertNsj            [int] Maximum number of junctions to be inserted on the fly during mapping stage.
-                                            Default: ${params.limitSjdbInsertNsj}
-
-      --outFilterMatchNminOverLread [float] Output alignment if ratio of matched bases relative to read length is >= value.
-                                            Default: ${params.outFilterMatchNminOverLread}
-
-      --outFilterMismatchNoverLmax  [float] Output alignment if ratio of mismatched based relative to mapped read length is <= value.
-                                            Default: ${params.outFilterMismatchNoverLmax}
-
-      --outFilterMultimapNmax         [int] Maximum number of multiple alignments permitted for read.
-                                            Default: ${params.outFilterMultimapNmax}
-
-      --outFilterMultimapScoreRange   [int] Score range below the maximum score for multimapping alignments.
-                                            Default: ${params.outFilterMultimapScoreRange}
-
-      --outSJfilterOverhangMin        [str] Minimum overhang length for novel splice junctions. 4 integers provided in string.
-                                            From left to right, integers sepcify minimum overhang length for splice junction sites:
-                                            1. non-canonical motifs
-                                            2. GT/AG and CT/AC motifs
-                                            3. GC/AG and CT/GC motifs
-                                            4. AT/AC and GT/AT motifs
-                                            Default: ${params.outSJfilterOverhangMin}
-
-      --sjdbOverhang                  [int] Specify length of donor/acceptor sequence flanking junctions (Index generation step).
-                                            Default: ${params.sjdbOverhang}
-
-      --sjdbScore                     [int] Alignment score for alignments that traverse database junctions.
-                                            Default: ${params.sjdbScore}
-
-      --winAnchorMultimapNmax         [int] Maximum number of loci anchors are allowed map to.
-                                            Default: ${params.winAnchorMultimapNmax}
-
-    Other options:
-      --outdir                        [dir] The output directory where the results will be saved.
-                                            Default: ${params.outdir}
-      --publish_dir_mode             [list] Mode for publishing results in the output directory (only one)
-                                            Available: symlink, rellink, link, copy, copyNoFollow, move
-                                            Default: copy
-
-   For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
-    """.stripIndent()
-}
-
-// Show help message
-params.help = false
-if (params.help){
-    helpMessage()
-    exit 0
-}
-
-// Small console separator to make it easier to read errors after launch
-println ""
-
-/*
-================================================================================
                           Check parameters
 ================================================================================
 */
@@ -256,21 +56,21 @@ if(params.input_type == ''){
 }
 
 // Check Genome version
-if(params.genome_version == ''){
-   exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
+if(params.genome == ''){
+   exit 1, "[nf-core/circrna] error: --genome was not supplied, please select 'GRCh37' or 'GRCh38'."
 }
 
 // Check proper versions supplied
-if(params.genome_version){
+if(params.genome){
 
    GenomeVersions = defineGenomeVersions()
 
    Channel
-         .value(params.genome_version)
+         .value(params.genome)
          .map{ it ->
 
                if(!GenomeVersions.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
+                  exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
                }
          }
 }
@@ -286,8 +86,8 @@ if(params.fasta && !has_extension(params.fasta, ".fa") && !has_extension(params.
 }
 
 // Check GTF
-if(params.gencode_gtf && !has_extension(params.gencode_gtf, ".gtf")){
-   exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gencode_gtf}) is not valid, GTF file should have the extension '.gtf'."
+if(params.gtf && !has_extension(params.gtf, ".gtf")){
+   exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gtf}) is not valid, GTF file should have the extension '.gtf'."
 }
 
 // Check Fasta fai
@@ -407,7 +207,7 @@ if(pheno_path){
 // Check BBDUK params
 
 // Check adapters
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
    if(!has_extension(params.adapters, ".fa") && !has_extension(params.adapters, ".fasta")){
       exit 1, "[nf-core/circrna] error: Adapters file provied (${params.adapters}) is not valid, Fasta files must have the extension '*.fa' or '*.fasta'."
    }
@@ -417,12 +217,12 @@ if(params.skip_trim == 'no'){
 }
 
 // Check all adapter trimming flags are provided
-if(params.skip_trim == 'no' && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
+if(params.skip_trim == false && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
    exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
 }
 
 // Check all quality trimming flags are provided
-if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
+if(params.skip_trim == false && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
    exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
 }
 
@@ -477,10 +277,11 @@ summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
+if('mirna_prediction' in module) summary['Minimum free energy'] = params.mfe
 
-summary['Genome version'] = params.genome_version
+summary['Genome version'] = params.genome
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
-if(params.gencode_gtf)     summary['Reference GTF']     = params.gencode_gtf
+if(params.gtf)             summary['Reference GTF']     = params.gtf
 if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
 if(params.bowtie_index)    summary['Bowtie indices']    = params.bowtie_index
 if(params.bowtie2_index)   summary['Bowtie2 indices']   = params.bowtie2_index
@@ -490,7 +291,7 @@ if(params.hisat2_index)    summary['HISAT2 indices']    = params.hisat2_index
 if(params.star_index)      summary ['STAR indices']     = params.star_index
 
 summary['Skip BBDUK']     = params.skip_trim
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
@@ -603,16 +404,18 @@ process get_software_versions {
     """
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/* --                          Begin Workflow                              -- */
+////////////////////////////////////////////////////////////////////////////////
+
 /*
 ================================================================================
-                          Begin Workflow
+                            1. Download Files
 ================================================================================
 */
 
 /*
-================================================================================
-                          Download Files
-================================================================================
+  STEP 1.1: Download Gencode FASTA file
 */
 
 process download_fasta{
@@ -625,7 +428,7 @@ process download_fasta{
     when: !params.fasta
 
     shell:
-    if(params.genome_version == 'GRCh37'){
+    if(params.genome == 'GRCh37'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
        gunzip GRCh37.primary_assembly.genome.fa.gz
@@ -633,7 +436,7 @@ process download_fasta{
        sed 's/\s.*$//' GRCh37.fa.tmp > GRCh37.fa
        rm GRCh37.fa.tmp
        /$
-    }else if(params.genome_version == 'GRCh38'){
+    }else if(params.genome == 'GRCh38'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz
        gunzip GRCh38.primary_assembly.genome.fa.gz
@@ -646,6 +449,10 @@ process download_fasta{
 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : fasta_downloaded
 
+/*
+  STEP 1.2: Download Gencode GTF file
+*/
+
 process download_gtf{
 
     publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
@@ -653,16 +460,16 @@ process download_gtf{
     output:
         file("*.gtf") into gtf_downloaded
 
-    when: !params.gencode_gtf
+    when: !params.gtf
 
     shell:
-    if(params.genome_version == 'GRCh37'){
+    if(params.genome == 'GRCh37'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
        gunzip gencode.v34lift37.annotation.gtf.gz
        mv gencode.v34lift37.annotation.gtf GRCh37.gtf
        /$
-    }else if(params.genome_version == 'GRCh38'){
+    }else if(params.genome == 'GRCh38'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
        gunzip gencode.v34.primary_assembly.annotation.gtf.gz
@@ -671,14 +478,18 @@ process download_gtf{
     }
 }
 
-ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gtf_downloaded
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : gtf_downloaded
+
+/*
+  STEP 1.3: Create customised gene annotation file
+*/
 
 process create_gene_annotation{
 
     publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
 
     input:
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("*.txt") into gene_annotation_created
@@ -687,12 +498,16 @@ process create_gene_annotation{
 
     shell:
     $/
-    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome_version}.genepred
-    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome_version}.genepred > !{params.genome_version}.txt
+    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome}.genepred
+    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome}.genepred > !{params.genome}.txt
     /$
 }
 
 ch_gene_annotation = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : gene_annotation_created
+
+/*
+  STEP 1.4: Download mirbase miRNAs
+*/
 
 process download_mirbase{
 
@@ -713,6 +528,10 @@ process download_mirbase{
     grep "sapiens" -A1 mature.fa | awk '!/--/' > hsa_mature.fa
     """
 }
+
+/*
+  STEP 1.5: Download TargetScan miRNAs
+*/
 
 process download_targetscan{
 
@@ -740,14 +559,18 @@ process download_targetscan{
 
 /*
 ================================================================================
-                          Create Genome Indices
+                          2. Create Genome Indices
 ================================================================================
+*/
+
+/*
+  STEP 2.1: Create SAMtools index
 */
 
 process samtools_index{
 
     label 'process_low'
-    
+
     publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode
 
     input:
@@ -765,6 +588,10 @@ process samtools_index{
 }
 
 ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_built
+
+/*
+  STEP 2.2: Create BWA index
+*/
 
 process bwa_index{
 
@@ -792,6 +619,10 @@ process bwa_index{
 
 ch_bwa_index = params.bwa_index ? Channel.value(params.bwa_index) : bwa_path
 
+/*
+  STEP 2.3: Create HISAT2 index
+*/
+
 process hisat2_index{
 
     label 'process_medium'
@@ -818,6 +649,10 @@ process hisat2_index{
 
 ch_hisat2_index = params.hisat2_index ? Channel.value(params.hisat2_index) : hisat2_path
 
+/*
+  STEP 2.4: Create STAR index
+*/
+
 process star_index{
 
     label 'process_medium'
@@ -826,7 +661,7 @@ process star_index{
 
     input:
         file(fasta) from ch_fasta
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("STAR") into star_built
@@ -846,6 +681,10 @@ process star_index{
 }
 
 ch_star_index = params.star_index ? Channel.value(file(params.star_index)) : star_built
+
+/*
+  STEP 2.5: Create Bowtie index
+*/
 
 process bowtie_index{
 
@@ -872,6 +711,10 @@ process bowtie_index{
 
 bowtie_path_files = params.bowtie_index + "/*"
 ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) : bowtie_built
+
+/*
+  STEP 2.6: Create Bowtie2 index
+*/
 
 process bowtie2_index{
 
@@ -901,10 +744,13 @@ ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)
 
 /*
 ================================================================================
-                       Misc. circRNA requirements
+                      3. Misc. circRNA requirements
 ================================================================================
 */
 
+/*
+  STEP 3.1: Generate individual chromosome FASTA files
+*/
 
 process split_fasta{
 
@@ -934,12 +780,16 @@ process split_fasta{
     '''
 }
 
+/*
+  STEP 3.2: Create CIRIquant .yml file
+*/
+
 process ciriquant_yml{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
 
     input:
-        file(gencode_gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
         file(fasta) from ch_fasta
         val(bwa_path) from ch_bwa_index
         val(hisat2_path) from ch_hisat2_index
@@ -952,7 +802,7 @@ process ciriquant_yml{
     script:
     index_prefix = fasta.toString() - ~/.fa/
     fasta_path = fasta.toRealPath()
-    gencode_gtf_path = gencode_gtf.toRealPath()
+    gtf_path = gtf.toRealPath()
     """
     export bwa=`whereis bwa | cut -f2 -d':'`
     export hisat2=`whereis hisat2 | cut -f2 -d':'`
@@ -968,7 +818,7 @@ process ciriquant_yml{
      samtools: \$samtools\n\n\
     reference:\n\
      fasta: ${fasta_path}\n\
-     gtf: ${gencode_gtf_path}\n\
+     gtf: ${gtf_path}\n\
      bwa_index: ${bwa_path}/${index_prefix}\n\
      hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
     """
@@ -976,11 +826,13 @@ process ciriquant_yml{
 
 /*
 ================================================================================
-                          Process Input Data
+                          4. Process Input Data
 ================================================================================
 */
 
-// Check inputs
+/*
+  STEP 4.1: Check Input files
+*/
 
 if(params.input == null){
    exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
@@ -1011,7 +863,9 @@ if(csv_path){
 
 }else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
 
-// Process bam file / stage fastq
+/*
+  STEP 4.2: Stage BAM/FASTQ files
+*/
 
 if(params.input_type == 'bam'){
 
@@ -1046,7 +900,9 @@ if(params.input_type == 'bam'){
 
 }else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
 
-// FASTQC on raw data
+/*
+  STEP 4.3: FastQC on raw data
+*/
 
 process FastQC {
 
@@ -1066,7 +922,9 @@ process FastQC {
     """
 }
 
-// MultiQC of the Raw Data
+/*
+  STEP 4.4: MultiQC on raw data
+*/
 
 // collect software_versions, workflow summary
 (software_versions_raw, software_versions_trim) = ch_software_versions_yaml.into(2)
@@ -1091,9 +949,17 @@ process multiqc_raw {
     """
 }
 
-// BBDUK
+/*
+================================================================================
+                           5. Fastq Trimming
+================================================================================
+*/
 
-if(params.skip_trim == 'no'){
+/*
+  STEP 5.1: BBDUK
+*/
+
+if(params.skip_trim == false){
 
    process bbduk {
 
@@ -1137,6 +1003,10 @@ if(params.skip_trim == 'no'){
    // trimmed reads into 2 channels:
    (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
+  /*
+    STEP 5.2: FastQC on trimmed reads
+  */
+
    process FastQC_trim {
 
        label 'py3'
@@ -1154,6 +1024,10 @@ if(params.skip_trim == 'no'){
        fastqc -q $fastq
        """
    }
+
+  /*
+  STEP 5.3: MultiQC on trimmed reads
+  */
 
    process multiqc_trim {
 
@@ -1175,20 +1049,25 @@ if(params.skip_trim == 'no'){
        multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
        """
    }
-}else if(params.skip_trim == 'yes'){
+}else if(params.skip_trim == true){
    aligner_reads = raw_reads
 }
 
-// Stage Aligner read channels
+/*
+  STEP 5.4: Stage reads for quantification
+*/
+
 (star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
-                             circRNA Discovery
+                           6. circRNA Discovery
 ================================================================================
 */
 
-// STAR 1st Pass
+/*
+  STEP 6.1.1: STAR 1st pass
+*/
 
 process STAR_1PASS{
 
@@ -1244,6 +1123,10 @@ process STAR_1PASS{
     """
 }
 
+/*
+  STEP 6.1.2: STAR SJDB file generation
+*/
+
 process sjdbFile{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode: params.publish_dir_mode
@@ -1264,6 +1147,10 @@ process sjdbFile{
 }
 
 (sjdbfile_pass2, sjdbfile_mate1, sjdbfile_mate2) = sjdbfile_ch.into(3)
+
+/*
+  STEP 6.1.3: STAR 2nd pass
+*/
 
 process STAR_2PASS{
 
@@ -1321,7 +1208,9 @@ process STAR_2PASS{
     """
 }
 
-// CIRCexplorer2
+/*
+  STEP 6.2: CIRCexplorer2 quantification
+*/
 
 process circexplorer2_star{
 
@@ -1354,7 +1243,9 @@ process circexplorer2_star{
     """
 }
 
-// circRNA_finder
+/*
+  STEP 6.3: circRNA finder quantification
+*/
 
 process circrna_finder{
 
@@ -1380,7 +1271,9 @@ process circrna_finder{
     """
 }
 
-// DCC
+/*
+  STEP 6.4.1: DCC mate 1 alignment
+*/
 
 process dcc_mate1{
 
@@ -1436,6 +1329,10 @@ process dcc_mate1{
     --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
+
+/*
+  STEP 6.4.2: DCC mate2 alignment
+*/
 
 process dcc_mate2{
 
@@ -1494,6 +1391,10 @@ process dcc_mate2{
 
 ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 
+/*
+  STEP 6.4.3: DCC quantification
+*/
+
 process dcc{
 
     label 'py3'
@@ -1504,7 +1405,7 @@ process dcc{
 
     input:
         tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
         file(fasta) from ch_fasta
 
     output:
@@ -1538,7 +1439,9 @@ process dcc{
     """
 }
 
-// find_circ
+/*
+  STEP 6.5.1: find_circ extract back-splice anchors
+*/
 
 process find_anchors{
 
@@ -1568,6 +1471,10 @@ process find_anchors{
     unmapped2anchors.py ${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
     """
 }
+
+/*
+  STEP 6.5.2: find_circ qantification
+*/
 
 process find_circ{
 
@@ -1600,7 +1507,9 @@ process find_circ{
     """
 }
 
-// CIRIquant
+/*
+  STEP 6.6: CIRIquant quantification
+*/
 
 process ciriquant{
 
@@ -1648,8 +1557,9 @@ process ciriquant{
     """
 }
 
-
-// mapsplice
+/*
+  STEP 6.7.1: MapSplice alignment
+*/
 
 process mapsplice_align{
 
@@ -1661,7 +1571,7 @@ process mapsplice_align{
         tuple val(base), file(fastq) from mapsplice_reads
         val(mapsplice_ref) from ch_fasta_chr
         file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
@@ -1716,6 +1626,9 @@ process mapsplice_align{
     }
 }
 
+/*
+  STEP 6.7.2: MapSplice quantification
+*/
 
 process mapsplice_parse{
 
@@ -1743,65 +1656,15 @@ process mapsplice_parse{
     """
 }
 
-// UROBORUS retry with py3 container.
-
-process tophat_align{
-
-    input:
-        tuple val(base), file(fastq) from uroborus_reads
-        file(bowtie2_index) from ch_bowtie2_index.collect()
-        file(fasta) from ch_fasta
-
-    output:
-        tuple val(base), file("unmapped.bam") into tophat_unmapped_bam
-        tuple val(base), file("accepted_hits.bam") into tophat_accepted_hits
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    tophat -p ${task.cpus} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
-    mv ${base}/unmapped.bam ./
-    mv ${base}/accepted_hits.bam ./
-    """
-}
-
-
-process uroborus{
-
-    publishDir "${params.outdir}/circrna_discovery/uroborus", mode: params.publish_dir_mode
-
-    input:
-        tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
-        tuple val(base), file(accepted_hits) from tophat_accepted_hits
-        file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
-        val(uroborus_ref) from ch_fasta_chr
-        file(fasta) from ch_fasta
-
-    output:
-        file("${base}.txt") into uroborus_results
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    samtools view $unmapped_bam > unmapped.sam
-
-    perl /opt/conda/envs/circrna/bin/UROBORUS.pl \
-    -index ${fasta.baseName} \
-    -gtf $gtf \
-    -fasta $uroborus_ref \
-    unmapped.sam $accepted_hits &> uroborus_logs.txt
-
-    mv circRNA_list.txt ${base}.txt
-    """
-}
 
 /*
 ================================================================================
-                            Annotate circRNAs
+                            7. Annotate circRNAs
 ================================================================================
+*/
+
+/*
+  STEP 7.1: Generate circRNA count matrix
 */
 
 if(tools_selected > 1){
@@ -1894,10 +1757,14 @@ if(tools_selected > 1){
 
 (circrna_matrix_mature_seq, circrna_matrix_parent_gene, circrna_matrix_diff_exp) = circRNA_counts.into(3)
 
+/*
+  STEP 7.2: Remove features from GTF not involved in circRNA biogenesis.
+*/
+
 process remove_unwanted_biotypes{
 
     input:
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("filt.gtf") into ch_gtf_filtered
@@ -1911,6 +1778,10 @@ process remove_unwanted_biotypes{
     grep -vf unwanted_biotypes.txt $gtf > filt.gtf
     """
 }
+
+/*
+  STEP 7.3: Annotate circRNAs. Description: https://github.com/nf-core/circrna/tree/master/docs/get_mature_seq.md
+*/
 
 process get_mature_seq{
 
@@ -1958,6 +1829,10 @@ process get_mature_seq{
 
 (fasta_mature_len, fasta_miranda) = miranda_sequences.into(2)
 
+/*
+  STEP 7.4: Annotate circRNA parent gene
+*/
+
 process get_parent_gene{
 
     input:
@@ -1977,6 +1852,10 @@ process get_parent_gene{
     bash ${projectDir}/bin/get_parent_genes.sh
     """
 }
+
+/*
+  STEP 7.5: Annotate circRNA mature spliced length
+*/
 
 process get_mature_len{
 
@@ -2006,6 +1885,10 @@ ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
 
 ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
+/*
+  STEP 7.6: Combine annotation information per circRNA
+*/
+
 process annotate_circrnas{
 
     input:
@@ -2021,6 +1904,10 @@ process annotate_circrnas{
     Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
     """
 }
+
+/*
+  STEP 7.7: Make master file outputting all circRNA annotations
+*/
 
 process master_annotate{
 
@@ -2046,8 +1933,12 @@ process master_annotate{
 
 /*
 ================================================================================
-                         circRNA - miRNA prediction
+                        8. circRNA - miRNA prediction
 ================================================================================
+*/
+
+/*
+  STEP 8.1: Predict circRNA-miRNA targets using miRanda
 */
 
 process miRanda{
@@ -2073,6 +1964,10 @@ process miRanda{
     grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
     """
 }
+
+/*
+  STEP 8.2: Predict circRNA-miRNA targets using TargetScan
+*/
 
 process targetscan{
 
@@ -2105,7 +2000,11 @@ ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
 
 ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(parent_circos).join(mature_circos)
 
-process circos_plots{
+/*
+  STEP 8.3: Apply filtering to miRanda, TargetScan outputs, generate circRNA MRE circos plot
+*/
+
+process mirna_targets{
 
     publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: params.publish_dir_mode
     publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: params.publish_dir_mode
@@ -2124,25 +2023,21 @@ process circos_plots{
     # create file for circos plot
     bash ${projectDir}/bin/prep_circos.sh $bed
 
-    # remove 6mers from TargetScan
-    #grep -v "6mer" $targetscan > targetscan_filt.txt
-
     # Make plots and generate circRNA info
-    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
+    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt $params.mfe
     """
 }
 
 
 /*
 ================================================================================
-                          Differential Expression
+                        9. Differential Expression
 ================================================================================
 */
 
 /*
- * RNA-Seq quantification required to estimate RNA size factors
- * for circRNA library correction
- */
+  STEP 9.1: RNA-Seq alignment required to estimate size factors for circRNA library correction
+*/
 
 ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
 
@@ -2166,6 +2061,9 @@ process Hisat2_align{
     """
 }
 
+/*
+  STEP 9.2: StringTie RNA-Seq quantification
+*/
 
 process StringTie{
 
@@ -2173,7 +2071,7 @@ process StringTie{
 
     input:
         tuple val(base), file(bam) from hisat2_bam
-        file(gtf) from ch_gencode_gtf
+        file(gtf) from ch_gtf
 
     output:
         file("${base}") into stringtie_dir
@@ -2188,6 +2086,10 @@ process StringTie{
 }
 
 ch_phenotype = params.phenotype ? file(params.phenotype) : ''
+
+/*
+  STEP 9.3: Perform circRNA, RNA-Seq differential expression analysis
+*/
 
 process diff_exp{
 
@@ -2455,7 +2357,7 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-if(params.skip_trim == 'no'){
+if(params.skip_trim == false){
     ch_multiqc_report = multiqc_trim_out
 }else{
     ch_multiqc_report = multiqc_raw_out

@@ -42,6 +42,12 @@ get_args <- function(){
 		short="z",
 		help="output from bash script preparing circlize exons")
 
+	argp <- add_argument(
+		parser=argp,
+		arg="mfe",
+		short="e",
+		help="minimum free energy filter")
+
     	argv <- parse_args(
             	parser=argp,
             	argv = commandArgs(trailingOnly = TRUE))
@@ -56,7 +62,7 @@ giveError <- function(message){
 
 usage <- function(){giveError("USAGE: circ_report.R bed miranda targetscan mature_len circlize_exons.txt")}
 
-stage_data <- function(parent_gene, bed, miranda, targetscan, mature_len, circlize_exons){
+stage_data <- function(parent_gene, bed, miranda, targetscan, mature_len, circlize_exons, mfe){
 
 	inputdata <- list()
 
@@ -77,6 +83,7 @@ stage_data <- function(parent_gene, bed, miranda, targetscan, mature_len, circli
 	inputdata$targetscan <- targetscan
 	inputdata$mature <- mature
 	inputdata$circlize_exons <- circlize_exons
+	inputdata$mfe <- mfe
 
 	return(inputdata)
 }
@@ -89,6 +96,7 @@ miRNAs <- function(inputdata){
 	targetscan <- inputdata$targetscan
 	x <- inputdata$circlize_exons
 	circlize_exons <- inputdata$circlize_exons
+	mfe <- inputdata$mfe
 
 	miranda$miRNA <- gsub("hsa-", "", miranda$miRNA)
 	colnames(targetscan)[2] <- "miRNA"
@@ -96,10 +104,10 @@ miRNAs <- function(inputdata){
 	mir_df <- merge(miranda, targetscan, by="miRNA")
 
 	## Filtering Step:
-	## Removes miRNA <= -20.00Kcal/Mol
+	## Removes miRNA <= specified MFE filter value
 	## Removes duplicate miRNAs sharing the same bind site (duplicate miRNA IDs)
 	## Keeps the miRNA with the higher "Score"
-	mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= -20.00)
+	mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= as.numeric(mfe))
 	mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
 	mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
 	miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
@@ -183,7 +191,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("circlize"))
 
 arg <- get_args()
-inputdata <- stage_data(arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$circlize_exons)
+inputdata <- stage_data(arg$parent_gene, arg$bed, arg$miranda, arg$targetscan, arg$mature_len, arg$circlize_exons, arg$mfe)
 y <- miRNAs(inputdata)
 
 #head(inputdata$de)
