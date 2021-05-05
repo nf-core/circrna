@@ -20,210 +20,6 @@ Dev version to nf-core Feb 2021.
 
 /*
 ================================================================================
-                                Help Flags
-================================================================================
-*/
-
-def helpMessage() {
-    log.info nfcoreHeader()
-    log.info"""
-    ====================================================
-                    circrna v${workflow.manifest.version}
-   ====================================================
-    Usage:
-
-    The typical command for running the pipeline is as follows:
-
-    nextflow run nf-core/circrna -profile <docker/singularity/institute> --input 'samples.csv' --input_type 'fastq' --module 'circrna_discovery' --tool 'circexplorer2'
-
-   Mandatory arguments:
-      -profile                        [str] Configuration profile to use. If selecting multiple, provide as a comma seperated list.
-                                            Note that later profiles overwrite earlier profiles, order is important!
-                                            Available: docker, singularity, <institute>
-
-      --module                        [str] Specify analysis module(s) to run. Can use multiple (comma separated), must include 'circrna_discovery'
-                                            Available: circrna_discovery, mirna_prediction, differential_expression.
-                                            Default: ${params.module}
-
-      --tool                          [str] Specify which circRNA quantification tool to use.
-                                            If selecting multiple tools, provide as a comma seperated list.
-                                            Available: circexplorer2, circrna_finder, ciriquant, dcc, find_circ, mapsplice.
-                                            Default: ${params.tool}
-
-      --input_type                    [str] Specify the input data type.
-                                            Avaialable: fastq or bam.
-                                            Default: ${params.input_type}
-
-      --input                        [file] Either paths to FASTQ/BAM data (must be surrounded with quotes).
-                                            Indicate multiple files with a suitable wildcard glob pattern i.e '*_{1,2}' for FASTQ paired end reads.
-
-                                            OR
-
-                                            A path to a CSV file (ending .csv) containing file URL/paths and sample IDs.
-                                            Please see online documentation for a template.
-
-      --phenotype                    [file] When differential_expression is provided to --module, a phenotype CSV file (ending .csv) must be provided.
-                                            Sample IDs and response + explanatory variables from metadata must be included. Do not include irrelavant metadata.
-                                            This file is used to construct the DESeq2 model design.
-                                            The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
-                                            Please see online documentation for examples of a valid phenotype.csv file.
-
-    circRNA filtering
-      --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
-                                            circRNAs with counts below [int] are discarded.
-                                            Disable by setting to 0.
-                                            Default: ${params.bsj_reads}
-
-      --tool_filter                   [int] Specify the minimum number of tools circRNAs must be called by.
-                                            Disable by setting to 0/1 (i.e take the union, do not apply filter).
-                                            Default: ${params.tool_filter}
-
-    miRNA filtering
-      --MFE                         [float] Specify the minimum free energy required for called miRNAs.
-                                            Default: ${params.MFE}
-
-    Reference files
-      --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
-                                            Gencode reference Fasta, GTF and annotation text files will be automatically generated.
-                                            Available: 'GRCh37', 'GRCh38'.
-
-      --fasta                        [file] Path to Gencode reference genome FASTA file. Must end with '.fa', '.fasta'.
-
-      --gtf                          [file] Path to Gencode reference GTF file. Must end with '.gtf'.
-
-      --gene_annotation              [file] Path to customised gene annotation file. Recommended to allow [nf-core/circrna] generate this file.
-
-      --bowtie_index                  [dir] Path to directory containing bowtie indices.
-
-      --bowtie2_index                 [dir] Path to directory containing bowtie2 indices.
-
-      --bwa_index                     [dir] Path to directory containing BWA indices.
-
-      --hisat2_index                  [dir] Path to directory containing HISAT2 indices.
-
-      --star_index                    [dir] Path to directory containing STAR indices.
-
-      --fasta_fai                    [file] Path to SAMtools genome index file.
-
-    Adapter trimming
-      --skip_trim                    [bool] Specify whether to skip BBDUK adapter/quality trimming. Available: true, false
-
-      --adapters                     [file] Path to adapters file containing sequences to trim.
-                                            Requires '--k', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.adapters}
-
-      --k                             [int] Specify k-mer size to use for sequence - adapter matching.
-                                            Requires '--adapters', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.k}
-
-      --ktrim                         [str] Specify which ends of reads to perform adapter trimming on.
-                                            Requires '--adapters', '--k' and optionally '--hdist'.
-                                            Default: ${params.ktrim}
-
-      --hdist                         [int] Specify maximin hamming distance for reference k-mers.
-                                            Default: ${params.hdist}
-
-      --trimq                         [int] Regions within reads that fall below this average Phred score are trimmed.
-                                            Requires '--qtrim'.
-                                            Default: ${params.trimq}
-
-      --qtrim                         [str] Specify which ends of reads to perform trimming on.
-                                            Requires '--trimq'.
-                                            Default: ${params.qtrim}
-
-      --minlen                        [int] Filter to remove trimmed reads with length below this value.
-                                            Default: ${params.minlen}
-
-    STAR alignment
-      --alignIntronMax                [int] Maximum length STAR considers for introns.
-                                            Default: ${params.alignIntronMax}
-
-      --alignIntronMin                [int] Minimum length STAR considers for introns (otherwise considered a deletion).
-                                            Default: ${params.alignIntronMin}
-
-      --alignMatesGapMax              [int] Maximum gap STAR considers between mates.
-                                            Default: ${params.alignMatesGapMax}
-
-      --alignSJDBoverhangMin          [int] Minimum overhang for annotated junctions.
-                                            Default: ${params.alignSJDBoverhangMin}
-
-      --alignSJoverhangMin            [int] Minimum overhang for unannotated junctions.
-                                            Default: ${params.alignSJoverhangMin}
-
-      --alignSoftClipAtReferenceEnds  [str] Allow soft-clipping of alignments past the ends of chromosomes.
-                                            Default: ${params.alignSoftClipAtReferenceEnds}
-
-      --alignTranscriptsPerReadNmax   [int] Max number of alignments per read to consider.
-                                            Default: ${params.alignTranscriptsPerReadNmax}
-
-      --chimJunctionOverhangMin       [int] Minimum overhang for a chimeric junction.
-                                            Default: ${params.chimJunctionOverhangMin}
-
-      --chimScoreMin                  [int] Minimum total score (summed) of chimeric segments.
-                                            Default: ${params.chimScoreMin}
-
-      --chimScoreSeparation           [int] Minimum difference between the best chimeric score and the next one.
-                                            Default: ${params.chimScoreSeparation}
-
-      --genomeLoad                    [str] Mode of shared memory usage for genome files.
-                                            Available: 'LoadAndKeep', 'LoadAndRemove', 'LoadAndExit', 'Remove', 'NoSharedMemory'.
-                                            Default: ${params.genomeLoad}
-
-      --limitSjdbInsertNsj            [int] Maximum number of junctions to be inserted on the fly during mapping stage.
-                                            Default: ${params.limitSjdbInsertNsj}
-
-      --outFilterMatchNminOverLread [float] Output alignment if ratio of matched bases relative to read length is >= value.
-                                            Default: ${params.outFilterMatchNminOverLread}
-
-      --outFilterMismatchNoverLmax  [float] Output alignment if ratio of mismatched based relative to mapped read length is <= value.
-                                            Default: ${params.outFilterMismatchNoverLmax}
-
-      --outFilterMultimapNmax         [int] Maximum number of multiple alignments permitted for read.
-                                            Default: ${params.outFilterMultimapNmax}
-
-      --outFilterMultimapScoreRange   [int] Score range below the maximum score for multimapping alignments.
-                                            Default: ${params.outFilterMultimapScoreRange}
-
-      --outSJfilterOverhangMin        [str] Minimum overhang length for novel splice junctions. 4 integers provided in string.
-                                            From left to right, integers sepcify minimum overhang length for splice junction sites:
-                                            1. non-canonical motifs
-                                            2. GT/AG and CT/AC motifs
-                                            3. GC/AG and CT/GC motifs
-                                            4. AT/AC and GT/AT motifs
-                                            Default: ${params.outSJfilterOverhangMin}
-
-      --sjdbOverhang                  [int] Specify length of donor/acceptor sequence flanking junctions (Index generation step).
-                                            Default: ${params.sjdbOverhang}
-
-      --sjdbScore                     [int] Alignment score for alignments that traverse database junctions.
-                                            Default: ${params.sjdbScore}
-
-      --winAnchorMultimapNmax         [int] Maximum number of loci anchors are allowed map to.
-                                            Default: ${params.winAnchorMultimapNmax}
-
-    Other options:
-      --outdir                        [dir] The output directory where the results will be saved.
-                                            Default: ${params.outdir}
-      --publish_dir_mode             [list] Mode for publishing results in the output directory (only one)
-                                            Available: symlink, rellink, link, copy, copyNoFollow, move
-                                            Default: copy
-
-   For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
-    """.stripIndent()
-}
-
-// Show help message
-params.help = false
-if (params.help){
-    helpMessage()
-    exit 0
-}
-
-// Small console separator to make it easier to read errors after launch
-println ""
-
-/*
-================================================================================
                           Check parameters
 ================================================================================
 */
@@ -260,21 +56,21 @@ if(params.input_type == ''){
 }
 
 // Check Genome version
-if(params.genome_version == ''){
-   exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
+if(params.genome == ''){
+   exit 1, "[nf-core/circrna] error: --genome was not supplied, please select 'GRCh37' or 'GRCh38'."
 }
 
 // Check proper versions supplied
-if(params.genome_version){
+if(params.genome){
 
    GenomeVersions = defineGenomeVersions()
 
    Channel
-         .value(params.genome_version)
+         .value(params.genome)
          .map{ it ->
 
                if(!GenomeVersions.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
+                  exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
                }
          }
 }
@@ -481,9 +277,9 @@ summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
-if('mirna_prediction' in module) summary['Minimum free energy'] = params.MFE
+if('mirna_prediction' in module) summary['Minimum free energy'] = params.mfe
 
-summary['Genome version'] = params.genome_version
+summary['Genome version'] = params.genome
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
 if(params.gtf)             summary['Reference GTF']     = params.gtf
 if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
@@ -632,7 +428,7 @@ process download_fasta{
     when: !params.fasta
 
     shell:
-    if(params.genome_version == 'GRCh37'){
+    if(params.genome == 'GRCh37'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
        gunzip GRCh37.primary_assembly.genome.fa.gz
@@ -640,7 +436,7 @@ process download_fasta{
        sed 's/\s.*$//' GRCh37.fa.tmp > GRCh37.fa
        rm GRCh37.fa.tmp
        /$
-    }else if(params.genome_version == 'GRCh38'){
+    }else if(params.genome == 'GRCh38'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz
        gunzip GRCh38.primary_assembly.genome.fa.gz
@@ -667,13 +463,13 @@ process download_gtf{
     when: !params.gtf
 
     shell:
-    if(params.genome_version == 'GRCh37'){
+    if(params.genome == 'GRCh37'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
        gunzip gencode.v34lift37.annotation.gtf.gz
        mv gencode.v34lift37.annotation.gtf GRCh37.gtf
        /$
-    }else if(params.genome_version == 'GRCh38'){
+    }else if(params.genome == 'GRCh38'){
        $/
        wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
        gunzip gencode.v34.primary_assembly.annotation.gtf.gz
@@ -702,8 +498,8 @@ process create_gene_annotation{
 
     shell:
     $/
-    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome_version}.genepred
-    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome_version}.genepred > !{params.genome_version}.txt
+    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome}.genepred
+    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome}.genepred > !{params.genome}.txt
     /$
 }
 
@@ -2173,7 +1969,7 @@ process mirna_targets{
     bash ${projectDir}/bin/prep_circos.sh $bed
 
     # Make plots and generate circRNA info
-    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt $params.MFE
+    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda $targetscan $mature_length circlize_exons.txt $params.mfe
     """
 }
 
