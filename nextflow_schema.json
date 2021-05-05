@@ -145,7 +145,7 @@
                     "fa_icon": "fas fa-font",
                     "description": "Path to FASTA genome file.",
                     "help_text": "If left empty, the parameter `--genome` must be supplied and the reference FASTA file will be automatically downloaded.\n```bash\n--fasta \"/reference/GRCh38.fa\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested.",
-                    "pattern": "\.fa(sta)$"
+                    "pattern": "\\.fa(sta)$"
                 },
                 "genome": {
                     "type": "string",
