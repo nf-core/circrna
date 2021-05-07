@@ -99,10 +99,11 @@ if(params.star_index){
           }
 }
 
-// Check phenotype file
+// Check phenotype file and stage the channel
 
 if(params.phenotype){
-   ch_phenotype = examine_phenotype(params.phenotype)
+   phenotype_check = examine_phenotype(params.phenotype)
+   ch_phenotype = params.phenotype ? file(params.phenotype) : ''
 } else {
    ch_phenotype = Channel.empty()
 }
