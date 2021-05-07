@@ -107,11 +107,20 @@ miRNAs <- function(inputdata){
 	## Removes miRNA <= specified MFE filter value
 	## Removes duplicate miRNAs sharing the same bind site (duplicate miRNA IDs)
 	## Keeps the miRNA with the higher "Score"
-	mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= as.numeric(mfe))
-	mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
-	mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
-	miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
-	colnames(miRs) <- c("miRNA", "Start", "End")
+
+	## Add a check here, if abs(MFE) is greater than largest energy value, discard filtering method
+	if(abs(mfe) > min(mir_df$Energy_KcalMol)){
+		mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
+		mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
+		miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
+		colnames(miRs) <- c("miRNA", "Start", "End")
+		}else{
+		mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= as.numeric(mfe))
+		mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
+		mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
+		miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
+		colnames(miRs) <- c("miRNA", "Start", "End")
+		}
 
 	## Calculate where the miRNAs fall in the context of the exons of the circRNA
 	## Add ifelse to allow for "empty" exons with no miRs.
