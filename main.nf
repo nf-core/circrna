@@ -688,7 +688,7 @@ process ciriquant_yml{
     file("travis.yml") into ch_ciriquant_yml
 
     script:
-    index_prefix = fasta.toString() - ~/.fa/
+    index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     """
@@ -1728,7 +1728,7 @@ process get_mature_len{
     file("*.mature_len.txt") into mature_len
 
     script:
-    prefix = fasta.toString() - ~/.fa/
+    prefix = fasta.toString() - ~/.(fa|fasta)$/
     """
     grep -v '>' $fasta | wc -c > ${prefix}.mature_len.txt
     """
@@ -1816,7 +1816,7 @@ process miRanda{
     file("*.miRanda.txt") into miranda_out
 
     script:
-    prefix = miranda.toString() - ~/.fa/
+    prefix = miranda.toString() - ~/.(fa|fasta)$/
     """
     miranda $mirbase $miranda -strict -out ${prefix}.bindsites.out -quiet
     echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
