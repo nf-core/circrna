@@ -102,11 +102,13 @@ if(params.star_index){
 // Check phenotype file and stage the channel
 
 if(params.phenotype){
-   phenotype_check = examine_phenotype(params.phenotype)
-   ch_phenotype = params.phenotype ? file(params.phenotype) : ''
+   pheno_file = file(params.phenotype)
+   phenotype_check = examine_phenotype(pheno_file)
+   ch_phenotype = params.phenotype ? Channel.value(pheno_file) : Channel.value(params.phenotype)
 } else {
    ch_phenotype = Channel.empty()
 }
+
 
 // Check BBDUK params
 
