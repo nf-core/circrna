@@ -43,6 +43,10 @@ if (params.validate_params) {
     NfcoreSchema.validateParameters(params, json_schema, log)
 }
 
+/*
+ * Check tools/modules here, enumerating in Schema is tedious expanding all possible combinations
+ */
+
 // Check Tools selected
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
@@ -96,7 +100,7 @@ if(params.star_index){
 }
 
 // Check phenotype file
-ch_phenotype = Channel.empty()
+
 if(params.phenotype){
    pheno_file = file(params.phenotype, checkIfExists=true)
    ch_phenotype = examine_phenotype(pheno_file)
@@ -1938,8 +1942,6 @@ process StringTie{
     stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p ${task.cpus} -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
     """
 }
-
-ch_phenotype = params.phenotype ? file(params.phenotype) : ''
 
 /*
   STEP 9.3: Perform circRNA, RNA-Seq differential expression analysis
