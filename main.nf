@@ -103,8 +103,7 @@ if(params.star_index){
 
 if(params.phenotype){
    pheno_file = file(params.phenotype)
-   phenotype_check = examine_phenotype(pheno_file)
-   ch_phenotype = params.phenotype ? Channel.value(pheno_file) : Channel.value(params.phenotype)
+   ch_phenotype = examine_phenotype(pheno_file)
 } else {
    ch_phenotype = Channel.empty()
 }
@@ -2174,10 +2173,10 @@ def examine_phenotype(pheno){
         if(condition == '') exit 1, "[nf-core/circrna] error: Invalid phenotype file, condition column contains empty cells."
         if(condition.matches('NA')) exit 1, "[nf-core/circrna] error: NA value in phenotype condition column."
 
-        return condition
-
         }
         .toList()
+
+        return Channel.value(file(pheno))
 }
 
 /*
