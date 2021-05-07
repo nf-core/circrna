@@ -102,8 +102,7 @@ if(params.star_index){
 // Check phenotype file
 
 if(params.phenotype){
-   pheno_file = file(params.phenotype, checkIfExists=true)
-   ch_phenotype = examine_phenotype(pheno_file)
+   ch_phenotype = examine_phenotype(params.phenotype)
 } else {
    ch_phenotype = Channel.empty()
 }
