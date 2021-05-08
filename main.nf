@@ -332,7 +332,8 @@ process download_fasta{
 
     publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
 
-    when: !params.fasta
+    when:
+    !params.fasta
 
     output:
     file("*.fa") into fasta_downloaded
@@ -358,7 +359,8 @@ process download_gtf{
 
     publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
 
-    when: !params.gtf
+    when:
+    !params.gtf
 
     output:
     file("*.gtf") into gtf_downloaded
@@ -382,7 +384,8 @@ process create_gene_annotation{
 
     publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
 
-    when: !params.gene_annotation
+    when:
+    !params.gene_annotation
 
     input:
     file(gtf) from ch_gtf
@@ -407,7 +410,8 @@ process download_mirbase{
 
     publishDir "${params.outdir}/mirna_prediction/assets",mode: params.publish_dir_mode
 
-    when: 'mirna_prediction' in module
+    when:
+    'mirna_prediction' in module
 
     output:
     file("hsa_mature.fa") into miranda_miRs
@@ -428,7 +432,8 @@ process download_targetscan{
 
     publishDir "${params.outdir}/mirna_prediction/assets", mode: params.publish_dir_mode
 
-    when: 'mirna_prediction' in module
+    when:
+    'mirna_prediction' in module
 
     output:
     file("hsa_miR.txt") into targetscan_miRs
@@ -461,7 +466,8 @@ process samtools_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode
 
-    when: !params.fasta_fai
+    when:
+    !params.fasta_fai
 
     input:
     file(fasta) from ch_fasta
@@ -487,7 +493,8 @@ process bwa_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/bwa", mode: params.publish_dir_mode
 
-    when: !(params.bwa_index) && 'ciriquant' in tool && 'circrna_discovery' in module
+    when:
+    !(params.bwa_index) && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -517,7 +524,8 @@ process hisat2_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: params.publish_dir_mode
 
-    when: !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
+    when:
+    !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
 
     input:
         file(fasta) from ch_fasta
@@ -547,7 +555,8 @@ process star_index{
 
     publishDir "${params.outdir}/circrna_discovery/index", mode: params.publish_dir_mode
 
-    when: !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    when:
+    !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -580,7 +589,8 @@ process bowtie_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode: params.publish_dir_mode
 
-    when: !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
+    when:
+    !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
 
     input:
         file(fasta) from ch_fasta
@@ -610,7 +620,8 @@ process bowtie2_index{
 
     publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode: params.publish_dir_mode
 
-    when: !(params.bowtie2_index) && ('find_circ' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
+    when:
+    !(params.bowtie2_index) && ('find_circ' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -644,7 +655,8 @@ process split_fasta{
 
     publishDir "${params.outdir}/circrna_discovery/reference/chromosomes", mode: params.publish_dir_mode
 
-    when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
+    when:
+    ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -676,7 +688,8 @@ process ciriquant_yml{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
 
-    when: 'ciriquant' in tool && 'circrna_discovery' in module
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
@@ -932,7 +945,8 @@ process STAR_1PASS{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(reads) from star_pass1_reads
@@ -988,7 +1002,8 @@ process sjdbFile{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode: params.publish_dir_mode
 
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     file(sjdb) from sjdb_ch
@@ -1015,7 +1030,8 @@ process STAR_2PASS{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    when:
+    'circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(reads) from star_pass2_reads
@@ -1077,7 +1093,8 @@ process circexplorer2_star{
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode: params.publish_dir_mode
 
-    when: 'circexplorer2' in tool && 'circrna_discovery' in module
+    when:
+    'circexplorer2' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(chimeric_reads) from circexplorer2_input
@@ -1111,7 +1128,8 @@ process circrna_finder{
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode: params.publish_dir_mode
 
-    when: 'circrna_finder' in tool && 'circrna_discovery' in module
+    when:
+    'circrna_finder' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(star_dir) from circrna_finder_input
@@ -1138,7 +1156,8 @@ process dcc_mate1{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode: params.publish_dir_mode
 
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(reads) from dcc_mate1_reads
@@ -1197,7 +1216,8 @@ process dcc_mate2{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode: params.publish_dir_mode
 
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(reads) from dcc_mate2_reads
@@ -1260,7 +1280,8 @@ process dcc{
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode: params.publish_dir_mode
 
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
@@ -1306,7 +1327,8 @@ process find_anchors{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode: params.publish_dir_mode
 
-    when: 'find_circ' in tool && 'circrna_discovery' in module
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(fastq) from find_circ_reads
@@ -1340,7 +1362,8 @@ process find_circ{
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: params.publish_dir_mode
 
-    when: 'find_circ' in tool && 'circrna_discovery' in module
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(anchors) from ch_anchors
@@ -1375,7 +1398,8 @@ process ciriquant{
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
 
-    when: 'ciriquant' in tool && 'circrna_discovery' in module
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(fastq) from ciriquant_reads
@@ -1424,7 +1448,8 @@ process mapsplice_align{
 
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode: params.publish_dir_mode
 
-    when: 'mapsplice' in tool && 'circrna_discovery' in module
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(fastq) from mapsplice_reads
@@ -1493,7 +1518,8 @@ process mapsplice_parse{
 
     publishDir "${params.outdir}/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
 
-    when: 'mapsplice' in tool && 'circrna_discovery' in module
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(raw_fusion) from mapsplice_fusion
@@ -1535,7 +1561,8 @@ if(tools_selected > 1){
 
    process consolidate_algorithms{
 
-       when: 'circrna_discovery' in module
+       when:
+       'circrna_discovery' in module
 
        input:
        tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
@@ -1567,7 +1594,8 @@ if(tools_selected > 1){
 
        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
-       when: 'circrna_discovery' in module
+       when:
+       'circrna_discovery' in module
 
        input:
        file(bed) from sample_counts.collect()
@@ -1590,7 +1618,8 @@ if(tools_selected > 1){
 
        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
-       when: 'circrna_discovery' in module
+       when:
+       'circrna_discovery' in module
 
        input:
        file(bed) from single_tool.collect()
@@ -1623,7 +1652,8 @@ if(tools_selected > 1){
 
 process remove_unwanted_biotypes{
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
@@ -1648,7 +1678,8 @@ process get_mature_seq{
     publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'bed12/*.bed'
     publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'fasta/*.fa'
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -1695,7 +1726,8 @@ process get_mature_seq{
 
 process get_parent_gene{
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf_filtered
@@ -1719,7 +1751,8 @@ process get_parent_gene{
 
 process get_mature_len{
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     file(fasta) from fasta_mature_len.flatten()
@@ -1751,7 +1784,8 @@ ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
 
 process annotate_circrnas{
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     tuple val(base), file(bed), file(mature_length), file(parent_gene) from ch_annotate
@@ -1773,7 +1807,8 @@ process master_annotate{
 
     publishDir "${params.outdir}/circrna_discovery/annotated", mode: params.publish_dir_mode
 
-    when: 'circrna_discovery' in module
+    when:
+    'circrna_discovery' in module
 
     input:
     file(annotated) from circrna_annotated.collect()
@@ -1806,7 +1841,8 @@ process miRanda{
 
     publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode: params.publish_dir_mode
 
-    when: 'mirna_prediction' in module
+    when:
+    'mirna_prediction' in module
 
     input:
     file(mirbase) from miranda_miRs
@@ -1834,7 +1870,8 @@ process targetscan{
 
     publishDir "${params.outdir}/mirna_prediction/targetscan", mode: params.publish_dir_mode
 
-    when: 'mirna_prediction' in module
+    when:
+    'mirna_prediction' in module
 
     input:
     file(miR) from targetscan_miRs
@@ -1868,7 +1905,8 @@ process mirna_targets{
     publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: params.publish_dir_mode
     publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: params.publish_dir_mode
 
-    when: 'mirna_prediction' in module
+    when:
+    'mirna_prediction' in module
 
     input:
     tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_circos_plot
@@ -1904,7 +1942,8 @@ process Hisat2_align{
 
     label 'process_high'
 
-    when: 'differential_expression' in module
+    when:
+    'differential_expression' in module
 
     input:
     tuple val(base), file(fastq) from hisat2_reads
@@ -1928,7 +1967,8 @@ process StringTie{
 
     label 'process_low'
 
-    when: 'differential_expression' in module
+    when:
+    'differential_expression' in module
 
     input:
     tuple val(base), file(bam) from hisat2_bam
@@ -1955,7 +1995,8 @@ process diff_exp{
     publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
     publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
 
-    when: 'differential_expression' in module
+    when:
+    'differential_expression' in module
 
     input:
     file(gtf_dir) from stringtie_dir.collect()
