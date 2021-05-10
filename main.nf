@@ -1031,7 +1031,7 @@ process STAR_2PASS{
     publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: params.publish_dir_mode
 
     when:
-    'circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     tuple val(base), file(reads) from star_pass2_reads

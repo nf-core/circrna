@@ -109,7 +109,7 @@ miRNAs <- function(inputdata){
 	## Keeps the miRNA with the higher "Score"
 
 	## Add a check here, if abs(MFE) is greater than largest energy value, discard filtering method
-	if(abs(mfe) > min(mir_df$Energy_KcalMol)){
+	if(abs(as.numeric(mfe)) > min(mir_df$Energy_KcalMol)){
 		mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
 		mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
 		miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
