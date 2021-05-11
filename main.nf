@@ -528,11 +528,11 @@ process hisat2_index{
     !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
 
     input:
-        file(fasta) from ch_fasta
+    file(fasta) from ch_fasta
 
     output:
-        file("${fasta.baseName}.*.ht2") into hisat2_built
-        val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
+    file("${fasta.baseName}.*.ht2") into hisat2_built
+    val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
 
     script:
     """
@@ -2388,11 +2388,11 @@ def checkHostname() {
         params.hostnames.each { prof, hnames ->
             hnames.each { hname ->
                 if (hostname.contains(hname) && !workflow.profile.contains(prof)) {
-                    log.error '====================================================\n' +
+                    log.error "${c_red}====================================================${c_reset}\n" +
                             "  ${c_red}WARNING!${c_reset} You are running with `-profile $workflow.profile`\n" +
                             "  but your machine hostname is ${c_white}'$hostname'${c_reset}\n" +
                             "  ${c_yellow_bold}It's highly recommended that you use `-profile $prof${c_reset}`\n" +
-                            '============================================================'
+                            "${c_red}====================================================${c_reset}\n"
                 }
             }
         }
