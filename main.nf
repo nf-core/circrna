@@ -528,11 +528,11 @@ process hisat2_index{
     !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
 
     input:
-        file(fasta) from ch_fasta
+    file(fasta) from ch_fasta
 
     output:
-        file("${fasta.baseName}.*.ht2") into hisat2_built
-        val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
+    file("${fasta.baseName}.*.ht2") into hisat2_built
+    val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
 
     script:
     """
