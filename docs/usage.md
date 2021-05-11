@@ -1,31 +1,31 @@
 # nf-core/circrna: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/circrna/usage](https://nf-co.re/circrna/usage)
+It is recommended that first time users run `nf-core/circrna` with the minimal test dataset either locally or on a HPC, referring to the [output documentation](https://nf-co.re/circrna/dev/output) before running a full analysis.
 
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+```bash
+nextflow run nf-core/circrna -profile test
+```
 
-## Introduction
+Run the test dataset on a HPC:
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+```bash
+nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
+```
 
 ## Running the pipeline
 
-The typical command for running the pipeline is as follows:
+A typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.csv'
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
-
-Note that the pipeline will create the following files in your working directory:
-
-```bash
-work            # Directory containing the nextflow working files
-results         # Finished results (configurable, see below)
-.nextflow_log   # Log file from Nextflow
-# Other nextflow hidden files, eg. history of pipeline runs and old logs.
-```
+Where input files are specified via the command line and analysis-specific parameters are passed to the workflow via configuration profiles, further described in the profile [documentation](https://nf-co.re/circrna/dev/usage#profile).
 
 ### Updating the pipeline
 
@@ -42,6 +42,219 @@ It's a good idea to specify a pipeline version when running the pipeline on your
 First, go to the [nf-core/circrna releases page](https://github.com/nf-core/circrna/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
+
+## Input specifications
+
+Input data can be passed to `nf-core/circrna` in two possible ways using the `--input` parameter.
+
+### `--input "<path>"`
+
+The simplest way to pass input data to `nf-core/circrna` is by providing the path to the input data with a suitable wildcard glob pattern:
+
+#### fastq
+
+```bash
+--input "/data/*_r{1,2}.fastq.gz"
+```
+
+##### bam
+
+```bash
+--input "/data/*.bam"
+```
+
+> Beware that providing a path to input data will result in samples being named according to the common tuple key based on the glob pattern supplied (i.e Channel.fromFilePairs("*_r{1,2}.fq.gz")). Take this into consideration when designing your phenotype file for differential expression analysis.
+
+### `--input samples.csv`
+
+Alternatively the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
+
+The headers of the CSV file must be: `Sample_ID,Read1,Read2,Bam`.
+
+> This approach is recommended for most real life situations, where in-house sequencing facilities file naming convention requires the user to manually match file names to metadata. The below input files use `TCGA` identifiers as proof of concept.
+
+Valid examples for fastq/bam input data in a CSV file is given below:
+
+| Sample_ID        | Read1                                                        | Read2                                                        | Bam  |
+| ---------------- | :----------------------------------------------------------- | ------------------------------------------------------------ | ---- |
+| TCGA-EJ-7783-11A | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R1.fastq.gz | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-G9-6365-11A | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R1.fastq.gz | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-7782-11A | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R1.fastq.gz | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-CH-5772-01A | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R1.fastq.gz | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-EJ-5518-01A | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R1.fastq.gz | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R2.fastq.gz | NA   |
+| TCGA-KK-A8I4-01A | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R1.fastq.gz | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R2.fastq.gz | NA   |
+
+***
+
+| Sample_ID        | Read1 | Read2 | Bam                                                          |
+| :--------------- | ----- | ----- | :----------------------------------------------------------- |
+| TCGA-EJ-7783-11A | NA    | NA    | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead.bam |
+| TCGA-G9-6365-11A | NA    | NA    | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead.bam |
+| TCGA-EJ-7782-11A | NA    | NA    | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead.bam |
+| TCGA-CH-5772-01A | NA    | NA    | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead.bam |
+| TCGA-EJ-5518-01A | NA    | NA    | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead.bam |
+| TCGA-KK-A8I4-01A | NA    | NA    | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead.bam |
+
+> Do not leave any cell empty in the CSV file.
+
+### `--phenotype`
+
+When running the differential expression analysis module, an input `phenotype.csv` file is required.
+
+It is recommended to use a `samples.csv` input CSV file in conjunction with a `phenotype.csv` file as the `Sample_ID` column **must match** the first column of the `phenotype.csv` file.
+
+A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
+
+| samples          | condition |
+| ---------------- | --------- |
+| TCGA-EJ-7783-11A | control   |
+| TCGA-G9-6365-11A | control   |
+| TCGA-EJ-7782-11A | control   |
+| TCGA-CH-5772-01A | tumor     |
+| TCGA-EJ-5518-01A | tumor     |
+| TCGA-KK-A8I4-01A | tumor     |
+
+> The response variable must be named `condition`, as these values are hard coded within the automated differential expression analysis script!
+
+## Analysis modules
+
+`nf-core/circrna` provides 3 analysis modules to the user:
+
+1. circRNA quantification & annotation.
+2. miRNA target prediction.
+3. Differential circRNA expression analysis.
+
+### circRNA discovery
+
+The core module of `nf-core/circrna`, the user can utilise the most popular circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` & `MapSplice` however the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
+
+To invoke the `circrna_discovery` analysis module, specify the configuration profile parameter `--module` or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#circrna-quantification).
+
+> Please note that this module must be included for every run of the workflow
+
+#### Tool selection
+
+The user may use one, all or any combination of circRNA quantification tools listed above in the analysis. To select which tools to use for the analysis, specify the `--tool` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ'
+```
+
+> When providing multiple tools, separate each entry with a comma.
+
+#### circRNA filtering
+
+`nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.  
+
+##### BSJ reads
+
+The user can specify the minimum number of reads spanning the back-splice junction site required for a circRNA to be considered for further analysis. circRNAs with counts below this value will be filtered to remove from the dataset.
+
+To apply this filtering method, specify the `--bsj_reads` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.csv' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ' \
+  --bsj_reads 2
+```
+
+Disable the filter by setting the value to 0.
+
+##### Multiple tool filtering
+
+When more than one tool has been provided using the `--tool` parameter, the user can specify the minimum number of tools circRNAs must be called by using `--tool_filter`. Setting this parameter to 0 or 1 will result in the union being output, i.e no filtering is applied. Setting this parameter to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.
+
+To apply this filtering method, specify the `--tool_filter` parameter in the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery' \
+  --tool 'ciriquant, dcc, find_circ' \
+  --bsj_reads 2 \
+  --tool_filter 2
+```
+
+> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`.
+
+### miRNA prediction
+
+The second module of `nf-core/circrna`, `mirna_prediction` analyses the mature spliced sequences of circRNAs to test for the presence of miRNA response elements using both `miRanda` and `TargetScan`. Results from both tools are consolidated and filtering methods are applied to produce robust miRNA target predictions of circRNAs in the dataset.
+
+To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery, mirna_prediction'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
+
+#### miRNA filtering
+
+##### Minimum free energy
+
+The user may wish to filter miRNAs predicted to bind the mature spliced sequence of called circRNAs by applying a minimum free energy (MFE) filter. MFE (Gibbs free energy) is an indicator of the stability of a biological system, thus miRNAs that have low MFE values will have less energy available to react in the future, resulting in systems with increased stability.
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --module 'circrna_discovery, mirna_prediction'
+  --mfe -20.00
+```
+
+> If the user is interested in a specific family of miRNAs then a more appropriate filter may be applied (e.g let-7 has a MFE of ~ 27 Kcal/mol.)
+
+### Differential circRNA analysis
+
+The third and final module of `nf-core/circrna` performs differential expression analysis of circRNAs, returning `DESeq2` result outputs, plots and diagnostic plots for the user. In order to run this module, it is essential that your `phenotype.csv` file is in the correct format - please refer to the input [specifications](https://nf-co.re/circrna/dev/usage#differential-expression-analysis).
+
+To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
+
+```bash
+nextflow run nf-core/circrna \
+  -profile <docker/singularity/podman/institute> \
+  --genome_version 'GRCh38' \
+  --input 'samples.csv' \
+  --input_type 'fastq' \
+  --phenotype 'phenotype.csv' \
+  --module 'circrna_discovery, differential_expression'
+```
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#differential-expression-analysis).
 
 ## Core Nextflow arguments
 
