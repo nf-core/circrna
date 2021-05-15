@@ -136,7 +136,7 @@ if(tools_selected > 1 && params.tool_filter > tools_selected){
 
 // Check Input data (if !csv choose path)
 
-if(params.input){
+if(has_extension(params.input, "csv")){
 
    csv_file = file(params.input, checkIfExists: true)
    ch_input_sample = extract_data(csv_file)
