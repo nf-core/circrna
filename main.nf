@@ -136,7 +136,7 @@ if(tools_selected > 1 && params.tool_filter > tools_selected){
 
 // Check Input data (if !csv choose path)
 
-if(params.input){
+if(has_extension(params.input, "csv")){
 
    csv_file = file(params.input, checkIfExists: true)
    ch_input_sample = extract_data(csv_file)
@@ -339,7 +339,7 @@ process download_fasta{
     file("*.fa") into fasta_downloaded
 
     script:
-    def url = params.genome == 'GRCh38' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/${params.genome}_mapping/${params.genome}.primary_assembly.genome.fa.gz' : ( params.genome == 'GRCh38' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/${params.genome}.primary_assembly.genome.fa.gz' : 'NA' )
+    def url = params.genome == 'GRCh37' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz' : ( params.genome == 'GRCh38' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz' : 'NA' )
     """
     wget --no-check-certificate $url
     gunzip ${params.genome}.primary_assembly.genome.fa.gz
@@ -366,7 +366,7 @@ process download_gtf{
     file("*.gtf") into gtf_downloaded
 
     script:
-    def url = params.genome == 'GRCh37' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/${params.genome}_mapping/gencode.v34lift37.annotation.gtf.gz' : ( params.genome == 'GRCh38' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz' : 'NA')
+    def url = params.genome == 'GRCh37' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz' : ( params.genome == 'GRCh38' ? 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz' : 'NA')
     """
     wget --no-check-certificate $url
     gunzip *.gtf.gz
