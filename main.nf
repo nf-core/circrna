@@ -490,8 +490,6 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 ================================================================================
 */
 
-// only need to pass a path to mapsplice, find_circ (not collect files)
-
 process SPLIT_CHROMOSOMES{
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -525,6 +523,9 @@ process SPLIT_CHROMOSOMES{
 // wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 ch_chromosomes.view()
+
+// collect() indices here, want them to be in the same directory and not scattered over mutliple in work/. 
+// this is slightly annoying, ciriquant
 
 process CIRIQUANT_YML{
     tag "Making CIRIquant .yml file"
