@@ -322,7 +322,7 @@ process test_bowtie{
     file(bowtie) from ch_bowtie
 
     output:
-    stdout to outd
+    stdout to outb
 
     script:
     """
