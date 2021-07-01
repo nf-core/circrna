@@ -298,7 +298,7 @@ println(params.bwa)
 // bwa different, each file in channel. i.e not a directory
 ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
 // the rest come in a directory, must grab the files out of the dir.
-ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
+ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
 
 
 
