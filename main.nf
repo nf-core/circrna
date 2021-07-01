@@ -292,13 +292,13 @@ params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: fa
 params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
 
 // stage files.
-// index directories stages below corresponding process. 
+// index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
 
 process BWA_INDEX {
     tag "${fasta}"
-    label 'proces_medium'
+    //label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/BWAIndex/${it}" : null }
 
@@ -320,6 +320,7 @@ process BWA_INDEX {
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
 // igenomes first, stage files. then user supplied path, finally 'built' if none supplied.
 ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).collect().ifEmpty{ exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"} : bwa_built
+ch_bwa.view()
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
@@ -342,10 +343,11 @@ process SAMTOOLS_INDEX {
 }
 
 ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
+ch_fai.view()
 
 process HISAT2_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
        saveAs: {params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
@@ -368,10 +370,11 @@ process HISAT2_INDEX {
 }
 
 ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
+ch_hisat.view()
 
 process STAR_INDEX {
     tag "${fasta}"
-    label 'process_high'
+    //label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/STARIndex/${it}" : null }
 
@@ -399,10 +402,11 @@ process STAR_INDEX {
 
 // STAR pass the directory, files do not need to be in scratch dir. call as value
 ch_star = params.star ? Channel.value(file(params.star)) : star_built
+ch_star.view()
 
 process BOWTIE_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
@@ -425,10 +429,11 @@ process BOWTIE_INDEX {
 }
 
 ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
+ch_bowtie.view()
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
@@ -451,7 +456,7 @@ process BOWTIE2_INDEX {
 }
 
 ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
-
+ch_bowtie2.view()
 
 /*
 ================================================================================
