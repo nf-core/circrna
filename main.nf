@@ -300,7 +300,7 @@ process BWA_INDEX {
     tag "${fasta}"
     //label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/BWAIndex/${it}" : null }
+        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
@@ -309,19 +309,19 @@ process BWA_INDEX {
     file(fasta) from ch_fasta
 
     output:
-    file("${fasta}.*") into bwa_built
-    file("${launchDir}/${params.outdir}/reference_genome/BWAIndex/") into bwa_path
+    file("BWAIndex") into bwa_built
 
     script:
     """
-    bwa index -a bwtsw ${fasta}
+    mkdir -p BWAIndex
+    bwa index -a bwtsw BWAIndex/${fasta}
     """
 }
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
-// We only need the path to the directry here.
-// I used file on all params here because in ciriquant yml, we need to use file to initiate bwa download for igenomes.
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_path
+// We only need the path to the directory for ciriwquant.yml
+// logic for creating direcotry above == so it matches the other two possible inputs (igenomes, path) which give a DIR.
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_built
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
@@ -359,7 +359,7 @@ process HISAT2_INDEX {
 
     output:
     file("${fasta.baseName}.*.ht2") into hisat_built
-    file("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
+    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
 
     script:
     """
@@ -376,7 +376,7 @@ process STAR_INDEX {
     tag "${fasta}"
     //label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/STARIndex/${it}" : null }
+        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     !params.star && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
@@ -386,7 +386,7 @@ process STAR_INDEX {
     file(gtf) from ch_gtf
 
     output:
-    file("STAR") into star_built
+    file("STARIndex") into star_built
 
     script:
     """
@@ -521,7 +521,6 @@ process SPLIT_CHROMOSOMES{
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
 process CIRIQUANT_YML{
-    tag "Making CIRIquant .yml file"
     publishDir params.outdir, mode: params.publish_dir_mode
 
     when:
@@ -530,8 +529,10 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
+    // bwa, forced to put into directory and treat as file (so iGenomes downloads). 
     file(bwa) from ch_bwa
-    file(hisat) from ch_hisat
+    // hisat generated or passed via cmdline, val is appropriate
+    val(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
@@ -541,7 +542,6 @@ process CIRIQUANT_YML{
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
-    hisat_path = hisat.toRealPath()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
