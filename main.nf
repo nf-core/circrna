@@ -320,7 +320,8 @@ process BWA_INDEX {
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
 // We only need the path to the directry here, no need to collect files.
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_path
+// use file() on iGenomes to initiate the download, yes or no?
+ch_bwa = params.genome ? Channel.value(params.bwa) : params.bwa ? Channel.value(params.bwa) : bwa_path
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
