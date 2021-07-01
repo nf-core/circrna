@@ -277,7 +277,7 @@ checkHostname()
 
 /*
 ================================================================================
-                        TESTING iGENOMES
+                            TESTING iGENOMES
 ================================================================================
 */
 
@@ -299,7 +299,7 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 
-process BuildBWAindexes {
+process BWA_INDEX {
     tag "${fasta}"
 
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -323,10 +323,136 @@ process BuildBWAindexes {
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
 // igenomes first, stage files. then user supplied path, finally 'built' if none supplied.
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).collect() : bwa_built
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).collect().ifEmpty{ exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"} : bwa_built
+
+process SAMTOOLS_INDEX {
+    tag "${fasta}"
+
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/SAMtoolsIndex/${it}" : null }
+
+    when: !(params.fasta_fai) && params.fasta
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file("${fasta}.fai") into fai_built
+
+    script:
+    """
+    samtools faidx ${fasta}
+    """
+}
+
+ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
+
+process HISAT2_INDEX {
+    tag "${fasta}"
+
+    publishDir params.outDir, mode: params.publish_dir_mode,
+       saveAs: {params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
+
+    when: !(params.hisat) && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file("${fasta.baseName}.*.ht2") into hisat_built
+
+    script:
+    """
+    hisat2-build \\
+        -p ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
+
+process STAR_INDEX {
+    tag "${fasta}"
+
+    publishDir params.outDir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/STARIndex/${it}" : null }
+
+    when: !(params.star) && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+    file(gtf) from ch_gtf
+
+    output:
+    file("STAR") into star_built
+
+    script:
+    """
+    STAR \\
+        --runMode genomeGenerate \\
+        --runThreadN ${task.cpus} \\
+        --sjdbOverhang ${params.sjdbOverhang} \\
+        --sjdbGTFfile $gtf \\
+        --genomeDir STAR/ \\
+        --genomeFastaFiles $fasta
+    """
+}
+
+// STAR pass the directory, files do not need to be in scratch dir. call as value
+ch_star = params.star ? Channel.value(file(params.star)) : star_built
+
+process BOWTIE_INDEX {
+    tag "${fasta}"
+
+    publishDir params.outDir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
 
-ch_bwa.view()
+    when: !(params.bowtie) && params.fasta && 'mapsplice' in tool && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file ("${fasta.baseName}.*") into bowtie_built
+
+    script:
+    """
+    bowtie-build \\
+        --threads ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
+
+process BOWTIE2_INDEX {
+    tag "${fasta}"
+
+    publishDir params.outDir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
+
+
+    when: !(params.bowtie2) && params.fasta && 'find_circ' in tool && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file ("${fasta.baseName}.*") into bowtie2_built
+
+    script:
+    """
+    bowtie2-build \\
+        --threads ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
 
 
 /*
