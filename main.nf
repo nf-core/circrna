@@ -294,9 +294,23 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 
 println(params.bwa)
 
-ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null 
+ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
 
-ch_bwa.view()
+process test_bwa{
+
+    echo true
+
+    input:
+    file(bwa) from ch_bwa
+
+    output:
+    stdout to outd
+
+    script:
+    """
+    ls -la
+    """
+}
 
 /*
 ================================================================================
