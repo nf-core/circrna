@@ -358,7 +358,7 @@ process HISAT2_INDEX {
 
     output:
     file("${fasta.baseName}.*.ht2") into hisat_built
-    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index/") into hisat_path
+    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
 
     script:
     """
