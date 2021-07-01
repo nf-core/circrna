@@ -152,7 +152,7 @@
                     "help_text": "If left empty, the parameter `--genome` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested.",
                     "pattern": "\\.gtf$"
                 },
-                "gene_annotation": {
+                "gene": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
@@ -164,47 +164,47 @@
                     "description": "Directory / URL base for iGenomes references.",
                     "default": "s3://ngi-igenomes/igenomes",
                     "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
+                    "hidden": false
                 },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
                     "fa_icon": "fas fa-ban",
-                    "hidden": true,
+                    "hidden": false,
                     "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
                 },
-                "fasta_fai": {
+                "samtools": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to SAMtools index file.",
                     "help_text": "Automatically generated if left set to null. \n\nWhen re-running the pipeline, provide the absolute path to the SAMtools index file e.g:\n\n```bash\n--fasta_fai '/data/results/circrna_discovery/index/GRCh38.fa.fai'\n```",
                     "pattern": "/.fai$"
                 },
-                "bowtie_index": {
+                "bowtie": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie index files.",
                     "help_text": "Automatically generated if set to null.\n\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory e.g:\n\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
                 },
-                "bowtie2_index": {
+                "bowtie2": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to Bowtie2 index files.",
                     "help_text": "Automatically generated if left empty. \n\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory e.g:\n\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
                 },
-                "bwa_index": {
+                "bwa": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to BWA index directory.",
                     "help_text": "Automatically generated if left empty.\n\nWhen re-running the pipeline, provide the absolute path to BWA indices directory e.g:\n\n```bash\n--bwa_index \"/data/results/circrna_discovery/index/bwa\"\n```"
                 },
-                "hisat2_index": {
+                "hisat2": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to HISAT2 index directory.",
                     "help_text": "Automatically generated if left empty. \n\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory e.g:\n\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
                 },
-                "star_index": {
+                "star": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to STAR index directory.",

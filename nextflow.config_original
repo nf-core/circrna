@@ -28,10 +28,10 @@ params {
   mfe = -20.00
 
   // Reference files
-  genome = 'Sbi1'
+  genome = 'GRCh38'
   fasta = null
   gtf = null
-  gene = null
+  gene_annotation = null
 
   // Genome indices
   samtools = null
