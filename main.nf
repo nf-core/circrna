@@ -540,12 +540,12 @@ process CIRIQUANT_YML{
     index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
+    bwa_path = bwa.toRealPath()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
     STRINGTIE=`whereis stringtie | cut -f2 -d':'`
     SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
-    bwa_path=`realpath $bwa`
 
     touch travis.yml
     printf "name: ciriquant\n\
@@ -555,8 +555,8 @@ process CIRIQUANT_YML{
      stringtie: \$STRINGTIE\n\
      samtools: \$SAMTOOLS\n\n\
     reference:\n\
-     fasta: $fasta\n\
-     gtf: $gtf\n\
+     fasta: ${fasta_path}\n\
+     gtf: ${gtf_path}\n\
      bwa_index: ${bwa_path}/${index_prefix}\n\
      hisat_index: ${hisat}/${index_prefix}" >> travis.yml
     """
