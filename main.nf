@@ -546,8 +546,8 @@ process CIRIQUANT_YML{
     index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
-    bwa_path = bwa.first().getAbsolutePath()
-    hisat_path = hisat.first().getAbsolutePath()
+    bwa_path = bwa.first().toAbsolutePath()
+    hisat_path = hisat.first().toAbsolutePath()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
