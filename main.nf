@@ -322,7 +322,9 @@ process BuildBWAindexes {
 }
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
-ch_bwa = params.bwa ? Channel.fromPath(params.bwa).collect() : params.genome ? Channel.value(file(params.bwa)) : bwa_built
+// igenomes first, stage files. then user supplied path, finally 'built' if none supplied. 
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath(params.bwa).collect() : bwa_built
+
 
 ch_bwa.view()
 
