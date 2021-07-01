@@ -335,7 +335,7 @@ ch_bwa.view()
 
 // Check integer
 def isValidInteger(value){
-    value instanceof Integergenome ? Channel.value(file(params.bwa)) : params.bwa
+    value instanceof Integer
 }
 
 // Check parameter existence
