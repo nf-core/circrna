@@ -492,8 +492,8 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 
 // only need to pass a path to mapsplice, find_circ (not collect files)
 
-process MAKE_CHROMOSOMES{
-    tag "{fasta}"
+process SPLIT_CHROMOSOMES{
+    tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/chromosomes/${it}" : null }
 
@@ -504,12 +504,12 @@ process MAKE_CHROMOSOMES{
     file(fasta) from ch_fasta
 
     output:
-    //path("*.fa", includeInputs:true) into split_fasta
+    path("*.fa", includeInputs:true) into publish_chromosomes
     val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into chromosomes_dir
 
     shell:
     '''
-    ## Add catch for test data (uses only 1 chr, no action needed)
+    ## Add catch for test datasets (uses only 1 chr, no action needed -> includeInputs:true)
     n_chr=$(grep '>' !{fasta} | wc -l)
 
     if [[ $n_chr -gt 1 ]];
@@ -525,6 +525,47 @@ process MAKE_CHROMOSOMES{
 // wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 ch_chromosomes.view()
+
+process CIRIQUANT_YML{
+    tag "Making CIRIquant .yml file"
+    publishDir params.outdir, mode: params.publish_dir_mode
+
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
+
+    input:
+    file(gtf) from ch_gtf
+    file(fasta) from ch_fasta
+    val(bwa_path) from ch_bwa
+    val(hisat2_path) from ch_hisat
+
+    output:
+    file("travis.yml") into ch_ciriquant_yml
+
+    script:
+    index_prefix = fasta.toString() - ~/.(fa|fasta)$/
+    fasta_path = fasta.toRealPath()
+    gtf_path = gtf.toRealPath()
+    """
+    BWA=`whereis bwa | cut -f2 -d':'`
+    HISAT2=`whereis hisat2 | cut -f2 -d':'`
+    STRINGTIE=`whereis stringtie | cut -f2 -d':'`
+    SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
+
+    touch travis.yml
+    printf "name: ciriquant\n\
+    tools:\n\
+     bwa: \$BWA\n\
+     hisat2: \$HISAT2\n\
+     stringtie: \$STRINGTIE\n\
+     samtools: \$SAMTOOLS\n\n\
+    reference:\n\
+     fasta: ${fasta_path}\n\
+     gtf: ${gtf_path}\n\
+     bwa_index: ${bwa_path}/${index_prefix}\n\
+     hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
+    """
+}
 
 /*
 ================================================================================
