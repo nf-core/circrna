@@ -545,7 +545,7 @@ process CIRIQUANT_YML{
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
     STRINGTIE=`whereis stringtie | cut -f2 -d':'`
     SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
-    bwa_path=$(realpath $bwa)
+    bwa_path=`realpath $bwa`
 
     touch travis.yml
     printf "name: ciriquant\n\
