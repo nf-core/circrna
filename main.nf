@@ -47,10 +47,8 @@ if (params.validate_params) {
 }
 
 // Check if genome exists in the config file
-if (params.genomes && !params.genomes.containsKey(params.genome) && !params.igenomes_ignore) {
-    exit 1, "The provided genome '${params.genome}' is not available in the iGenomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
-} else if (params.genomes && !params.genomes.containsKey(params.genome) && params.igenomes_ignore) {
-    exit 1, "The provided genome '${params.genome}' is not available in the genomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
+if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)){
+    exit 1, "The provided genome '${params.genome}' is not available in the iGenomes file. Currently the available genomes are ${params.genomes.keySet().join(', ')}"
 }
 
 // Check Tools selected
@@ -201,7 +199,7 @@ if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
 if(params.bowtie)    summary['Bowtie indices']    = params.bowtie
 if(params.bowtie2)   summary['Bowtie2 indices']   = params.bowtie2
 if(params.bwa)       summary['BWA indices']       = params.bwa
-if(params.samtools)       summary['SAMtools index']    = params.samtools
+if(params.fasta_fai)       summary['SAMtoolsindex']    = params.fasta_fai
 if(params.hisat2)    summary['HISAT2 indices']    = params.hisat2
 if(params.star)      summary ['STAR indices']     = params.star
 
@@ -284,9 +282,17 @@ checkHostname()
 */
 
 // smarna + sarek do not have params.fasta as an option in the config file
-// therefore, can not be set to null 
+// therefore, can not be set to null
+
+// If --fasta provided, command line is first priority
 params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
-println(params.fasta)
+params.gtf   = params.genome ? params.genomes[params.genome].gtf   ?: false : false
+params.bwa   = params.genome ? params.genomes[params.genome].bwa   ?: false : false
+params.star  = params.genome ? params.genomes[params.genome].star  ?: false : false
+params.bowtie2 = params.genome ? params.genomes[params.genome].bowtie2 ?: false : false
+params.mature = params.genome ? params.genomes[params.genome].mature ?: false : false
+
+println(params.bwa)
 
 /*
 ================================================================================
