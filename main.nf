@@ -522,11 +522,11 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-if(params.skip_trim == false){
-    ch_multiqc_report = multiqc_trim_out
-}else{
-    ch_multiqc_report = multiqc_raw_out
-}
+//if(params.skip_trim == false){
+//    ch_multiqc_report = multiqc_trim_out
+//}else{
+//    ch_multiqc_report = multiqc_raw_out
+//}
 
 // Completion e-mail notification
 workflow.onComplete {
@@ -565,12 +565,12 @@ workflow.onComplete {
         if (workflow.success) {
             mqc_report = ch_multiqc_report.getVal()
             if (mqc_report.getClass() == ArrayList) {
-                log.warn "[nf-core/chipseq] Found multiple reports from process 'multiqc', will use only one"
+                log.warn "[nf-core/circrna] Found multiple reports from process 'multiqc', will use only one"
                 mqc_report = mqc_report[0]
             }
         }
     } catch (all) {
-        log.warn "[nf-core/chipseq] Could not attach MultiQC report to summary email"
+        log.warn "[nf-core/circrna] Could not attach MultiQC report to summary email"
     }
 
     // Check if we are only sending emails on failure
