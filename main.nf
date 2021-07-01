@@ -310,7 +310,7 @@ process BWA_INDEX {
 
     output:
     file("${fasta}.*") into bwa_built
-    val("${launchDir}/${params.outdir}/reference_genome/BWAIndex/") into bwa_path
+    file("${launchDir}/${params.outdir}/reference_genome/BWAIndex/") into bwa_path
 
     script:
     """
@@ -359,7 +359,7 @@ process HISAT2_INDEX {
 
     output:
     file("${fasta.baseName}.*.ht2") into hisat_built
-    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
+    file("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
 
     script:
     """
@@ -371,7 +371,6 @@ process HISAT2_INDEX {
 }
 
 ch_hisat = params.hisat ? Channel.value(file(params.hisat)) : hisat_path
-//ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
 
 process STAR_INDEX {
     tag "${fasta}"
@@ -532,7 +531,7 @@ process CIRIQUANT_YML{
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
     file(bwa) from ch_bwa
-    val(hisat) from ch_hisat
+    file(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
@@ -542,6 +541,7 @@ process CIRIQUANT_YML{
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
+    hisat_path = hisat.toRealPath()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
