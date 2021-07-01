@@ -282,7 +282,7 @@ checkHostname()
 */
 
 // smarna + sarek do not have params.fasta as an option in the config file
-// therefore, can not be set to null
+// therefore, can not be set to null. Do this for all igenomes subcategories!
 
 // If --fasta provided, command line is first priority
 params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
