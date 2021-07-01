@@ -281,32 +281,29 @@ checkHostname()
 ================================================================================
 */
 
-// smarna + sarek do not have params.fasta as an option in the config file
-// therefore, can not be set to null. Do this for all igenomes subcategories!
-
-// If --fasta provided, command line is first priority
-params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
+// below is overridden by cmdline vars.
+params.fasta     = params.genome ? params.genomes[params.genome].fasta     ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
-params.gtf   = params.genome ? params.genomes[params.genome].gtf   ?: false : false
-params.bwa   = params.genome ? params.genomes[params.genome].bwa   ?: false : false
-params.star  = params.genome ? params.genomes[params.genome].star  ?: false : false
-params.bowtie = params.genome ? params.genomes[params.genome].bowtie ?: false : false
-params.bowtie2 = params.genome ? params.genomes[params.genome].bowtie2 ?: false : false
-params.mature = params.genome ? params.genomes[params.genome].mature ?: false : false
+params.gtf       = params.genome ? params.genomes[params.genome].gtf       ?: false : false
+params.bwa       = params.genome ? params.genomes[params.genome].bwa       ?: false : false
+params.star      = params.genome ? params.genomes[params.genome].star      ?: false : false
+params.bowtie    = params.genome ? params.genomes[params.genome].bowtie    ?: false : false
+params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: false : false
+params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
 
-// the rest come in a directory, must grab the files out of the dir.
-//ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
-
+// stage files.
+// index directories stages below corresponding process. 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
 
 process BWA_INDEX {
     tag "${fasta}"
-
+    label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/BWAIndex/${it}" : null }
 
-    when: !(params.bwa) && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
+    when:
+    !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -316,9 +313,7 @@ process BWA_INDEX {
 
     script:
     """
-    bwa index \\
-        -a bwtsw \\
-        ${fasta}
+    bwa index -a bwtsw ${fasta}
     """
 }
 
@@ -328,11 +323,11 @@ ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
-
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/SAMtoolsIndex/${it}" : null }
 
-    when: !(params.fasta_fai) && params.fasta
+    when:
+    !params.fasta_fai && params.fasta
 
     input:
     file(fasta) from ch_fasta
@@ -350,11 +345,12 @@ ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
 
 process HISAT2_INDEX {
     tag "${fasta}"
-
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
        saveAs: {params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
-    when: !(params.hisat) && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
+    when:
+    !params.hisat && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
 
     input:
     file(fasta) from ch_fasta
@@ -375,11 +371,12 @@ ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: tr
 
 process STAR_INDEX {
     tag "${fasta}"
-
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/STARIndex/${it}" : null }
 
-    when: !(params.star) && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    when:
+    !params.star && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -405,12 +402,12 @@ ch_star = params.star ? Channel.value(file(params.star)) : star_built
 
 process BOWTIE_INDEX {
     tag "${fasta}"
-
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
-
-    when: !(params.bowtie) && params.fasta && 'mapsplice' in tool && 'circrna_discovery' in module
+    when:
+    !params.bowtie && params.fasta && 'mapsplice' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -431,12 +428,12 @@ ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists:
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
-
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
-
-    when: !(params.bowtie2) && params.fasta && 'find_circ' in tool && 'circrna_discovery' in module
+    when:
+    !params.bowtie2 && params.fasta && 'find_circ' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
