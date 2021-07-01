@@ -290,7 +290,9 @@ params.star      = params.genome ? params.genomes[params.genome].star      ?: fa
 params.bowtie    = params.genome ? params.genomes[params.genome].bowtie    ?: false : false
 params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: false : false
 params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
-
+println(params.bwa)
+foo = params.bwa.getParent()
+println(foo)
 // stage files.
 // index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
@@ -320,7 +322,7 @@ process BWA_INDEX {
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
 // igenomes first, stage files. then user supplied path, finally 'built' if none supplied.
 // WE ONLY NEED THE PATH OF THE BWA INDEX FOR CIRIQUANT - iGENOMES fucks us here
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).collect().ifEmpty{ exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"} : bwa_built
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).ifEmpty{ exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"} : bwa_built
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
@@ -369,7 +371,6 @@ process HISAT2_INDEX {
 }
 
 ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
-ch_hisat.view()
 
 process STAR_INDEX {
     tag "${fasta}"
@@ -426,7 +427,7 @@ process BOWTIE_INDEX {
     """
 }
 
-ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
+ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
@@ -452,7 +453,7 @@ process BOWTIE2_INDEX {
     """
 }
 
-ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
+ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
 
 process SEGEMEHL_INDEX{
     tag "${fasta}"
