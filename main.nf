@@ -284,7 +284,6 @@ checkHostname()
 // below is overridden by cmdline vars.
 params.fasta     = params.genome ? params.genomes[params.genome].fasta     ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
-params.chromosomes = params.genome ? params.genomes[params.genome].chromosome ?: false : false
 params.gtf       = params.genome ? params.genomes[params.genome].gtf       ?: false : false
 params.bwa       = params.genome ? params.genomes[params.genome].bwa       ?: false : false
 params.star      = params.genome ? params.genomes[params.genome].star      ?: false : false
@@ -493,19 +492,19 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 
 // only need to pass a path to mapsplice, find_circ (not collect files)
 
-process split_fasta{
+process MAKE_CHROMOSOMES{
     tag "{fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/chromosomes/${it}" : null }
 
     when:
-    !params.chromosomes && params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
+    params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
 
     output:
-    path("*.fa", includeInputs:true) into split_fasta
+    //path("*.fa", includeInputs:true) into split_fasta
     val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into chromosomes_dir
 
     shell:
@@ -525,25 +524,7 @@ process split_fasta{
 
 // wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
-
-// test it
-
-process test{
-
-echo true
-
-input:
-val(chromosomes) from ch_chromosomes
-
-output:
-stdout to out
-
-script:
-"""
-echo $chromosomes
-ls -la $chromosomes
-"""
-}
+ch_chromosomes.view()
 
 /*
 ================================================================================
