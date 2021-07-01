@@ -314,7 +314,7 @@ process BWA_INDEX {
     script:
     """
     mkdir -p BWAIndex
-    bwa index -a bwtsw BWAIndex/${fasta}
+    bwa index $fasta -p BWAIndex/${fasta.baseName}
     """
 }
 
@@ -529,7 +529,7 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    // bwa, forced to put into directory and treat as file (so iGenomes downloads). 
+    // bwa, forced to put into directory and treat as file (so iGenomes downloads).
     file(bwa) from ch_bwa
     // hisat generated or passed via cmdline, val is appropriate
     val(hisat) from ch_hisat
