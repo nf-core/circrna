@@ -524,7 +524,7 @@ process SPLIT_CHROMOSOMES{
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 ch_chromosomes.view()
 
-// collect() indices here, want them to be in the same directory and not scattered over mutliple in work/. 
+// collect() indices here, want them to be in the same directory and not scattered over mutliple in work/.
 // this is slightly annoying, ciriquant
 
 process CIRIQUANT_YML{
@@ -547,8 +547,8 @@ process CIRIQUANT_YML{
     index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
-    bwa_path = bwa.first().toAbsolutePath()
-    hisat_path = hisat.first().toAbsolutePath()
+    bwa_path = bwa.toString().getParent()
+    hisat_path = hisat.toString().getParent()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
