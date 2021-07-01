@@ -286,6 +286,7 @@ checkHostname()
 
 // If --fasta provided, command line is first priority
 params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
+params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
 params.gtf   = params.genome ? params.genomes[params.genome].gtf   ?: false : false
 params.bwa   = params.genome ? params.genomes[params.genome].bwa   ?: false : false
 params.star  = params.genome ? params.genomes[params.genome].star  ?: false : false
@@ -295,8 +296,14 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 
 println(params.bwa)
 
-// bwa different, each file in channel. i.e not a directory
-ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
+// bwa from igenomes -> files
+// bwa user supplied -> path.
+// must be able to handle each case.
+if(!params.genome){
+  ch_bwa = Channel.fromPath("${params.bwa}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"}
+} else {
+  ch_bwa = Channel.value(file(params.bwa))
+}
 // the rest come in a directory, must grab the files out of the dir.
 ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
 
