@@ -351,7 +351,7 @@ ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
 process HISAT2_INDEX {
     tag "${fasta}"
 
-    publishDir params.outDir, mode: params.publish_dir_mode,
+    publishDir params.outdir, mode: params.publish_dir_mode,
        saveAs: {params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
     when: !(params.hisat) && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
@@ -376,7 +376,7 @@ ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: tr
 process STAR_INDEX {
     tag "${fasta}"
 
-    publishDir params.outDir, mode: params.publish_dir_mode,
+    publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/STARIndex/${it}" : null }
 
     when: !(params.star) && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
@@ -406,7 +406,7 @@ ch_star = params.star ? Channel.value(file(params.star)) : star_built
 process BOWTIE_INDEX {
     tag "${fasta}"
 
-    publishDir params.outDir, mode: params.publish_dir_mode,
+    publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
 
@@ -432,7 +432,7 @@ ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists:
 process BOWTIE2_INDEX {
     tag "${fasta}"
 
-    publishDir params.outDir, mode: params.publish_dir_mode,
+    publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: {params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
 
