@@ -579,7 +579,7 @@ def defineToolList() {
         'circrna_finder',
         'dcc',
         'mapsplice',
-        'uroborus'
+        'segemehl'
         ]
 }
 
