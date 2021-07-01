@@ -289,12 +289,14 @@ params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : fa
 params.gtf   = params.genome ? params.genomes[params.genome].gtf   ?: false : false
 params.bwa   = params.genome ? params.genomes[params.genome].bwa   ?: false : false
 params.star  = params.genome ? params.genomes[params.genome].star  ?: false : false
+params.bowtie = params.genome ? params.genomes[params.genome].bowtie ?: false : false
 params.bowtie2 = params.genome ? params.genomes[params.genome].bowtie2 ?: false : false
 params.mature = params.genome ? params.genomes[params.genome].mature ?: false : false
 
 println(params.bwa)
 
 ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
+ch_bowtie = params.bowtie ? Channel.value(file(params.bowtie)) : null
 
 process test_bwa{
 
@@ -302,6 +304,22 @@ process test_bwa{
 
     input:
     file(bwa) from ch_bwa
+
+    output:
+    stdout to outd
+
+    script:
+    """
+    ls -la
+    """
+}
+
+process test_bowtie{
+
+    echo true
+
+    input:
+    file(bowtie) from ch_bowtie
 
     output:
     stdout to outd
