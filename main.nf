@@ -319,7 +319,7 @@ process test_bowtie{
     echo true
 
     input:
-    file(bowtie) from ch_bowtie
+    file(bowtie) from ch_bowtie.collect()
 
     output:
     stdout to outb
