@@ -290,9 +290,7 @@ params.star      = params.genome ? params.genomes[params.genome].star      ?: fa
 params.bowtie    = params.genome ? params.genomes[params.genome].bowtie    ?: false : false
 params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: false : false
 params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
-println(params.bwa)
-foo = params.bwa.getParent()
-println(foo)
+
 // stage files.
 // index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
@@ -312,6 +310,7 @@ process BWA_INDEX {
 
     output:
     file("${fasta}.*") into bwa_built
+    val("${launchDir}/${params.outdir}/reference_genome/BWAIndex/") into bwa_path
 
     script:
     """
@@ -320,9 +319,8 @@ process BWA_INDEX {
 }
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
-// igenomes first, stage files. then user supplied path, finally 'built' if none supplied.
-// WE ONLY NEED THE PATH OF THE BWA INDEX FOR CIRIQUANT - iGENOMES fucks us here
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.fromPath("${params.bwa}*", checkIfExists: true).ifEmpty{ exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"} : bwa_built
+// We only need the path to the directry here, no need to collect files.
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_path
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
@@ -344,7 +342,7 @@ process SAMTOOLS_INDEX {
     """
 }
 
-ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
+ch_fai = params.genome ? Channel.value(file(params.fasta_fai)) : params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
 
 process HISAT2_INDEX {
     tag "${fasta}"
@@ -360,6 +358,7 @@ process HISAT2_INDEX {
 
     output:
     file("${fasta.baseName}.*.ht2") into hisat_built
+    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index/") into hisat_path
 
     script:
     """
@@ -370,7 +369,8 @@ process HISAT2_INDEX {
     """
 }
 
-ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
+ch_hisat = params.hisat ? Channel.value(file(params.hisat)) : hisat_path
+//ch_hisat = params.hisat ? Channel.fromPath("${params.hisat}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Hisat2 index directory not found: ${params.hisat}"} : hisat_built
 
 process STAR_INDEX {
     tag "${fasta}"
@@ -401,7 +401,7 @@ process STAR_INDEX {
 }
 
 // STAR pass the directory
-ch_star = params.star ? Channel.value(file(params.star)) : star_built
+ch_star = params.genome ? Channel.value(file(params.star)) : params.star ? Channel.value(file(params.star)) : star_built
 
 process BOWTIE_INDEX {
     tag "${fasta}"
@@ -427,7 +427,8 @@ process BOWTIE_INDEX {
     """
 }
 
-ch_bowtie = params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
+// need to use all files, use collect in processes.
+ch_bowtie = params.genome ? Channel.fromPath("${params.bowtie}*") : params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
@@ -453,7 +454,7 @@ process BOWTIE2_INDEX {
     """
 }
 
-ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
+ch_bowtie2 = params.genome ? Channel.fromPath("${params.bowtie2}*") : params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
 
 process SEGEMEHL_INDEX{
     tag "${fasta}"
@@ -517,11 +518,7 @@ process SPLIT_CHROMOSOMES{
     '''
 }
 
-// wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
-
-// collect() indices here, want them to be in the same directory and not scattered over mutliple in work/.
-// this is slightly annoying, ciriquant
 
 process CIRIQUANT_YML{
     tag "Making CIRIquant .yml file"
@@ -533,8 +530,8 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    file(bwa) from ch_bwa.collect()
-    file(hisat) from ch_hisat.collect()
+    val(bwa) from ch_bwa
+    val(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
@@ -543,8 +540,6 @@ process CIRIQUANT_YML{
     index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
-    bwa_path = bwa.toString().getParent()
-    hisat_path = hisat.toString().getParent()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
@@ -561,8 +556,8 @@ process CIRIQUANT_YML{
     reference:\n\
      fasta: ${fasta_path}\n\
      gtf: ${gtf_path}\n\
-     bwa_index: ${bwa_path}/${index_prefix}\n\
-     hisat_index: ${hisat_path}/${index_prefix}" >> travis.yml
+     bwa_index: ${bwa}/${index_prefix}\n\
+     hisat_index: ${hisat}/${index_prefix}" >> travis.yml
     """
 }
 
