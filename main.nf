@@ -283,7 +283,8 @@ checkHostname()
 ================================================================================
 */
 
-// not sure how the below captures command line too??!
+// smarna + sarek do not have params.fasta as an option in the config file
+// therefore, can not be set to null 
 params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
 println(params.fasta)
 
