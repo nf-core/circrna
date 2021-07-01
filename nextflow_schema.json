@@ -138,12 +138,8 @@
                 "genome": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "Genome version to use, options: 'GRCh37', 'GRCh38'",
-                    "help_text": "Required if `--fasta`, `--gtf`, `--gene_annotation` are set to null.",
-                    "enum": [
-                        "GRCh38",
-                        "GRCh37"
-                    ]
+                    "description": "iGenome version to use, options: 'GRCh37', 'GRCh38'",
+                    "help_text": "Required if `--fasta`, `--gtf`, `--gene_annotation` are set to null."
                 },
                 "gtf": {
                     "type": "string",
