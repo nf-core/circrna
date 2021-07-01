@@ -296,7 +296,7 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 println(params.bwa)
 
 ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
-ch_bowtie = params.bowtie ? Channel.value(file(params.bowtie)) : null
+ch_bowtie = params.bowtie ? Channel.from(params.bowtie).map{file(it)}.toList() : null
 
 process test_bwa{
 
