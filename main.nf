@@ -284,6 +284,7 @@ checkHostname()
 // below is overridden by cmdline vars.
 params.fasta     = params.genome ? params.genomes[params.genome].fasta     ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
+params.chromosomes = params.genome ? params.genomes[params.genome].chromosome ?: false : false
 params.gtf       = params.genome ? params.genomes[params.genome].gtf       ?: false : false
 params.bwa       = params.genome ? params.genomes[params.genome].bwa       ?: false : false
 params.star      = params.genome ? params.genomes[params.genome].star      ?: false : false
@@ -457,6 +458,73 @@ process BOWTIE2_INDEX {
 
 ch_bowtie2 = params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
 ch_bowtie2.view()
+
+process SEGEMEHL_INDEX{
+    tag "${fasta}"
+    //label 'proces_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
+
+    when:
+    'do_not_run_yet' in tool && params.fasta && 'segemehl' in tool
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file("${fasta.baseName}.idx") into segemehl_built
+
+    script:
+    """
+    segemehl.x \\
+        -t ${task.cpus} \\
+        -d $fasta \\
+        -x "${fasta.baseName}.idx"
+    """
+}
+
+ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_built
+
+/*
+================================================================================
+                           Misc circRNA Requirements
+================================================================================
+*/
+
+// only need to pass a path to mapsplice, find_circ (not collect files)
+
+process split_fasta{
+    tag "{fasta}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/chromosomes/${it}" : null }
+
+    when:
+    !params.chromosomes && params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    path("*.fa", includeInputs:true) into split_fasta
+    val("${launchDir}/${params.outdir}/circrna_discovery/reference/chromosomes") into chromosomes_dir
+
+    shell:
+    '''
+    ## Add catch for test data (uses only 1 chr, no action needed)
+    n_chr=$(grep '>' !{fasta} | wc -l)
+
+    if [[ $n_chr -gt 1 ]];
+    then
+      awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
+      rm !{fasta}
+    else
+      :
+    fi
+    '''
+}
+
+// wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
+ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
 /*
 ================================================================================
