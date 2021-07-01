@@ -506,7 +506,7 @@ process split_fasta{
 
     output:
     path("*.fa", includeInputs:true) into split_fasta
-    val("${launchDir}/${params.outdir}/circrna_discovery/reference/chromosomes") into chromosomes_dir
+    val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into chromosomes_dir
 
     shell:
     '''
