@@ -526,6 +526,25 @@ process split_fasta{
 // wonder will providing the igenomes directory work (i.e will it downlad it properly or just pass a URL)
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
+// test it
+
+process test{
+
+echo true
+
+input:
+val(chromosomes) from ch_chromosomes
+
+output:
+stdout to out
+
+script:
+"""
+echo $chromosomes
+ls -la $chromosomes
+"""
+}
+
 /*
 ================================================================================
                            Auxiliary functions
