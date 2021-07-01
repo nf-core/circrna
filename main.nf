@@ -536,8 +536,8 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    val(bwa_path) from ch_bwa
-    val(hisat2_path) from ch_hisat
+    file(bwa) from ch_bwa
+    file(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
@@ -546,6 +546,8 @@ process CIRIQUANT_YML{
     index_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
+    bwa_path = bwa.first().toRealPath()
+    hisat_path = hisat.first().toRealPath()
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
@@ -563,7 +565,7 @@ process CIRIQUANT_YML{
      fasta: ${fasta_path}\n\
      gtf: ${gtf_path}\n\
      bwa_index: ${bwa_path}/${index_prefix}\n\
-     hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
+     hisat_index: ${hisat_path}/${index_prefix}" >> travis.yml
     """
 }
 
