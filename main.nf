@@ -295,8 +295,12 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 
 println(params.bwa)
 
+// bwa different, each file in channel. i.e not a directory
 ch_bwa = params.bwa ? Channel.value(file(params.bwa)) : null
-ch_bowtie = params.bowtie ? Channel.from(params.bowtie).map{file(it)}.toList() : null
+// the rest come in a directory, must grab the files out of the dir.
+ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
+
+
 
 process test_bwa{
 
@@ -319,7 +323,7 @@ process test_bowtie{
     echo true
 
     input:
-    file(bowtie) from ch_bowtie.collect()
+    file(bowtie) from ch_bowtie
 
     output:
     stdout to outb
