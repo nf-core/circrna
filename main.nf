@@ -319,9 +319,9 @@ process BWA_INDEX {
 }
 
 // 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
-// We only need the path to the directory for ciriwquant.yml
-// logic for creating direcotry above == so it matches the other two possible inputs (igenomes, path) which give a DIR.
-// otherwise you get a situation where you are mixing val() and file() 
+// We only need the path to the directory for ciriquant.yml
+// logic for creating direcotry above == so it matches the other two possible inputs for bwa (igenomes, path) which give a DIR.
+// otherwise you get a situation where you are mixing val() and file()
 ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_built
 
 process SAMTOOLS_INDEX {
