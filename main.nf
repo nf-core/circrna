@@ -294,52 +294,38 @@ params.bowtie = params.genome ? params.genomes[params.genome].bowtie ?: false : 
 params.bowtie2 = params.genome ? params.genomes[params.genome].bowtie2 ?: false : false
 params.mature = params.genome ? params.genomes[params.genome].mature ?: false : false
 
-println(params.bwa)
-
-// bwa from igenomes -> files
-// bwa user supplied -> path.
-// must be able to handle each case.
-if(!params.genome){
-  ch_bwa = Channel.fromPath("${params.bwa}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: BWA index directory not found: ${params.bwa}"}
-} else {
-  ch_bwa = Channel.value(file(params.bwa))
-}
 // the rest come in a directory, must grab the files out of the dir.
-ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
+//ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
 
+ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 
+process BuildBWAindexes {
+    tag "${fasta}"
 
-process test_bwa{
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/BWAIndex/${it}" : null }
 
-    echo true
+    when: !(params.bwa) && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
-    file(bwa) from ch_bwa
+    file(fasta) from ch_fasta
 
     output:
-    stdout to outd
+    file("${fasta}.*") into bwa_built
 
     script:
     """
-    ls -la
+    bwa index \\
+        -a bwtsw \\
+        ${fasta}
     """
 }
 
-process test_bowtie{
+// 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
+ch_bwa = params.bwa ? Channel.fromPath(params.bwa).collect() : params.genome ? Channel.value(file(params.bwa)) : bwa_built
 
-    echo true
+ch_bwa.view()
 
-    input:
-    file(bowtie) from ch_bowtie
-
-    output:
-    stdout to outb
-
-    script:
-    """
-    ls -la
-    """
-}
 
 /*
 ================================================================================
@@ -349,7 +335,7 @@ process test_bowtie{
 
 // Check integer
 def isValidInteger(value){
-    value instanceof Integer
+    value instanceof Integergenome ? Channel.value(file(params.bwa)) : params.bwa
 }
 
 // Check parameter existence
