@@ -200,6 +200,13 @@
                     "description": "Path to HISAT2 index directory.",
                     "help_text": "Automatically generated if left empty. \n\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory e.g:\n\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
                 },
+                "save_reference": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Save generated reference genome files to results.",
+                    "help_text": "Saving generated references means that you can use them for future pipeline runs, reducing processing times.",
+                    "fa_icon": "fas fa-save"
+                },
                 "star": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
