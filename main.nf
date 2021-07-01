@@ -531,7 +531,7 @@ process CIRIQUANT_YML{
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
     file(bwa) from ch_bwa
-    file(hisat) from ch_hisat
+    val(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
@@ -545,6 +545,7 @@ process CIRIQUANT_YML{
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
     STRINGTIE=`whereis stringtie | cut -f2 -d':'`
     SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
+    bwa_path=$(realpath $bwa)
 
     touch travis.yml
     printf "name: ciriquant\n\
@@ -554,9 +555,9 @@ process CIRIQUANT_YML{
      stringtie: \$STRINGTIE\n\
      samtools: \$SAMTOOLS\n\n\
     reference:\n\
-     fasta: ${fasta_path}\n\
-     gtf: ${gtf_path}\n\
-     bwa_index: ${bwa}/${index_prefix}\n\
+     fasta: $fasta\n\
+     gtf: $gtf\n\
+     bwa_index: ${bwa_path}/${index_prefix}\n\
      hisat_index: ${hisat}/${index_prefix}" >> travis.yml
     """
 }
