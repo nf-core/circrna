@@ -284,7 +284,7 @@ checkHostname()
 */
 
 // not sure how the below captures command line too??!
-params.fasta = params.genome ? params.genomes[params.genome].fasta ?: null : null
+params.fasta = params.genome ? params.genomes[params.genome].fasta ?: false : false
 println(params.fasta)
 
 /*
