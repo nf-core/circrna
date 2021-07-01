@@ -530,8 +530,8 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    val(bwa) from ch_bwa
-    val(hisat) from ch_hisat
+    file(bwa) from ch_bwa
+    file(hisat) from ch_hisat
 
     output:
     file("travis.yml") into ch_ciriquant_yml
