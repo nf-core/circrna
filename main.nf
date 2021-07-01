@@ -298,6 +298,7 @@ params.mature = params.genome ? params.genomes[params.genome].mature ?: false : 
 //ch_bowtie = Channel.fromPath("${params.bowtie}*", checkIfExists: true).collect().ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie1 index directory not found: ${params.bowtie}" }
 
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null 
 
 process BWA_INDEX {
     tag "${fasta}"
