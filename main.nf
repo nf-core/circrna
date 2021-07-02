@@ -7,8 +7,8 @@
 Started August 2020.
 Dev version to nf-core Feb 2021.
 
-This is a heavily commented revision of the DEV branch. The goal is to implement
-iGenomes reference files, test compatability with circRNA tools.
+This is a heavily commented revision of the DEV revision for reviewers.
+Comments will be kept on local fork, removed on nf-core fork when review passed.
 --------------------------------------------------------------------------------
  @Homepage
  https://github.com/nf-core/circrna
@@ -104,6 +104,7 @@ if(params.star){
 }
 
 // Check phenotype file and stage the channel
+// Primarily concernced about the column 'Condition' and no NA entries.
 
 if(params.phenotype){
    pheno_file = file(params.phenotype)
@@ -396,7 +397,7 @@ process STAR_INDEX {
         --runThreadN ${task.cpus} \\
         --sjdbOverhang ${params.sjdbOverhang} \\
         --sjdbGTFfile $gtf \\
-        --genomeDir STAR/ \\
+        --genomeDir STARIndex/ \\
         --genomeFastaFiles $fasta
     """
 }
@@ -464,7 +465,7 @@ process SEGEMEHL_INDEX{
         saveAs: {params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
 
     when:
-    'do_not_run_yet' in tool && params.fasta && 'segemehl' in tool
+    !params.segemehl && params.fasta && 'segemehl' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -522,7 +523,6 @@ process SPLIT_CHROMOSOMES{
 ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
 process CIRIQUANT_YML{
-    publishDir params.outdir, mode: params.publish_dir_mode
 
     when:
     'ciriquant' in tool && 'circrna_discovery' in module
@@ -530,9 +530,7 @@ process CIRIQUANT_YML{
     input:
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    // bwa, forced to put into directory and treat as file (so iGenomes downloads).
     file(bwa) from ch_bwa
-    // hisat generated or passed via cmdline, val is appropriate
     val(hisat) from ch_hisat
 
     output:
@@ -561,6 +559,27 @@ process CIRIQUANT_YML{
      gtf: ${gtf_path}\n\
      bwa_index: ${bwa_path}/${index_prefix}\n\
      hisat_index: ${hisat}/${index_prefix}" >> travis.yml
+    """
+}
+
+process GENE_ANNOTATION{
+    tag "${gtf}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
+
+    when:
+    !params.gene && params.gtf && 'circexlorer2' in tool && 'circrna_discovery' in module
+
+    input:
+    file(gtf) from ch_gtf
+
+    output:
+    file("${gtf.baseName}.txt") into ch_gene
+
+    script:
+    """
+    gtfToGenePred -genePredExt -geneNameAsName2 ${gtf} ${gtf.baseName}.genepred
+    perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
     """
 }
 
