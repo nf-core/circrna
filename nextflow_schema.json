@@ -647,12 +647,6 @@
             "$ref": "#/definitions/pipeline_options"
         },
         {
-            "$ref": "#/definitions/circrna_filtering"
-        },
-        {
-            "$ref": "#/definitions/mirna_filtering"
-        },
-        {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
