@@ -629,6 +629,7 @@ if(params.input_type == 'bam'){
 
 process FASTQC_RAW {
     tag "${base}"
+    label 'process_low'
     label 'py3'
 
     input:
@@ -639,7 +640,7 @@ process FASTQC_RAW {
 
     script:
     """
-    fastqc -q $fastq
+    fastqc -q $fastq --threads ${task.cpus}
     """
 }
 
@@ -704,6 +705,7 @@ if(params.trim_fastq){
 
    process FASTQC_BBDUK {
        tag "${base}"
+       label 'process_low'
        label 'py3'
 
        input:
@@ -714,7 +716,7 @@ if(params.trim_fastq){
 
        script:
        """
-       fastqc -q $fastq
+       fastqc -q $fastq --threads ${task.cpus}
        """
    }
 
