@@ -659,7 +659,7 @@ if(params.trim_fastq){
        tag "${base}"
        label 'process_medium'
        publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*fq.gz",
-           saveAs: { params.save_trimmed ? "quality_control/trimmed_reads/${it}" : null },
+           saveAs: { params.save_trimmed ? "quality_control/trimmed_reads/${it}" : null }
 
        input:
        tuple val(base), file(fastq) from trimming_reads
@@ -679,7 +679,7 @@ if(params.trim_fastq){
        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
        """
        bbduk.sh \\
-           -Xmx4g \\
+           -Xmx${task.memory.toGiga()}g \\
            threads=${task.cpus} \\
            in1=${fastq[0]} \\
            in2=${fastq[1]} \\
