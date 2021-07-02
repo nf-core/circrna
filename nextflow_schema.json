@@ -26,6 +26,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-dna",
                     "description": "Input data type, 'fastq' or 'bam'.",
+                    "help_text": "If the user wishes to save the converted raw FASTQ files, set `--save_bamtofastq true`",
                     "enum": [
                         "fastq",
                         "bam"
@@ -36,6 +37,13 @@
                     "description": "The output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "save_bamtofastq": {
+                    "type": "boolean",
+                    "description": "Save outputs from Picard SamToFastq conversion (i.e raw Fastq files).",
+                    "fa_icon": "fas fa-save",
+                    "default": false,
+                    "hidden": true
                 },
                 "phenotype": {
                     "type": "string",
@@ -49,9 +57,9 @@
         "pipeline_options": {
             "title": "Pipeline Options",
             "type": "object",
-            "fa-icon": "fas fa-cog",
-            "description": "Mandatory options for nf-core/circrna deployment",
-            "help_text": "Documentation for selecting circRNA quantification tools and analysis modules.",
+            "fa_icon": "fas fa-terminal",
+            "description": "Options for circRNA, miRNA predictions",
+            "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
             "required": [
                 "module",
                 "tool"
@@ -71,20 +79,7 @@
                     "mandatory": "circrna_discovery",
                     "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n\n```bash\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n```",
                     "default": "circrna_discovery"
-                }
-            },
-            "fa_icon": "fas fa-terminal"
-        },
-        "circrna_filtering": {
-            "title": "circRNA filtering options",
-            "type": "object",
-            "fa-icon": "fas fa-filter",
-            "description": "Filtering options for circRNAs called by workflow.",
-            "required": [
-                "bsj_reads",
-                "tool_filter"
-            ],
-            "properties": {
+                },
                 "bsj_reads": {
                     "type": "integer",
                     "fa_icon": "fas fa-circle-notch",
@@ -101,23 +96,18 @@
                     "default": 2,
                     "minimum": 0,
                     "maximum": 6
-                }
-            },
-            "fa_icon": "fas fa-filter"
-        },
-        "mirna_filtering": {
-            "title": "miRNA filtering options",
-            "type": "object",
-            "fa-icon": "fas fa-filter",
-            "description": "Filtering options for miRNAs called by workflow.",
-            "properties": {
-                "mfe": {
-                    "type": "number",
-                    "fa_icon": "fas fa-bolt",
-                    "description": "Minimum free energy required for miRNAs",
-                    "help_text": "Filter miRNAs using the minimum free energy as calculated by ViennaRNA. Please note values are always negative.",
-                    "default": -20,
-                    "maximum": 0
+                },
+                "save_quantification_intermediates" :{
+                  "type": "boolean",
+                  "fa_icon": "fas fa-save",
+                  "description": "Save raw outputs from circRNA quantification?",
+                  "default": true
+                },
+                "save_mirna_predictions": {
+                  "type": "boolean",
+                  "fa_icon": "fas fa-save",
+                  "description": "Save raw miRanda, TargetScan prediction outputs?",
+                  "default": true
                 }
             }
         },
@@ -138,8 +128,8 @@
                 "genome": {
                     "type": "string",
                     "fa_icon": "fas fa-clone",
-                    "description": "iGenome version to use, options: 'GRCh37', 'GRCh38'",
-                    "help_text": "Required if `--fasta`, `--gtf`, `--gene_annotation` are set to null."
+                    "description": "iGenome version to use.",
+                    "help_text": "Required if `--fasta`, `--gtf`, `--gene` are set to null."
                 },
                 "gtf": {
                     "type": "string",
@@ -152,7 +142,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
                     "description": "Path to custom annotation text file.",
-                    "help_text": "If left empty, the parameter --genome must be supplied and the customised annotation text file will be automatically generated.\n\n```bash\n--gene_annotation \"/reference/GRCh38.txt\"\n```\n\n> NB: The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for CIRCexplorer2 [compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to leave the parameter null unless re-running the pipeline.",
+                    "help_text": "If left empty, the parameter --genome must be supplied and the customised annotation text file will be automatically generated.\n\n```bash\n--gene \"/reference/GRCh38.txt\"\n```\n\n> NB: The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for CIRCexplorer2 [compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to leave the parameter null unless re-running the pipeline.",
                     "pattern": "\\.txt$"
                 },
                 "igenomes_base": {
@@ -207,6 +197,11 @@
                     "help_text": "Saving generated references means that you can use them for future pipeline runs, reducing processing times.",
                     "fa_icon": "fas fa-save"
                 },
+                "segemehl":{
+                    "type": "string",
+                    "fa_icon": "fa-address-book",
+                    "description": "Path to Segemehl Index file"
+                },
                 "star": {
                     "type": "string",
                     "fa_icon": "fas fa-address-book",
@@ -220,13 +215,14 @@
             "type": "object",
             "fa_icon": "fas fa-cut",
             "description": "Parameters for BBDUK",
-            "help_text": "BBDUK read filtering is deployed when `--skip_trim false`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+            "help_text": "BBDUK read filtering is deployed when `--trim_fastq true`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
             "properties": {
-                "skip_trim": {
+                "trim_fastq": {
                     "type": "boolean",
                     "fa_icon": "fas fa-fast-forward",
-                    "description": "Skip BBDUK?",
-                    "help_text": "If set to false, the BBDUK process is executed. If true, the BBDUK process is skipped and raw reads will be supplied to circRNA quantification tools."
+                    "description": "Trim Fastq?",
+                    "help_text": "If set to true, the BBDUK process is executed. If false, the BBDUK process is skipped and raw reads will be supplied to circRNA quantification tools.",
+                    "default": false
                 },
                 "adapters": {
                     "type": "string",
@@ -287,6 +283,12 @@
                     "fa_icon": "fas fa-ruler-horizontal",
                     "description": "Remove reads below length *n*",
                     "default": 30
+                },
+                "save_trimmed":{
+                    "type": "boolean",
+                    "fa_icon": "fas fa-save",
+                    "description": "Save trimmed FASTQ files?",
+                    "default": false
                 }
             }
         },

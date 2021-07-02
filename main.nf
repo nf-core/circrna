@@ -117,7 +117,7 @@ if(params.phenotype){
 // Check BBDUK params
 
 // Check adapters
-if(!params.skip_trim){
+if(params.trim_fastq){
    if(params.adapters){
       adapters = file(params.adapters, checkIfExists: true)
       // Check all adapter trimming flags are provided
@@ -144,7 +144,7 @@ if(tools_selected > 1 && params.tool_filter > tools_selected){
 if(has_extension(params.input, "csv")){
 
    csv_file = file(params.input, checkIfExists: true)
-   ch_input_sample = extract_data(csv_file)
+   ch_input = extract_data(csv_file)
 
 }else if(params.input && !has_extension(params.input, "csv")){
 
@@ -154,7 +154,7 @@ if(has_extension(params.input, "csv")){
    log.info "Reading input data from path: ${params.input}\n"
    log.info ""
 
-   ch_input_sample = retrieve_input_paths(params.input, params.input_type)
+   ch_input = retrieve_input_paths(params.input, params.input_type)
 
 }
 
@@ -204,8 +204,8 @@ if(params.fasta_fai)       summary['SAMtoolsindex']    = params.fasta_fai
 if(params.hisat2)    summary['HISAT2 indices']    = params.hisat2
 if(params.star)      summary ['STAR indices']     = params.star
 
-summary['Skip BBDUK']     = params.skip_trim
-if(params.skip_trim == false){
+summary['Skip BBDUK']     = params.trim_fastq
+if(params.trim_fastq){
                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
@@ -305,7 +305,7 @@ process BWA_INDEX {
     tag "${fasta}"
     //label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
@@ -332,7 +332,7 @@ ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.
 process SAMTOOLS_INDEX {
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/SAMtoolsIndex/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     !params.fasta_fai && params.fasta
@@ -355,7 +355,7 @@ process HISAT2_INDEX {
     tag "${fasta}"
     //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-       saveAs: {params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
+       saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
     when:
     !params.hisat && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
@@ -382,7 +382,7 @@ process STAR_INDEX {
     tag "${fasta}"
     //label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     !params.star && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
@@ -413,7 +413,7 @@ process BOWTIE_INDEX {
     tag "${fasta}"
     //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
     when:
     !params.bowtie && params.fasta && 'mapsplice' in tool && 'circrna_discovery' in module
@@ -440,7 +440,7 @@ process BOWTIE2_INDEX {
     tag "${fasta}"
     //label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
     when:
     !params.bowtie2 && params.fasta && 'find_circ' in tool && 'circrna_discovery' in module
@@ -466,7 +466,7 @@ process SEGEMEHL_INDEX{
     tag "${fasta}"
     //label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
 
     when:
     !params.segemehl && params.fasta && 'segemehl' in tool && 'circrna_discovery' in module
@@ -497,7 +497,7 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 process SPLIT_CHROMOSOMES{
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/chromosomes/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/chromosomes/${it}" : null }
 
     when:
     params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
@@ -569,7 +569,7 @@ process CIRIQUANT_YML{
 process GENE_ANNOTATION{
     tag "${gtf}"
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {params.save_reference ? "reference_genome/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
     params.gtf && 'circexplorer2' in tool && 'circrna_discovery' in module
@@ -586,6 +586,148 @@ process GENE_ANNOTATION{
     perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
     """
 }
+
+/*
+================================================================================
+                          4. Process Input Data
+================================================================================
+*/
+
+if(params.input_type == 'bam'){
+
+   process BAM_TO_FQ{
+        tag "${base}"
+        label 'process_medium'
+        publishDir params.outdir, mode: params.publish_dir_mode,
+            saveAs: { params.save_bamtofastq ? "quality_control/BamToFastq/${it}" : null }
+
+        input:
+        tuple val(base), file(bam) from ch_input
+
+        output:
+        tuple val(base), file('*.fq.gz') into fastq_built
+
+        script:
+        """
+        picard \\
+            -Xmx${task.memory.toGiga()}g \\
+            SamToFastq \\
+            I=$bam \\
+            F=${base}_R1.fq.gz \\
+            F2=${base}_R2.fq.gz \\
+            VALIDATION_STRINGENCY=LENIENT
+        """
+   }
+
+   (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
+
+}else if(params.input_type == 'fastq'){
+
+   (fastqc_reads, trimming_reads, raw_reads) = ch_input.into(3)
+
+}
+
+process FASTQC_RAW {
+    tag "${base}"
+    label 'py3'
+
+    input:
+    tuple val(base), file(fastq) from fastqc_reads
+
+    output:
+    file("*.{html,zip}") into fastqc_raw
+
+    script:
+    """
+    fastqc -q $fastq
+    """
+}
+
+/*
+================================================================================
+                           5. Fastq Trimming
+================================================================================
+*/
+
+/*
+  STEP 5.1: BBDUK
+*/
+
+if(params.trim_fastq){
+
+   process BBDUK {
+       tag "${base}"
+       label 'process_medium'
+       publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*fq.gz",
+           saveAs: { params.save_trimmed ? "quality_control/trimmed_reads/${it}" : null },
+
+       input:
+       tuple val(base), file(fastq) from trimming_reads
+       path adapters from params.adapters
+
+       output:
+       tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+       file("*BBDUK.txt") into bbduk_stats_ch
+
+       script:
+       def adapter = params.adapters ? "ref=${params.adapters}" : ''
+       def k = params.k ? "k=${params.k}" : ''
+       def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
+       def hdist = params.hdist ? "hdist=${params.hdist}" : ''
+       def trimq = params.trimq ? "trimq=${params.trimq}" : ''
+       def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
+       def minlen = params.minlen ? "minlen=${params.minlen}" : ''
+       """
+       bbduk.sh \\
+           -Xmx4g \\
+           threads=${task.cpus} \\
+           in1=${fastq[0]} \\
+           in2=${fastq[1]} \\
+           out1=${base}_R1.trim.fq.gz \\
+           out2=${base}_R2.trim.fq.gz \\
+           $adapter \\
+           $k \\
+           $ktrim \\
+           $trimq \\
+           $qtrim \\
+           $minlen \\
+           stats=${base}_BBDUK.txt
+       """
+   }
+
+   // trimmed reads into 2 channels:
+   (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
+
+  /*
+    STEP 5.2: FastQC on trimmed reads
+  */
+
+   process FASTQC_BBDUK {
+       tag "${base}"
+       label 'py3'
+
+       input:
+       tuple val(base), file(fastq) from fastqc_trim_reads
+
+       output:
+       file ("*.{html,zip}") into fastqc_trimmed
+
+       script:
+       """
+       fastqc -q $fastq
+       """
+   }
+
+}else if(!params.trim_fastq){
+   aligner_reads = raw_reads
+}
+
+/*
+  STEP 5.4: Stage reads for quantification
+*/
+
+(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
+
 
 /*
 ================================================================================
@@ -822,7 +964,7 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-//if(params.skip_trim == false){
+//if(params.trim_fastq == false){
 //    ch_multiqc_report = multiqc_trim_out
 //}else{
 //    ch_multiqc_report = multiqc_raw_out
