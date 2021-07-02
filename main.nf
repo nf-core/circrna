@@ -282,7 +282,11 @@ checkHostname()
 ================================================================================
 */
 
-// below is overridden by cmdline vars.
+// Stage igenomes parameters first
+
+// In SAREK, they use conditionals when staging parameters and channels, and once more in
+// processes. Is this overkill? or should I do the same.
+
 params.fasta     = params.genome ? params.genomes[params.genome].fasta     ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
 params.gtf       = params.genome ? params.genomes[params.genome].gtf       ?: false : false
@@ -568,7 +572,7 @@ process GENE_ANNOTATION{
         saveAs: {params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    !params.gene && params.gtf && 'circexlorer2' in tool && 'circrna_discovery' in module
+    params.gtf && 'circexplorer2' in tool && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
