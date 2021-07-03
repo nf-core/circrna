@@ -730,6 +730,62 @@ if(params.trim_fastq){
 
 (star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
 
+/*
+================================================================================
+                           circRNA quantification
+================================================================================
+*/
+
+process CIRIQUANT{
+    tag "${base}"
+    label 'process_high'
+
+    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
+
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(fastq) from ciriquant_reads
+    file(ciriquant_yml) from ch_ciriquant_yml
+
+    output:
+    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
+    tuple val(base), file("${base}") into ciriquant_intermediates
+
+    script:
+    """
+    CIRIquant \\
+        -t ${task.cpus} \\
+        -1 ${fastq[0]} \\
+        -2 ${fastq[1]} \\
+        --config $ciriquant_yml \\
+        --no-gene \\
+        -o ${base} \\
+        -p ${base}
+
+    cp ${base}/${base}.gtf .
+
+    ## extract counts (convert float/double to int [no loss of information])
+    grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
+    grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
+    paste ${base}.tmp counts > ${base}_unfilt.bed
+
+    ## filter
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_unfilt.bed > ${base}_filt.bed
+    grep -v '^\$' ${base}_filt.bed > ${base}_ciriquant
+
+    ## correct offset bp position
+    awk -v OFS="\t" '{\$2-=1;print}' ${base}_ciriquant > ${base}_ciriquant.bed
+
+    rm ${base}.gtf
+    """
+}
+
+
+
+
 
 /*
 ================================================================================
