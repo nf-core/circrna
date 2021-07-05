@@ -796,7 +796,7 @@ process STAR_1PASS{
 
     input:
     tuple val(base), file(reads) from star_pass1_reads
-    val(star_idx) from ch_star
+    file(star_idx) from ch_star
 
     output:
     file("${base}/*SJ.out.tab") into sjdb_ch
@@ -885,7 +885,7 @@ process STAR_2PASS{
     input:
     tuple val(base), file(reads) from star_pass2_reads
     file(sjdbfile) from sjdbfile_pass2.collect()
-    val(star_idx) from ch_star
+    file(star_idx) from ch_star
 
     output:
     tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
@@ -1015,7 +1015,7 @@ process DCC_MATE1{
     input:
     tuple val(base), file(reads) from dcc_mate1_reads
     file(sjdbfile) from sjdbfile_mate1.collect()
-    val(star_idx) from ch_star
+    file(star_idx) from ch_star
 
     output:
     tuple val(base), file("mate1") into dcc_mate1
@@ -1077,7 +1077,7 @@ process DCC_MATE2{
     input:
     tuple val(base), file(reads) from dcc_mate2_reads
     file(sjdbfile) from sjdbfile_mate2.collect()
-    val(star_idx) from ch_star
+    file(star_idx) from ch_star
 
     output:
     tuple val(base), file("mate2") into dcc_mate2
