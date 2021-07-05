@@ -572,7 +572,7 @@ process GENE_ANNOTATION{
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    params.gtf && 'circexplorer2' in tool && 'circrna_discovery' in module
+    params.gtf && ('circexplorer2' && 'mapsplice' in tool) && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
@@ -740,8 +740,9 @@ process CIRIQUANT{
     tag "${base}"
     label 'process_high'
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "${base}_ciriquant.bed",
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/${it}" : null }
 
     when:
     'ciriquant' in tool && 'circrna_discovery' in module
@@ -783,9 +784,539 @@ process CIRIQUANT{
     """
 }
 
+process STAR_1PASS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/1st_Pass/${it}" : null }
+
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(reads) from star_pass1_reads
+    val(star_idx) from ch_star_index
+
+    output:
+    file("${base}/*SJ.out.tab") into sjdb_ch
+    file("${base}") into star_1st_pass_output
+
+    script:
+    def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
+    """
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix ${base}/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    """
+}
+
+/*
+  STEP 6.1.2: STAR SJDB file generation
+*/
+
+process SJDB_FILE{
+    tag "${base}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/SJFile/${it}" : null }
+
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    file(sjdb) from sjdb_ch
+
+    output:
+    file("*SJFile.tab") into sjdbfile_ch
+
+    shell:
+    '''
+    base=$(basename !{sjdb} .SJ.out.tab)
+    awk 'BEGIN {OFS="\t"; strChar[0]="."; strChar[1]="+"; strChar[2]="-";} {if($5>0){print $1,$2,$3,strChar[$4]}}' !{sjdb} > ${base}.SJFile.tab
+    '''
+}
+
+(sjdbfile_pass2, sjdbfile_mate1, sjdbfile_mate2) = sjdbfile_ch.into(3)
+
+/*
+  STEP 6.1.3: STAR 2nd pass
+*/
+
+process STAR_2PASS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/STAR/2nd_Pass/${it}" : null }
+
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(reads) from star_pass2_reads
+    file(sjdbfile) from sjdbfile_pass2.collect()
+    val(star_idx) from ch_star_index
+
+    output:
+    tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
+    tuple val(base), file("${base}") into circrna_finder_input, dcc_pairs
 
 
+    script:
+    def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
+    """
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix ${base}/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    """
+}
 
+process CIRCEXPLORER2{
+    tag "${base}"
+    label 'process_low'
+
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/CIRCexplorer2/${it}" : null }
+
+    when:
+    'circexplorer2' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(chimeric_reads) from circexplorer2_input
+    file(fasta) from ch_fasta
+    file(gene_annotation) from ch_gene_annotation
+
+    output:
+    tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
+    tuple val(base), file("${base}") into circexplorer2_intermediates
+
+    script:
+    """
+    mkdir -p ${base}
+
+    CIRCexplorer2 parse -t STAR $chimeric_reads -b ${base}/${base}.STAR.junction.bed
+
+    CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
+
+    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
+    """
+}
+
+/*
+  STEP 6.3: circRNA finder quantification
+*/
+
+process CIRCRNA_FINDER{
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circrna_finder/${it}" : null }
+
+    when:
+    'circrna_finder' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(star_dir) from circrna_finder_input
+
+    output:
+    tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
+    tuple val(base), file("${base}") into circrna_finder_intermediates
+
+    script:
+    """
+    postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ./
+
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
+
+    mkdir -p ${base}
+
+    mv *filteredJunctions* ${base}
+    mv *.Chimeric.out.sorted.* ${base}
+    """
+}
+
+/*
+  STEP 6.4.1: DCC mate 1 alignment
+*/
+
+process DCC_MATE1{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate1",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(reads) from dcc_mate1_reads
+    file(sjdbfile) from sjdbfile_mate1.collect()
+    val(star_idx) from ch_star_index
+
+    output:
+    tuple val(base), file("mate1") into dcc_mate1
+
+    script:
+    def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
+    """
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix mate1/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    """
+}
+
+/*
+  STEP 6.4.2: DCC mate2 alignment
+*/
+
+process DCC_MATE2{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate2",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(reads) from dcc_mate2_reads
+    file(sjdbfile) from sjdbfile_mate2.collect()
+    val(star_idx) from ch_star_index
+
+    output:
+    tuple val(base), file("mate2") into dcc_mate2
+
+	  script:
+    def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
+    """
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix mate2/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    """
+}
+
+ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
+
+/*
+  STEP 6.4.3: DCC quantification
+*/
+
+process DCC{
+    tag "${base}"
+    label 'py3'
+    label 'process_low'
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "outputs",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
+    file(gtf) from ch_gtf
+    file(fasta) from ch_fasta
+
+    output:
+    tuple val(base), file("${base}_dcc.bed") into dcc_results
+    tuple val(base), file("outputs") into dcc_intermediates
+
+    script:
+    COJ="Chimeric.out.junction"
+    """
+    sed -i 's/^chr//g' $gtf
+    printf "${base}/${base}.${COJ}" > samplesheet
+    printf "mate1/${base}.${COJ}" > mate1file
+    printf "mate2/${base}.${COJ}" > mate2file
+    DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${task.cpus}
+
+    ## Add strand to counts
+    awk '{print \$6}' CircCoordinates >> strand
+    paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${base}_dcc.txt
+
+    ## filter reads
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_dcc.txt > ${base}_dcc.filtered
+
+    ## fix start position (+1)
+    awk -v OFS="\t" '{\$2-=1;print}' ${base}_dcc.filtered > ${base}_dcc.bed
+
+    mkdir -p outputs
+    rm strand
+    rm ${base}_dcc.txt
+    rm ${base}_dcc.filtered
+    find $(pwd) -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t outputs/
+    """
+}
+
+/*
+  STEP 6.5.1: find_circ extract back-splice anchors
+*/
+
+process FIND_ANCHORS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "{*anchors.qfa.gz,*.bam}",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/find_circ/${base}/${it}" : null }
+
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(fastq) from find_circ_reads
+    file(fasta) from ch_fasta
+    file(bowtie2_index) from ch_bowtie2_index.collect()
+
+    output:
+    tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
+    tuple val(base), file("${base}{_anchors.qfa.gz,_unmapped.bam}") into find_anchors_intermediates
+
+    script:
+    """
+    bowtie2 -p ${task.cpus} --very-sensitive --mm -D 20 --score-min=C,-15,0 \\
+    -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \\
+    | samtools view -hbuS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
+
+    samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
+
+    unmapped2anchors.py ${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
+    """
+}
+
+/*
+  STEP 6.5.2: find_circ qantification
+*/
+
+process FIND_CIRC{
+    tag "${base}"
+    label 'process_high'
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/${base}/${it}" : null }
+
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(anchors) from ch_anchors
+    file(bowtie2_index) from ch_bowtie2_index.collect()
+    file(fasta) from ch_fasta
+    val(fasta_chr_path) from ch_fasta_chr
+
+    output:
+    tuple val(base), file("${base}_find_circ.bed") into find_circ_results
+    tuple val(base), file("*.sites.*") into find_circ_intermediates
+
+    script:
+    """
+    bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \\
+    -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
+
+    ## filtering
+    grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
+
+    tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
+    """
+}
+
+process MAPSPLICE_ALIGN{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/${it}" : null }
+
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(fastq) from mapsplice_reads
+    val(mapsplice_ref) from ch_fasta_chr
+    file(bowtie_index) from ch_bowtie_index.collect()
+    file(gtf) from ch_gtf
+
+    output:
+    tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
+    tuple val(base), file("${base}") into mapsplice_align_intermediates
+
+    script:
+    def prefix = gtf.toString() - ~/.gtf/
+    def handleGzip_R1 = fastq[0].toString().endsWith('.gz') ? "gzip -d --force ${fastq[0]}" : ''
+    def handleGzip_R2 = fastq[1].toString().endsWith('.gz') ? "gzip -d --force ${fastq[1]}" : ''
+    def read1 = fastq[0].toString().endsWith('.gz') ? fastq[0].toString() - ~/.gz/ : fastq[0]
+    def read2 = fastq[1].toString().endsWith('.gz') ? fastq[1].toString() - ~/.gz/ : fastq[1]
+    """
+    ${handleGzip_R1}
+    ${handleGzip_R2}
+
+    mapsplice.py \\
+       -c $mapsplice_ref \\
+       -x $prefix \\
+       -1 ${strip1} \\
+       -2 ${strip2} \\
+       -p ${task.cpus} \\
+       --bam \\
+       --seglen 25 \\
+       --min-intron ${params.alignIntronMin} \\
+       --max-intron ${params.alignIntronMax} \\
+       --min-map-len 40 \\
+       --fusion-non-canonical \\
+       --min-fusion-distance 200 \\
+       --gene-gtf $gtf \\
+       -o $base
+   """
+}
+
+/*
+  STEP 6.7.2: MapSplice quantification
+*/
+
+process MAPSPLICE_PARSE{
+    tag "${base}"
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/MapSplice/${it}" : null }
+
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(raw_fusion) from mapsplice_fusion
+    file(fasta) from ch_fasta
+    file(gene_annotation) from ch_gene_annotation
+
+    output:
+    tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
+    tuple val(base), file("${base}") into mapsplice_intermediates
+
+    script:
+    """
+    mkdir -p ${base}
+
+    CIRCexplorer2 parse -t MapSplice $raw_fusion -b ${base}/${base}.mapsplice.junction.bed
+
+    CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.mapsplice.junction.bed -o ${base}/${base}.txt
+
+    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+    """
+}
 
 /*
 ================================================================================
