@@ -1191,6 +1191,7 @@ process FIND_ANCHORS{
 
     input:
     tuple val(base), file(fastq) from find_circ_reads
+    val(fasta) from ch_fasta
     file(bowtie2_index) from ch_bowtie2_anchors.collect()
 
     output:
@@ -1225,6 +1226,7 @@ process FIND_CIRC{
 
     input:
     tuple val(base), file(anchors) from ch_anchors
+    val(fasta) from ch_fasta
     file(bowtie2_index) from ch_bowtie2_find_circ.collect()
     val(fasta_chr_path) from ch_chromosomes
 
