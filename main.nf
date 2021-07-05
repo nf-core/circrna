@@ -461,6 +461,7 @@ process BOWTIE2_INDEX {
 }
 
 ch_bowtie2 = params.genome ? Channel.fromPath("${params.bowtie2}*") : params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
+(ch_bowtie2_anchors, ch_bowtie2_find_circ) ch_bowtie2.into(2)
 
 process SEGEMEHL_INDEX{
     tag "${fasta}"
@@ -1183,7 +1184,7 @@ process FIND_ANCHORS{
     input:
     tuple val(base), file(fastq) from find_circ_reads
     file(fasta) from ch_fasta
-    file(bowtie2_index) from ch_bowtie2.collect()
+    file(bowtie2_index) from ch_bowtie2_anchors.collect()
 
     output:
     tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
@@ -1217,7 +1218,7 @@ process FIND_CIRC{
 
     input:
     tuple val(base), file(anchors) from ch_anchors
-    file(bowtie2_index) from ch_bowtie2.collect()
+    file(bowtie2_index) from ch_bowtie2_find_circ.collect()
     file(fasta) from ch_fasta
     val(fasta_chr_path) from ch_chromosomes
 
