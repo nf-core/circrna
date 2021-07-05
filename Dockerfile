@@ -28,8 +28,6 @@ RUN cpanm CPAN::Meta Statistics::Lite Bio::TreeIO
 RUN apt-get install --yes libtbb-dev \
                           g++
 
-RUN make 
-
 # Install the conda environment
 COPY environment.yml /
 RUN conda env create --quiet -f /environment.yml && conda clean -a
