@@ -303,7 +303,7 @@ ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
 
 process BWA_INDEX {
     tag "${fasta}"
-    //label 'proces_medium'
+    label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
@@ -353,7 +353,7 @@ ch_fai = params.genome ? Channel.value(file(params.fasta_fai)) : params.fasta_fa
 
 process HISAT2_INDEX {
     tag "${fasta}"
-    //label 'process_medium'
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
        saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
@@ -380,7 +380,7 @@ ch_hisat = params.hisat ? Channel.value(file(params.hisat)) : hisat_path
 
 process STAR_INDEX {
     tag "${fasta}"
-    //label 'process_high'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
@@ -411,7 +411,7 @@ ch_star = params.genome ? Channel.value(file(params.star)) : params.star ? Chann
 
 process BOWTIE_INDEX {
     tag "${fasta}"
-    //label 'process_medium'
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
@@ -438,7 +438,7 @@ ch_bowtie = params.genome ? Channel.fromPath("${params.bowtie}*") : params.bowti
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
-    //label 'process_medium'
+    label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
@@ -464,7 +464,7 @@ ch_bowtie2 = params.genome ? Channel.fromPath("${params.bowtie2}*") : params.bow
 
 process SEGEMEHL_INDEX{
     tag "${fasta}"
-    //label 'proces_medium'
+    label 'proces_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
 
@@ -595,7 +595,7 @@ process GENE_ANNOTATION{
 
 if(params.input_type == 'bam'){
 
-   process BAM_TO_FQ{
+   process BAM_TO_FASTQ{
         tag "${base}"
         label 'process_medium'
         publishDir params.outdir, mode: params.publish_dir_mode,
@@ -795,7 +795,7 @@ process STAR_1PASS{
 
     input:
     tuple val(base), file(reads) from star_pass1_reads
-    val(star_idx) from ch_star_index
+    val(star_idx) from ch_star
 
     output:
     file("${base}/*SJ.out.tab") into sjdb_ch
@@ -882,7 +882,7 @@ process STAR_2PASS{
     input:
     tuple val(base), file(reads) from star_pass2_reads
     file(sjdbfile) from sjdbfile_pass2.collect()
-    val(star_idx) from ch_star_index
+    val(star_idx) from ch_star
 
     output:
     tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
@@ -942,7 +942,7 @@ process CIRCEXPLORER2{
     input:
     tuple val(base), file(chimeric_reads) from circexplorer2_input
     file(fasta) from ch_fasta
-    file(gene_annotation) from ch_gene_annotation
+    file(gene_annotation) from ch_gene
 
     output:
     tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
@@ -1010,7 +1010,7 @@ process DCC_MATE1{
     input:
     tuple val(base), file(reads) from dcc_mate1_reads
     file(sjdbfile) from sjdbfile_mate1.collect()
-    val(star_idx) from ch_star_index
+    val(star_idx) from ch_star
 
     output:
     tuple val(base), file("mate1") into dcc_mate1
@@ -1070,7 +1070,7 @@ process DCC_MATE2{
     input:
     tuple val(base), file(reads) from dcc_mate2_reads
     file(sjdbfile) from sjdbfile_mate2.collect()
-    val(star_idx) from ch_star_index
+    val(star_idx) from ch_star
 
     output:
     tuple val(base), file("mate2") into dcc_mate2
@@ -1183,7 +1183,7 @@ process FIND_ANCHORS{
     input:
     tuple val(base), file(fastq) from find_circ_reads
     file(fasta) from ch_fasta
-    file(bowtie2_index) from ch_bowtie2_index.collect()
+    file(bowtie2_index) from ch_bowtie2.collect()
 
     output:
     tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
@@ -1217,9 +1217,9 @@ process FIND_CIRC{
 
     input:
     tuple val(base), file(anchors) from ch_anchors
-    file(bowtie2_index) from ch_bowtie2_index.collect()
+    file(bowtie2_index) from ch_bowtie2.collect()
     file(fasta) from ch_fasta
-    val(fasta_chr_path) from ch_fasta_chr
+    val(fasta_chr_path) from ch_chromosomes
 
     output:
     tuple val(base), file("${base}_find_circ.bed") into find_circ_results
@@ -1248,8 +1248,8 @@ process MAPSPLICE_ALIGN{
 
     input:
     tuple val(base), file(fastq) from mapsplice_reads
-    val(mapsplice_ref) from ch_fasta_chr
-    file(bowtie_index) from ch_bowtie_index.collect()
+    val(mapsplice_ref) from ch_chromosomes
+    file(bowtie_index) from ch_bowtie.collect()
     file(gtf) from ch_gtf
 
     output:
@@ -1300,7 +1300,7 @@ process MAPSPLICE_PARSE{
     input:
     tuple val(base), file(raw_fusion) from mapsplice_fusion
     file(fasta) from ch_fasta
-    file(gene_annotation) from ch_gene_annotation
+    file(gene_annotation) from ch_gene
 
     output:
     tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
