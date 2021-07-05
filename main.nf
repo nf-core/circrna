@@ -1163,7 +1163,7 @@ process DCC{
     rm strand
     rm ${base}_dcc.txt
     rm ${base}_dcc.filtered
-    find $(pwd) -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t outputs/
+    find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t outputs/
     """
 }
 
