@@ -805,6 +805,8 @@ process STAR_1PASS{
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
+    mkdir -p ${base}
+
     STAR \\
         --alignIntronMax ${params.alignIntronMax} \\
         --alignIntronMin ${params.alignIntronMin} \\
@@ -893,6 +895,8 @@ process STAR_2PASS{
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
+    mkdir -p ${base}
+
     STAR \\
         --alignIntronMax ${params.alignIntronMax} \\
         --alignIntronMin ${params.alignIntronMin} \\
@@ -1019,6 +1023,8 @@ process DCC_MATE1{
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
+    mkdir -p mate1
+
     STAR \\
         --alignIntronMax ${params.alignIntronMax} \\
         --alignIntronMin ${params.alignIntronMin} \\
@@ -1079,6 +1085,8 @@ process DCC_MATE2{
 	  script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
+    mkdir -p mate2
+
     STAR \\
         --alignIntronMax ${params.alignIntronMax} \\
         --alignIntronMin ${params.alignIntronMin} \\
