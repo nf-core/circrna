@@ -599,7 +599,7 @@ if(params.input_type == 'bam'){
         tag "${base}"
         label 'process_medium'
         publishDir params.outdir, mode: params.publish_dir_mode,
-            saveAs: { params.save_bamtofastq ? "quality_control/BamToFastq/${it}" : null }
+            saveAs: { params.save_bamtofastq ? "picard/SamToFastq/${it}" : null }
 
         input:
         tuple val(base), file(bam) from ch_input
@@ -659,8 +659,8 @@ if(params.trim_fastq){
    process BBDUK {
        tag "${base}"
        label 'process_medium'
-       publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*fq.gz",
-           saveAs: { params.save_trimmed ? "quality_control/trimmed_reads/${it}" : null }
+       publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
+           saveAs: { params.save_trimmed ? "BBDUK/${it}" : null }
 
        input:
        tuple val(base), file(fastq) from trimming_reads
@@ -740,7 +740,7 @@ process CIRIQUANT{
     tag "${base}"
     label 'process_high'
 
-    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "${base}_ciriquant.bed",
+    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "${base}_ciriquant.bed"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/${it}" : null }
 
