@@ -44,7 +44,7 @@ dependencies:
   - r-pvclust=2.2_0
   - r-rcolorbrewer=1.1_2
   - samtools=1.10
-  - segemehl=0.3.4
+  - segemehl=0.3.1
   - star=2.6.1d
   - stringtie=2.1.1
   - tophat=2.1.1

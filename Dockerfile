@@ -24,10 +24,6 @@ RUN apt-get install --yes libxml-libxml-perl \
 
 RUN cpanm CPAN::Meta Statistics::Lite Bio::TreeIO
 
-# After adding segemehl, bowtie now fails. fix below
-RUN apt-get install --yes libtbb-dev \
-                          g++
-
 # Install the conda environment
 COPY environment.yml /
 RUN conda env create --quiet -f /environment.yml && conda clean -a
