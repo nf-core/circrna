@@ -1336,7 +1336,7 @@ process SEGEMEHL{
     grep ';C;' ${base}/${base}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${base}/${base}_collapsed.bed
 
     # now let user filter by BSJ read count param.
-    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if($5>=BSJ) print $0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print $0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
     """
 }
 
