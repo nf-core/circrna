@@ -542,7 +542,8 @@ process CIRIQUANT_YML{
     file("travis.yml") into ch_ciriquant_yml
 
     script:
-    index_prefix = fasta.toString() - ~/.(fa|fasta)$/
+    bwa_prefix = fasta.toString() == 'genome.fa' ? fasta.toString() : fasta.toString() - ~/.(fa|fasta)$/
+    hisat_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
@@ -562,8 +563,8 @@ process CIRIQUANT_YML{
     reference:\n\
      fasta: ${fasta_path}\n\
      gtf: ${gtf_path}\n\
-     bwa_index: ${bwa_path}/${index_prefix}\n\
-     hisat_index: ${hisat}/${index_prefix}" >> travis.yml
+     bwa_index: ${bwa_path}/${bwa_prefix}\n\
+     hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
     """
 }
 
