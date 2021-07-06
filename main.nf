@@ -1278,8 +1278,8 @@ process MAPSPLICE_ALIGN{
     mapsplice.py \\
        -c $mapsplice_ref \\
        -x $prefix \\
-       -1 ${strip1} \\
-       -2 ${strip2} \\
+       -1 ${read1} \\
+       -2 ${read2} \\
        -p ${task.cpus} \\
        --bam \\
        --seglen 25 \\
