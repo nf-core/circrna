@@ -843,10 +843,6 @@ process STAR_1PASS{
     """
 }
 
-/*
-  STEP 6.1.2: STAR SJDB file generation
-*/
-
 process SJDB_FILE{
     tag "${base}"
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -870,15 +866,11 @@ process SJDB_FILE{
 
 (sjdbfile_pass2, sjdbfile_mate1, sjdbfile_mate2) = sjdbfile_ch.into(3)
 
-/*
-  STEP 6.1.3: STAR 2nd pass
-*/
-
 process STAR_2PASS{
     tag "${base}"
     label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/STAR/2nd_Pass/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/2nd_Pass/${it}" : null }
 
     when:
     ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
@@ -940,7 +932,7 @@ process CIRCEXPLORER2{
 
     publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/CIRCexplorer2/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/${it}" : null }
 
     when:
     'circexplorer2' in tool && 'circrna_discovery' in module
@@ -966,16 +958,12 @@ process CIRCEXPLORER2{
     """
 }
 
-/*
-  STEP 6.3: circRNA finder quantification
-*/
-
 process CIRCRNA_FINDER{
     tag "${base}"
     label 'process_low'
     publishDir "${params.outdir}/circrna_discovery/${base}", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
-        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circrna_finder/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/${it}" : null }
 
     when:
     'circrna_finder' in tool && 'circrna_discovery' in module
@@ -1000,15 +988,11 @@ process CIRCRNA_FINDER{
     """
 }
 
-/*
-  STEP 6.4.1: DCC mate 1 alignment
-*/
-
 process DCC_MATE1{
     tag "${base}"
     label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate1",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/${base}/${it}" : null }
 
     when:
     'dcc' in tool && 'circrna_discovery' in module
@@ -1062,15 +1046,11 @@ process DCC_MATE1{
     """
 }
 
-/*
-  STEP 6.4.2: DCC mate2 alignment
-*/
-
 process DCC_MATE2{
     tag "${base}"
     label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate2",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/${base}/${it}" : null }
 
     when:
     'dcc' in tool && 'circrna_discovery' in module
@@ -1126,17 +1106,13 @@ process DCC_MATE2{
 
 ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 
-/*
-  STEP 6.4.3: DCC quantification
-*/
-
 process DCC{
     tag "${base}"
     label 'py3'
     label 'process_low'
     publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "outputs",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/DCC/${base}/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "outputs/*",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/${base}/${it}" : null }
 
     when:
     'dcc' in tool && 'circrna_discovery' in module
@@ -1148,7 +1124,7 @@ process DCC{
 
     output:
     tuple val(base), file("${base}_dcc.bed") into dcc_results
-    tuple val(base), file("outputs") into dcc_intermediates
+    tuple val(base), file("outputs/*") into dcc_intermediates
 
     script:
     COJ="Chimeric.out.junction"
@@ -1177,15 +1153,11 @@ process DCC{
     """
 }
 
-/*
-  STEP 6.5.1: find_circ extract back-splice anchors
-*/
-
 process FIND_ANCHORS{
     tag "${base}"
     label 'process_high'
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "{*anchors.qfa.gz,*.bam}",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/find_circ/${base}/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "{*.*}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/${base}/${it}" : null }
 
     when:
     'find_circ' in tool && 'circrna_discovery' in module
@@ -1197,7 +1169,7 @@ process FIND_ANCHORS{
 
     output:
     tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
-    tuple val(base), file("${base}{_anchors.qfa.gz,_unmapped.bam}") into find_anchors_intermediates
+    tuple val(base), file("*.*") into find_anchors_intermediates
 
     script:
     """
@@ -1210,10 +1182,6 @@ process FIND_ANCHORS{
     unmapped2anchors.py ${base}_unmapped.bam | gzip > ${base}_anchors.qfa.gz
     """
 }
-
-/*
-  STEP 6.5.2: find_circ qantification
-*/
 
 process FIND_CIRC{
     tag "${base}"
@@ -1301,8 +1269,8 @@ process MAPSPLICE_ALIGN{
 process MAPSPLICE_PARSE{
     tag "${base}"
     publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
-        saveAs: { params.save_quantification_intermediates ? "/circrna_discovery/MapSplice/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/${it}" : null }
 
     when:
     'mapsplice' in tool && 'circrna_discovery' in module
@@ -1314,7 +1282,7 @@ process MAPSPLICE_PARSE{
 
     output:
     tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
-    tuple val(base), file("${base}") into mapsplice_intermediates
+    tuple val(base), file("${base}/*") into mapsplice_intermediates
 
     script:
     """
@@ -1325,6 +1293,50 @@ process MAPSPLICE_PARSE{
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.mapsplice.junction.bed -o ${base}/${base}.txt
 
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+    """
+}
+
+process SEGEMEHL{
+    tag "${base}"
+    label 'process_high'
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_segemehl.bed", mode: params.publish_dir_mode
+    publishDir paramsoutdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/${it}" : null }
+
+    when:
+    'segemehl' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(fastq) from segemehl_reads
+    file(fasta) from ch_fasta
+    file(idx) from ch_segemehl
+
+    output:
+    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
+    tule val(base), file("${base}") into segemehl_intermediates
+
+    script:
+    def handleSam = params.save_quantification_intermediates ? 'samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam' : 'rm -rf ${base}/${base}.sam'
+    """
+    mkdir -p ${base}
+
+    segemehl.x \\
+        -t ${task.cpus} \\
+        -d $fasta \\
+        -i $idx
+        -q ${fastq[0]} \\
+        -p ${fastq[1]} \\
+        -S \\
+        -o ${base}/${base}.sam
+
+    $handleSam
+
+    # Segemehl does not preserve strand information, nor account for it
+    # when collapsing and counting reads using haarz.x. This is my own fix which does.
+    grep ';C;' ${base}/${base}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${base}/${base}_collapsed.bed
+
+    # now let user filter by BSJ read count param.
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if($5>=BSJ) print $0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
     """
 }
 
