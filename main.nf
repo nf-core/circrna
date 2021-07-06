@@ -1313,7 +1313,7 @@ process SEGEMEHL{
 
     output:
     tuple val(base), file("${base}_segemehl.bed") into segemehl_results
-    tule val(base), file("${base}") into segemehl_intermediates
+    tuple val(base), file("${base}") into segemehl_intermediates
 
     script:
     def handleSam = params.save_quantification_intermediates ? 'samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam' : 'rm -rf ${base}/${base}.sam'
