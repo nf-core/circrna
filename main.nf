@@ -1300,7 +1300,7 @@ process SEGEMEHL{
     tag "${base}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_segemehl.bed", mode: params.publish_dir_mode
-    publishDir paramsoutdir, mode: params.publish_dir_mode, pattern: "${base}",
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/${it}" : null }
 
     when:
