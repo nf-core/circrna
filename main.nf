@@ -844,7 +844,7 @@ process STAR_1PASS{
 }
 
 process SJDB_FILE{
-    tag "${base}"
+    tag "${sjdb}"
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/SJFile/${it}" : null }
 
@@ -1316,14 +1316,14 @@ process SEGEMEHL{
     tuple val(base), file("${base}") into segemehl_intermediates
 
     script:
-    def handleSam = params.save_quantification_intermediates ? 'samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam' : 'rm -rf ${base}/${base}.sam'
+    def handleSam = params.save_quantification_intermediates ? "samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam" : "rm -rf ${base}/${base}.sam"
     """
     mkdir -p ${base}
 
     segemehl.x \\
         -t ${task.cpus} \\
         -d $fasta \\
-        -i $idx
+        -i $idx \\
         -q ${fastq[0]} \\
         -p ${fastq[1]} \\
         -S \\
