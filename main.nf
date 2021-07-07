@@ -1241,8 +1241,8 @@ process MAPSPLICE_ALIGN{
     def read1 = fastq[0].toString().endsWith('.gz') ? fastq[0].toString() - ~/.gz/ : fastq[0]
     def read2 = fastq[1].toString().endsWith('.gz') ? fastq[1].toString() - ~/.gz/ : fastq[1]
     """
-    ${handleGzip_R1}
-    ${handleGzip_R2}
+    $handleGzip_R1
+    $handleGzip_R2
 
     mapsplice.py \\
        -c $mapsplice_ref \\
@@ -1339,6 +1339,103 @@ process SEGEMEHL{
     awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
     """
 }
+
+/*
+================================================================================
+                         Generate circRNA count matrix
+================================================================================
+*/
+
+if(tools_selected > 1){
+
+   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
+   // Causes WARN: input caridnality does not match (due to null items), but script works.
+   // No WARN if ciriquant selected in tool?
+   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true).join(segemehl_results, remainder: true)
+
+   process consolidate_algorithms{
+       tag "${base}"
+
+       when:
+       'circrna_discovery' in module
+
+       input:
+       tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice), file(segemehl) from combined_tool
+
+       output:
+       file("${base}.bed") into sample_counts
+
+       script:
+       """
+       ## make list of files for R to read
+       ls *.bed > samples.csv
+
+       ## Add catch for empty bed file and delete
+       bash ${projectDir}/bin/check_empty.sh
+
+       ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
+       ## remove duplicate IDs, keep highest count.
+       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
+
+       mv combined_counts.bed ${base}.bed
+       """
+   }
+
+   process get_counts_combined{
+       tag "${base}"
+       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
+
+       when:
+       'circrna_discovery' in module
+
+       input:
+       file(bed) from sample_counts.collect()
+
+       output:
+       file("circRNA_matrix.txt") into circRNA_counts
+       file("count_matrix.txt") into matrix
+
+       script:
+       """
+       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+       Rscript ${projectDir}/bin/reformat_count_matrix.R
+       """
+   }
+}else{
+
+   single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results, segemehl_results)
+
+   process get_counts_single{
+
+       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "count_matrix.txt", mode: params.publish_dir_mode
+
+       when:
+       'circrna_discovery' in module
+
+       input:
+       file(bed) from single_tool.collect()
+       val(tool) from params.tool
+
+       output:
+       file("circRNA_matrix.txt") into circRNA_counts
+       file("count_matrix.txt") into matrix
+
+       script:
+       """
+       # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
+       for b in *.bed; do
+           basename=\${b%".bed"};
+           sample_name=\${basename%"_${tool}"};
+           mv \$b \${sample_name}.bed
+       done
+
+       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+       Rscript ${projectDir}/bin/reformat_count_matrix.R
+       """
+    }
+}
+
+
 
 /*
 ================================================================================
