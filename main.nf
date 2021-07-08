@@ -816,7 +816,7 @@ process CIRIQUANT{
     mv master_bed12.bed ${base}.bed
 
     ## FASTA sequences
-    bedtools getfasta -fi $fasta -bed CIRIquant.bed -s -split -name > circ_seq.tmp
+    bedtools getfasta -fi $fasta -bed ${base}.bed -s -split -name > circ_seq.tmp
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
     ## output to dir
