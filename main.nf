@@ -1494,7 +1494,7 @@ if(tools_selected > 1){
 
    process COUNT_MATRIX_SINGLE{
        tag "${bed}"
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "count_matrix.txt", mode: params.publish_dir_mode
+       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
        when:
        'circrna_discovery' in module
