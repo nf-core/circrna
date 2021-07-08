@@ -1408,7 +1408,7 @@ if(tools_selected > 1){
        """
    }
 
-   process CIRC_MATRIX{
+   process COUNT_MATRIX_COMBINED{
        tag "${base}"
        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
@@ -1432,7 +1432,7 @@ if(tools_selected > 1){
 
    single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results, segemehl_results)
 
-   process CIRC_MATRIX{
+   process COUNT_MATRIX_SINGLE{
        tag "${bed}"
        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
