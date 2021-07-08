@@ -783,7 +783,7 @@ process CIRIQUANT{
     tuple val(base), file("${base}") into ciriquant_intermediates
     tuple val(base), file("${base}.bed") into ciriquant_annotated
     file("fasta") into ciriquant_fasta
-    file("${base}_annotation.log") into ciriquant_annotation_logs
+    file("${base}.log") into ciriquant_annotation_logs
 
     script:
     """
