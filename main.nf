@@ -754,7 +754,7 @@ if(params.trim_fastq){
 
 /*
 ================================================================================
-                           circRNA quantification
+                   circRNA quantification, annotation
 ================================================================================
 */
 
@@ -826,7 +826,7 @@ process CIRIQUANT{
     mkdir -p fasta
     awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
     ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' $f | wc -c ; done &> mature.txt
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
     paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
