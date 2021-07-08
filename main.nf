@@ -775,6 +775,8 @@ process CIRIQUANT{
     tuple val(base), file(fastq) from ciriquant_reads
     file(ciriquant_yml) from ch_ciriquant_yml
     file(gtf_filt) from ch_gtf_filtered
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
 
     output:
     tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
