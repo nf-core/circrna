@@ -763,8 +763,8 @@ process CIRIQUANT{
     label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/CIRIquant", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishdir "${params.outdir}/circrna_discovery/CIRIquant", mode: params.publish_dir_mode, pattern: "fasta"
-    publishdir "${params.outdir}/circrna_discovery/CIRIquant/logs", mode: params.publish_dir_mode, pattern: "${base}_annotation.log"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/logs", mode: params.publish_dir_mode, pattern: "${base}_annotation.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
 
