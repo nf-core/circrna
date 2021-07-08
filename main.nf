@@ -772,7 +772,7 @@ process CIRIQUANT{
     input:
     tuple val(base), file(fastq) from ciriquant_reads
     file(ciriquant_yml) from ch_ciriquant_yml
-    file(gtf) from ch_gtf_filtered
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
@@ -806,9 +806,9 @@ process CIRIQUANT{
 
     rm ${base}.gtf
 
-    ## experimental feature.
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' ${base}_ciriquant.bed > circs.bed
-    bash ${projectDir}/bin/get_mature_seq.sh &> annotation.log
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_ciriquant.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
     mv master_bed12.bed CIRIquant.bed
     """
 }
@@ -957,7 +957,7 @@ process CIRCEXPLORER2{
     tag "${base}"
     label 'process_low'
 
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "CIRCexplorer2.bed", mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/${it}" : null }
 
@@ -968,10 +968,12 @@ process CIRCEXPLORER2{
     tuple val(base), file(chimeric_reads) from circexplorer2_input
     file(fasta) from ch_fasta
     file(gene_annotation) from ch_gene
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
     tuple val(base), file("${base}") into circexplorer2_intermediates
+    tuple val(base), file("CIRCexplorer2.bed") into circexplorer2_annotated
 
     script:
     """
@@ -982,13 +984,18 @@ process CIRCEXPLORER2{
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circexplorer2.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed CIRCexplorer2.bed
     """
 }
 
 process CIRCRNA_FINDER{
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: 'circRNA_Finder.bed', mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/${it}" : null }
 
@@ -997,10 +1004,12 @@ process CIRCRNA_FINDER{
 
     input:
     tuple val(base), file(star_dir) from circrna_finder_input
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
     tuple val(base), file("${base}") into circrna_finder_intermediates
+    tuple val(base), file("circRNA_Finder.bed") into circrna_finder_annotated
 
     script:
     """
@@ -1012,6 +1021,11 @@ process CIRCRNA_FINDER{
 
     mv *filteredJunctions* ${base}
     mv *.Chimeric.out.sorted.* ${base}
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circrna_finder.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed circRNA_Finder.bed
     """
 }
 
@@ -1137,7 +1151,7 @@ process DCC{
     tag "${base}"
     label 'py3'
     label 'process_low'
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "DCC.bed", mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "outputs/*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/${base}/${it}" : null }
 
@@ -1148,10 +1162,12 @@ process DCC{
     tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_dcc.bed") into dcc_results
     tuple val(base), file("outputs/*") into dcc_intermediates
+    tuple val(base), file("DCC.bed") into dcc_annotated
 
     script:
     COJ="Chimeric.out.junction"
@@ -1177,6 +1193,11 @@ process DCC{
     rm ${base}_dcc.txt
     rm ${base}_dcc.filtered
     find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t outputs/
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_dcc.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed DCC.bed
     """
 }
 
@@ -1213,7 +1234,7 @@ process FIND_ANCHORS{
 process FIND_CIRC{
     tag "${base}"
     label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: 'find_circ.bed', mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/${base}/${it}" : null }
 
@@ -1225,10 +1246,12 @@ process FIND_CIRC{
     val(fasta) from ch_fasta
     file(bowtie2_index) from ch_bowtie2_find_circ.collect()
     val(fasta_chr_path) from ch_chromosomes
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_find_circ.bed") into find_circ_results
     tuple val(base), file("*.sites.*") into find_circ_intermediates
+    tuple val(base), file("find_circ.bed") into find_circ_annotated
 
     script:
     """
@@ -1239,6 +1262,11 @@ process FIND_CIRC{
     grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
     tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_find_circ.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed find_circ.bed
     """
 }
 
@@ -1295,7 +1323,7 @@ process MAPSPLICE_ALIGN{
 
 process MAPSPLICE_PARSE{
     tag "${base}"
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "MapSplice.bed", mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/${it}" : null }
 
@@ -1306,10 +1334,12 @@ process MAPSPLICE_PARSE{
     tuple val(base), file(raw_fusion) from mapsplice_fusion
     file(fasta) from ch_fasta
     file(gene_annotation) from ch_gene
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
     tuple val(base), file("${base}/*") into mapsplice_intermediates
+    tuple val(base), file("MapSplice.bed") into mapsplice_annotated
 
     script:
     """
@@ -1320,13 +1350,18 @@ process MAPSPLICE_PARSE{
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.mapsplice.junction.bed -o ${base}/${base}.txt
 
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_mapsplice.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed MapSplice.bed
     """
 }
 
 process SEGEMEHL{
     tag "${base}"
     label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "*_segemehl.bed", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/circrna_discovery/${base}", pattern: "Segemehl.bed", mode: params.publish_dir_mode
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/${it}" : null }
 
@@ -1337,10 +1372,12 @@ process SEGEMEHL{
     tuple val(base), file(fastq) from segemehl_reads
     file(fasta) from ch_fasta
     file(idx) from ch_segemehl
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_segemehl.bed") into segemehl_results
     tuple val(base), file("${base}") into segemehl_intermediates
+    tuple val(base), file("Segemehl.bed") into segemehl_annotated
 
     script:
     def handleSam = params.save_quantification_intermediates ? "samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam" : "rm -rf ${base}/${base}.sam"
@@ -1364,6 +1401,11 @@ process SEGEMEHL{
 
     # now let user filter by BSJ read count param.
     awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
+    mv master_bed12.bed Segemehl.bed
     """
 }
 
