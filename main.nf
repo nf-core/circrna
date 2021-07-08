@@ -495,6 +495,26 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 ================================================================================
 */
 
+process FILTER_GTF{
+    tag"${gtf}"
+
+    when:
+    'circrna_discovery' in module
+
+    input:
+    file(gtf) from ch_gtf
+
+    output:
+    file("filt.gtf") into ch_gtf_filtered
+
+    script:
+    """
+    cp ${projectDir}/bin/unwanted_biotypes.txt ./
+
+    grep -vf unwanted_biotypes.txt $gtf > filt.gtf
+    """
+}
+
 process SPLIT_CHROMOSOMES{
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -742,7 +762,7 @@ process CIRIQUANT{
     tag "${base}"
     label 'process_high'
 
-    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "${base}_ciriquant.bed"
+    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "CIRIquant.bed"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/${it}" : null }
 
@@ -752,10 +772,12 @@ process CIRIQUANT{
     input:
     tuple val(base), file(fastq) from ciriquant_reads
     file(ciriquant_yml) from ch_ciriquant_yml
+    file(gtf) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
     tuple val(base), file("${base}") into ciriquant_intermediates
+    yuple val(base), file("CIRIquant.bed") into ciriquant_annotated
 
     script:
     """
@@ -783,6 +805,11 @@ process CIRIQUANT{
     awk -v OFS="\t" '{\$2-=1;print}' ${base}_ciriquant > ${base}_ciriquant.bed
 
     rm ${base}.gtf
+
+    ## experimental feature.
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' ${base}_ciriquant.bed > circs.bed
+    bash ${projectDir}/bin/get_mature_seq.sh &> annotation.log
+    mv master_bed12.bed CIRIquant.bed
     """
 }
 
@@ -1353,7 +1380,7 @@ if(tools_selected > 1){
    // No WARN if ciriquant selected in tool?
    combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true).join(segemehl_results, remainder: true)
 
-   process consolidate_algorithms{
+   process MERGE_TOOLS{
        tag "${base}"
 
        when:
@@ -1381,7 +1408,7 @@ if(tools_selected > 1){
        """
    }
 
-   process get_counts_combined{
+   process CIRC_MATRIX{
        tag "${base}"
        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
@@ -1405,8 +1432,8 @@ if(tools_selected > 1){
 
    single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results, segemehl_results)
 
-   process get_counts_single{
-
+   process CIRC_MATRIX{
+       tag "${bed}"
        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
        when:
@@ -1434,6 +1461,13 @@ if(tools_selected > 1){
        """
     }
 }
+
+/*
+================================================================================
+                             Annotate circRNAs
+================================================================================
+*/
+
 
 
 

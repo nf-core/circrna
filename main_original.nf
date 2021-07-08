@@ -1681,8 +1681,8 @@ process remove_unwanted_biotypes{
   STEP 7.3: Annotate circRNAs. Description: https://github.com/nf-core/circrna/tree/master/docs/get_mature_seq.md
 */
 
-process get_mature_seq{
-
+process ANNOTATE_CIRCS{
+    label 'process_low'
     publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'bed12/*.bed'
     publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'fasta/*.fa'
 
@@ -1700,6 +1700,7 @@ process get_mature_seq{
     file("targetscan/*.txt") into targetscan_sequences
     file("bed12/*.bed") into bed_files
     file("fasta/*.fa") into circ_seqs
+    file("annotation.log") into annotation_trace
 
     script:
     """
@@ -1707,19 +1708,20 @@ process get_mature_seq{
     tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > circs.bed
 
     # Create BED12 files
-    bash ${projectDir}/bin/get_mature_seq.sh
+    bash ${projectDir}/bin/get_mature_seq.sh &> annotation.log
 
     # Create miRanda inputs
-    bedtools getfasta -fi $fasta -bed de_circ_exon_annotated.bed -s -split -name > de_circ_sequences.fa_tmp
-    grep -A 1 '>' de_circ_sequences.fa_tmp | cut -d: -f1,2,3 > de_circ_sequences.fa && rm de_circ_sequences.fa_tmp
+    bedtools getfasta -fi $fasta -bed master_bed12.bed -s -split -name > circ_sequences.fa_tmp
+    # need to think about this next part dynamically, which i think modifies the fasta header.
+    grep -A 1 '>' circ_sequences.fa_tmp | cut -d: -f1,2,3 > circ_sequences.fa && rm circ_sequences.fa_tmp
     mkdir -p miranda
-    awk -F '>' '/^>/ {F=sprintf("miranda/%s.fa",\$2); print > F;next;} {print >> F;}' < de_circ_sequences.fa
+    awk -F '>' '/^>/ {F=sprintf("miranda/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_sequences.fa
 
     # Create TargetScan inputs
-    bedtools getfasta -fi $fasta -bed de_circ_exon_annotated.bed -s -split -tab | sed 's/(/:/g' | sed 's/)//g' > de_circ_seq_tab.txt_tmp
-    awk -v OFS="\t" '{print \$1, 9606, \$2}' de_circ_seq_tab.txt_tmp > de_circ_seq_tab.txt && rm de_circ_seq_tab.txt_tmp
+    bedtools getfasta -fi $fasta -bed master_bed12.bed -s -split -tab | sed 's/(/:/g' | sed 's/)//g' > circ_seq_tab.txt_tmp
+    awk -v OFS="\t" '{print \$1, 9606, \$2}' circ_seq_tab.txt_tmp > circ_seq_tab.txt && rm circ_seq_tab.txt_tmp
     mkdir -p targetscan
-    while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < de_circ_seq_tab.txt
+    while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < circ_seq_tab.txt
 
     # Save fasta sequences for users
     cp -r miranda/ fasta/
