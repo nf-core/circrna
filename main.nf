@@ -762,9 +762,11 @@ process CIRIQUANT{
     tag "${base}"
     label 'process_high'
 
-    publishDir "${params.outdir}/circrna_discovery/${base}", mode: params.publish_dir_mode, pattern: "CIRIquant.bed"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishdir "${params.outdir}/circrna_discovery/CIRIquant", mode: params.publish_dir_mode, pattern: "fasta"
+    publishdir "${params.outdir}/circrna_discovery/CIRIquant/logs", mode: params.publish_dir_mode, pattern: "${base}_annotation.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
-        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/${it}" : null }
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
 
     when:
     'ciriquant' in tool && 'circrna_discovery' in module
@@ -777,7 +779,9 @@ process CIRIQUANT{
     output:
     tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
     tuple val(base), file("${base}") into ciriquant_intermediates
-    tuple val(base), file("CIRIquant.bed") into ciriquant_annotated
+    tuple val(base), file("${base}.bed") into ciriquant_annotated
+    file("fasta") into ciriquant_fasta
+    file("${base}_annotation.log") into ciriquant_annotation_logs
 
     script:
     """
@@ -808,8 +812,16 @@ process CIRIQUANT{
 
     ## Annotation
     awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_ciriquant.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> annotation.log
-    mv master_bed12.bed CIRIquant.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}_annotation.log
+    mv master_bed12.bed ${base}.bed
+
+    ## FASTA sequences
+    bedtools getfasta -fi $fasta -bed CIRIquant.bed -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
     """
 }
 
