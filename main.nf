@@ -300,6 +300,7 @@ params.mature    = params.genome ? params.genomes[params.genome].mature    ?: fa
 // index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
+ch_mature = params.mature ? Channel.value(file(params.mature)) : null
 
 process BWA_INDEX {
     tag "${fasta}"
@@ -763,7 +764,7 @@ process CIRIQUANT{
     label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
@@ -782,7 +783,7 @@ process CIRIQUANT{
     tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
     tuple val(base), file("${base}") into ciriquant_intermediates
     tuple val(base), file("${base}.bed") into ciriquant_annotated
-    tuple val(base), file("fasta") into ciriquant_fasta
+    tuple val(base), file("fasta/*") into ciriquant_fasta
     tuple val(base), file("${base}.log") into ciriquant_annotation_logs
 
     script:
@@ -976,7 +977,7 @@ process CIRCEXPLORER2{
     label 'process_medium'
 
     publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/intermediates/${it}" : null }
@@ -995,7 +996,7 @@ process CIRCEXPLORER2{
     tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
     tuple val(base), file("${base}") into circexplorer2_intermediates
     tuple val(base), file("${base}.bed") into circexplorer2_annotated
-    tuple val(base), file("fasta") into circexplorer2_fasta
+    tuple val(base), file("fasta/*") into circexplorer2_fasta
     tuple val(base), file("${base}.log") into circexplorer2_logs
 
     script:
@@ -1031,7 +1032,7 @@ process CIRCRNA_FINDER{
     tag "${base}"
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/intermediates/${it}" : null }
@@ -1049,7 +1050,7 @@ process CIRCRNA_FINDER{
     tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
     tuple val(base), file("${base}") into circrna_finder_intermediates
     tuple val(base), file("${base}.bed") into circrna_finder_annotated
-    tuple val(base), file("fasta") into circrna_finder_fasta
+    tuple val(base), file("fasta/*") into circrna_finder_fasta
     tuple val(base), file("${base}.log") into circrna_finder_logs
 
     script:
@@ -1205,7 +1206,7 @@ process DCC{
     label 'py3'
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/DCC/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/DCC/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${it}" : null }
@@ -1224,7 +1225,7 @@ process DCC{
     tuple val(base), file("${base}_dcc.bed") into dcc_results
     tuple val(base), file("${base}") into dcc_intermediates
     tuple val(base), file("${base}.bed") into dcc_annotated
-    tuple val(base), file("fasta") into dcc_fasta
+    tuple val(base), file("fasta/*") into dcc_fasta
     tuple val(base), file("${base}.log") into dcc_logs
 
     script:
@@ -1305,7 +1306,7 @@ process FIND_CIRC{
     tag "${base}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/find_circ/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/intermediates/${base}/${it}" : null }
@@ -1325,7 +1326,7 @@ process FIND_CIRC{
     tuple val(base), file("${base}_find_circ.bed") into find_circ_results
     tuple val(base), file("*.sites.*") into find_circ_intermediates
     tuple val(base), file("${base}.bed") into find_circ_annotated
-    tuple val(base), file("fasta") into find_circ_fasta
+    tuple val(base), file("fasta/*") into find_circ_fasta
     tuple val(base), file("${base}.log") into find_circ_logs
 
     script:
@@ -1412,7 +1413,7 @@ process MAPSPLICE_PARSE{
     tag "${base}"
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/MapSplice/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/intermediates/${it}" : null }
@@ -1431,7 +1432,7 @@ process MAPSPLICE_PARSE{
     tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
     tuple val(base), file("${base}/*") into mapsplice_intermediates
     tuple val(base), file("${base}.bed") into mapsplice_annotated
-    tuple val(base), file("fasta") into mapsplice_fasta
+    tuple val(base), file("fasta/*") into mapsplice_fasta
     tuple val(base), file("${base}.log") into mapsplice_logs
 
     script:
@@ -1467,7 +1468,7 @@ process SEGEMEHL{
     tag "${base}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/intermediates/${it}" : null }
@@ -1486,7 +1487,7 @@ process SEGEMEHL{
     tuple val(base), file("${base}_segemehl.bed") into segemehl_results
     tuple val(base), file("${base}") into segemehl_intermediates
     tuple val(base), file("${base}.bed") into segemehl_annotated
-    tuple val(base), file("fasta") into segemehl_fasta
+    tuple val(base), file("fasta/*") into segemehl_fasta
     tuple val(base), file("${base}.log") into segemehl_logs
 
     script:
@@ -1626,11 +1627,76 @@ if(tools_selected > 1){
 
 /*
 ================================================================================
-                             Annotate circRNAs
+                             miRNA Prediction
 ================================================================================
 */
 
 
+process FORMAT_TARGETSCAN{
+    when:
+    'mirna_prediction' in module
+
+    input:
+    file(mature) from ch_mature
+
+    output:
+    file("mature.txt") into ch_mature_txt
+
+    script:
+    """
+    bash ${projectDir}/bin/targetscan_format.sh $mature
+    """
+}
+
+// Collect the sample fasta files per tool, make unique to avoid input collision
+// must keep tuple structure here to name output mirna preds.
+// like joining the circrna bed files, gives warning but it works.
+sample_fasta = ciriquant_fasta.join(circexplorer2_fasta, remainder: true).join(circrna_finder_fasta, remainder: true).join(dcc_fasta, remainder: true).join(mapsplice_fasta, remainder: true).join(find_circ_fasta, remainder: true).join(segemehl_fasta, remainder: true).unique()
+(miranda_input, targetscan_input) = sample_fasta.into(2)
+
+process MIRANDA {
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode
+
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), file(fasta) from miranda_input.flatten()
+    file(mirbase) from ch_mature
+
+    output:
+    tuple val(base), file("*.miRanda.txt") into miranda_out
+
+    script:
+    """
+    miranda $mirbase $fasta -strict -out ${base}.bindsites.out -quiet
+    echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${base}.miRanda.txt
+    grep -A 1 "Scores for this hit:" ${base}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
+    """
+}
+
+process TARGETSCAN {
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/TargetScan/${base}", mode: params.publish_dir_mode
+
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), file(fasta) from targetscan_input.flatten()
+    file(mirbase) from ch_mature_txt
+
+    output:
+    tuple val(base), file("*.targetscan.txt") into targetscan_out
+
+    script:
+    """
+    targetscan_70.pl $mirbase $fasta ${base}.targetscan.txt
+    """
+}
 
 
 /*

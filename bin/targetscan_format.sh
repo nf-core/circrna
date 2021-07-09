@@ -15,7 +15,7 @@
 
 ## Stage input mature.fa file, species
 MATURE="$1"
-GENOME_ID="$2"
+#GENOME_ID="$2"
 
 ## Uncompress if necessary
 if [ ${MATURE: -3} == ".gz" ]; then
@@ -33,7 +33,7 @@ grep ">" $MATURE | awk -F ' ' '{print $NF}' > miR_ID
 ## Combine
 paste miR_ID seed_sequence > targetscan_tmp.txt
 ## Correct delimiter, add dummy species
-awk -v OFS="\t" '{print $1, $2, "0000"}' targetscan_tmp.txt > ${GENOME_ID}_targetscan.txt
+awk -v OFS="\t" '{print $1, $2, "0000"}' targetscan_tmp.txt > mature.txt
 
 ## Tidy the work dir (uncomment these for debugging scratch dirs)
 rm -rf mature_sequence
