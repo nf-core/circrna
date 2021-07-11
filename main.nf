@@ -1538,7 +1538,7 @@ process SEGEMEHL{
 ================================================================================
 */
 
-quantification_results = ciriquant_results.mix(circexplorer2_results, circrna_finder_results, dcc_results, find_circ_results, mapsplice_results, segemehl_results).groupTuple()
+quantification_results = ciriquant_results.mix(circexplorer2_results, circrna_finder_results, dcc_results, find_circ_results, mapsplice_results, segemehl_results)
 
 if(tools_selected > 1){
    process MERGE_TOOLS{
@@ -1548,7 +1548,7 @@ if(tools_selected > 1){
        'circrna_discovery' in module
 
        input:
-       tuple val(base), file(bed) from quantification_results
+       tuple val(base), file(bed) from quantification_results.groupTuple()
 
        output:
        file("${base}.bed") into sample_counts
@@ -1595,7 +1595,7 @@ if(tools_selected > 1){
        'circrna_discovery' in module
 
        input:
-       tuple val(base), file(bed) from quantification_results.collect()
+       file(bed) from quantification_results.collect()
        val(tool) from params.tool
 
        output:
