@@ -1595,7 +1595,7 @@ if(tools_selected > 1){
        'circrna_discovery' in module
 
        input:
-       file(bed) from quantification_results.collect()
+       tuple val(base), file(bed) from quantification_results.collect()
        val(tool) from params.tool
 
        output:
