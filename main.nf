@@ -764,7 +764,7 @@ process CIRIQUANT{
     label 'process_high'
 
     publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
@@ -977,7 +977,7 @@ process CIRCEXPLORER2{
     label 'process_medium'
 
     publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/intermediates/${it}" : null }
@@ -1032,7 +1032,7 @@ process CIRCRNA_FINDER{
     tag "${base}"
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/intermediates/${it}" : null }
@@ -1206,7 +1206,7 @@ process DCC{
     label 'py3'
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/DCC/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/DCC/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${it}" : null }
@@ -1306,7 +1306,7 @@ process FIND_CIRC{
     tag "${base}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/find_circ/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/intermediates/${base}/${it}" : null }
@@ -1413,7 +1413,7 @@ process MAPSPLICE_PARSE{
     tag "${base}"
     label 'process_medium'
     publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/MapSplice/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/intermediates/${it}" : null }
@@ -1468,7 +1468,7 @@ process SEGEMEHL{
     tag "${base}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}/fasta", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
     publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/intermediates/${it}" : null }
@@ -1639,6 +1639,7 @@ process MIRANDA {
 
     output:
     tuple val(base), file("*.miRanda.txt") into miranda_out
+    tuple val(base), file("${prefix}.txt") into targetscan_inputs
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1646,6 +1647,12 @@ process MIRANDA {
     miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
     echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
     grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
+
+    # format for targetscan
+    cat $fasta | grep ">" | sed 's/>//g' > id
+    cat $fasta | grep -v ">" > seq
+    echo "0000" > species
+    paste id species seq > ${prefix}.txt
     """
 }
 
@@ -1662,6 +1669,28 @@ process TARGETSCAN_DATABASE{
     script:
     """
     bash ${projectDir}/bin/targetscan_format.sh $mature
+    """
+}
+
+process TARGETSCAN{
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/TargetScan/${base}", mode: params.publish_dir_mode
+
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), file(txt) from targetscan_inputs
+    file(mature) from ch_mature_txt
+
+    output:
+    tuple val(base), file("*.targetscan.txt") into targetscan_out
+
+    script:
+    prefix = txt.toString() - /.txt/
+    """
+    targetscan_70.pl $mature $txt ${prefix}.targetscan.txt
     """
 }
 
