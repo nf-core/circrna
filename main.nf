@@ -1247,11 +1247,11 @@ process DCC{
     ## fix start position (+1)
     awk -v OFS="\t" '{\$2-=1;print}' ${base}_dcc.filtered > ${base}_dcc.bed
 
-    mkdir -p outputs
+    mkdir -p ${base}
     rm strand
     rm ${base}_dcc.txt
     rm ${base}_dcc.filtered
-    find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t outputs/
+    find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t ${base}/
 
     ## Annotation
     awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_dcc.bed > circs.bed
