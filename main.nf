@@ -1330,6 +1330,7 @@ process FIND_CIRC{
     tuple val(base), file("${base}.log") into find_circ_logs
 
     script:
+    def fasta_file =
     """
     bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \\
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
@@ -1346,7 +1347,7 @@ process FIND_CIRC{
 
     ## FASTA sequences
     cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    bedtools getfasta -fi ${fasta.baseName}.fa -bed bed12.tmp -s -split -name > circ_seq.tmp
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
     ## output to dir
