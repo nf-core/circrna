@@ -1639,7 +1639,7 @@ process MIRANDA {
 
     output:
     tuple val(base), file("*.miRanda.txt") into miranda_out
-    tuple val(base), file("${prefix}.txt") into targetscan_inputs
+    tuple val(base), file("*_ts.txt") into targetscan_inputs
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1652,7 +1652,7 @@ process MIRANDA {
     cat $fasta | grep ">" | sed 's/>//g' > id
     cat $fasta | grep -v ">" > seq
     echo "0000" > species
-    paste id species seq > ${prefix}.txt
+    paste id species seq > ${prefix}_ts.txt
     """
 }
 
@@ -1688,7 +1688,7 @@ process TARGETSCAN{
     tuple val(base), file("*.targetscan.txt") into targetscan_out
 
     script:
-    prefix = txt.toString() - /.txt/
+    prefix = txt.toString() - /_ts.txt/
     """
     targetscan_70.pl $mature $txt ${prefix}.targetscan.txt
     """
