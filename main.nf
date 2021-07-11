@@ -1538,13 +1538,9 @@ process SEGEMEHL{
 ================================================================================
 */
 
+quantification_results = ciriquant_results.mix(circexplorer2_results, circrna_finder_results, dcc_results, find_circ_results, mapsplice_results, segemehl_results).groupTuple()
+
 if(tools_selected > 1){
-
-   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
-   // Causes WARN: input caridnality does not match (due to null items), but script works.
-   // No WARN if ciriquant selected in tool?
-   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true).join(segemehl_results, remainder: true)
-
    process MERGE_TOOLS{
        tag "${base}"
 
@@ -1552,7 +1548,7 @@ if(tools_selected > 1){
        'circrna_discovery' in module
 
        input:
-       tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice), file(segemehl) from combined_tool
+       tuple val(base), file(bed) from quantification_results
 
        output:
        file("${base}.bed") into sample_counts
@@ -1572,7 +1568,6 @@ if(tools_selected > 1){
        mv combined_counts.bed ${base}.bed
        """
    }
-
    process COUNT_MATRIX_COMBINED{
        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
@@ -1593,9 +1588,6 @@ if(tools_selected > 1){
        """
    }
 }else{
-
-   single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results, segemehl_results)
-
    process COUNT_MATRIX_SINGLE{
        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
@@ -1603,7 +1595,7 @@ if(tools_selected > 1){
        'circrna_discovery' in module
 
        input:
-       file(bed) from single_tool.collect()
+       file(bed) from quantification_results.collect()
        val(tool) from params.tool
 
        output:
@@ -1631,8 +1623,33 @@ if(tools_selected > 1){
 ================================================================================
 */
 
+miranda_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
 
-process FORMAT_TARGETSCAN{
+process MIRANDA {
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode
+
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), file(fasta) from miranda_input
+    file(mirbase) from ch_mature
+
+    output:
+    tuple val(base), file("*.miRanda.txt") into miranda_out
+
+    script:
+    prefix = fasta.toString() - ~/.fa/
+    """
+    miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
+    echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
+    grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
+    """
+}
+
+process TARGETSCAN_DATABASE{
     when:
     'mirna_prediction' in module
 
@@ -1647,57 +1664,6 @@ process FORMAT_TARGETSCAN{
     bash ${projectDir}/bin/targetscan_format.sh $mature
     """
 }
-
-// Collect the sample fasta files per tool, make unique to avoid input collision
-// must keep tuple structure here to name output mirna preds.
-// like joining the circrna bed files, gives warning but it works.
-sample_fasta = ciriquant_fasta.join(circexplorer2_fasta, remainder: true).join(circrna_finder_fasta, remainder: true).join(dcc_fasta, remainder: true).join(mapsplice_fasta, remainder: true).join(find_circ_fasta, remainder: true).join(segemehl_fasta, remainder: true).unique()
-(miranda_input, targetscan_input) = sample_fasta.into(2)
-
-process MIRANDA {
-    tag "${base}"
-    label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode
-
-    when:
-    'mirna_prediction' in module
-
-    input:
-    tuple val(base), file(fasta) from miranda_input.flatten()
-    file(mirbase) from ch_mature
-
-    output:
-    tuple val(base), file("*.miRanda.txt") into miranda_out
-
-    script:
-    """
-    miranda $mirbase $fasta -strict -out ${base}.bindsites.out -quiet
-    echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${base}.miRanda.txt
-    grep -A 1 "Scores for this hit:" ${base}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
-    """
-}
-
-process TARGETSCAN {
-    tag "${base}"
-    label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/TargetScan/${base}", mode: params.publish_dir_mode
-
-    when:
-    'mirna_prediction' in module
-
-    input:
-    tuple val(base), file(fasta) from targetscan_input.flatten()
-    file(mirbase) from ch_mature_txt
-
-    output:
-    tuple val(base), file("*.targetscan.txt") into targetscan_out
-
-    script:
-    """
-    targetscan_70.pl $mirbase $fasta ${base}.targetscan.txt
-    """
-}
-
 
 /*
 ================================================================================
