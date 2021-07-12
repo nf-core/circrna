@@ -295,12 +295,14 @@ params.star      = params.genome ? params.genomes[params.genome].star      ?: fa
 params.bowtie    = params.genome ? params.genomes[params.genome].bowtie    ?: false : false
 params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: false : false
 params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
+params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
 
 // stage files.
 // index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
 ch_mature = params.mature ? Channel.value(file(params.mature)) : null
+ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 process BWA_INDEX {
     tag "${fasta}"
@@ -510,9 +512,7 @@ process FILTER_GTF{
 
     script:
     """
-    cp ${projectDir}/bin/unwanted_biotypes.txt ./
-
-    grep -vf unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf ${projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     """
 }
 
@@ -1699,13 +1699,14 @@ process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
     publishDir "${params.outdir}/mirna_prediction/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
-    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"    
+    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
     tuple val(base), file(miranda), file(targetscan) from miranda_out.join(targetscan_out)
     file(fasta) from ch_fasta
     file(fai) from ch_fai
     file(filt_gtf) from ch_gtf_filtered
+    val(species) from ch_species
 
     output:
     tuple val(base), file("*.pdf") into circos_plots
@@ -1724,13 +1725,10 @@ process MIRNA_TARGETS{
     bash ${projectDir}/bin/prep_circos.sh bed12.tmp
 
     ## add mature spl len (+ 1 bp)
-    awk '{print \$11}' circ.bed.tmp | sed -e 's/,/\n/g' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
     paste circ.bed.tmp ml > circ.bed
 
-    ## grab species
-    grep "miR-" $miranda | cut -d\$'\t' -f1 | cut -d'm' -f1 | sort -u > species
-
-    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt species
+    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt "${species}-"
     """
 }
 
