@@ -1629,7 +1629,7 @@ miranda_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, d
 process MIRANDA {
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode, pattern: "*.miRanda.txt"
 
     when:
     'mirna_prediction' in module
@@ -1692,6 +1692,45 @@ process TARGETSCAN{
     prefix = txt.toString() - /_ts.txt/
     """
     targetscan_70.pl $mature $txt ${prefix}.targetscan.txt
+    """
+}
+
+process MIRNA_TARGETS{
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
+    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"    
+
+    input:
+    tuple val(base), file(miranda), file(targetscan) from miranda_out.join(targetscan_out)
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(filt_gtf) from ch_gtf_filtered
+
+    output:
+    tuple val(base), file("*.pdf") into circos_plots
+    tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
+
+    script:
+    prefix = miranda.toString() - /.miRanda.txt/
+    """
+    ## use file name to derive bed12 coordiantes.
+    echo *.miRanda.txt | sed 's/.miRanda.txt//g' | sed 's/:/\t/g; s/-/\t/g' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
+    mv master_bed12.bed circ.bed.tmp
+
+    ## Prep exon track for circlize
+    cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
+    bash ${projectDir}/bin/prep_circos.sh bed12.tmp
+
+    ## add mature spl len (+ 1 bp)
+    awk '{print \$11}' circ.bed.tmp | sed -e 's/,/\n/g' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+    paste circ.bed.tmp ml > circ.bed
+
+    ## grab species
+    grep "miR-" $miranda | cut -d\$'\t' -f1 | cut -d'm' -f1 | sort -u > species
+
+    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt species
     """
 }
 
