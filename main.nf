@@ -1639,8 +1639,8 @@ process MIRANDA {
     file(mirbase) from ch_mature
 
     output:
-    tuple val(base), file("*.miRanda.txt") into miranda_out
-    tuple val(base), file("*_ts.txt") into targetscan_inputs
+    tuple val(prefix), file("*.miRanda.txt") into miranda_out
+    tuple val(prefix), file("*_ts.txt") into targetscan_inputs
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1686,7 +1686,7 @@ process TARGETSCAN{
     file(mature) from ch_mature_txt
 
     output:
-    tuple val(base), file("*.targetscan.txt") into targetscan_out
+    tuple val(prefix), file("*.targetscan.txt") into targetscan_out
 
     script:
     prefix = txt.toString() - /_ts.txt/
