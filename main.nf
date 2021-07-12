@@ -1713,7 +1713,7 @@ process MIRNA_TARGETS{
     tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
 
     script:
-    prefix = miranda.toString() - /.miRanda.txt/
+    def species_id = $species + "-"
     """
     ## use file name to derive bed12 coordiantes.
     echo *.miRanda.txt | sed 's/.miRanda.txt//g' | sed 's/:/\t/g; s/-/\t/g' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
@@ -1725,10 +1725,10 @@ process MIRNA_TARGETS{
     bash ${projectDir}/bin/prep_circos.sh bed12.tmp
 
     ## add mature spl len (+ 1 bp)
-    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
     paste circ.bed.tmp ml > circ.bed
 
-    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt "${species}-"
+    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
     """
 }
 
