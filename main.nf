@@ -1624,39 +1624,6 @@ if(tools_selected > 1){
 ================================================================================
 */
 
-miranda_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
-
-process MIRANDA {
-    tag "${base}"
-    label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/miRanda/${base}", mode: params.publish_dir_mode, pattern: "*.miRanda.txt"
-
-    when:
-    'mirna_prediction' in module
-
-    input:
-    tuple val(base), file(fasta) from miranda_input
-    file(mirbase) from ch_mature
-
-    output:
-    tuple val(prefix), file("*.miRanda.txt") into miranda_out
-    tuple val(prefix), file("*_ts.txt") into targetscan_inputs
-
-    script:
-    prefix = fasta.toString() - ~/.fa/
-    """
-    miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
-    echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
-    grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
-
-    # format for targetscan
-    cat $fasta | grep ">" | sed 's/>//g' > id
-    cat $fasta | grep -v ">" > seq
-    echo "0000" > species
-    paste id species seq > ${prefix}_ts.txt
-    """
-}
-
 process TARGETSCAN_DATABASE{
     when:
     'mirna_prediction' in module
@@ -1673,25 +1640,41 @@ process TARGETSCAN_DATABASE{
     """
 }
 
-process TARGETSCAN{
+mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
+
+process MIRNA_PREDICTION{
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/TargetScan/${base}", mode: params.publish_dir_mode
-
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${base}/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${base}/${it}" : null }
     when:
     'mirna_prediction' in module
 
     input:
-    tuple val(base), file(txt) from targetscan_inputs
-    file(mature) from ch_mature_txt
+    tuple val(base), file(fasta) from mirna_input
+    file(mirbase) from ch_mature
+    file(mirbase_txt) from ch_mature_txt
 
     output:
-    tuple val(prefix), file("*.targetscan.txt") into targetscan_out
+    tuple val(base), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
 
     script:
-    prefix = txt.toString() - /_ts.txt/
+    prefix = fasta.toString() - ~/.fa/
     """
-    targetscan_70.pl $mature $txt ${prefix}.targetscan.txt
+    miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
+    echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
+    grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
+
+    # format for targetscan
+    cat $fasta | grep ">" | sed 's/>//g' > id
+    cat $fasta | grep -v ">" > seq
+    echo "0000" > species
+    paste id species seq > ${prefix}_ts.txt
+
+    # run targetscan
+    targetscan_70.pl $mirbase_txt ${prefix}_ts.txt ${prefix}.targetscan.txt
     """
 }
 
@@ -1702,7 +1685,7 @@ process MIRNA_TARGETS{
     publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
-    tuple val(base), file(miranda), file(targetscan) from miranda_out.join(targetscan_out)
+    tuple val(base), file(miranda), file(targetscan) from mirna_prediction
     file(fasta) from ch_fasta
     file(fai) from ch_fai
     file(filt_gtf) from ch_gtf_filtered
