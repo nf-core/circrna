@@ -1713,7 +1713,7 @@ process MIRNA_TARGETS{
     tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
 
     script:
-    def species_id = $species + "-"
+    def species_id = species + "-"
     """
     ## use file name to derive bed12 coordiantes.
     echo *.miRanda.txt | sed 's/.miRanda.txt//g' | sed 's/:/\t/g; s/-/\t/g' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
