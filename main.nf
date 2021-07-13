@@ -751,7 +751,7 @@ if(params.trim_fastq){
   STEP 5.4: Stage reads for quantification
 */
 
-(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
+(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
@@ -1714,6 +1714,93 @@ process MIRNA_TARGETS{
     Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
     """
 }
+
+/*
+================================================================================
+                            Differential Expression
+================================================================================
+*/
+
+ch_hisat_index_files = params.hisat ? Channel.value(file("${params.hisat}/*")) :  hisat_built
+
+process HISAT_ALIGN{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern "${base}.bam",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/Hisat2/${it}" : null }
+
+    when:
+    'differential_expression' in module
+
+    input:
+    tuple val(base), file(fastq) from hisat_reads
+    file(hisat2_index) from ch_hisat_index_files.collect()
+    file(fasta) from ch_fasta
+
+    output:
+    tuple val(base), file("${base}.bam") into hisat_bam
+
+    script:
+    """
+    hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
+    """
+}
+
+process STRINGTIE{
+    tag "${base}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern "${base}.bam",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/StringTie/${it}" : null }
+
+    when:
+    'differential_expression' in module
+
+    input:
+    tuple val(base), file(bam) from hisat2_bam
+    file(gtf) from ch_gtf
+
+    output:
+    file("${base}") into stringtie_dir
+
+    script:
+    """
+    mkdir ${base}/
+    stringtie $bam -e -G $gtf -C ${base}/${base}_cov.gtf -p ${task.cpus} -o ${base}/${base}.gtf -A ${base}/${base}_genes.list
+    """
+}
+
+process DEA{
+    label 'process_medium'
+    publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
+
+    when:
+    'differential_expression' in module
+
+    input:
+    file(gtf_dir) from stringtie_dir.collect()
+    file(circ_matrix) from circRNA_counts
+    file(phenotype) from ch_phenotype
+
+    output:
+    file("RNA-Seq") into rnaseq_dir
+    file("circRNA") into circrna_dir
+    file("boxplots") into boxplots_dir
+    file("DESeq2_QC") into qc_plots
+
+    script:
+    """
+    for i in \$(ls -d */); do sample=\${i%"/"}; file=\${sample}.gtf; touch samples.txt; printf "\$sample\t\${i}\${file}\n" >> samples.txt; done
+
+    prepDE.py -i samples.txt
+
+    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+    """
+}
+
+
 
 /*
 ================================================================================
