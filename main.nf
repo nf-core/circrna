@@ -1756,7 +1756,7 @@ process STRINGTIE{
     'differential_expression' in module
 
     input:
-    tuple val(base), file(bam) from hisat2_bam
+    tuple val(base), file(bam) from hisat_bam
     file(gtf) from ch_gtf
 
     output:
