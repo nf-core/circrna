@@ -1783,6 +1783,7 @@ process DEA{
     file(gtf_dir) from stringtie_dir.collect()
     file(circ_matrix) from circRNA_counts
     file(phenotype) from ch_phenotype
+    val(species) from ch_species
 
     output:
     file("RNA-Seq") into rnaseq_dir
@@ -1796,7 +1797,7 @@ process DEA{
 
     prepDE.py -i samples.txt
 
-    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix ${projectDir}/bin/ensemblDatabase_map.txt $species
     """
 }
 
