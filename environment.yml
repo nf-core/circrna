@@ -35,7 +35,7 @@ dependencies:
   - conda-forge::r-argparser=0.6
   - r-base=3.6.3
   - conda-forge::r-circlize=0.4.12
-  - conda-forge::r-dplyr=1.0.3
+  - conda-forge::r-dplyr=1.0.5
   - conda-forge::r-ggplot2=3.3.3
   - r-ggpubr=0.4.0
   - conda-forge::r-gplots=3.1.1

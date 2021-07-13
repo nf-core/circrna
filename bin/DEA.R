@@ -31,6 +31,20 @@ get_args <- function(){
             help="circRNA counts matrix",
             default="circRNA_matrix.txt")
 
+    argp <- add_argument(
+            parser=argp,
+            arg="species",
+            short="s",
+            help="species ID",
+            default="hsa")
+
+    argp <- add_argument(
+            parser=argp,
+            arg="map",
+            short="m",
+            help="ensDB",
+            "default"="ensemblDatabase.txt")
+
     argv <- parse_args(
             parser=argp,
             argv = commandArgs(trailingOnly = TRUE))
@@ -44,13 +58,14 @@ giveError <- function(message){
     quit()
 }
 
-usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <circRNA_matrix.txt> ")}
+usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <circRNA_matrix.txt> <species id> <ensembl_map>")}
 
 
-stage_data <- function(gene_counts, phenotype, circRNA){
+stage_data <- function(gene_counts, phenotype, circRNA, species, map){
 
     inputdata <- list()
 
+    dbmap <- read.table(map, sep="\t", header=T, quote="")
     gene_mat <- read.csv(gene_counts, row.names="gene_id", check.names=F)
     circ <- read.table(circRNA, sep ="\t", header = T, stringsAsFactors=FALSE)
 
@@ -78,6 +93,8 @@ stage_data <- function(gene_counts, phenotype, circRNA){
     inputdata$gene <- gene_mat
     inputdata$circ <- circ
     inputdata$design <- makedesign(inputdata$pheno)
+    inputdata$species <- species
+    inputdata$map <- dbmap
 
     return(inputdata)
 }
@@ -144,23 +161,37 @@ makedesign <- function(phenotype){
 
 
 
-ens2symbol <- function(mat){
+ens2symbol <- function(mat, inputdata){
 
-    mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-    mat <- as.data.frame(mat)
-    mat$ensembl_gene_id_version <- rownames(mat)
-    info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
-                  filters = c("ensembl_gene_id_version"),
-                  values = mat$ensembl_gene_id_version,
-                  mart = mart,
-                  useCache=FALSE)
+    ## If rownames(mat) begin with ENS (are ensembl), then convert to HGNC
+    ## Else, I assume the identifiers are okay and should be left alone.
+    ## This is something I do not have the time or resources to test for
+    ## ENSEMBL/Gencode/NCBI/UCSC reference files
 
-    tmp <- merge(mat, info, by="ensembl_gene_id_version")
-    tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
-    rownames(tmp) <- tmp$external_gene_name
-    tmp <- subset(tmp, select=-c(ensembl_gene_id_version, external_gene_name))
+    if(all(grepl(pattern="^ENSG", rownames(mat)))){
 
-    return(tmp)
+        map <- inputdata$map
+        mart_call <- subset(map$command, map$species == species)
+
+        mart <- mart_call
+        mat <- as.data.frame(mat)
+        mat$ensembl_gene_id_version <- rownames(mat)
+        info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
+                      filters = c("ensembl_gene_id_version"),
+                      values = mat$ensembl_gene_id_version,
+                      mart = mart,
+                      useCache=FALSE)
+
+        tmp <- merge(mat, info, by="ensembl_gene_id_version")
+        tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
+        rownames(tmp) <- tmp$external_gene_name
+        tmp <- subset(tmp, select=-c(ensembl_gene_id_version, external_gene_name))
+
+        return(tmp)
+
+    }else{
+        return(mat)
+    }
 }
 
 get_upregulated <- function(df){
@@ -320,7 +351,7 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
     res_df <- as.data.frame(res)
 
     if(outdir == "RNA-Seq/"){
-        ann_res <- ens2symbol(res_df)
+        ann_res <- ens2symbol(res_df, inputdata)
     }else{
         ann_res <- res_df
     }
@@ -360,7 +391,7 @@ DESeq2_plots <- function(dds, outdir){
     counts <- counts(dds, normalized=T)
 
     if(outdir == "RNA-Seq/"){
-        counts <- ens2symbol(counts)
+        counts <- ens2symbol(counts, inputdata)
         log2 <- log2(counts + 1)
     }else{
         counts <- as.data.frame(counts)
@@ -601,7 +632,7 @@ suppressPackageStartupMessages(library("RColorBrewer"))
 
 arg <- get_args()
 
-inputdata <- stage_data(arg$gene_counts, arg$phenotype, arg$circRNA)
+inputdata <- stage_data(arg$gene_counts, arg$phenotype, arg$circRNA, arg$species, arg$map)
 dir.create("RNA-Seq")
 dir.create("circRNA")
 x <- DESeq2(inputdata, "RNA-Seq")
