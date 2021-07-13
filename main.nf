@@ -1726,7 +1726,7 @@ ch_hisat_index_files = params.hisat ? Channel.value(file("${params.hisat}/*")) :
 process HISAT_ALIGN{
     tag "${base}"
     label 'process_high'
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern "${base}.bam",
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}.bam",
         saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/Hisat2/${it}" : null }
 
     when:
