@@ -1797,7 +1797,7 @@ process DEA{
 
     prepDE.py -i samples.txt
 
-    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix ${projectDir}/bin/ensemblDatabase_map.txt $species
+    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${projectDir}/bin/ensemblDatabase_map.txt
     """
 }
 
