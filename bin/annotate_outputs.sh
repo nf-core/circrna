@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
+##
+## Expected Input:
+## Chr Start Stop Strand Count
+##
 
 echo "===================================================================================="
 echo "[nf-core/circrna]: circRNA annotation script                                        "
