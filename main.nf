@@ -1699,7 +1699,7 @@ process MIRNA_TARGETS{
     def species_id = species + "-"
     """
     ## use file name to derive bed12 coordiantes.
-    echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1,\$2,\$3,\$4,"0"}' > circs.bed
+    echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
     bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
     mv master_bed12.bed circ.bed.tmp
 

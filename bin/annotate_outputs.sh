@@ -2,8 +2,8 @@
 
 ##
 ## Expected Input:
-## Chr Start Stop Strand Count
-##
+## Chr Start Stop name count strand
+## name= chr":"start"-"stop":"strand
 
 echo "===================================================================================="
 echo "[nf-core/circrna]: circRNA annotation script                                        "
