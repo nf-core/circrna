@@ -399,6 +399,8 @@ process STAR_INDEX {
 
     script:
     """
+    mkdir -p STARIndex
+    
     STAR \\
         --runMode genomeGenerate \\
         --runThreadN ${task.cpus} \\
