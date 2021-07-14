@@ -603,7 +603,7 @@ process GENE_ANNOTATION{
     file(gtf) from ch_gtf
 
     output:
-    file("${gtf.baseName}.txt") into ch_gene
+    file("${gtf.baseName}.txt") into ch_gene_txt
 
     script:
     """
@@ -611,6 +611,8 @@ process GENE_ANNOTATION{
     perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
     """
 }
+
+ch_gene = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : ch_gene_txt
 
 /*
 ================================================================================
