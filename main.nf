@@ -597,7 +597,7 @@ process GENE_ANNOTATION{
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
+    !params.gene_annotation && params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
