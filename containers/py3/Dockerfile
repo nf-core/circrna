@@ -1,4 +1,4 @@
-FROM nfcore/base:1.12.1
+FROM nfcore/base:1.13.3
 LABEL authors="Barry Digby" \
       description="python 3 container for nf-core/circrna"
 

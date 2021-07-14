@@ -6,6 +6,7 @@
 ================================================================================
 Started August 2020.
 Dev version to nf-core Feb 2021.
+
 --------------------------------------------------------------------------------
  @Homepage
  https://github.com/nf-core/circrna
@@ -18,205 +19,20 @@ Dev version to nf-core Feb 2021.
 --------------------------------------------------------------------------------
 */
 
+log.info Headers.nf_core(workflow, params.monochrome_logs)
+
 /*
 ================================================================================
-                                Help Flags
+                              Print Help
 ================================================================================
 */
 
-def helpMessage() {
-    log.info nfcoreHeader()
-    log.info"""
-    ====================================================
-                    circrna v${workflow.manifest.version}
-   ====================================================
-    Usage:
-
-    The typical command for running the pipeline is as follows:
-
-    nextflow run nf-core/circrna -profile <docker/singularity/institute> --input 'samples.csv' --input_type 'fastq' --module 'circrna_discovery' --tool 'circexplorer2'
-
-   Mandatory arguments:
-      -profile                        [str] Configuration profile to use. If selecting multiple, provide as a comma seperated list.
-                                            Note that later profiles overwrite earlier profiles, order is important!
-                                            Available: docker, singularity, <institute>
-
-      --module                        [str] Specify analysis module(s) to run. Can use multiple (comma separated), must include 'circrna_discovery'
-                                            Available: circrna_discovery, mirna_prediction, differential_expression.
-                                            Default: ${params.module}
-
-      --tool                          [str] Specify which circRNA quantification tool to use.
-                                            If selecting multiple tools, provide as a comma seperated list.
-                                            Available: circexplorer2, circrna_finder, ciriquant, dcc, find_circ, mapsplice.
-                                            Default: ${params.tool}
-
-      --input_type                    [str] Specify the input data type.
-                                            Avaialable: fastq or bam.
-                                            Default: ${params.input_type}
-
-      --input                        [file] Either paths to FASTQ/BAM data (must be surrounded with quotes).
-                                            Indicate multiple files with a suitable wildcard glob pattern i.e '*_{1,2}' for FASTQ paired end reads.
-
-                                            OR
-
-                                            A path to a CSV file (ending .csv) containing file URL/paths and sample IDs.
-                                            Please see online documentation for a template.
-
-      --phenotype                    [file] When differential_expression is provided to --module, a phenotype CSV file (ending .csv) must be provided.
-                                            Sample IDs and response + explanatory variables from metadata must be included. Do not include irrelavant metadata.
-                                            This file is used to construct the DESeq2 model design.
-                                            The response variable must be named 'condition' &  wild-type/control/normal samples named 'control'.
-                                            Please see online documentation for examples of a valid phenotype.csv file.
-
-    circRNA filtering
-      --bsj_reads                     [int] Define the required number of reads spanning circRNA back-splice junction for circRNAs.
-                                            circRNAs with counts below [int] are discarded.
-                                            Disable by setting to 0.
-                                            Default: ${params.bsj_reads}
-
-      --tool_filter                   [int] Specify the minimum number of tools circRNAs must be called by.
-                                            Disable by setting to 0/1 (i.e take the union, do not apply filter).
-                                            Default: ${params.tool_filter}
-
-    Reference files
-      --genome_version                [str] When running the pipeline for the first time, specify the genome version to download for the analysis.
-                                            Gencode reference Fasta, GTF and annotation text files will be automatically generated.
-                                            Available: 'GRCh37', 'GRCh38'.
-
-      --fasta                        [file] Path to Gencode reference genome FASTA file. Must end with '.fa', '.fasta'.
-
-      --gencode_gtf                  [file] Path to Gencode reference GTF file. Must end with '.gtf'.
-
-      --gene_annotation              [file] Path to customised gene annotation file. Recommended to allow [nf-core/circrna] generate this file.
-
-      --bowtie_index                  [dir] Path to directory containing bowtie indices.
-
-      --bowtie2_index                 [dir] Path to directory containing bowtie2 indices.
-
-      --bwa_index                     [dir] Path to directory containing BWA indices.
-
-      --hisat2_index                  [dir] Path to directory containing HISAT2 indices.
-
-      --star_index                    [dir] Path to directory containing STAR indices.
-
-      --fasta_fai                    [file] Path to SAMtools genome index file.
-
-    Adapter trimming
-      --skip_trim                     [str] Specify whether to skip BBDUK adapter/quality trimming. Available: 'no', 'yes'
-
-      --adapters                     [file] Path to adapters file containing sequences to trim.
-                                            Requires '--k', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.adapters}
-
-      --k                             [int] Specify k-mer size to use for sequence - adapter matching.
-                                            Requires '--adapters', '--ktrim' and optionally '--hdist'.
-                                            Default: ${params.k}
-
-      --ktrim                         [str] Specify which ends of reads to perform adapter trimming on.
-                                            Requires '--adapters', '--k' and optionally '--hdist'.
-                                            Default: ${params.ktrim}
-
-      --hdist                         [int] Specify maximin hamming distance for reference k-mers.
-                                            Default: ${params.hdist}
-
-      --trimq                         [int] Regions within reads that fall below this average Phred score are trimmed.
-                                            Requires '--qtrim'.
-                                            Default: ${params.trimq}
-
-      --qtrim                         [str] Specify which ends of reads to perform trimming on.
-                                            Requires '--trimq'.
-                                            Default: ${params.qtrim}
-
-      --minlen                        [int] Filter to remove trimmed reads with length below this value.
-                                            Default: ${params.minlen}
-
-    STAR alignment
-      --alignIntronMax                [int] Maximum length STAR considers for introns.
-                                            Default: ${params.alignIntronMax}
-
-      --alignIntronMin                [int] Minimum length STAR considers for introns (otherwise considered a deletion).
-                                            Default: ${params.alignIntronMin}
-
-      --alignMatesGapMax              [int] Maximum gap STAR considers between mates.
-                                            Default: ${params.alignMatesGapMax}
-
-      --alignSJDBoverhangMin          [int] Minimum overhang for annotated junctions.
-                                            Default: ${params.alignSJDBoverhangMin}
-
-      --alignSJoverhangMin            [int] Minimum overhang for unannotated junctions.
-                                            Default: ${params.alignSJoverhangMin}
-
-      --alignSoftClipAtReferenceEnds  [str] Allow soft-clipping of alignments past the ends of chromosomes.
-                                            Default: ${params.alignSoftClipAtReferenceEnds}
-
-      --alignTranscriptsPerReadNmax   [int] Max number of alignments per read to consider.
-                                            Default: ${params.alignTranscriptsPerReadNmax}
-
-      --chimJunctionOverhangMin       [int] Minimum overhang for a chimeric junction.
-                                            Default: ${params.chimJunctionOverhangMin}
-
-      --chimScoreMin                  [int] Minimum total score (summed) of chimeric segments.
-                                            Default: ${params.chimScoreMin}
-
-      --chimScoreSeparation           [int] Minimum difference between the best chimeric score and the next one.
-                                            Default: ${params.chimScoreSeparation}
-
-      --genomeLoad                    [str] Mode of shared memory usage for genome files.
-                                            Available: 'LoadAndKeep', 'LoadAndRemove', 'LoadAndExit', 'Remove', 'NoSharedMemory'.
-                                            Default: ${params.genomeLoad}
-
-      --limitSjdbInsertNsj            [int] Maximum number of junctions to be inserted on the fly during mapping stage.
-                                            Default: ${params.limitSjdbInsertNsj}
-
-      --outFilterMatchNminOverLread [float] Output alignment if ratio of matched bases relative to read length is >= value.
-                                            Default: ${params.outFilterMatchNminOverLread}
-
-      --outFilterMismatchNoverLmax  [float] Output alignment if ratio of mismatched based relative to mapped read length is <= value.
-                                            Default: ${params.outFilterMismatchNoverLmax}
-
-      --outFilterMultimapNmax         [int] Maximum number of multiple alignments permitted for read.
-                                            Default: ${params.outFilterMultimapNmax}
-
-      --outFilterMultimapScoreRange   [int] Score range below the maximum score for multimapping alignments.
-                                            Default: ${params.outFilterMultimapScoreRange}
-
-      --outSJfilterOverhangMin        [str] Minimum overhang length for novel splice junctions. 4 integers provided in string.
-                                            From left to right, integers sepcify minimum overhang length for splice junction sites:
-                                            1. non-canonical motifs
-                                            2. GT/AG and CT/AC motifs
-                                            3. GC/AG and CT/GC motifs
-                                            4. AT/AC and GT/AT motifs
-                                            Default: ${params.outSJfilterOverhangMin}
-
-      --sjdbOverhang                  [int] Specify length of donor/acceptor sequence flanking junctions (Index generation step).
-                                            Default: ${params.sjdbOverhang}
-
-      --sjdbScore                     [int] Alignment score for alignments that traverse database junctions.
-                                            Default: ${params.sjdbScore}
-
-      --winAnchorMultimapNmax         [int] Maximum number of loci anchors are allowed map to.
-                                            Default: ${params.winAnchorMultimapNmax}
-
-    Other options:
-      --outdir                        [dir] The output directory where the results will be saved.
-                                            Default: ${params.outdir}
-      --publish_dir_mode             [list] Mode for publishing results in the output directory (only one)
-                                            Available: symlink, rellink, link, copy, copyNoFollow, move
-                                            Default: copy
-
-   For a full description of the parameters, visit [nf-core/circrna] homepage (https://nf-co.re/circrna).
-    """.stripIndent()
-}
-
-// Show help message
-params.help = false
-if (params.help){
-    helpMessage()
+def json_schema = "$projectDir/nextflow_schema.json"
+if (params.help) {
+    def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
+    log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
     exit 0
 }
-
-// Small console separator to make it easier to read errors after launch
-println ""
 
 /*
 ================================================================================
@@ -224,15 +40,12 @@ println ""
 ================================================================================
 */
 
-def json_schema = "$projectDir/nextflow_schema.json"
-if (params.help) {
-    def command = "nextflow run nf-core/circrna --input '*_R{1,2}.fastq.gz' -profile docker"
-    log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
-    exit 0
-}
-
 if (params.validate_params) {
     NfcoreSchema.validateParameters(params, json_schema, log)
+}
+
+if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)){
+    exit 1, "The provided genome '${params.genome}' is not available in the iGenomes file. Currently the available genomes are ${params.genomes.keySet().join(', ')}"
 }
 
 // Check Tools selected
@@ -245,220 +58,79 @@ moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
-// Check outdir not empty string.
-if(params.outdir == ''){
-   exit 1, "[nf-core/circrna] error: --outdir was not supplied, please provide a output directory to publish workflow results."
-}
-
-// Check input type not empty.
-if(params.input_type == ''){
-   exit 1, "[nf-core/circrna] error: --input_type was not supplied, please select 'fastq' or 'bam'."
-}
-
-// Check Genome version
-if(params.genome_version == ''){
-   exit 1, "[nf-core/circrna] error: --genome_version was not supplied, please select 'GRCh37' or 'GRCh38'."
-}
-
-// Check proper versions supplied
-if(params.genome_version){
-
-   GenomeVersions = defineGenomeVersions()
-
-   Channel
-         .value(params.genome_version)
-         .map{ it ->
-
-               if(!GenomeVersions.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect genome version (${params.genome_version}) supplied.\n\nPlease select 'GRCh37' or 'GRCh38'"
-               }
-         }
-}
-
 /*
- * The below Reference Genome / index parameters are allowed to be empty (they will be generated if empty)
- * Mainly concerned about valid file extensions when provided.
+ * The below index parameters are allowed to be empty (they will be generated if empty)
+ * Mainly concerned about valid file extensions when provided (advanced checks not capable in Schema)
  */
 
-// Check Fasta
-if(params.fasta && !has_extension(params.fasta, ".fa") && !has_extension(params.fasta, ".fasta")){
-   exit 1, "[nf-core/circrna] error: Reference Fasta file provided (${params.fasta}) is not valid, Fasta file should have the extension '.fa' or '.fasta'."
-}
+// Check phenotype file and stage the channel
+// (Must not have NA's, must have 'condition' as colname)
 
-// Check GTF
-if(params.gencode_gtf && !has_extension(params.gencode_gtf, ".gtf")){
-   exit 1, "[nf-core/circrna] error: Reference GTF file provided (${params.gencode_gtf}) is not valid, GTF file should have the extension '.gtf'."
-}
-
-// Check Fasta fai
-if(params.fasta_fai && !has_extension(params.fasta_fai, ".fai")){
-   exit 1, "[nf-core/circrna] error: Fasta index file provided (${params.fasta_fai}) is not valid, Fasta index files should have the extension '.fai'."
-}
-
-// Check BWA index
-if(params.bwa_index){
-
-   bwa_path_files = params.bwa_index + "/*"
-
-   Channel
-         .fromPath(bwa_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it ->
-
-               if(!has_extension(it, ".ann") && !has_extension(it, ".amb") && !has_extension(it, ".bwt") && !has_extension(it, ".pac") && !has_extension(it, ".sa")){
-                  exit 1, "[nf-core/circrna] error: BWA index file ($it) has an incorrect extension. Are you sure they are BWA indices?"
-               }
-         }
-}
-
-// Check Bowtie index
-if(params.bowtie_index){
-
-   bowtie_path_files = params.bowtie_index + "/*"
-
-   Channel
-         .fromPath(bowtie_path_files, checkIfExists: true)
-         .flatten().view()
-         .map{ it ->
-
-               if(!has_extension(it, ".ebwt")){
-                  exit 1, "[nf-core/circrna] error: Bowtie index file ($it) has an incorrect extension. Are you sure they are Bowtie(1) indices?"
-               }
-         }
-}
-
-// Check Bowtie 2 index
-if(params.bowtie2_index){
-
-   bowtie2_path_files = params.bowtie2_index + "/*"
-
-   Channel
-         .fromPath(bowtie2_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it ->
-
-               if(!has_extension(it, ".bt2")){
-                  exit 1, "[nf-core/circrna] error: Bowtie 2 index file ($it) has an incorrect extension. Are you sure they are Bowtie 2 indices?"
-               }
-          }
-}
-
-
-// Check HISAT2 index
-if(params.hisat2_index){
-
-   hisat2_path_files = params.hisat2_index + "/*"
-
-   Channel
-         .fromPath(hisat2_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it ->
-
-               if(!has_extension(it, ".ht2")){
-                  exit 1, "[nf-core/circrna] error: HISAT2 index file ($it) has an incorrect extension. Are you sure they are HISAT2 indices?"
-               }
-          }
-}
-
-// Check STAR index
-if(params.star_index){
-
-   starList = defineStarFiles()
-
-   star_path_files = params.star_index + "/*"
-
-   Channel
-         .fromPath(star_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it -> it.getName()}
-         .collect()
-         .flatten()
-         .map{ it ->
-
-               if(!starList.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect index file ($it) is in the STAR directory provided.\n\nPlease check your STAR indices are valid:\n$starList."
-               }
-          }
-}
-
-// Check phenotype file
-
-// Check it is a valid file & stage path:
-pheno_path = null
-if(params.phenotype && (has_extension(params.phenotype, ".csv"))){
-   pheno_path = params.phenotype
-}else{
-   exit 1, "[nf-core/circrna] error: Input phenotype file (${params.phenotype}) is incorrect.\n\nMust be a '.csv' file and be comma delimited. See online documentation for description + examples."
-}
-
-// Check 'condition' is a col name, and that it contains 'control'.
-ch_phenotype = Channel.empty()
-if(pheno_path){
-
-   pheno_file = file(pheno_path)
-
-   if(pheno_file instanceof List) exit 1, "[nf-core/circrna] error: multiple files passed to --phenotype parameter."
-   if(!pheno_file.exists()) exit 1, "[nf-core/circrna] error: input phenotype file could not be found using the path provided: ${params.phenotype}"
-
+if(params.phenotype){
+   pheno_file = file(params.phenotype)
    ch_phenotype = examine_phenotype(pheno_file)
-   ch_phenotype.filter{ it =~/control/ }
-               .ifEmpty{ exit 1, "[nf-core/circrna] error: There are no samples named control in your condition column. Please rename the wild-type/normal samples control"}
-
+} else {
+   ch_phenotype = Channel.empty()
 }
 
 // Check BBDUK params
+/*
+  check adapters file exists
+  check combinations of parameters have been supplied
+*/
 
-// Check adapters
-if(params.skip_trim == 'no'){
-   if(!has_extension(params.adapters, ".fa") && !has_extension(params.adapters, ".fasta")){
-      exit 1, "[nf-core/circrna] error: Adapters file provied (${params.adapters}) is not valid, Fasta files must have the extension '*.fa' or '*.fasta'."
-   }
+if(params.trim_fastq){
    if(params.adapters){
       adapters = file(params.adapters, checkIfExists: true)
+      if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
+         exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
+      }
+    }
+    if(params.trimq && !params.qtrim || !params.trimq && params.qtrim){
+       exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
    }
-}
-
-// Check all adapter trimming flags are provided
-if(params.skip_trim == 'no' && params.adapters && (!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim)){
-   exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
-}
-
-// Check all quality trimming flags are provided
-if(params.skip_trim == 'no' && (params.trimq && !params.qtrim || !params.trimq && params.qtrim)){
-   exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
 }
 
 // Check filtering params
 tools_selected = tool.size()
 
-// Check it is an integer
-if(tools_selected > 1 && !isValidInteger(params.tool_filter)){
-  exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' ($params.tool_filter) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
-}
-
-// Check it does not exceed number of tools selected
+// Check '--tool_filter'' does not exceed number of tools selected
 if(tools_selected > 1 && params.tool_filter > tools_selected){
   exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' (${params.tool_filter}) exceeds the number of tools selected (${params.tool}). Please select a value less than or equal to the number of quantification tools selected ($tools_selected).\n\nPlease check the help documentation."
 }
 
-// Check BSJ reads param
-if(!isValidInteger(params.bsj_reads)){
-exit 1, "[nf-core/circrna] error: The parameter '--bsj_reads' ($params.bsj_reads) is not an integer. Do not wrap in quotes.\n\nPlease check the documentation online."
-}
+// Check Input data (if !csv choose path)
 
+if(has_extension(params.input, "csv")){
+
+   csv_file = file(params.input, checkIfExists: true)
+   ch_input = extract_data(csv_file)
+
+}else if(params.input && !has_extension(params.input, "csv")){
+
+   log.info ""
+   log.info "Input data log info:"
+   log.info "No input sample CSV file provided, attempting to read from path instead."
+   log.info "Reading input data from path: ${params.input}\n"
+   log.info ""
+
+   ch_input = retrieve_input_paths(params.input, params.input_type)
+
+}
 
 /*
 ================================================================================
-                                PRINTING SUMMARY
+                        PRINTING PARAMETER SUMMARY
 ================================================================================
 */
+
+log.info NfcoreSchema.params_summary_log(workflow, params, json_schema)
 
 // Has the run name been specified by the user?
 // This has the bonus effect of catching both -name and --name
 custom_runName = params.name
 if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
 
-log.info nfcoreHeader()
 def summary = [:]
 if (workflow.revision)        summary['Pipeline Release']    = workflow.revision
 summary['Run Name']          = custom_runName ?: workflow.runName
@@ -479,19 +151,21 @@ summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
+if('mirna_prediction' in module) summary['Minimum free energy'] = params.mfe
 
-summary['Genome version'] = params.genome_version
+summary['Genome version'] = params.genome
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
-if(params.gencode_gtf)     summary['Reference GTF']     = params.gencode_gtf
+if(params.gtf)             summary['Reference GTF']     = params.gtf
 if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
-if(params.bowtie_index)    summary['Bowtie indices']    = params.bowtie_index
-if(params.bowtie2_index)   summary['Bowtie2 indices']   = params.bowtie2_index
-if(params.bwa_index)       summary['BWA indices']       = params.bwa_index
-if(params.fasta_fai)       summary['SAMtools index']    = params.fasta_fai
-if(params.hisat2_index)    summary['HISAT2 indices']    = params.hisat2_index
-if(params.star_index)      summary ['STAR indices']     = params.star_index
+if(params.bowtie)    summary['Bowtie indices']    = params.bowtie
+if(params.bowtie2)   summary['Bowtie2 indices']   = params.bowtie2
+if(params.bwa)       summary['BWA indices']       = params.bwa
+if(params.fasta_fai)       summary['SAMtoolsindex']    = params.fasta_fai
+if(params.hisat2)    summary['HISAT2 indices']    = params.hisat2
+if(params.star)      summary ['STAR indices']     = params.star
 
-if(params.skip_trim == 'no'){
+summary['Skip BBDUK']     = params.trim_fastq
+if(params.trim_fastq){
                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
@@ -539,9 +213,6 @@ if(params.email || params.email_on_fail){
     summary['MultiQC maxsize']   = params.max_multiqc_email_size
 }
 
-log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
-log.info "\033[2m----------------------------------------------------\033[0m"
-
 // Check the hostnames against configured profiles
 checkHostname()
 
@@ -561,344 +232,260 @@ Channel.from(summary.collect{ [it.key, it.value] })
     """.stripIndent() }
     .set { ch_workflow_summary }
 
-/*
-================================================================================
-                          Export software versions
-================================================================================
-*/
-
-process get_software_versions {
-    publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
-        saveAs: {it.indexOf(".csv") > 0 ? it : null}
-
-    output:
-        file 'software_versions_mqc.yaml' into ch_software_versions_yaml
-        file "software_versions.csv"
-
-    script:
-    """
-    echo $workflow.manifest.version > v_pipeline.txt
-    echo $workflow.nextflow.version > v_nextflow.txt
-    bbduk.sh | grep 'Last modified' | cut -d' ' -f 3-99 &> v_bbduk.txt 2>&1 || true
-    bedtools --version &> v_bedtools.txt 2>&1 || true
-    bowtie --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie.txt 2>&1 || true
-    bowtie2 --version | awk -v OFS=' ' '{print \$3}' | head -n 1 &> v_bowtie2.txt 2>&1 || true
-    echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' &> v_bwa.txt 2>&1 || true
-    CIRCexplorer2 --version &> v_circexplorer2.txt 2>&1 || true
-    CIRIquant --version &> v_ciriquant.txt 2>&1 || true
-    hisat2 --version &> v_hisat2.txt 2>&1 || true
-    java --version &> v_java.txt 2>&1 || true
-    mapsplice.py --version &> v_mapsplice.txt 2>&1 || true
-    miranda -v | grep 'Algorithm' | cut -d' ' -f 1,2 &> v_miranda.txt 2>&1 || true
-    perl --version | grep 'x86' | cut -d' ' -f1-9 &> v_perl.txt 2>&1 || true
-    picard SamToFastq --version &> v_picard.txt 2>&1 || true
-    pip --version | cut -d' ' -f 1,2,5,6 &> v_pip.txt 2>&1 || true
-    python --version &> v_python.txt 2>&1 || true
-    R --version | head -n 1 &> v_R.txt || true
-    RNAfold --version | cut -d' ' -f2 &> v_viennarna.txt || true
-    samtools --version &> v_samtools.txt 2>&1 || true
-    STAR --version &> v_star.txt 2>&1 || true
-    stringtie --version &> v_stringtie.txt 2>&1 || true
-    targetscan_70.pl --version &> v_targetscan.txt 2>&1 || true
-    scrape_software_versions.py &> software_versions_mqc.yaml
-    """
-}
 
 /*
 ================================================================================
-                          Begin Workflow
+                            Stage Parameters
 ================================================================================
 */
+
+params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
+params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
+params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
+params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
+params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
+params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
+params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
+params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
+params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
+
+ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
+ch_mature = params.mature ? Channel.value(file(params.mature)) : null
+ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 /*
 ================================================================================
-                          Download Files
+                            BUILD INDICES
 ================================================================================
 */
 
-process download_fasta{
+process BWA_INDEX {
+    tag "${fasta}"
+    label 'proces_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
-
-    output:
-        file("*.fa") into fasta_downloaded
-
-    when: !params.fasta
-
-    shell:
-    if(params.genome_version == 'GRCh37'){
-       $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
-       gunzip GRCh37.primary_assembly.genome.fa.gz
-       mv GRCh37.primary_assembly.genome.fa GRCh37.fa.tmp
-       sed 's/\s.*$//' GRCh37.fa.tmp > GRCh37.fa
-       rm GRCh37.fa.tmp
-       /$
-    }else if(params.genome_version == 'GRCh38'){
-       $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh38.primary_assembly.genome.fa.gz
-       gunzip GRCh38.primary_assembly.genome.fa.gz
-       mv GRCh38.primary_assembly.genome.fa GRCh38.fa.tmp
-       sed 's/\s.*$//' GRCh38.fa.tmp > GRCh38.fa
-       rm GRCh38.fa.tmp
-       /$
-    }
-}
-
-ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : fasta_downloaded
-
-process download_gtf{
-
-    publishDir "${params.outdir}/circrna_discovery/reference", mode: params.publish_dir_mode
-
-    output:
-        file("*.gtf") into gtf_downloaded
-
-    when: !params.gencode_gtf
-
-    shell:
-    if(params.genome_version == 'GRCh37'){
-       $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
-       gunzip gencode.v34lift37.annotation.gtf.gz
-       mv gencode.v34lift37.annotation.gtf GRCh37.gtf
-       /$
-    }else if(params.genome_version == 'GRCh38'){
-       $/
-       wget --no-check-certificate ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.primary_assembly.annotation.gtf.gz
-       gunzip gencode.v34.primary_assembly.annotation.gtf.gz
-       mv gencode.v34.primary_assembly.annotation.gtf GRCh38.gtf
-       /$
-    }
-}
-
-ch_gencode_gtf = params.gencode_gtf ? Channel.value(file(params.gencode_gtf)) : gtf_downloaded
-
-process create_gene_annotation{
-
-    publishDir "${params.outdir}/circrna_discovery/reference/", mode: params.publish_dir_mode
+    when:
+    !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
-        file(gtf) from ch_gencode_gtf
+    file(fasta) from ch_fasta
 
     output:
-        file("*.txt") into gene_annotation_created
-
-    when: !params.gene_annotation
-
-    shell:
-    $/
-    gtfToGenePred -genePredExt -geneNameAsName2 !{gtf} !{params.genome_version}.genepred
-    perl -alne '$"="\t";print "@F[11,0..9]"' !{params.genome_version}.genepred > !{params.genome_version}.txt
-    /$
-}
-
-ch_gene_annotation = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : gene_annotation_created
-
-process download_mirbase{
-
-    errorStrategy 'retry'
-    maxRetries 10
-
-    publishDir "${params.outdir}/mirna_prediction/assets",mode: params.publish_dir_mode
-
-    output:
-        file("hsa_mature.fa") into miranda_miRs
-
-    when: 'mirna_prediction' in module
+    file("BWAIndex") into bwa_built
 
     script:
     """
-    wget --no-check-certificate ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz
-    gunzip mature.fa.gz
-    grep "sapiens" -A1 mature.fa | awk '!/--/' > hsa_mature.fa
+    mkdir -p BWAIndex
+    bwa index $fasta -p BWAIndex/${fasta.baseName}
     """
 }
 
-process download_targetscan{
+ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_built
 
-    errorStrategy 'retry'
-    maxRetries 10
+process SAMTOOLS_INDEX {
+    tag "${fasta}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
-    publishDir "${params.outdir}/mirna_prediction/assets", mode: params.publish_dir_mode
+    when:
+    !params.fasta_fai && params.fasta
+
+    input:
+    file(fasta) from ch_fasta
 
     output:
-        file("hsa_miR.txt") into targetscan_miRs
-        file("hsa_miR_for_context_scores.txt") into targetscan_miRs_context_scores
-
-    when: 'mirna_prediction' in module
+    file("${fasta}.fai") into fai_built
 
     script:
     """
-    wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/miR_Family_Info.txt.zip
-    jar xvf miR_Family_Info.txt.zip
-    grep 9606 miR_Family_Info.txt > hsa_miR_Family_Info.txt
-    awk -v OFS="\t" '{print \$1, \$2, \$3}' hsa_miR_Family_Info.txt > hsa_miR.txt
-    awk -v OFS="\t" '{print \$1, \$3, \$4, \$5}' hsa_miR.txt > hsa_miR_for_context_scores.txt
+    samtools faidx ${fasta}
     """
 }
 
+ch_fai = params.genome ? Channel.value(file(params.fasta_fai)) : params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
+
+process HISAT2_INDEX {
+    tag "${fasta}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+       saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
+
+    when:
+    !params.hisat && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file("${fasta.baseName}.*.ht2") into hisat_built
+    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
+
+    script:
+    """
+    hisat2-build \\
+        -p ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_hisat = params.hisat ? Channel.value(file(params.hisat)) : hisat_path
+
+process STAR_INDEX {
+    tag "${fasta}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
+
+    when:
+    !params.star && params.fasta && params.gtf && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+    file(gtf) from ch_gtf
+
+    output:
+    file("STARIndex") into star_built
+
+    script:
+    """
+    mkdir -p STARIndex
+
+    STAR \\
+        --runMode genomeGenerate \\
+        --runThreadN ${task.cpus} \\
+        --sjdbOverhang ${params.sjdbOverhang} \\
+        --sjdbGTFfile $gtf \\
+        --genomeDir STARIndex/ \\
+        --genomeFastaFiles $fasta
+    """
+}
+
+ch_star = params.genome ? Channel.value(file(params.star)) : params.star ? Channel.value(file(params.star)) : star_built
+
+process BOWTIE_INDEX {
+    tag "${fasta}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
+
+    when:
+    !params.bowtie && params.fasta && 'mapsplice' in tool && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file ("${fasta.baseName}.*") into bowtie_built
+
+    script:
+    """
+    bowtie-build \\
+        --threads ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_bowtie = params.genome ? Channel.fromPath("${params.bowtie}*") : params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
+
+process BOWTIE2_INDEX {
+    tag "${fasta}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
+
+    when:
+    !params.bowtie2 && params.fasta && 'find_circ' in tool && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file ("${fasta.baseName}.*") into bowtie2_built
+
+    script:
+    """
+    bowtie2-build \\
+        --threads ${task.cpus} \\
+        $fasta \\
+        ${fasta.baseName}
+    """
+}
+
+ch_bowtie2 = params.genome ? Channel.fromPath("${params.bowtie2}*") : params.bowtie2 ? Channel.fromPath("${params.bowtie2}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie2 index directory not found: ${params.bowtie2}"} : bowtie2_built
+(ch_bowtie2_anchors, ch_bowtie2_find_circ) = ch_bowtie2.into(2)
+
+process SEGEMEHL_INDEX{
+    tag "${fasta}"
+    label 'proces_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
+
+    when:
+    !params.segemehl && params.fasta && 'segemehl' in tool && 'circrna_discovery' in module
+
+    input:
+    file(fasta) from ch_fasta
+
+    output:
+    file("${fasta.baseName}.idx") into segemehl_built
+
+    script:
+    """
+    segemehl.x \\
+        -t ${task.cpus} \\
+        -d $fasta \\
+        -x "${fasta.baseName}.idx"
+    """
+}
+
+ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_built
 
 /*
 ================================================================================
-                          Create Genome Indices
+                           Misc circRNA Requirements
 ================================================================================
 */
 
-process samtools_index{
+process FILTER_GTF{
+    tag"${gtf}"
 
-    publishDir "${params.outdir}/circrna_discovery/index/samtools", mode: params.publish_dir_mode
+    when:
+    'circrna_discovery' in module
 
     input:
-        file(fasta) from ch_fasta
+    file(gtf) from ch_gtf
 
     output:
-        file("${fasta}.fai") into fasta_fai_built
-
-    when: !(params.fasta_fai)
+    file("filt.gtf") into ch_gtf_filtered
 
     script:
     """
-    samtools faidx $fasta
+    grep -vf ${projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     """
 }
 
-ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fasta_fai_built
+process SPLIT_CHROMOSOMES{
+    tag "${fasta}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/chromosomes/${it}" : null }
 
-process bwa_index{
-
-    publishDir "${params.outdir}/circrna_discovery/index/bwa", mode: params.publish_dir_mode
-
-    input:
-        file(fasta) from ch_fasta
-
-    output:
-        file("${fasta.baseName}.*") into bwa_built
-        val("$launchDir/${params.outdir}/circrna_discovery/index/bwa") into bwa_path
-
-    when: !(params.bwa_index) && 'ciriquant' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    bwa index -a bwtsw $fasta -p ${fasta.baseName}
-    """
-}
-
-ch_bwa_index = params.bwa_index ? Channel.value(params.bwa_index) : bwa_path
-
-process hisat2_index{
-
-    publishDir "${params.outdir}/circrna_discovery/index/hisat2", mode: params.publish_dir_mode
+    when:
+    params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 
     input:
-        file(fasta) from ch_fasta
+    file(fasta) from ch_fasta
 
     output:
-        file("${fasta.baseName}.*.ht2") into hisat2_built
-        val("$launchDir/${params.outdir}/circrna_discovery/index/hisat2") into hisat2_path
-
-    when: !(params.hisat2_index) && ( 'ciriquant' in tool || 'differential_expression' in module )
-
-    script:
-    """
-    hisat2-build $fasta ${fasta.baseName}
-    """
-}
-
-ch_hisat2_index = params.hisat2_index ? Channel.value(params.hisat2_index) : hisat2_path
-
-process star_index{
-
-    publishDir "${params.outdir}/circrna_discovery/index", mode: params.publish_dir_mode
-
-    input:
-        file(fasta) from ch_fasta
-        file(gtf) from ch_gencode_gtf
-
-    output:
-        file("STAR") into star_built
-
-    when: !(params.star_index) && ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
-
-    script:
-    """
-    STAR \
-    --runMode genomeGenerate \
-    --runThreadN ${task.cpus} \
-    --sjdbOverhang ${params.sjdbOverhang} \
-    --sjdbGTFfile $gtf \
-    --genomeDir STAR/ \
-    --genomeFastaFiles $fasta
-    """
-}
-
-ch_star_index = params.star_index ? Channel.value(file(params.star_index)) : star_built
-
-process bowtie_index{
-
-    publishDir "${params.outdir}/circrna_discovery/index/bowtie", mode: params.publish_dir_mode
-
-    input:
-        file(fasta) from ch_fasta
-
-    output:
-        file ("${fasta.baseName}.*") into bowtie_built
-
-    when: !(params.bowtie_index) && ('mapsplice' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
-
-    script:
-    """
-    bowtie-build $fasta ${fasta.baseName}
-    """
-}
-
-bowtie_path_files = params.bowtie_index + "/*"
-ch_bowtie_index = params.bowtie_index ? Channel.value(file(bowtie_path_files)) : bowtie_built
-
-process bowtie2_index{
-
-    publishDir "${params.outdir}/circrna_discovery/index/bowtie2", mode: params.publish_dir_mode
-
-    input:
-        file(fasta) from ch_fasta
-
-    output:
-        file ("${fasta.baseName}.*") into bowtie2_built
-
-    when: !(params.bowtie2_index) && ('find_circ' in tool || 'uroborus' in tool) && 'circrna_discovery' in module
-
-    script:
-    """
-    bowtie2-build $fasta ${fasta.baseName}
-    """
-}
-
-bowtie2_path_files = params.bowtie2_index + "/*"
-ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)) : bowtie2_built
-
-/*
-================================================================================
-                       Misc. circRNA requirements
-================================================================================
-*/
-
-
-process split_fasta{
-
-    publishDir "${params.outdir}/circrna_discovery/reference/chromosomes", mode: params.publish_dir_mode
-
-    input:
-        file(fasta) from ch_fasta
-
-    output:
-        path("*.fa", includeInputs:true) into split_fasta
-        val("${launchDir}/${params.outdir}/circrna_discovery/reference/chromosomes") into ch_fasta_chr
-
-    when: ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
+    path("*.fa", includeInputs:true) into publish_chromosomes
+    val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into chromosomes_dir
 
     shell:
     '''
-    ## Add catch for test data (uses only 1 chr, no action needed)
+    ## Add catch for test datasets (uses only 1 chr, no action needed -> includeInputs:true)
     n_chr=$(grep '>' !{fasta} | wc -l)
 
     if [[ $n_chr -gt 1 ]];
@@ -911,105 +498,101 @@ process split_fasta{
     '''
 }
 
-process ciriquant_yml{
+ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", mode: params.publish_dir_mode
+process CIRIQUANT_YML{
+
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
-        file(gencode_gtf) from ch_gencode_gtf
-        file(fasta) from ch_fasta
-        val(bwa_path) from ch_bwa_index
-        val(hisat2_path) from ch_hisat2_index
+    file(gtf) from ch_gtf
+    file(fasta) from ch_fasta
+    file(bwa) from ch_bwa
+    val(hisat) from ch_hisat
 
     output:
-        file("travis.yml") into ch_ciriquant_yml
-
-    when: 'ciriquant' in tool && 'circrna_discovery' in module
+    file("travis.yml") into ch_ciriquant_yml
 
     script:
-    index_prefix = fasta.toString() - ~/.fa/
+    bwa_prefix = fasta.toString() == 'genome.fa' ? fasta.toString() : fasta.toString() - ~/.(fa|fasta)$/
+    hisat_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
-    gencode_gtf_path = gencode_gtf.toRealPath()
+    gtf_path = gtf.toRealPath()
+    bwa_path = bwa.toRealPath()
     """
-    export bwa=`whereis bwa | cut -f2 -d':'`
-    export hisat2=`whereis hisat2 | cut -f2 -d':'`
-    export stringtie=`whereis stringtie | cut -f2 -d':'`
-    export samtools=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
+    BWA=`whereis bwa | cut -f2 -d':'`
+    HISAT2=`whereis hisat2 | cut -f2 -d':'`
+    STRINGTIE=`whereis stringtie | cut -f2 -d':'`
+    SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
 
     touch travis.yml
     printf "name: ciriquant\n\
     tools:\n\
-     bwa: \$bwa\n\
-     hisat2: \$hisat2\n\
-     stringtie: \$stringtie\n\
-     samtools: \$samtools\n\n\
+     bwa: \$BWA\n\
+     hisat2: \$HISAT2\n\
+     stringtie: \$STRINGTIE\n\
+     samtools: \$SAMTOOLS\n\n\
     reference:\n\
      fasta: ${fasta_path}\n\
-     gtf: ${gencode_gtf_path}\n\
-     bwa_index: ${bwa_path}/${index_prefix}\n\
-     hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
+     gtf: ${gtf_path}\n\
+     bwa_index: ${bwa_path}/${bwa_prefix}\n\
+     hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
     """
 }
 
+process GENE_ANNOTATION{
+    tag "${gtf}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
+
+    when:
+    !params.gene_annotation && params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
+
+    input:
+    file(gtf) from ch_gtf
+
+    output:
+    file("${gtf.baseName}.txt") into ch_gene_txt
+
+    script:
+    """
+    gtfToGenePred -genePredExt -geneNameAsName2 ${gtf} ${gtf.baseName}.genepred
+    perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
+    """
+}
+
+ch_gene = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : ch_gene_txt
+
 /*
 ================================================================================
-                          Process Input Data
+                            Stage Input Data
 ================================================================================
 */
 
-// Check inputs
-
-if(params.input == null){
-   exit 1, "[nf-core/circrna] error: --input was not supplied! Please check '--help' or documentation for details"
-}
-
-csv_path = null
-if(params.input && (has_extension(params.input, "csv"))) csv_path = params.input
-
-ch_input_sample = Channel.empty()
-if(csv_path){
-
-   csv_file = file(csv_path)
-   println csv_file
-   if(csv_file instanceof List) exit 1, "[nf-core/circrna] error: can only accept one CSV file per run."
-   if(!csv_file.exists()) exit 1, "[nf-core/circrna] error: input CSV file could not be found using the path provided: ${params.input}"
-
-   ch_input_sample = extract_data(csv_path)
-
-}else if(params.input && !has_extension(params.input, "csv")){
-
-   log.info ""
-   log.info "Input data log info:"
-   log.info "No input sample CSV file provided, attempting to read from path instead."
-   log.info "Reading input data from path: ${params.input}\n"
-   log.info ""
-   inputSample = retrieve_input_paths(params.input, params.input_type)
-   ch_input_sample = inputSample
-
-}else exit 1, "[nf-core/circrna] error: --input file(s) not correctly supplied or improperly defined, see '--help' flag or documentation"
-
-// Process bam file / stage fastq
-
 if(params.input_type == 'bam'){
 
-   process bam_to_fq{
-
-        publishDir "${params.outdir}/quality_control/preprocessing/bamtofastq", mode: params.publish_dir_mode
+   process BAM_TO_FASTQ{
+        tag "${base}"
+        label 'process_medium'
+        publishDir params.outdir, mode: params.publish_dir_mode,
+            saveAs: { params.save_bamtofastq ? "quality_control/SamToFastq/${it}" : null }
 
         input:
-            tuple val(base), file(bam) from ch_input_sample
+        tuple val(base), file(bam) from ch_input
 
         output:
-            tuple val(base), file('*.fq.gz') into fastq_built
+        tuple val(base), file('*.fq.gz') into fastq_built
 
         script:
         """
-        picard "-Xmx${task.memory.toGiga()}g" \
-        SamToFastq \
-        I=$bam \
-        F=${base}_R1.fq.gz \
-        F2=${base}_R2.fq.gz \
-        VALIDATION_STRINGENCY=LENIENT
+        picard \\
+            -Xmx${task.memory.toGiga()}g \\
+            SamToFastq \\
+            I=$bam \\
+            F=${base}_R1.fq.gz \\
+            F2=${base}_R2.fq.gz \\
+            VALIDATION_STRINGENCY=LENIENT
         """
    }
 
@@ -1017,70 +600,48 @@ if(params.input_type == 'bam'){
 
 }else if(params.input_type == 'fastq'){
 
-   (fastqc_reads, trimming_reads, raw_reads) = ch_input_sample.into(3)
+   (fastqc_reads, trimming_reads, raw_reads) = ch_input.into(3)
 
-}else exit 1, "[nf-core/circrna] error: --input_type must be one of 'fastq' or 'bam'."
-
-// FASTQC on raw data
-
-process FastQC {
-
-    label 'py3'
-
-    publishDir "${params.outdir}/quality_control/fastqc/raw", mode: params.publish_dir_mode
-
-    input:
-        tuple val(base), file(fastq) from fastqc_reads
-
-    output:
-        file("*.{html,zip}") into fastqc_raw
-
-    script:
-    """
-    fastqc -q $fastq
-    """
 }
 
-// MultiQC of the Raw Data
-
-// collect software_versions, workflow summary
-(software_versions_raw, software_versions_trim) = ch_software_versions_yaml.into(2)
-(workflow_summary_raw, workflow_summary_trim) = ch_workflow_summary.into(2)
-process multiqc_raw {
-
-    publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
-
+process FASTQC_RAW {
+    tag "${base}"
+    label 'process_low'
     label 'py3'
 
     input:
-        file(htmls) from fastqc_raw.collect()
-        file ('software_versions/*') from software_versions_raw.collect()
-        file workflow_summary from workflow_summary_raw.collectFile(name: "workflow_summary_mqc.yaml")
+    tuple val(base), file(fastq) from fastqc_reads
 
     output:
-        file("Raw_Reads_MultiQC.html") into multiqc_raw_out
+    file("*.{html,zip}") into fastqc_raw
 
     script:
     """
-    multiqc -i "Raw_Reads_MultiQC" -b "nf-circ pipeline" -n "Raw_Reads_MultiQC.html" .
+    fastqc -q $fastq --threads ${task.cpus}
     """
 }
 
-// BBDUK
+/*
+================================================================================
+                                    BBDUK
+================================================================================
+*/
 
-if(params.skip_trim == 'no'){
+if(params.trim_fastq){
 
-   process bbduk {
-
-       publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: params.publish_dir_mode
+   process BBDUK {
+       tag "${base}"
+       label 'process_medium'
+       publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
+           saveAs: { params.save_trimmed ? "BBDUK/${it}" : null }
 
        input:
-           tuple val(base), file(fastq) from trimming_reads
-           path adapters from params.adapters
+       tuple val(base), file(fastq) from trimming_reads
+       path adapters from params.adapters
 
        output:
-           tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
-           file("*BBDUK.txt") into bbduk_stats_ch
+       tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+       file("*BBDUK.txt") into bbduk_stats_ch
 
        script:
        def adapter = params.adapters ? "ref=${params.adapters}" : ''
@@ -1091,140 +652,198 @@ if(params.skip_trim == 'no'){
        def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
        """
-       bbduk.sh "-Xmx${task.memory.toGiga()}g" \
-       in1=${fastq[0]} \
-       in2=${fastq[1]} \
-       out1=${base}_R1.trim.fq.gz \
-       out2=${base}_R2.trim.fq.gz \
-       $adapter \
-       $k \
-       $ktrim \
-       $trimq \
-       $qtrim \
-       $minlen \
-       stats=${base}_BBDUK.txt
+       bbduk.sh \\
+           -Xmx${task.memory.toGiga()}g \\
+           threads=${task.cpus} \\
+           in1=${fastq[0]} \\
+           in2=${fastq[1]} \\
+           out1=${base}_R1.trim.fq.gz \\
+           out2=${base}_R2.trim.fq.gz \\
+           $adapter \\
+           $k \\
+           $ktrim \\
+           $trimq \\
+           $qtrim \\
+           $minlen \\
+           stats=${base}_BBDUK.txt
        """
    }
 
    // trimmed reads into 2 channels:
    (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
-   process FastQC_trim {
-
-       label 'py3'
-
-       publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode: params.publish_dir_mode
-
-       input:
-           tuple val(base), file(fastq) from fastqc_trim_reads
-
-       output:
-           file ("*.{html,zip}") into fastqc_trimmed
-
-       script:
-       """
-       fastqc -q $fastq
-       """
-   }
-
-   process multiqc_trim {
-
-       publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
-
+   process FASTQC_BBDUK {
+       tag "${base}"
+       label 'process_low'
        label 'py3'
 
        input:
-           file(htmls) from fastqc_trimmed.collect()
-           file(bbduk_stats) from bbduk_stats_ch.collect()
-           file ('software_versions/*') from software_versions_trim.collect()
-           file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
+       tuple val(base), file(fastq) from fastqc_trim_reads
 
        output:
-           file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
+       file ("*.{html,zip}") into fastqc_trimmed
 
        script:
        """
-       multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
+       fastqc -q $fastq --threads ${task.cpus}
        """
    }
-}else if(params.skip_trim == 'yes'){
+
+}else if(!params.trim_fastq){
    aligner_reads = raw_reads
 }
 
-// Stage Aligner read channels
-(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, uroborus_reads, dcc_mate1_reads, dcc_mate2_reads, hisat2_reads) = aligner_reads.into(9)
+(star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
-                             circRNA Discovery
+                     circRNA quantification + annotation
 ================================================================================
 */
 
-// STAR 1st Pass
+process CIRIQUANT{
+    tag "${base}"
+    label 'process_high'
 
-process STAR_1PASS{
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/1st_Pass", pattern: "${base}", mode: params.publish_dir_mode
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(reads) from star_pass1_reads
-        val(star_idx) from ch_star_index
+    tuple val(base), file(fastq) from ciriquant_reads
+    file(ciriquant_yml) from ch_ciriquant_yml
+    file(gtf_filt) from ch_gtf_filtered
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
 
     output:
-        file("${base}/*SJ.out.tab") into sjdb_ch
-        file("${base}") into star_1st_pass_output
+    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
+    tuple val(base), file("${base}") into ciriquant_intermediates
+    tuple val(base), file("${base}.bed") into ciriquant_annotated
+    tuple val(base), file("fasta/*") into ciriquant_fasta
+    tuple val(base), file("${base}.log") into ciriquant_annotation_logs
 
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    script:
+    """
+    CIRIquant \\
+        -t ${task.cpus} \\
+        -1 ${fastq[0]} \\
+        -2 ${fastq[1]} \\
+        --config $ciriquant_yml \\
+        --no-gene \\
+        -o ${base} \\
+        -p ${base}
+
+    cp ${base}/${base}.gtf .
+
+    ## extract counts (convert float/double to int [no loss of information])
+    grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
+    grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
+    paste ${base}.tmp counts > ${base}_unfilt.bed
+
+    ## filter bsj_reads
+    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_unfilt.bed > ${base}_filt.bed
+    grep -v '^\$' ${base}_filt.bed > ${base}_ciriquant
+
+    ## correct offset bp position
+    awk -v OFS="\t" '{\$2-=1;print}' ${base}_ciriquant > ${base}_ciriquant.bed
+
+    rm ${base}.gtf
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_ciriquant.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    """
+}
+
+process STAR_1PASS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/1st_Pass/${it}" : null }
+
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(reads) from star_pass1_reads
+    file(star_idx) from ch_star
+
+    output:
+    file("${base}/*SJ.out.tab") into sjdb_ch
+    file("${base}") into star_1st_pass_output
 
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
-    STAR \
-    --alignIntronMax ${params.alignIntronMax} \
-    --alignIntronMin ${params.alignIntronMin} \
-    --alignMatesGapMax ${params.alignMatesGapMax} \
-    --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
-    --alignSJoverhangMin ${params.alignSJoverhangMin} \
-    --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
-    --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
-    --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-    --chimOutType Junctions SeparateSAMold \
-    --chimScoreMin ${params.chimScoreMin} \
-    --chimScoreSeparation ${params.chimScoreSeparation} \
-    --chimSegmentMin ${params.chimSegmentMin} \
-    --genomeDir ${star_idx} \
-    --genomeLoad ${params.genomeLoad} \
-    --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-    --outFileNamePrefix ${base}/${base}. \
-    --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-    --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
-    --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
-    --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-    --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-    --outFilterType BySJout \
-    --outReadsUnmapped None \
-    --outSAMtype BAM SortedByCoordinate \
-    --outSAMunmapped Within \
-    --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
-    ${readFilesCommand} \
-    --readFilesIn ${reads} \
-    --runThreadN ${task.cpus} \
-    --sjdbScore ${params.sjdbScore} \
-    --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    mkdir -p ${base}
+
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix ${base}/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
 
-process sjdbFile{
+process SJDB_FILE{
+    tag "${sjdb}"
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/SJFile/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/SJFile", pattern: "*SJFile.tab", mode: params.publish_dir_mode
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
-        file(sjdb) from sjdb_ch
+    file(sjdb) from sjdb_ch
 
     output:
-        file("*SJFile.tab") into sjdbfile_ch
-
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
+    file("*SJFile.tab") into sjdbfile_ch
 
     shell:
     '''
@@ -1236,77 +855,91 @@ process sjdbFile{
 (sjdbfile_pass2, sjdbfile_mate1, sjdbfile_mate2) = sjdbfile_ch.into(3)
 
 process STAR_2PASS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/STAR/2nd_Pass/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/STAR/2nd_Pass", pattern: "${base}", mode: params.publish_dir_mode
+    when:
+    ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(reads) from star_pass2_reads
-        file(sjdbfile) from sjdbfile_pass2.collect()
-        val(star_idx) from ch_star_index
+    tuple val(base), file(reads) from star_pass2_reads
+    file(sjdbfile) from sjdbfile_pass2.collect()
+    file(star_idx) from ch_star
 
     output:
-        tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
-        tuple val(base), file("${base}") into circrna_finder_input, dcc_pairs
+    tuple val(base), file("${base}/${base}.Chimeric.out.junction") into circexplorer2_input
+    tuple val(base), file("${base}") into circrna_finder_input, dcc_pairs
 
-    when: ('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool) && 'circrna_discovery' in module
 
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
-    STAR \
-    --alignIntronMax ${params.alignIntronMax} \
-    --alignIntronMin ${params.alignIntronMin} \
-    --alignMatesGapMax ${params.alignMatesGapMax} \
-    --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
-    --alignSJoverhangMin ${params.alignSJoverhangMin} \
-    --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
-    --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
-    --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-    --chimOutType Junctions SeparateSAMold \
-    --chimScoreMin ${params.chimScoreMin} \
-    --chimScoreSeparation ${params.chimScoreSeparation} \
-    --chimSegmentMin ${params.chimSegmentMin} \
-    --genomeDir ${star_idx} \
-    --genomeLoad ${params.genomeLoad} \
-    --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-    --outFileNamePrefix ${base}/${base}. \
-    --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-    --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
-    --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
-    --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-    --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-    --outFilterType BySJout \
-    --outReadsUnmapped None \
-    --outSAMtype BAM SortedByCoordinate \
-    --outSAMunmapped Within \
-    --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
-    ${readFilesCommand} \
-    --readFilesIn ${reads} \
-    --runThreadN ${task.cpus} \
-    --sjdbFileChrStartEnd ${sjdbfile} \
-    --sjdbScore ${params.sjdbScore} \
-    --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    mkdir -p ${base}
+
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix ${base}/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
 
-// CIRCexplorer2
+process CIRCEXPLORER2{
+    tag "${base}"
+    label 'process_medium'
 
-process circexplorer2_star{
+    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/intermediates/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circexplorer2", pattern: "*_circexplorer2.bed", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circexplorer2", pattern: "${base}", mode: params.publish_dir_mode
+    when:
+    'circexplorer2' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(chimeric_reads) from circexplorer2_input
-        file(fasta) from ch_fasta
-        file(gene_annotation) from ch_gene_annotation
+    tuple val(base), file(chimeric_reads) from circexplorer2_input
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(gene_annotation) from ch_gene
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
-        tuple val(base), file("${base}") into circexplorer2_raw
-
-
-    when: 'circexplorer2' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
+    tuple val(base), file("${base}") into circexplorer2_intermediates
+    tuple val(base), file("${base}.bed") into circexplorer2_annotated
+    tuple val(base), file("fasta/*") into circexplorer2_fasta
+    tuple val(base), file("${base}.log") into circexplorer2_logs
 
     script:
     """
@@ -1317,160 +950,225 @@ process circexplorer2_star{
     CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.STAR.junction.bed -o ${base}/${base}.txt
 
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circexplorer2.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
-// circRNA_finder
+process CIRCRNA_FINDER{
+    tag "${base}"
+    label 'process_medium'
+    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/intermediates/${it}" : null }
 
-process circrna_finder{
-
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/circrna_finder", pattern: '*_circrna_finder.bed', mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/circrna_finder/${base}", pattern: "{*filteredJunctions*,*.Chimeric.out.sorted.*}", mode: params.publish_dir_mode
+    when:
+    'circrna_finder' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(star_dir) from circrna_finder_input
+    tuple val(base), file(star_dir) from circrna_finder_input
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
-        tuple val(base), file("{*filteredJunctions*,*.Chimeric.out.sorted.*}") into circrna_finder_raw
-
-    when: 'circrna_finder' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
+    tuple val(base), file("${base}") into circrna_finder_intermediates
+    tuple val(base), file("${base}.bed") into circrna_finder_annotated
+    tuple val(base), file("fasta/*") into circrna_finder_fasta
+    tuple val(base), file("${base}.log") into circrna_finder_logs
 
     script:
     """
     postProcessStarAlignment.pl --starDir ${star_dir}/ --outDir ./
 
     awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_circrna_finder.bed
+
+    mkdir -p ${base}
+
+    mv *filteredJunctions* ${base}
+    mv *.Chimeric.out.sorted.* ${base}
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circrna_finder.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
-// DCC
+process DCC_MATE1{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate1",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
-process dcc_mate1{
-
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate1", mode: params.publish_dir_mode
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(reads) from dcc_mate1_reads
-        file(sjdbfile) from sjdbfile_mate1.collect()
-        val(star_idx) from ch_star_index
+    tuple val(base), file(reads) from dcc_mate1_reads
+    file(sjdbfile) from sjdbfile_mate1.collect()
+    file(star_idx) from ch_star
 
     output:
-        tuple val(base), file("mate1") into dcc_mate1
-
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    tuple val(base), file("mate1") into dcc_mate1
 
     script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
-    STAR \
-    --alignIntronMax ${params.alignIntronMax} \
-    --alignIntronMin ${params.alignIntronMin} \
-    --alignMatesGapMax ${params.alignMatesGapMax} \
-    --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
-    --alignSJoverhangMin ${params.alignSJoverhangMin} \
-    --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
-    --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
-    --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-    --chimOutType Junctions SeparateSAMold \
-    --chimScoreMin ${params.chimScoreMin} \
-    --chimScoreSeparation ${params.chimScoreSeparation} \
-    --chimSegmentMin ${params.chimSegmentMin} \
-    --genomeDir ${star_idx} \
-    --genomeLoad ${params.genomeLoad} \
-    --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-    --outFileNamePrefix mate1/${base}. \
-    --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-    --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
-    --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
-    --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-    --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-    --outFilterType BySJout \
-    --outReadsUnmapped None \
-    --outSAMtype BAM SortedByCoordinate \
-    --outSAMunmapped Within \
-    --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
-    ${readFilesCommand} \
-    --readFilesIn ${reads} \
-    --runThreadN ${task.cpus} \
-    --sjdbFileChrStartEnd ${sjdbfile} \
-    --sjdbScore ${params.sjdbScore} \
-    --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    mkdir -p mate1
+
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix mate1/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
 
-process dcc_mate2{
+process DCC_MATE2{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "mate2",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "mate2", mode: params.publish_dir_mode
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(reads) from dcc_mate2_reads
-        file(sjdbfile) from sjdbfile_mate2.collect()
-        val(star_idx) from ch_star_index
+    tuple val(base), file(reads) from dcc_mate2_reads
+    file(sjdbfile) from sjdbfile_mate2.collect()
+    file(star_idx) from ch_star
 
     output:
-        tuple val(base), file("mate2") into dcc_mate2
-
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    tuple val(base), file("mate2") into dcc_mate2
 
 	  script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
-    STAR \
-    --alignIntronMax ${params.alignIntronMax} \
-    --alignIntronMin ${params.alignIntronMin} \
-    --alignMatesGapMax ${params.alignMatesGapMax} \
-    --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \
-    --alignSJoverhangMin ${params.alignSJoverhangMin} \
-    --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \
-    --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \
-    --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \
-    --chimOutType Junctions SeparateSAMold \
-    --chimScoreMin ${params.chimScoreMin} \
-    --chimScoreSeparation ${params.chimScoreSeparation} \
-    --chimSegmentMin ${params.chimSegmentMin} \
-    --genomeDir ${star_idx} \
-    --genomeLoad ${params.genomeLoad} \
-    --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \
-    --outFileNamePrefix mate2/${base}. \
-    --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \
-    --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \
-    --outFilterMultimapNmax ${params.outFilterMultimapNmax} \
-    --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \
-    --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \
-    --outFilterType BySJout \
-    --outReadsUnmapped None \
-    --outSAMtype BAM SortedByCoordinate \
-    --outSAMunmapped Within \
-    --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \
-    ${readFilesCommand} \
-    --readFilesIn ${reads} \
-    --runThreadN ${task.cpus} \
-    --sjdbFileChrStartEnd ${sjdbfile} \
-    --sjdbScore ${params.sjdbScore} \
-    --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
+    mkdir -p mate2
+
+    STAR \\
+        --alignIntronMax ${params.alignIntronMax} \\
+        --alignIntronMin ${params.alignIntronMin} \\
+        --alignMatesGapMax ${params.alignMatesGapMax} \\
+        --alignSJDBoverhangMin ${params.alignSJDBoverhangMin} \\
+        --alignSJoverhangMin ${params.alignSJoverhangMin} \\
+        --alignSoftClipAtReferenceEnds ${params.alignSoftClipAtReferenceEnds} \\
+        --alignTranscriptsPerReadNmax ${params.alignTranscriptsPerReadNmax} \\
+        --chimJunctionOverhangMin ${params.chimJunctionOverhangMin} \\
+        --chimOutType Junctions SeparateSAMold \\
+        --chimScoreMin ${params.chimScoreMin} \\
+        --chimScoreSeparation ${params.chimScoreSeparation} \\
+        --chimSegmentMin ${params.chimSegmentMin} \\
+        --genomeDir ${star_idx} \\
+        --genomeLoad ${params.genomeLoad} \\
+        --limitSjdbInsertNsj ${params.limitSjdbInsertNsj} \\
+        --outFileNamePrefix mate2/${base}. \\
+        --outFilterMatchNminOverLread ${params.outFilterMatchNminOverLread} \\
+        --outFilterMismatchNoverLmax ${params.outFilterMismatchNoverLmax} \\
+        --outFilterMultimapNmax ${params.outFilterMultimapNmax} \\
+        --outFilterMultimapScoreRange ${params.outFilterMultimapScoreRange} \\
+        --outFilterScoreMinOverLread ${params.outFilterScoreMinOverLread} \\
+        --outFilterType BySJout \\
+        --outReadsUnmapped None \\
+        --outSAMtype BAM SortedByCoordinate \\
+        --outSAMunmapped Within \\
+        --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
+        ${readFilesCommand} \\
+        --readFilesIn ${reads} \\
+        --runThreadN ${task.cpus} \\
+        --sjdbFileChrStartEnd ${sjdbfile} \\
+        --sjdbScore ${params.sjdbScore} \\
+        --winAnchorMultimapNmax ${params.winAnchorMultimapNmax}
     """
 }
 
 ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 
-process dcc{
-
+process DCC{
+    tag "${base}"
     label 'py3'
+    label 'process_medium'
+    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/DCC/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/dcc", pattern: "${base}_dcc.bed", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/dcc/${base}", pattern: "{*.log,*Circ*}", mode: params.publish_dir_mode
+    when:
+    'dcc' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
-        file(gtf) from ch_gencode_gtf
-        file(fasta) from ch_fasta
+    tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
+    file(gtf) from ch_gtf
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        tuple val(base), file("${base}_dcc.bed") into dcc_results
-        tuple val(base), file("${base}{.log,*.Circ*}") into dcc_raw_results
-
-    when: 'dcc' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_dcc.bed") into dcc_results
+    tuple val(base), file("${base}") into dcc_intermediates
+    tuple val(base), file("${base}.bed") into dcc_annotated
+    tuple val(base), file("fasta/*") into dcc_fasta
+    tuple val(base), file("${base}.log") into dcc_logs
 
     script:
     COJ="Chimeric.out.junction"
@@ -1491,33 +1189,53 @@ process dcc{
     ## fix start position (+1)
     awk -v OFS="\t" '{\$2-=1;print}' ${base}_dcc.filtered > ${base}_dcc.bed
 
-    mv CircCoordinates ${base}.CircCoordinates
-    mv CircRNACount ${base}.CircRNACount
-    mv *.log ${base}.log
+    mkdir -p ${base}
+    rm strand
+    rm ${base}_dcc.txt
+    rm ${base}_dcc.filtered
+    find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t ${base}/
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_dcc.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
-// find_circ
+process FIND_ANCHORS{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "{*.*}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/intermediates/${base}/${it}" : null }
 
-process find_anchors{
-
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "{*anchors.qfa.gz,*.bam}", mode: params.publish_dir_mode
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(fastq) from find_circ_reads
-        file(fasta) from ch_fasta
-        file(bowtie2_index) from ch_bowtie2_index.collect()
+    tuple val(base), file(fastq) from find_circ_reads
+    val(fasta) from ch_fasta
+    file(bowtie2_index) from ch_bowtie2_anchors.collect()
 
     output:
-        tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
-        tuple val(base), file("${base}{_anchors.qfa.gz,_unmapped.bam}") into find_circ_dir
-
-    when: 'find_circ' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_anchors.qfa.gz") into ch_anchors
+    tuple val(base), file("*.*") into find_anchors_intermediates
 
     script:
     """
-    bowtie2 -p ${task.cpus} --very-sensitive --mm -D 20 --score-min=C,-15,0 \
-    -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \
+    bowtie2 -p ${task.cpus} --very-sensitive --mm -D 20 --score-min=C,-15,0 \\
+    -x ${fasta.baseName} -q -1 ${fastq[0]} -2 ${fastq[1]} \\
     | samtools view -hbuS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
 
     samtools view -hf 4 ${base}.bam | samtools view -Sb - > ${base}_unmapped.bam
@@ -1526,261 +1244,263 @@ process find_anchors{
     """
 }
 
-process find_circ{
+process FIND_CIRC{
+    tag "${base}"
+    label 'process_high'
+    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/find_circ/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/intermediates/${base}/${it}" : null }
 
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/find_circ/", pattern: '*_find_circ.bed', mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/find_circ/${base}", pattern: "*.sites.*", mode: params.publish_dir_mode
+    when:
+    'find_circ' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(anchors) from ch_anchors
-        file(bowtie2_index) from ch_bowtie2_index.collect()
-        file(fasta) from ch_fasta
-        val(fasta_chr_path) from ch_fasta_chr
+    tuple val(base), file(anchors) from ch_anchors
+    val(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(bowtie2_index) from ch_bowtie2_find_circ.collect()
+    val(fasta_chr_path) from ch_chromosomes
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        tuple val(base), file("${base}_find_circ.bed") into find_circ_results
-        tuple val(base), file("*.sites.*") into find_circ_raw_results
-
-    when: 'find_circ' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_find_circ.bed") into find_circ_results
+    tuple val(base), file("*.sites.*") into find_circ_intermediates
+    tuple val(base), file("${base}.bed") into find_circ_annotated
+    tuple val(base), file("fasta/*") into find_circ_fasta
+    tuple val(base), file("${base}.log") into find_circ_logs
 
     script:
     """
-    bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \
+    bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \\
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
     ## filtering
     grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
     tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_find_circ.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi ${fasta.baseName}.fa -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
-// CIRIquant
+process MAPSPLICE_ALIGN{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/intermediates/${it}" : null }
 
-process ciriquant{
-
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/ciriquant", pattern: "${base}_ciriquant.bed", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/ciriquant", pattern: "${base}", mode: params.publish_dir_mode
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(fastq) from ciriquant_reads
-        file(ciriquant_yml) from ch_ciriquant_yml
+    tuple val(base), file(fastq) from mapsplice_reads
+    val(mapsplice_ref) from ch_chromosomes
+    file(bowtie_index) from ch_bowtie.collect()
+    file(gtf) from ch_gtf
 
     output:
-        tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
-        tuple val(base), file("${base}") into ciriquant_raw_dir
-
-    when: 'ciriquant' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
+    tuple val(base), file("${base}") into mapsplice_align_intermediates
 
     script:
+    def prefix = gtf.toString() - ~/.gtf/
+    def handleGzip_R1 = fastq[0].toString().endsWith('.gz') ? "gzip -d --force ${fastq[0]}" : ''
+    def handleGzip_R2 = fastq[1].toString().endsWith('.gz') ? "gzip -d --force ${fastq[1]}" : ''
+    def read1 = fastq[0].toString().endsWith('.gz') ? fastq[0].toString() - ~/.gz/ : fastq[0]
+    def read2 = fastq[1].toString().endsWith('.gz') ? fastq[1].toString() - ~/.gz/ : fastq[1]
     """
-    CIRIquant -t ${task.cpus} \
-    -1 ${fastq[0]} \
-    -2 ${fastq[1]} \
-    --config $ciriquant_yml \
-    --no-gene \
-    -o ${base} \
-    -p ${base}
+    $handleGzip_R1
+    $handleGzip_R2
 
-    cp ${base}/${base}.gtf .
-
-    ## extract counts (convert float to int)
-    grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
-    grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
-    paste ${base}.tmp counts > ${base}_unfilt.bed
-
-    ## filter
-    awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_unfilt.bed > ${base}_filt.bed
-    grep -v '^\$' ${base}_filt.bed > ${base}_ciriquant
-
-    ## correct offset bp position
-    awk -v OFS="\t" '{\$2-=1;print}' ${base}_ciriquant > ${base}_ciriquant.bed
-
-    rm ${base}.gtf
-    """
+    mapsplice.py \\
+       -c $mapsplice_ref \\
+       -x $prefix \\
+       -1 ${read1} \\
+       -2 ${read2} \\
+       -p ${task.cpus} \\
+       --bam \\
+       --seglen 25 \\
+       --min-intron ${params.alignIntronMin} \\
+       --max-intron ${params.alignIntronMax} \\
+       --min-map-len 40 \\
+       --fusion-non-canonical \\
+       --min-fusion-distance 200 \\
+       --gene-gtf $gtf \\
+       -o $base
+   """
 }
 
+/*
+  STEP 6.7.2: MapSplice quantification
+*/
 
-// mapsplice
+process MAPSPLICE_PARSE{
+    tag "${base}"
+    label 'process_medium'
+    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/MapSplice/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/intermediates/${it}" : null }
 
-process mapsplice_align{
-
-    publishDir "${params.outdir}/circrna_discovery/tool_outputs/mapsplice", pattern: "${base}", mode: params.publish_dir_mode
-
-    input:
-        tuple val(base), file(fastq) from mapsplice_reads
-        val(mapsplice_ref) from ch_fasta_chr
-        file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
-
-    output:
-        tuple val(base), file("${base}/fusions_raw.txt") into mapsplice_fusion
-        tuple val(base), file("${base}") into mapsplice_raw
-
-    when: 'mapsplice' in tool && 'circrna_discovery' in module
-
-    script:
-    if(fastq[0].toString().endsWith('.gz')){
-       prefix = gtf.toString() - ~/.gtf/
-       strip1 = fastq[0].toString() - ~/.gz/
-       strip2 = fastq[1].toString() - ~/.gz/
-       """
-       gzip -d --force ${fastq[0]}
-       gzip -d --force ${fastq[1]}
-
-       mapsplice.py \
-       -c $mapsplice_ref \
-       -x $prefix \
-       -1 ${strip1} \
-       -2 ${strip2} \
-       -p ${task.cpus} \
-       --bam \
-       --seglen 25 \
-       --min-intron ${params.alignIntronMin} \
-       --max-intron ${params.alignIntronMax} \
-       --min-map-len 40 \
-       --fusion-non-canonical \
-       --min-fusion-distance 200 \
-       --gene-gtf $gtf \
-       -o $base
-       """
-    }else{
-       prefix = gtf.toString() - ~/.gtf/
-       """
-       mapsplice.py \
-       -c $mapsplice_ref \
-       -x $prefix \
-       -1 ${fastq[0]} \
-       -2 ${fastq[1]} \
-       -p ${task.cpus} \
-       --bam \
-       --seglen 25 \
-       --min-intron ${params.alignIntronMin} \
-       --max-intron ${params.alignIntronMax} \
-       --min-map-len 40 \
-       --fusion-non-canonical \
-       --min-fusion-distance 200 \
-       --gene-gtf $gtf \
-       -o $base
-       """
-    }
-}
-
-
-process mapsplice_parse{
-
-    publishDir "${params.outdir}/circrna_discovery/filtered_outputs/mapsplice", pattern: "*_mapsplice.bed", mode: params.publish_dir_mode
+    when:
+    'mapsplice' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(raw_fusion) from mapsplice_fusion
-        file(fasta) from ch_fasta
-        file(gene_annotation) from ch_gene_annotation
+    tuple val(base), file(raw_fusion) from mapsplice_fusion
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(gene_annotation) from ch_gene
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
-
-    when: 'mapsplice' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
+    tuple val(base), file("${base}/*") into mapsplice_intermediates
+    tuple val(base), file("${base}.bed") into mapsplice_annotated
+    tuple val(base), file("fasta/*") into mapsplice_fasta
+    tuple val(base), file("${base}.log") into mapsplice_logs
 
     script:
     """
     mkdir -p ${base}
 
-    CIRCexplorer2 parse -t MapSplice $raw_fusion -b ${base}.mapsplice.junction.bed
+    CIRCexplorer2 parse -t MapSplice $raw_fusion -b ${base}/${base}.mapsplice.junction.bed
 
-    CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}.mapsplice.junction.bed -o ${base}.txt
+    CIRCexplorer2 annotate -r $gene_annotation -g $fasta -b ${base}/${base}.mapsplice.junction.bed -o ${base}/${base}.txt
 
-    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+    awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_mapsplice.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
-// UROBORUS retry with py3 container.
+process SEGEMEHL{
+    tag "${base}"
+    label 'process_high'
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/intermediates/${it}" : null }
 
-process tophat_align{
-
-    input:
-        tuple val(base), file(fastq) from uroborus_reads
-        file(bowtie2_index) from ch_bowtie2_index.collect()
-        file(fasta) from ch_fasta
-
-    output:
-        tuple val(base), file("unmapped.bam") into tophat_unmapped_bam
-        tuple val(base), file("accepted_hits.bam") into tophat_accepted_hits
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
-
-    script:
-    """
-    tophat -p ${task.cpus} -o ${base} ${fasta.baseName} ${fastq[0]} ${fastq[1]}
-    mv ${base}/unmapped.bam ./
-    mv ${base}/accepted_hits.bam ./
-    """
-}
-
-
-process uroborus{
-
-    publishDir "${params.outdir}/circrna_discovery/uroborus", mode: params.publish_dir_mode
+    when:
+    'segemehl' in tool && 'circrna_discovery' in module
 
     input:
-        tuple val(base), file(unmapped_bam) from tophat_unmapped_bam
-        tuple val(base), file(accepted_hits) from tophat_accepted_hits
-        file(bowtie_index) from ch_bowtie_index.collect()
-        file(gtf) from ch_gencode_gtf
-        val(uroborus_ref) from ch_fasta_chr
-        file(fasta) from ch_fasta
+    tuple val(base), file(fastq) from segemehl_reads
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(idx) from ch_segemehl
+    file(gtf_filt) from ch_gtf_filtered
 
     output:
-        file("${base}.txt") into uroborus_results
-
-    when: 'uroborus' in tool && 'circrna_discovery' in module
+    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
+    tuple val(base), file("${base}") into segemehl_intermediates
+    tuple val(base), file("${base}.bed") into segemehl_annotated
+    tuple val(base), file("fasta/*") into segemehl_fasta
+    tuple val(base), file("${base}.log") into segemehl_logs
 
     script:
+    def handleSam = params.save_quantification_intermediates ? "samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam" : "rm -rf ${base}/${base}.sam"
     """
-    samtools view $unmapped_bam > unmapped.sam
+    mkdir -p ${base}
 
-    perl /opt/conda/envs/circrna/bin/UROBORUS.pl \
-    -index ${fasta.baseName} \
-    -gtf $gtf \
-    -fasta $uroborus_ref \
-    unmapped.sam $accepted_hits &> uroborus_logs.txt
+    segemehl.x \\
+        -t ${task.cpus} \\
+        -d $fasta \\
+        -i $idx \\
+        -q ${fastq[0]} \\
+        -p ${fastq[1]} \\
+        -S \\
+        -o ${base}/${base}.sam
 
-    mv circRNA_list.txt ${base}.txt
+    $handleSam
+
+    # Segemehl does not preserve strand information, nor account for it
+    # when collapsing and counting reads using haarz.x. This is my own fix which does.
+    grep ';C;' ${base}/${base}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${base}/${base}_collapsed.bed
+
+    # now let user filter by BSJ read count param.
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
+
+    ## Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    mv master_bed12.bed ${base}.bed.tmp
+
+    ## FASTA sequences
+    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
+    ## clean fasta header
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
+    ## output to dir
+    mkdir -p fasta
+    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    ## mature spliced len for annotation file
+    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
+    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
 
 /*
 ================================================================================
-                            Annotate circRNAs
+                         Generate circRNA count matrix
 ================================================================================
 */
 
+quantification_results = ciriquant_results.mix(circexplorer2_results, circrna_finder_results, dcc_results, find_circ_results, mapsplice_results, segemehl_results)
+
 if(tools_selected > 1){
+   process MERGE_TOOLS{
+       tag "${base}"
 
-   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
-   // Causes WARN: input caridnality does not match (due to null items), but script works.
-   // No WARN if ciriquant selected in tool.
-   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
-
-   process consolidate_algorithms{
+       when:
+       'circrna_discovery' in module
 
        input:
-           tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
+       tuple val(base), file(bed) from quantification_results.groupTuple()
 
        output:
-           file("${base}.bed") into sample_counts
-
-       when: 'circrna_discovery' in module
+       file("${base}.bed") into sample_counts
 
        script:
        """
-       ## make tool output csv file
-       files=\$(ls *.bed)
+       ## make list of files for R to read
+       ls *.bed > samples.csv
 
-       for i in \$files; do
-           printf "\$i\n" >> samples.csv
-       done
-
-       ## Add catch for empty file in tool output
+       ## Add catch for empty bed file and delete
        bash ${projectDir}/bin/check_empty.sh
 
        ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
@@ -1790,19 +1510,18 @@ if(tools_selected > 1){
        mv combined_counts.bed ${base}.bed
        """
    }
+   process COUNT_MATRIX_COMBINED{
+       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
-   process get_counts_combined{
-
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
+       when:
+       'circrna_discovery' in module
 
        input:
-           file(bed) from sample_counts.collect()
+       file(bed) from sample_counts.collect()
 
        output:
-           file("circRNA_matrix.txt") into circRNA_counts
-           file("matrix.txt") into matrix
-
-       when: 'circrna_discovery' in module
+       file("circRNA_matrix.txt") into circRNA_counts
+       file("count_matrix.txt") into matrix
 
        script:
        """
@@ -1811,29 +1530,27 @@ if(tools_selected > 1){
        """
    }
 }else{
+   process COUNT_MATRIX_SINGLE{
+       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
-   single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results)
-
-   process get_counts_single{
-
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
+       when:
+       'circrna_discovery' in module
 
        input:
-           file(bed) from single_tool.collect()
-           val(tool) from params.tool
+       file(bed) from quantification_results.collect()
+       val(tool) from params.tool
 
        output:
-           file("circRNA_matrix.txt") into circRNA_counts
-           file("matrix.txt") into matrix
-
-       when: 'circrna_discovery' in module
+       file("circRNA_matrix.txt") into circRNA_counts
+       file("count_matrix.txt") into matrix
 
        script:
        """
+       # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
        for b in *.bed; do
-           foo=\${b%".bed"};
-           bar=\${foo%"_${tool}"};
-           mv \$b \${bar}.bed
+           basename=\${b%".bed"};
+           sample_name=\${basename%"_${tool}"};
+           mv \$b \${sample_name}.bed
        done
 
        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
@@ -1842,267 +1559,127 @@ if(tools_selected > 1){
     }
 }
 
-(circrna_matrix_mature_seq, circrna_matrix_parent_gene, circrna_matrix_diff_exp) = circRNA_counts.into(3)
+/*
+================================================================================
+                             miRNA Prediction
+================================================================================
+*/
 
-process remove_unwanted_biotypes{
+process TARGETSCAN_DATABASE{
+    when:
+    'mirna_prediction' in module
 
     input:
-        file(gtf) from ch_gencode_gtf
+    file(mature) from ch_mature
 
     output:
-        file("filt.gtf") into ch_gtf_filtered
-
-    when: 'circrna_discovery' in module
+    file("mature.txt") into ch_mature_txt
 
     script:
     """
-    cp ${projectDir}/bin/unwanted_biotypes.txt ./
-
-    grep -vf unwanted_biotypes.txt $gtf > filt.gtf
+    bash ${projectDir}/bin/targetscan_format.sh $mature
     """
 }
 
-process get_mature_seq{
+mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
 
-    publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'bed12/*.bed'
-    publishDir "${params.outdir}/circrna_discovery", mode: params.publish_dir_mode, pattern: 'fasta/*.fa'
-
-    input:
-        file(fasta) from ch_fasta
-        file(fai) from ch_fai
-        file(gtf) from ch_gtf_filtered
-        file(circRNA) from circrna_matrix_mature_seq
-
-    output:
-        file("miranda/*.fa") into miranda_sequences
-        file("targetscan/*.txt") into targetscan_sequences
-        file("bed12/*.bed") into bed_files
-        file("fasta/*.fa") into circ_seqs
-
-    when: 'circrna_discovery' in module
-
-    script:
-    """
-    # convert circrna matrix to bed6 file
-    tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > circs.bed
-
-    # Create BED12 files
-    bash ${projectDir}/bin/get_mature_seq.sh
-
-    # Create miRanda inputs
-    bedtools getfasta -fi $fasta -bed de_circ_exon_annotated.bed -s -split -name > de_circ_sequences.fa_tmp
-    grep -A 1 '>' de_circ_sequences.fa_tmp | cut -d: -f1,2,3 > de_circ_sequences.fa && rm de_circ_sequences.fa_tmp
-    mkdir -p miranda
-    awk -F '>' '/^>/ {F=sprintf("miranda/%s.fa",\$2); print > F;next;} {print >> F;}' < de_circ_sequences.fa
-
-    # Create TargetScan inputs
-    bedtools getfasta -fi $fasta -bed de_circ_exon_annotated.bed -s -split -tab | sed 's/(/:/g' | sed 's/)//g' > de_circ_seq_tab.txt_tmp
-    awk -v OFS="\t" '{print \$1, 9606, \$2}' de_circ_seq_tab.txt_tmp > de_circ_seq_tab.txt && rm de_circ_seq_tab.txt_tmp
-    mkdir -p targetscan
-    while IFS='' read -r line; do name=\$(echo \$line | awk '{print \$1}'); echo \$line | sed 's/ /\t/g' >> targetscan/\${name}.txt; done < de_circ_seq_tab.txt
-
-    # Save fasta sequences for users
-    cp -r miranda/ fasta/
-    """
-}
-
-(fasta_mature_len, fasta_miranda) = miranda_sequences.into(2)
-
-process get_parent_gene{
+process MIRNA_PREDICTION{
+    tag "${base}"
+    label 'process_low'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${base}/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${base}/${it}" : null }
+    when:
+    'mirna_prediction' in module
 
     input:
-        file(gtf) from ch_gtf_filtered
-        file(circRNA) from circrna_matrix_parent_gene
+    tuple val(base), file(fasta) from mirna_input
+    file(mirbase) from ch_mature
+    file(mirbase_txt) from ch_mature_txt
 
     output:
-        file("parent_genes/*.txt") into parent_genes
-
-    when: 'circrna_discovery' in module
-
-    script:
-    """
-    # convert circrna matrix to bed6 file
-    tail -n +2 circRNA_matrix.txt | awk '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' | tr ' ' '\t' > circs.bed
-
-    bash ${projectDir}/bin/get_parent_genes.sh
-    """
-}
-
-process get_mature_len{
-
-    input:
-        file(fasta) from fasta_mature_len.flatten()
-
-    output:
-        file("*.mature_len.txt") into mature_len
-
-    when: 'circrna_discovery' in module
+    tuple val(base), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
 
     script:
     prefix = fasta.toString() - ~/.fa/
     """
-    grep -v '>' $fasta | wc -c > ${prefix}.mature_len.txt
-    """
-}
-
-// Create tuples, merge channels by simpleName for annotation.
-ch_mature_len = mature_len.map{ file -> [file.simpleName, file]}
-ch_parent_genes = parent_genes.flatten().map{ file -> [file.simpleName, file]}
-ch_bed = bed_files.flatten().map{ file -> [file.simpleName, file]}
-
-(bed_ann, bed_circos, bed_diff_exp) = ch_bed.into(3)
-(mature_ann, mature_circos, mature_diff_exp) = ch_mature_len.into(3)
-(parent_ann, parent_circos, parent_diff_exp) = ch_parent_genes.into(3)
-
-ch_annotate = bed_ann.join(mature_ann).join(parent_ann)
-
-process annotate_circrnas{
-
-    input:
-        tuple val(base), file(bed), file(mature_length), file(parent_gene) from ch_annotate
-
-    output:
-        file("*annotated.txt") into circrna_annotated
-
-    when: 'circrna_discovery' in module
-
-    script:
-    """
-    Rscript ${projectDir}/bin/annotate_circs.R $parent_gene $bed $mature_length
-    """
-}
-
-process master_annotate{
-
-    publishDir "${params.outdir}/circrna_discovery/annotated", mode: params.publish_dir_mode
-
-
-    input:
-        file(annotated) from circrna_annotated.collect()
-
-    output:
-        file("circrnas_annotated.txt") into annotated_merged
-
-    when: 'circrna_discovery' in module
-
-    script:
-    """
-    cat *.txt > merged.txt
-    grep -v "Type" merged.txt > no_headers.txt
-    echo "circRNA_ID Type Mature_Length Parent_Gene Strand" | tr ' ' '\t' > headers.txt
-    cat headers.txt no_headers.txt > circrnas_annotated.txt
-    """
-}
-
-/*
-================================================================================
-                         circRNA - miRNA prediction
-================================================================================
-*/
-
-process miRanda{
-
-    publishDir "${params.outdir}/mirna_prediction/miranda", pattern: "*.miRanda.txt", mode: params.publish_dir_mode
-
-    input:
-        file(mirbase) from miranda_miRs
-        file(miranda) from fasta_miranda.flatten()
-
-    output:
-        file("*.miRanda.txt") into miranda_out
-
-    when: 'mirna_prediction' in module
-
-    script:
-    prefix = miranda.toString() - ~/.fa/
-    """
-    miranda $mirbase $miranda -strict -out ${prefix}.bindsites.out -quiet
+    miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
     echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
     grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
+
+    # format for targetscan
+    cat $fasta | grep ">" | sed 's/>//g' > id
+    cat $fasta | grep -v ">" > seq
+    echo "0000" > species
+    paste id species seq > ${prefix}_ts.txt
+
+    # run targetscan
+    targetscan_70.pl $mirbase_txt ${prefix}_ts.txt ${prefix}.targetscan.txt
     """
 }
 
-process targetscan{
-
-    publishDir "${params.outdir}/mirna_prediction/targetscan", mode: params.publish_dir_mode
+process MIRNA_TARGETS{
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/mirna_prediction/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
+    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
-        file(miR) from targetscan_miRs
-        file(circ) from targetscan_sequences.flatten()
+    tuple val(base), file(miranda), file(targetscan) from mirna_prediction
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(filt_gtf) from ch_gtf_filtered
+    val(species) from ch_species
 
     output:
-        file("*.targetscan.txt") into targetscan_out
-
-    when: 'mirna_prediction' in module
-
-    script:
-    prefix = circ.toString() - ~/.txt/
-    """
-    targetscan_70.pl $miR $circ ${prefix}.targetscan.txt
-    """
-}
-
-// Create tuples, merge channels by simpleName for report.
-ch_targetscan = targetscan_out.map{ file -> [file.simpleName, file]}
-ch_miranda = miranda_out.map{ file -> [file.simpleName, file]}
-
-(targetscan_circos, targetscan_diff_exp) = ch_targetscan.into(2)
-(miranda_circos, miranda_diff_exp) = ch_miranda.into(2)
-
-ch_circos_plot = targetscan_circos.join(miranda_circos).join(bed_circos).join(parent_circos).join(mature_circos)
-
-process circos_plots{
-
-    publishDir "${params.outdir}/mirna_prediction/circos_plots", pattern: "*.pdf", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/mirna_prediction/mirna_targets", pattern: "*miRNA_targets.txt", mode: params.publish_dir_mode
-
-    input:
-        tuple val(base), file(targetscan), file(miranda), file(bed), file(parent_gene), file(mature_length) from ch_circos_plot
-
-    output:
-        file("*.pdf") into circos_plots
-        file("*miRNA_targets.txt") into circrna_mirna_targets
-
-    when: 'mirna_prediction' in module
+    tuple val(base), file("*.pdf") into circos_plots
+    tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
 
     script:
+    def species_id = species + "-"
     """
-    # create file for circos plot
-    bash ${projectDir}/bin/prep_circos.sh $bed
+    ## use file name to derive bed12 coordiantes.
+    echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
+    bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
+    mv master_bed12.bed circ.bed.tmp
 
-    # remove 6mers from TargetScan
-    grep -v "6mer" $targetscan > targetscan_filt.txt
+    ## Prep exon track for circlize
+    cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
+    bash ${projectDir}/bin/prep_circos.sh bed12.tmp
 
-    # Make plots and generate circRNA info
-    Rscript ${projectDir}/bin/mirna_circos.R $parent_gene $bed $miranda targetscan_filt.txt $mature_length circlize_exons.txt
+    ## add mature spl len (+ 1 bp)
+    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+    paste circ.bed.tmp ml > circ.bed
+
+    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
     """
 }
-
 
 /*
 ================================================================================
-                          Differential Expression
+                            Differential Expression
 ================================================================================
 */
 
-/*
- * RNA-Seq quantification required to estimate RNA size factors
- * for circRNA library correction
- */
+ch_hisat_index_files = params.hisat ? Channel.value(file("${params.hisat}/*")) :  hisat_built
 
-ch_hisat2_index_files = params.hisat2_index ? Channel.value(file(params.hisat2_index + "/*")) : hisat2_built
+process HISAT_ALIGN{
+    tag "${base}"
+    label 'process_high'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}.bam",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/Hisat2/${it}" : null }
 
-process Hisat2_align{
+    when:
+    'differential_expression' in module
 
     input:
-        tuple val(base), file(fastq) from hisat2_reads
-        file(hisat2_index) from ch_hisat2_index_files.collect()
-        file(fasta) from ch_fasta
+    tuple val(base), file(fastq) from hisat_reads
+    file(hisat2_index) from ch_hisat_index_files.collect()
+    file(fasta) from ch_fasta
 
     output:
-        tuple val(base), file("${base}.bam") into hisat2_bam
-
-    when: 'differential_expression' in module
+    tuple val(base), file("${base}.bam") into hisat_bam
 
     script:
     """
@@ -2110,17 +1687,21 @@ process Hisat2_align{
     """
 }
 
+process STRINGTIE{
+    tag "${base}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/StringTie/${it}" : null }
 
-process StringTie{
+    when:
+    'differential_expression' in module
 
     input:
-        tuple val(base), file(bam) from hisat2_bam
-        file(gtf) from ch_gencode_gtf
+    tuple val(base), file(bam) from hisat_bam
+    file(gtf) from ch_gtf
 
     output:
-        file("${base}") into stringtie_dir
-
-    when: 'differential_expression' in module
+    file("${base}") into stringtie_dir
 
     script:
     """
@@ -2129,27 +1710,27 @@ process StringTie{
     """
 }
 
-ch_phenotype = params.phenotype ? file(params.phenotype) : ''
-
-process diff_exp{
-
+process DEA{
+    label 'process_medium'
     publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
     publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode: params.publish_dir_mode
     publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
     publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
 
+    when:
+    'differential_expression' in module
+
     input:
-        file(gtf_dir) from stringtie_dir.collect()
-        file(circ_matrix) from circrna_matrix_diff_exp
-        file(phenotype) from ch_phenotype
+    file(gtf_dir) from stringtie_dir.collect()
+    file(circ_matrix) from circRNA_counts
+    file(phenotype) from ch_phenotype
+    val(species) from ch_species
 
     output:
-        file("RNA-Seq") into rnaseq_dir
-        file("circRNA") into circrna_dir
-        file("boxplots") into boxplots_dir
-        file("DESeq2_QC") into qc_plots
-
-    when: 'differential_expression' in module
+    file("RNA-Seq") into rnaseq_dir
+    file("circRNA") into circrna_dir
+    file("boxplots") into boxplots_dir
+    file("DESeq2_QC") into qc_plots
 
     script:
     """
@@ -2157,9 +1738,10 @@ process diff_exp{
 
     prepDE.py -i samples.txt
 
-    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix
+    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${projectDir}/bin/ensemblDatabase_map.txt
     """
 }
+
 
 
 /*
@@ -2196,7 +1778,7 @@ def defineToolList() {
         'circrna_finder',
         'dcc',
         'mapsplice',
-        'uroborus'
+        'segemehl'
         ]
 }
 
@@ -2206,36 +1788,6 @@ def defineModuleList() {
     'circrna_discovery',
     'mirna_prediction',
     'differential_expression'
-    ]
-}
-
-// Define STAR index files
-def defineStarFiles() {
-    return [
-    'chrLength.txt',
-    'chrNameLength.txt',
-    'chrName.txt',
-    'chrStart.txt',
-    'exonGeTrInfo.tab',
-    'exonInfo.tab',
-    'geneInfo.tab',
-    'Genome',
-    'genomeParameters.txt',
-    'Log.out',
-    'SA',
-    'SAindex',
-    'sjdbInfo.txt',
-    'sjdbList.fromGTF.out.tab',
-    'sjdbList.out.tab',
-    'transcriptInfo.tab'
-    ]
-}
-
-// Define Genome versions
-def defineGenomeVersions() {
-    return [
-    'GRCh37',
-    'GRCh38'
     ]
 }
 
@@ -2297,8 +1849,8 @@ def retrieve_input_paths(input, type){
          fastq_files = input
          Channel
                .fromFilePairs(fastq_files)
-               .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
-               .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', 'fq.gz', fastq' or 'fq'."}
+               .filter { it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
+               .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', '.fq.gz', .fastq' or '.fq'."}
                .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
                .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
                .set{reads_for_csv}
@@ -2335,11 +1887,6 @@ def retrieve_input_paths(input, type){
 
 // Check input phenotype file
 
-/*
- * User can supply many explanatory variables and thus this function only checks the condition column.
- * Ask @nf-core how this can be adapted to accept any number of columns?
- */
-
 def examine_phenotype(pheno){
 
   Channel
@@ -2356,10 +1903,10 @@ def examine_phenotype(pheno){
         if(condition == '') exit 1, "[nf-core/circrna] error: Invalid phenotype file, condition column contains empty cells."
         if(condition.matches('NA')) exit 1, "[nf-core/circrna] error: NA value in phenotype condition column."
 
-        return condition
-
         }
         .toList()
+
+        return Channel.value(file(pheno))
 }
 
 /*
@@ -2397,11 +1944,11 @@ def nfcoreHeader() {
 }
 
 // handle multiqc_channels
-if(params.skip_trim == 'no'){
-    ch_multiqc_report = multiqc_trim_out
-}else{
-    ch_multiqc_report = multiqc_raw_out
-}
+//if(params.trim_fastq == false){
+//    ch_multiqc_report = multiqc_trim_out
+//}else{
+//    ch_multiqc_report = multiqc_raw_out
+//}
 
 // Completion e-mail notification
 workflow.onComplete {
@@ -2440,12 +1987,12 @@ workflow.onComplete {
         if (workflow.success) {
             mqc_report = ch_multiqc_report.getVal()
             if (mqc_report.getClass() == ArrayList) {
-                log.warn "[nf-core/chipseq] Found multiple reports from process 'multiqc', will use only one"
+                log.warn "[nf-core/circrna] Found multiple reports from process 'multiqc', will use only one"
                 mqc_report = mqc_report[0]
             }
         }
     } catch (all) {
-        log.warn "[nf-core/chipseq] Could not attach MultiQC report to summary email"
+        log.warn "[nf-core/circrna] Could not attach MultiQC report to summary email"
     }
 
     // Check if we are only sending emails on failure
@@ -2530,11 +2077,11 @@ def checkHostname() {
         params.hostnames.each { prof, hnames ->
             hnames.each { hname ->
                 if (hostname.contains(hname) && !workflow.profile.contains(prof)) {
-                    log.error '====================================================\n' +
+                    log.error "${c_red}====================================================${c_reset}\n" +
                             "  ${c_red}WARNING!${c_reset} You are running with `-profile $workflow.profile`\n" +
                             "  but your machine hostname is ${c_white}'$hostname'${c_reset}\n" +
                             "  ${c_yellow_bold}It's highly recommended that you use `-profile $prof${c_reset}`\n" +
-                            '============================================================'
+                            "${c_red}====================================================${c_reset}\n"
                 }
             }
         }
