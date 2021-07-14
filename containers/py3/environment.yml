@@ -1,0 +1,15 @@
+name: py3
+channels:
+  - agbiome
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - fastqc
+  - multiqc
+  - bedtools
+  - ucsc-bedgraphtobigwig=357
+  - ucsc-bedtobigbed=357
+  - ucsc-genepredtobed=377
+  - ucsc-genepredtogtf=377
+  - ucsc-gtftogenepred=377
