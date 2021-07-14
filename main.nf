@@ -7,8 +7,6 @@
 Started August 2020.
 Dev version to nf-core Feb 2021.
 
-This is a heavily commented revision of the DEV revision for reviewers.
-Comments will be kept on local fork, removed on nf-core fork when review passed.
 --------------------------------------------------------------------------------
  @Homepage
  https://github.com/nf-core/circrna
@@ -31,7 +29,7 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 
 def json_schema = "$projectDir/nextflow_schema.json"
 if (params.help) {
-    def command = "nextflow run nf-core/circrna -profile docker --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
+    def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
     log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
     exit 0
 }
@@ -46,7 +44,6 @@ if (params.validate_params) {
     NfcoreSchema.validateParameters(params, json_schema, log)
 }
 
-// Check if genome exists in the config file
 if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)){
     exit 1, "The provided genome '${params.genome}' is not available in the iGenomes file. Currently the available genomes are ${params.genomes.keySet().join(', ')}"
 }
@@ -66,45 +63,8 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
  * Mainly concerned about valid file extensions when provided (advanced checks not capable in Schema)
  */
 
-// Check BWA index
-if(params.bwa){
-
-   bwa_path_files = params.bwa + "/*"
-
-   Channel
-         .fromPath(bwa_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it ->
-
-               if(!has_extension(it, ".ann") && !has_extension(it, ".amb") && !has_extension(it, ".bwt") && !has_extension(it, ".pac") && !has_extension(it, ".sa")){
-                  exit 1, "[nf-core/circrna] error: BWA index file ($it) has an incorrect extension. Are you sure they are BWA indices?"
-               }
-         }
-}
-
-// Check STAR index
-if(params.star){
-
-   starList = defineStarFiles()
-
-   star_path_files = params.star + "/*"
-
-   Channel
-         .fromPath(star_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it -> it.getName()}
-         .collect()
-         .flatten()
-         .map{ it ->
-
-               if(!starList.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect index file ($it) is in the STAR directory provided.\n\nPlease check your STAR indices are valid:\n$starList."
-               }
-          }
-}
-
 // Check phenotype file and stage the channel
-// Primarily concernced about the column 'Condition' and no NA entries.
+// (Must not have NA's, must have 'condition' as colname)
 
 if(params.phenotype){
    pheno_file = file(params.phenotype)
@@ -113,19 +73,19 @@ if(params.phenotype){
    ch_phenotype = Channel.empty()
 }
 
-
 // Check BBDUK params
+/*
+  check adapters file exists
+  check combinations of parameters have been supplied
+*/
 
-// Check adapters
 if(params.trim_fastq){
    if(params.adapters){
       adapters = file(params.adapters, checkIfExists: true)
-      // Check all adapter trimming flags are provided
       if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
          exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
       }
     }
-    // Check all quality trimming flags are provided
     if(params.trimq && !params.qtrim || !params.trimq && params.qtrim){
        exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
    }
@@ -253,9 +213,8 @@ if(params.email || params.email_on_fail){
     summary['MultiQC maxsize']   = params.max_multiqc_email_size
 }
 
-// Correct to delete the below lines, but keep Summary?
-//log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
-//log.info "\033[2m----------------------------------------------------\033[0m"
+// Check the hostnames against configured profiles
+checkHostname()
 
 Channel.from(summary.collect{ [it.key, it.value] })
     .map { k,v -> "<dt>$k</dt><dd><samp>${v ?: '<span style=\"color:#999999;\">N/A</a>'}</samp></dd>" }
@@ -273,36 +232,33 @@ Channel.from(summary.collect{ [it.key, it.value] })
     """.stripIndent() }
     .set { ch_workflow_summary }
 
-// Check the hostnames against configured profiles
-checkHostname()
 
 /*
 ================================================================================
-                            TESTING iGENOMES
+                            Stage Parameters
 ================================================================================
 */
 
-// Stage igenomes parameters first
-
-// In SAREK, they use conditionals when staging parameters and channels, and once more in
-// processes. Is this overkill? or should I do the same.
-
-params.fasta     = params.genome ? params.genomes[params.genome].fasta     ?: false : false
+params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
-params.gtf       = params.genome ? params.genomes[params.genome].gtf       ?: false : false
-params.bwa       = params.genome ? params.genomes[params.genome].bwa       ?: false : false
-params.star      = params.genome ? params.genomes[params.genome].star      ?: false : false
-params.bowtie    = params.genome ? params.genomes[params.genome].bowtie    ?: false : false
-params.bowtie2   = params.genome ? params.genomes[params.genome].bowtie2   ?: false : false
-params.mature    = params.genome ? params.genomes[params.genome].mature    ?: false : false
+params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
+params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
+params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
+params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
+params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
+params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
 params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
 
-// stage files.
-// index directories stages below corresponding process.
 ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
 ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
 ch_mature = params.mature ? Channel.value(file(params.mature)) : null
 ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
+
+/*
+================================================================================
+                            BUILD INDICES
+================================================================================
+*/
 
 process BWA_INDEX {
     tag "${fasta}"
@@ -326,10 +282,6 @@ process BWA_INDEX {
     """
 }
 
-// 3 options, user can downlaod via igenomes, supply path to dir, or make indices.
-// We only need the path to the directory for ciriquant.yml
-// logic for creating direcotry above == so it matches the other two possible inputs for bwa (igenomes, path) which give a DIR.
-// otherwise you get a situation where you are mixing val() and file()
 ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_built
 
 process SAMTOOLS_INDEX {
@@ -411,7 +363,6 @@ process STAR_INDEX {
     """
 }
 
-// STAR pass the directory
 ch_star = params.genome ? Channel.value(file(params.star)) : params.star ? Channel.value(file(params.star)) : star_built
 
 process BOWTIE_INDEX {
@@ -438,7 +389,6 @@ process BOWTIE_INDEX {
     """
 }
 
-// need to use all files, use collect in processes.
 ch_bowtie = params.genome ? Channel.fromPath("${params.bowtie}*") : params.bowtie ? Channel.fromPath("${params.bowtie}*", checkIfExists: true).ifEmpty { exit 1, "[nf-core/circrna] error: Bowtie index directory not found: ${params.bowtie}"} : bowtie_built
 
 process BOWTIE2_INDEX {
@@ -616,7 +566,7 @@ ch_gene = params.gene_annotation ? Channel.value(file(params.gene_annotation)) :
 
 /*
 ================================================================================
-                          4. Process Input Data
+                            Stage Input Data
 ================================================================================
 */
 
@@ -626,7 +576,7 @@ if(params.input_type == 'bam'){
         tag "${base}"
         label 'process_medium'
         publishDir params.outdir, mode: params.publish_dir_mode,
-            saveAs: { params.save_bamtofastq ? "picard/SamToFastq/${it}" : null }
+            saveAs: { params.save_bamtofastq ? "quality_control/SamToFastq/${it}" : null }
 
         input:
         tuple val(base), file(bam) from ch_input
@@ -673,12 +623,8 @@ process FASTQC_RAW {
 
 /*
 ================================================================================
-                           5. Fastq Trimming
+                                    BBDUK
 ================================================================================
-*/
-
-/*
-  STEP 5.1: BBDUK
 */
 
 if(params.trim_fastq){
@@ -726,10 +672,6 @@ if(params.trim_fastq){
    // trimmed reads into 2 channels:
    (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
-  /*
-    STEP 5.2: FastQC on trimmed reads
-  */
-
    process FASTQC_BBDUK {
        tag "${base}"
        label 'process_low'
@@ -751,15 +693,11 @@ if(params.trim_fastq){
    aligner_reads = raw_reads
 }
 
-/*
-  STEP 5.4: Stage reads for quantification
-*/
-
 (star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat_reads) = aligner_reads.into(9)
 
 /*
 ================================================================================
-                   circRNA quantification, annotation
+                     circRNA quantification + annotation
 ================================================================================
 */
 
@@ -808,7 +746,7 @@ process CIRIQUANT{
     grep -v "#" ${base}.gtf | awk -v OFS="\t" '{print \$1,\$4,\$5,\$7}' > ${base}.tmp
     paste ${base}.tmp counts > ${base}_unfilt.bed
 
-    ## filter
+    ## filter bsj_reads
     awk '{if(\$5 >= ${params.bsj_reads}) print \$0}' ${base}_unfilt.bed > ${base}_filt.bed
     grep -v '^\$' ${base}_filt.bed > ${base}_ciriquant
 
@@ -1334,7 +1272,6 @@ process FIND_CIRC{
     tuple val(base), file("${base}.log") into find_circ_logs
 
     script:
-    def fasta_file =
     """
     bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \\
     -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
@@ -1854,36 +1791,6 @@ def defineModuleList() {
     ]
 }
 
-// Define STAR index files
-def defineStarFiles() {
-    return [
-    'chrLength.txt',
-    'chrNameLength.txt',
-    'chrName.txt',
-    'chrStart.txt',
-    'exonGeTrInfo.tab',
-    'exonInfo.tab',
-    'geneInfo.tab',
-    'Genome',
-    'genomeParameters.txt',
-    'Log.out',
-    'SA',
-    'SAindex',
-    'sjdbInfo.txt',
-    'sjdbList.fromGTF.out.tab',
-    'sjdbList.out.tab',
-    'transcriptInfo.tab'
-    ]
-}
-
-// Define Genome versions
-def defineGenomeVersions() {
-    return [
-    'GRCh37',
-    'GRCh38'
-    ]
-}
-
 // Check if a row has the expected number of item
 def checkNumberOfItem(row, number) {
     if (row.size() != number) exit 1, "[nf-core/circrna] error:  Invalid CSV input - malformed row (e.g. missing column) in ${row}, see '--help' flag and documentation under 'running the pipeline' for more information"
@@ -1979,11 +1886,6 @@ def retrieve_input_paths(input, type){
 
 
 // Check input phenotype file
-
-/*
- * User can supply many explanatory variables and thus this function only checks the condition column.
- * Ask @nf-core how this can be adapted to accept any number of columns?
- */
 
 def examine_phenotype(pheno){
 
