@@ -400,7 +400,7 @@ process STAR_INDEX {
     script:
     """
     mkdir -p STARIndex
-    
+
     STAR \\
         --runMode genomeGenerate \\
         --runThreadN ${task.cpus} \\
@@ -597,7 +597,7 @@ process GENE_ANNOTATION{
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    params.gtf && ('circexplorer2' && 'mapsplice' in tool) && 'circrna_discovery' in module
+    params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
