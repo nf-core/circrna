@@ -574,7 +574,7 @@ if(params.input_type == 'bam'){
         tag "${base}"
         label 'process_medium'
         publishDir params.outdir, mode: params.publish_dir_mode,
-            saveAs: { params.save_bamtofastq ? "quality_control/SamToFastq/${it}" : null }
+            saveAs: { params.save_qc_intermediates ? "quality_control/SamToFastq/${it}" : null }
 
         input:
         tuple val(base), file(bam) from ch_input
@@ -631,7 +631,7 @@ if(params.trim_fastq){
        tag "${base}"
        label 'process_medium'
        publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
-           saveAs: { params.save_trimmed ? "BBDUK/${it}" : null }
+           saveAs: { params.save_qc_intermediates ? "quality_control/BBDUK/${it}" : null }
 
        input:
        tuple val(base), file(fastq) from trimming_reads
