@@ -249,9 +249,9 @@ params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.
 params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
 params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
 
-ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
-ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
-ch_mature = params.mature ? Channel.value(file(params.mature)) : null
+ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : 'null'
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : 'null'
+ch_mature = params.mature && 'mirna_prediction' in module ? Channel.value(file(params.mature)) : 'null'
 ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 /*
