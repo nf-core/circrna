@@ -65,7 +65,7 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
 
     inputdata <- list()
 
-    dbmap <- read.table(map, sep="\t", header=T, quote="")
+    dbmap <- read.table(map, sep="\t", header=T, quote="", stringsAsFactors=FALSE)
     gene_mat <- read.csv(gene_counts, row.names="gene_id", check.names=F)
     circ <- read.table(circRNA, sep ="\t", header = T, stringsAsFactors=FALSE)
 
@@ -95,6 +95,11 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
     inputdata$design <- makedesign(inputdata$pheno)
     inputdata$species <- species
     inputdata$map <- dbmap
+
+    print(inputdata$map)
+    print(colnames(inputdata$map))
+
+    inputdata$gene <- ens2symbol(inputdata$gene, inputdata)
 
     return(inputdata)
 }
@@ -163,35 +168,69 @@ makedesign <- function(phenotype){
 
 ens2symbol <- function(mat, inputdata){
 
-    ## If rownames(mat) begin with ENS (are ensembl), then convert to HGNC
-    ## Else, I assume the identifiers are okay and should be left alone.
-    ## This is something I do not have the time or resources to test for
-    ## ENSEMBL/Gencode/NCBI/UCSC reference files
+    ## designed to work on input gene_count_matrix.csv file
+    ## everything else downstream no longer needs to be converted
+
+    ## figure out if working with ENS, or ENS IDs
+
+    mat <- as.data.frame(mat)
+    map <- inputdata$map
+    species <- inputdata$species
 
     if(all(grepl(pattern="^ENSG", rownames(mat)))){
+        filter = "ensembl_gene_id"
+            if(all(grepl(pattern=".", rownames(mat)))){
+                filter = "ensembl_gene_id_version"
+            }
+    }else{
+        filter = "external_gene_name"
+    }
 
-        map <- inputdata$map
-        mart_call <- subset(map$command, map$species == species)
+    ## set up Mart
+    mart_call <- as.character(subset(map$command, map$species == species))
+    print("ENS2SYMBOL")
+    mart <- eval(str2expression(mart_call))
 
-        mart <- mart_call
-        mat <- as.data.frame(mat)
-        mat$ensembl_gene_id_version <- rownames(mat)
-        info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
-                      filters = c("ensembl_gene_id_version"),
-                      values = mat$ensembl_gene_id_version,
+    ## now go about converting ENS2SYMBOL
+    if(filter == "ensembl_gene_id"){
+
+        mat$ensembl_gene_id <- rownames(mat)
+        info <- getBM(attributes=c("ensembl_gene_id","external_gene_name"),
+                      filters = c("ensembl_gene_id"),
+                      values = mat$ensembl_gene_id,
                       mart = mart,
                       useCache=FALSE)
+
+        tmp <- merge(mat, info, by="ensembl_gene_id")
+        tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
+        rownames(tmp) <- tmp$external_gene_name
+        tmp <- subset(tmp, select=-c(ensembl_gene_id, external_gene_name))
+
+        mat <- tmp
+        print("input mat ensembl gene id detected and converted")
+        return(mat)
+    }else if(filter == "ensembl_gene_id_version"){
+
+        mat$ensembl_gene_id_version <- rownames(mat)
+        info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
+                  filters = c("ensembl_gene_id_version"),
+                  values = mat$ensembl_gene_id_version,
+                  mart = mart,
+                  useCache=FALSE)
 
         tmp <- merge(mat, info, by="ensembl_gene_id_version")
         tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
         rownames(tmp) <- tmp$external_gene_name
         tmp <- subset(tmp, select=-c(ensembl_gene_id_version, external_gene_name))
 
-        return(tmp)
-
+        mat <- tmp
+        print("input mat ensembl gene id version detected and converted")
+        return(mat)
     }else{
+        print("NO change made to input mat ")
         return(mat)
     }
+
 }
 
 get_upregulated <- function(df){
@@ -211,23 +250,27 @@ get_downregulated <- function(df){
 }
 
 
-annotate_de_genes <- function(df){
+annotate_de_genes <- function(df, inputdata){
 
-    df$ensembl_gene_id_version <- rownames(df)
-    mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-    info <- getBM(attributes=c("ensembl_gene_id_version",
-                               "external_gene_name",
+    map <- inputdata$map
+    species <- inputdata$species
+    print("ANNOTATE DE GENES")
+    mart_call <- as.character(subset(map$command, map$species == species))
+    mart <- eval(str2expression(mart_call))
+
+    df$external_gene_name <- rownames(df)
+    info <- getBM(attributes=c("external_gene_name",
                                "chromosome_name",
                                "start_position",
                                "end_position",
                                "strand",
                                "entrezgene_description"),
-                  filters = c("ensembl_gene_id_version"),
-                  values = df$ensembl_gene_id_version,
+                  filters = c("external_gene_name"),
+                  values = rownames(df),
                   mart = mart,
                   useCache=FALSE)
 
-    tmp <- merge(df, info, by="ensembl_gene_id_version")
+    tmp <- merge(df, info, by="external_gene_name")
     tmp$strand <- gsub("-1", "-", tmp$strand)
     tmp$strand <- gsub("1", "+", tmp$strand)
     tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
@@ -268,7 +311,7 @@ DESeq2 <- function(inputdata, data_type){
 
             for(var in contrasts){
                 contrast <- paste(var, "vs", reference, sep="_")
-                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
+                DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir, inputdata)
             }
         }
     }else if(data_type == "circRNA"){
@@ -311,7 +354,7 @@ DESeq2 <- function(inputdata, data_type){
 }
 
 
-getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
+getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir, inputdata) {
 
     res <- results(dds, filterFun=ihw, alpha=0.05,  contrast=c("condition", var, reference))
     cat('\n\nSummary data from DESeq2 for ', contrast, ':', sep="")
@@ -336,8 +379,8 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
     global_heatmap(de, log2, contrast, outdir)
 
     if(outdir == "RNA-Seq/"){
-        up_regulated <- annotate_de_genes(up_regulated)
-        down_regulated <- annotate_de_genes(down_regulated)
+        up_regulated <- annotate_de_genes(up_regulated, inputdata)
+        down_regulated <- annotate_de_genes(down_regulated, inputdata)
     }else{
         up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
         down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
@@ -350,13 +393,13 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir) {
 
     res_df <- as.data.frame(res)
 
-    if(outdir == "RNA-Seq/"){
-        ann_res <- ens2symbol(res_df, inputdata)
-    }else{
-        ann_res <- res_df
-    }
+    #if(outdir == "RNA-Seq/"){
+    #    ann_res <- ens2symbol(res_df, inputdata)
+    #}else{
+    #    ann_res <- res_df
+    #}
 
-    volcano_plot(ann_res, contrast, outdir)
+    volcano_plot(res_df, contrast, outdir)
 
     pdf(file.path(dir, paste("DESeq2", contrast, "fold_change_distribution.pdf", sep="_")), width=8, height=8)
     hist(res$log2FoldChange, breaks=50, col="seagreen", xlab=paste("(Fold change)", contrast, sep=" "), main="Distribution of differential expression fold change")
