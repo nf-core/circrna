@@ -1713,9 +1713,10 @@ process STRINGTIE{
 process DEA{
     label 'process_medium'
     publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode: params.publish_dir_mode
     publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
     publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
+    publishDir params.outdir, mode params.publish_dir_mode, pattern: "RNA-Seq",
+        saveAs: { params.save_rnaseq_intermediates ? "/differential_expression/intermediates/${it}" : null }
 
     when:
     'differential_expression' in module
@@ -1739,6 +1740,9 @@ process DEA{
     prepDE.py -i samples.txt
 
     Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${projectDir}/bin/ensemblDatabase_map.txt
+
+    mv gene_count_matrix.csv RNA-Seq
+    mv transcript_count_matrix.csv RNA-Seq
     """
 }
 
