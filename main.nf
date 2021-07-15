@@ -267,7 +267,7 @@ process BWA_INDEX {
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
+    !params.bwa & !params.genome && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
