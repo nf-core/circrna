@@ -1715,8 +1715,8 @@ process DEA{
     publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
     publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
     publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
-    publishDir params.outdir, mode params.publish_dir_mode, pattern: "RNA-Seq",
-        saveAs: { params.save_rnaseq_intermediates ? "/differential_expression/intermediates/${it}" : null }
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "RNA-Seq",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/${it}" : null }
 
     when:
     'differential_expression' in module

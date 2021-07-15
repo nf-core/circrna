@@ -96,9 +96,6 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
     inputdata$species <- species
     inputdata$map <- dbmap
 
-    print(inputdata$map)
-    print(colnames(inputdata$map))
-
     inputdata$gene <- ens2symbol(inputdata$gene, inputdata)
 
     return(inputdata)
