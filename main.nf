@@ -1652,20 +1652,27 @@ process MIRNA_TARGETS{
     script:
     def species_id = species + "-"
     """
-    ## use file name to derive bed12 coordiantes.
-    echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
-    mv master_bed12.bed circ.bed.tmp
+    ## As before, we have a catch for NA miRNA pred files.
+    grep -v "miRNA" $miranda | if grep -q "NA";
+    then
+        touch ${base}_failed_miRNA_targets.txt
+        touch ${base}_failed.pdf
+    else
+        ## use file name to derive bed12 coordiantes.
+        echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
+        bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
+        mv master_bed12.bed circ.bed.tmp
 
-    ## Prep exon track for circlize
-    cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
-    bash ${projectDir}/bin/prep_circos.sh bed12.tmp
+        ## Prep exon track for circlize
+        cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
+        bash ${projectDir}/bin/prep_circos.sh bed12.tmp
 
-    ## add mature spl len (+ 1 bp)
-    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
-    paste circ.bed.tmp ml > circ.bed
+        ## add mature spl len (+ 1 bp)
+        awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+        paste circ.bed.tmp ml > circ.bed
 
-    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
+        Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
+    fi
     """
 }
 
