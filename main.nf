@@ -1655,8 +1655,8 @@ process MIRNA_TARGETS{
     ## As before, we have a catch for NA miRNA pred files.
     grep -v "miRNA" $miranda | if grep -q "NA";
     then
-        touch ${base}_failed_miRNA_targets.txt
-        touch ${base}_failed.pdf
+        touch ${base}_fail_catch_miRNA_targets.txt
+        touch ${base}_fail_catch.pdf
     else
         ## use file name to derive bed12 coordiantes.
         echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
