@@ -1604,16 +1604,31 @@ process MIRNA_PREDICTION{
     """
     miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
     echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
-    grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
 
-    # format for targetscan
-    cat $fasta | grep ">" | sed 's/>//g' > id
-    cat $fasta | grep -v ">" > seq
-    echo "0000" > species
-    paste id species seq > ${prefix}_ts.txt
+    # Add catch here for non hits (supply NAs to outfile)
+    # Making the decision that if miRanda fails, then the miRNA analysis for this circRNA exits cleanly.
+    # Happy to rework in the future, but do not want pipeline failing on low confidence circRNA calls.
+    ## exit code 1 = fail, 0 = success
+    if grep -A 1 -q "Scores for this hit:" ${prefix}.bindsites.out;
+    then
+        grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
 
-    # run targetscan
-    targetscan_70.pl $mirbase_txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+        ##format for targetscan
+        cat $fasta | grep ">" | sed 's/>//g' > id
+        cat $fasta | grep -v ">" > seq
+        echo "0000" > species
+        paste id species seq > ${prefix}_ts.txt
+
+        # run targetscan
+        targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+    else
+        ## Add NA's to miRanda cols:
+        printf "%0.sNA\t" {1..11} >> ${prefix}.miRanda.txt
+        ## Construct TargetScan header
+        echo "a_Gene_ID miRNA_family_ID species_ID MSA_start MSA_end UTR_start UTR_end Group_num Site_type miRNA_in_this_species Group_type Species_in_this_group Species_in_this_group_with_this_site_type ORF_overlap" | tr ' ' '\t' > ${prefix}.targetscan.txt
+        ## Add NA's to file
+        printf "%0.sNA\t" {1..13} >> ${prefix}.targetscan.txt
+    fi
     """
 }
 
