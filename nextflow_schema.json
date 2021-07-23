@@ -9,38 +9,105 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
+            "description": "Define where the pipeline should find input data and write output data.",
             "required": [
-                "input"
+                "input",
+                "input_type",
+                "outdir"
             ],
             "properties": {
                 "input": {
                     "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/csv",
-                    "pattern": "\\.csv$",
-                    "schema": "assets/schema_input.json",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/circrna/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-dna",
+                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the absolute path to FASTQ/BAM files.",
+                    "help_text": "There are two ways to supply input data to nf-core/circrna:\n\n1. Provide the path to the directory containing FASTQ or BAM files, with the appropriate wildcard glob pattern *e.g:*\n```bash\n--input \"/data/*_r{1,2}.fastq.gz\"\n```\n2. Provide a CSV file containing the absolute paths to FASTQ or BAM files *e.g:*\n\n| Sample_ID    | Read1                          | Read2                          | Bam  |\n|------------- |------------------------------- |------------------------------- |----- |\n| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |\n| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |\n| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |\n| lung_rep1   | /data/lung_rep1_r1.fastq.gz   | /data/lung_rep1_r2.fastq.gz   | NA   |\n| lung_rep2   | /data/lung_rep2_r1.fastq.gz   | /data/lung_rep2_r2.fastq.gz   | NA   |\n| lung_rep3   | /data/lung_rep3_r1.fastq.gz   | /data/lung_rep3_r2.fastq.gz   | NA   |\n| melanoma_rep1   | /data/melanoma_rep1_r1.fastq.gz   | /data/melanoma_rep1_r2.fastq.gz   | NA   |\n| melanoma_rep2   | /data/melanoma_rep2_r1.fastq.gz   | /data/melanoma_rep2_r2.fastq.gz   | NA   |\n| melanoma_rep3   | /data/melanoma_rep3_r1.fastq.gz   | /data/melanoma_rep3_r2.fastq.gz   | NA   |\n\n When supplying BAM files to the CSV file, set Read1 & Read2 columns to 'NA'."
+                },
+                "input_type": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dna",
+                    "description": "Input data type, 'fastq' or 'bam'.",
+                    "help_text": "If the user wishes to save the converted raw FASTQ files, set `--save_bamtofastq true`",
+                    "enum": [
+                        "fastq",
+                        "bam"
+                    ]
                 },
                 "outdir": {
                     "type": "string",
-                    "description": "Path to the output directory where the results will be saved.",
+                    "description": "The output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "email": {
-                    "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                "save_bamtofastq": {
+                    "type": "boolean",
+                    "description": "Save outputs from Picard SamToFastq conversion (i.e raw Fastq files).",
+                    "fa_icon": "fas fa-save",
+                    "default": false,
+                    "hidden": true
                 },
-                "multiqc_title": {
+                "phenotype": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
+                    "fa_icon": "far fa-file-alt",
+                    "help_text": "The response variable containing the phenotype of primary interest in the experiment must have the column name condition. An example phenotype file is given below:\n\n| Sample_ID | condition | replicates |\n|---------|-----------|------------|\n| control_rep1  | control   | 1          |\n| control_rep2  | control   | 2          |\n| control_rep3  | control   | 3          |\n| lung_rep1  | lung      | 1          |\n| lung_rep2  | lung      | 2          |\n| lung_rep3  | lung      | 3          |\n| melanoma_rep1  | melanoma  | 1          |\n| melanoma_rep2  | melanoma  | 2          |\n| melanoma_rep3  | melanoma  | 3          |\n\nThis will produce the DESeq2 design formula '~ replicates + condition' i.e all columns not named condition will be controlled for in the linear mixed model.",
+                    "pattern": "\\.csv$"
+                }
+            }
+        },
+        "pipeline_options": {
+            "title": "Pipeline Options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Options for circRNA, miRNA predictions",
+            "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
+            "required": [
+                "module",
+                "tool"
+            ],
+            "properties": {
+                "tool": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
+                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n```bash\n--tool 'circexplorer2, ciriquant, find_circ'\n```\n\n> N.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
+                    "default": "circexplorer2"
+                },
+                "module": {
+                    "type": "string",
+                    "fa_icon": "fas fa-sliders-h",
+                    "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
+                    "mandatory": "circrna_discovery",
+                    "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n\n```bash\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n```",
+                    "default": "circrna_discovery"
+                },
+                "bsj_reads": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum number of required reads spanning circRNA back-splice junction for circRNA to be output by workflow.",
+                    "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 0.",
+                    "default": 2,
+                    "minimum": 0
+                },
+                "tool_filter": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-intersection",
+                    "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, the user can set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\n> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`. ",
+                    "default": 2,
+                    "minimum": 0,
+                    "maximum": 6
+                },
+                "save_quantification_intermediates" :{
+                  "type": "boolean",
+                  "fa_icon": "fas fa-save",
+                  "description": "Save raw outputs from circRNA quantification?",
+                  "default": true
+                },
+                "save_mirna_predictions": {
+                  "type": "boolean",
+                  "fa_icon": "fas fa-save",
+                  "description": "Save raw miRanda, TargetScan prediction outputs?",
+                  "default": true
                 }
             }
         },
@@ -48,37 +115,471 @@
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
+            "description": "Reference genome options used in the analysis.",
+            "help_text": "`nf-core/circrna` will automatically download reference files if none are provided and generate genome index files based on the tools selected by the user.",
             "properties": {
-                "genome": {
-                    "type": "string",
-                    "description": "Name of iGenomes reference.",
-                    "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
-                },
                 "fasta": {
                     "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
-                    "pattern": "\\.fn?a(sta)?(\\.gz)?$",
+                    "fa_icon": "fas fa-font",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
+                    "help_text": "If set to null, the parameter `--genome` must be supplied and the reference FASTA file will be automatically downloaded.\n\n```bash\n--fasta '/reference/GRCh38.fa'\n```",
+                    "pattern": "\\.(fa|fasta)$"
+                },
+                "genome": {
+                    "type": "string",
+                    "fa_icon": "fas fa-clone",
+                    "description": "iGenome version to use.",
+                    "help_text": "Required if `--fasta`, `--gtf`, `--gene` are set to null."
+                },
+                "gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to reference GTF file.",
+                    "help_text": "If left empty, the parameter `--genome` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested.",
+                    "pattern": "\\.gtf$"
+                },
+                "gene": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to custom annotation text file.",
+                    "help_text": "If left empty, the parameter --genome must be supplied and the customised annotation text file will be automatically generated.\n\n```bash\n--gene \"/reference/GRCh38.txt\"\n```\n\n> NB: The gene annotation text file is generated using a combination of `gtfToGenePred` and perl commands for CIRCexplorer2 [compatability](https://github.com/YangLab/CIRCexplorer2/issues/43). The file cannot be downloaded and it is recommended to leave the parameter null unless re-running the pipeline.",
+                    "pattern": "\\.txt$"
                 },
                 "igenomes_base": {
                     "type": "string",
-                    "format": "directory-path",
                     "description": "Directory / URL base for iGenomes references.",
                     "default": "s3://ngi-igenomes/igenomes",
                     "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
+                    "hidden": false
                 },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
                     "fa_icon": "fas fa-ban",
-                    "hidden": true,
+                    "hidden": false,
                     "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                },
+                "samtools": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to SAMtools index file.",
+                    "help_text": "Automatically generated if left set to null. \n\nWhen re-running the pipeline, provide the absolute path to the SAMtools index file e.g:\n\n```bash\n--fasta_fai '/data/results/circrna_discovery/index/GRCh38.fa.fai'\n```",
+                    "pattern": "/.fai$"
+                },
+                "bowtie": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to Bowtie index files.",
+                    "help_text": "Automatically generated if set to null.\n\nWhen re-running the pipeline, provide the absolute path to Bowtie indices directory e.g:\n\n```bash\n--bowtie_index \"/data/results/circrna_discovery/index/bowtie\"\n```"
+                },
+                "bowtie2": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to Bowtie2 index files.",
+                    "help_text": "Automatically generated if left empty. \n\nWhen re-running the pipeline, provide the absolute path to the Bowtie2 indices directory e.g:\n\n```bash\n--bowtie2_index \"/data/results/circrna_discovery/index/bowtie2\"\n```"
+                },
+                "bwa": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to BWA index directory.",
+                    "help_text": "Automatically generated if left empty.\n\nWhen re-running the pipeline, provide the absolute path to BWA indices directory e.g:\n\n```bash\n--bwa_index \"/data/results/circrna_discovery/index/bwa\"\n```"
+                },
+                "hisat2": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to HISAT2 index directory.",
+                    "help_text": "Automatically generated if left empty. \n\nWhen re-running the pipeline, provide the absolute path to HISAT2 indices directory e.g:\n\n```bash\n--hisat2_index \"/data/results/circrna_discovery/index/hisat2\"\n```"
+                },
+                "save_reference": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Save generated reference genome files to results.",
+                    "help_text": "Saving generated references means that you can use them for future pipeline runs, reducing processing times.",
+                    "fa_icon": "fas fa-save"
+                },
+                "segemehl":{
+                    "type": "string",
+                    "fa_icon": "fa-address-book",
+                    "description": "Path to Segemehl Index file"
+                },
+                "star": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "description": "Path to STAR index directory.",
+                    "help_text": "Automatically generated if left empty.\n\nWhen re-running the pipeline, provide the absolute path to STAR indices directory e.g:\n\n```bash\n--star_index \"/data/results/circrna_discovery/index/STAR\"\n```"
+                }
+            }
+        },
+        "read_trimming_and_adapter_removal": {
+            "title": "Read trimming & adapter removal",
+            "type": "object",
+            "fa_icon": "fas fa-cut",
+            "description": "Parameters for BBDUK",
+            "help_text": "BBDUK read filtering is deployed when `--trim_fastq true`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+            "properties": {
+                "trim_fastq": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-fast-forward",
+                    "description": "Trim Fastq?",
+                    "help_text": "If set to true, the BBDUK process is executed. If false, the BBDUK process is skipped and raw reads will be supplied to circRNA quantification tools.",
+                    "default": false
+                },
+                "adapters": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file-alt",
+                    "description": "Reference adapter file supplied to BBDUK",
+                    "deafult": "adapters.fa",
+                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
+                    "default": "${projectDir}/bin/adapters.fa",
+                    "pattern": "\\.(fa|fasta)$"
+                },
+                "k": {
+                    "type": "integer",
+                    "fa_icon": "fab fa-kickstarter",
+                    "description": "Specifies K-mer size to use for adapter removal",
+                    "default": 12,
+                    "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k 32` removes all reads that have a 32 kmer match with the adapter sequences provided."
+                },
+                "ktrim": {
+                    "type": "string",
+                    "fa_icon": "fas fa-exchange-alt",
+                    "description": "Which end of reads to perform kmer trimming",
+                    "default": "r",
+                    "help_text": "Specify which end of the reads to perform kmer trimming on. Options are 'r', 'l', and 'f' (right, left, don't trim).",
+                    "enum": [
+                        "r",
+                        "l",
+                        "f"
+                    ]
+                },
+                "hdist": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "Maximum Hamming distance for reference kmers",
+                    "default": 1,
+                    "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n> Warning: setting `--hdist` to values higher than 1 will result in high memory usage."
+                },
+                "trimq": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-award",
+                    "description": "Trimming performed on regions in reads with an average Phred score below specified value",
+                    "default": 20,
+                    "help_text": "> NB: This action is performed after adapter removal if specified."
+                },
+                "qtrim": {
+                    "type": "string",
+                    "fa_icon": "fas fa-exchange-alt",
+                    "description": "Which end of reads to perform quality trimming",
+                    "default": "r",
+                    "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are 'r', 'l' and 'rl' (right, left, both).",
+                    "enum": [
+                        "r",
+                        "l",
+                        "rl"
+                    ]
+                },
+                "minlen": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "Remove reads below length *n*",
+                    "default": 30
+                },
+                "save_trimmed":{
+                    "type": "boolean",
+                    "fa_icon": "fas fa-save",
+                    "description": "Save trimmed FASTQ files?",
+                    "default": false
+                }
+            }
+        },
+        "star_general": {
+            "title": "STAR",
+            "type": "object",
+            "description": "Define parameters for STAR 2 pass mode",
+            "help_text": "STAR 2 pass mode is performed to identify novel splice sites in *all* samples. STAR takes the novel splice sites into account when performig re-alignment during the second pass. STAR is used for CIRCexplorer2, circRNA_finder & DCC",
+            "properties": {
+                "alignIntronMax": {
+                    "type": "integer",
+                    "default": 1000000,
+                    "description": "The maximum intron length is set to 1,000,000",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignIntronMin": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "The minimum intron length is set to 20. If the genomic gap is smaller than this value, it is considered as a deletion",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignMatesGapMax": {
+                    "type": "integer",
+                    "default": 1000000,
+                    "description": "The maximum genomic distance between mates is 1,000,000",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignSJDBoverhangMin": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The number of minimum overhang for annotated junctions",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignSJoverhangMin": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The number of minimum overhang for unannotated junctions",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignSoftClipAtReferenceEnds": {
+                    "type": "string",
+                    "default": "No",
+                    "description": "Allow the soft-clipping of the alignments past the end of chromosomes",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "alignTranscriptsPerReadNmax": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Max number of different alignments per read to consider",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "chimJunctionOverhangMin": {
+                    "type": "integer",
+                    "default": 15,
+                    "description": "Minimum overhang for a chimeric junction",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "chimScoreMin": {
+                    "type": "integer",
+                    "default": 15,
+                    "description": "Minimum total (summed) score of the chimeric segments",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "chimScoreSeparation": {
+                    "type": "integer",
+                    "default": 15,
+                    "description": "Minimum difference (separation) between the best chimeric score and the next one",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "chimSegmentMin": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": " Minimum length of chimeric segment length, if == 0, no chimeric output",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "Do not set to 0, this will disable outputs compatible with circRNA quantification."
+                },
+                "genomeLoad": {
+                    "type": "string",
+                    "default": "NoSharedMemory",
+                    "description": "Mode of shared memory usage for the genome files",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "Users can select a variety of options depending on their resource configuration:\n\n1. `LoadAndKeep`: load genome into shared and keep it in memory after run\n2. `LoadAndRemove`: load genome into shared but remove it after run\n3. `LoadAndExit`: load genome into shared memory and exit, keeping the genome in memory for future runs\n4. `Remove`: do not map anything, just remove loaded genome from memory\n5. `NoSharedMemory`: do not use shared memory, each job will have its own private copy of the genome",
+                    "enum": [
+                        "LoadAndKeep",
+                        "LoadAndRemove",
+                        "LoadAndExit",
+                        "Remove",
+                        "NoSharedMemory"
+                    ]
+                },
+                "limitSjdbInsertNsj": {
+                    "type": "integer",
+                    "default": 1000000,
+                    "description": "Maximum number of junction to be inserted to the genome on the fly at the mapping stage, including those from annotations and those detected in the 1st step of the 2-pass run",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterMatchNminOverLread": {
+                    "type": "number",
+                    "default": 0.33,
+                    "description": "Alignment output if ratio of matched bases relative to read length is equal to or higher than this value",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "Consider 75bp paired end reads with sum matched bases of 120bp. Matched bp is summmed over combined read length (120/150 = 0.8). Simply put, lowering this ratio reduces the number of required matches in reads.\n\n`outFilterMatchNminOverLread` is preferred over `outFilterMatchNmin` as it considers read length, suitable for experiments with varying read length."
+                },
+                "outFilterMismatchNoverLmax": {
+                    "type": "number",
+                    "default": 0.05,
+                    "description": "Alignment output if ratio of mismatched bases relative to **mapped** read length is lower than value",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "For example, for reads <20b no mismatches are allowed (1/19 = 0.0526), 20-39b: 1 mismatch, 40-59b 2 mismatches and so on. Simply put, increasing this value will allow for more mismatches in the mapped reads.\n\n`outFilterMismatchNoverLmax` is preferred over `outFilterMismatchNmax` as it considers the mapped read length, suitable for experiments with varying read length."
+                },
+                "outFilterMultimapNmax": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Max number of multiple alignments allowed for a read: if exceeded, the read is considered unmapped",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterMultimapScoreRange": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": " Score range below the maximum score for multimapping alignments",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "outFilterScoreMinOverLread": {
+                    "type": "number",
+                    "default": 0.33,
+                    "description": "Alignment will be output only if its score relative to read length is higher than or equal to this value",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "outSJfilterOverhangMin": {
+                    "type": "string",
+                    "default": "15 15 15 15",
+                    "description": "Minimum overhang length for novel splice junctions",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "4 integers: minimum overhang length for splice junctions on both sides for:\n1. non-canonical motifs\n2. GT/AG and CT/AC motif\n3. GC/AG and CT/GC motif\n4. AT/AC and GT/AT motif\n\n-1 means no output for that motif"
+                },
+                "sjdbOverhang": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Option to specify the length of the donor/acceptor sequence on each side of the junctions used in constructing the splice junctions database",
+                    "fa_icon": "fas fa-sliders-h",
+                    "help_text": "By default the option is set to 100. However, we recommend setting a value depending on the read length: read/mate length - 1"
+                },
+                "sjdbScore": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Alignment score for alignmets that cross database junctions",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "winAnchorMultimapNmax": {
+                    "type": "integer",
+                    "default": 999,
+                    "description": "The maximum number of loci anchors that are allowed to map. By default, the pipeline uses a large number 999 to switch this filter off.",
+                    "fa_icon": "fas fa-sliders-h"
+                }
+            },
+            "fa_icon": "fas fa-star"
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "fa_icon": "fas fa-file-import",
+            "description": "Less common options for the pipeline, typically set in a config file.",
+            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
+            "properties": {
+                "help": {
+                    "type": "boolean",
+                    "description": "Display help text.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-question-circle"
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "hidden": true,
+                    "description": "Method used to save pipeline results to output directory.",
+                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
+                    "fa_icon": "fas fa-copy",
+                    "enum": [
+                        "symlink",
+                        "rellink",
+                        "link",
+                        "copy",
+                        "copyNoFollow",
+                        "move"
+                    ]
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
+                    "hidden": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Workflow name.",
+                    "fa_icon": "fas fa-fingerprint",
+                    "hidden": true,
+                    "help_text": "A custom name for the pipeline run. Unlike the core nextflow `-name` option with one hyphen this parameter can be reused multiple times, for example if using `-resume`. Passed through to steps such as MultiQC and used for things like report filenames and titles."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "hidden": true,
+                    "help_text": "An email address to send a summary email to when the pipeline is completed.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
+                "email_on_fail": {
+                    "type": "string",
+                    "description": "Email address for completion summary, only when pipeline fails.",
+                    "fa_icon": "fas fa-exclamation-triangle",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                    "hidden": true,
+                    "help_text": "This works exactly as with `--email`, except emails are only sent if the workflow is not successful."
+                },
+                "plaintext_email": {
+                    "type": "boolean",
+                    "description": "Send plain-text email instead of HTML.",
+                    "fa_icon": "fas fa-remove-format",
+                    "hidden": true,
+                    "help_text": "Set to receive plain-text e-mails instead of HTML formatted."
+                },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "description": "File size limit when attaching MultiQC reports to summary emails.",
+                    "default": "25.MB",
+                    "fa_icon": "fas fa-file-upload",
+                    "hidden": true,
+                    "help_text": "If file generated by pipeline exceeds the threshold, it will not be attached."
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "description": "Do not use coloured log outputs.",
+                    "fa_icon": "fas fa-palette",
+                    "hidden": true,
+                    "help_text": "Set to disable colourful command line output and live life in monochrome."
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "tracedir": {
+                    "type": "string",
+                    "description": "Directory to keep pipeline Nextflow logs and reports.",
+                    "default": "${params.outdir}/pipeline_info",
+                    "fa_icon": "fas fa-cogs",
+                    "hidden": true
+                },
+                "show_hidden_params": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-eye-slash",
+                    "description": "Show all params when using `--help`",
+                    "hidden": true,
+                    "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
+                }
+            }
+        },
+        "max_job_request_options": {
+            "title": "Max job request options",
+            "type": "object",
+            "fa_icon": "fab fa-acquisitions-incorporated",
+            "description": "Set the top limit for requested resources for any single job.",
+            "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
+            "properties": {
+                "max_cpus": {
+                    "type": "integer",
+                    "description": "Maximum number of CPUs that can be requested    for any single job.",
+                    "default": 16,
+                    "fa_icon": "fas fa-microchip",
+                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
+                },
+                "max_memory": {
+                    "type": "string",
+                    "description": "Maximum amount of memory that can be requested for any single job.",
+                    "default": "128.GB",
+                    "fa_icon": "fas fa-memory",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "hidden": true,
+                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
+                },
+                "max_time": {
+                    "type": "string",
+                    "description": "Maximum amount of time that can be requested for any single job.",
+                    "default": "240.h",
+                    "fa_icon": "far fa-clock",
+                    "pattern": "^(\\d+\\.?\\s*(s|m|h|day)\\s*)+$",
+                    "hidden": true,
+                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
                 }
             }
         },
@@ -94,14 +595,15 @@
                     "description": "Git commit id for Institutional configs.",
                     "default": "master",
                     "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
+                    "fa_icon": "fas fa-users-cog",
+                    "help_text": "Provide git commit id for custom Institutional configs hosted at `nf-core/configs`. This was implemented for reproducibility purposes. Default: `master`.\n\n```bash\n## Download and use config file with following git commit id\n--custom_config_version d52db660777c4bf36546ddb188ec530c3ada1b96\n```"
                 },
                 "custom_config_base": {
                     "type": "string",
                     "description": "Base directory for Institutional configs.",
                     "default": "https://raw.githubusercontent.com/nf-core/configs/master",
                     "hidden": true,
-                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "help_text": "If you're running offline, nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell nextflow where to find them with the `custom_config_base` option. For example:\n\n```bash\n## Download and unzip the config files\ncd /path/to/my/configs\nwget https://github.com/nf-core/configs/archive/master.zip\nunzip master.zip\n\n## Run the pipeline\ncd /path/to/my/data\nnextflow run /path/to/pipeline/ --custom_config_base /path/to/my/configs/configs-master/\n```\n\n> Note that the nf-core/tools helper package has a `download` command to download all required pipeline files + singularity containers + institutional configs in one go for you, to make this process easier.",
                     "fa_icon": "fas fa-users-cog"
                 },
                 "hostnames": {
@@ -135,140 +637,6 @@
                     "fa_icon": "fas fa-users-cog"
                 }
             }
-        },
-        "max_job_request_options": {
-            "title": "Max job request options",
-            "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
-            "description": "Set the top limit for requested resources for any single job.",
-            "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
-            "properties": {
-                "max_cpus": {
-                    "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
-                    "fa_icon": "fas fa-microchip",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
-                },
-                "max_memory": {
-                    "type": "string",
-                    "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
-                    "fa_icon": "fas fa-memory",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
-                },
-                "max_time": {
-                    "type": "string",
-                    "description": "Maximum amount of time that can be requested for any single job.",
-                    "default": "240.h",
-                    "fa_icon": "far fa-clock",
-                    "pattern": "^(\\d+\\.?\\s*(s|m|h|day)\\s*)+$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
-                }
-            }
-        },
-        "generic_options": {
-            "title": "Generic options",
-            "type": "object",
-            "fa_icon": "fas fa-file-import",
-            "description": "Less common options for the pipeline, typically set in a config file.",
-            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
-            "properties": {
-                "help": {
-                    "type": "boolean",
-                    "description": "Display help text.",
-                    "fa_icon": "fas fa-question-circle",
-                    "hidden": true
-                },
-                "publish_dir_mode": {
-                    "type": "string",
-                    "default": "copy",
-                    "description": "Method used to save pipeline results to output directory.",
-                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
-                    "fa_icon": "fas fa-copy",
-                    "enum": [
-                        "symlink",
-                        "rellink",
-                        "link",
-                        "copy",
-                        "copyNoFollow",
-                        "move"
-                    ],
-                    "hidden": true
-                },
-                "email_on_fail": {
-                    "type": "string",
-                    "description": "Email address for completion summary, only when pipeline fails.",
-                    "fa_icon": "fas fa-exclamation-triangle",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
-                    "help_text": "An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.",
-                    "hidden": true
-                },
-                "plaintext_email": {
-                    "type": "boolean",
-                    "description": "Send plain-text email instead of HTML.",
-                    "fa_icon": "fas fa-remove-format",
-                    "hidden": true
-                },
-                "max_multiqc_email_size": {
-                    "type": "string",
-                    "description": "File size limit when attaching MultiQC reports to summary emails.",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "default": "25.MB",
-                    "fa_icon": "fas fa-file-upload",
-                    "hidden": true
-                },
-                "monochrome_logs": {
-                    "type": "boolean",
-                    "description": "Do not use coloured log outputs.",
-                    "fa_icon": "fas fa-palette",
-                    "hidden": true
-                },
-                "multiqc_config": {
-                    "type": "string",
-                    "description": "Custom config file to supply to MultiQC.",
-                    "fa_icon": "fas fa-cog",
-                    "hidden": true
-                },
-                "tracedir": {
-                    "type": "string",
-                    "description": "Directory to keep pipeline Nextflow logs and reports.",
-                    "default": "${params.outdir}/pipeline_info",
-                    "fa_icon": "fas fa-cogs",
-                    "hidden": true
-                },
-                "validate_params": {
-                    "type": "boolean",
-                    "description": "Boolean whether to validate parameters against the schema at runtime",
-                    "default": true,
-                    "fa_icon": "fas fa-check-square",
-                    "hidden": true
-                },
-                "show_hidden_params": {
-                    "type": "boolean",
-                    "fa_icon": "far fa-eye-slash",
-                    "description": "Show all params when using `--help`",
-                    "hidden": true,
-                    "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
-                },
-                "enable_conda": {
-                    "type": "boolean",
-                    "description": "Run this workflow with Conda. You can also use '-profile conda' instead of providing this parameter.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-bacon"
-                },
-                "singularity_pull_docker_container": {
-                    "type": "boolean",
-                    "description": "Instead of directly downloading Singularity images for use with Singularity, force the workflow to pull and convert Docker containers instead.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-toolbox",
-                    "help_text": "This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues."
-                }
-            }
         }
     },
     "allOf": [
@@ -276,16 +644,25 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
+            "$ref": "#/definitions/pipeline_options"
+        },
+        {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
-            "$ref": "#/definitions/institutional_config_options"
+            "$ref": "#/definitions/read_trimming_and_adapter_removal"
+        },
+        {
+            "$ref": "#/definitions/star_general"
+        },
+        {
+            "$ref": "#/definitions/generic_options"
         },
         {
             "$ref": "#/definitions/max_job_request_options"
         },
         {
-            "$ref": "#/definitions/generic_options"
+            "$ref": "#/definitions/institutional_config_options"
         }
     ]
 }
