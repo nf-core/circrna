@@ -1,27 +1,27 @@
 FROM nfcore/base:1.14
 LABEL authors="Barry Digby" \
-      description="Docker image containing all software requirements for the nf-core/circrna pipeline"
+        description="Docker image containing all software requirements for the nf-core/circrna pipeline"
 
 # install main packages:
 RUN apt-get update; apt-get clean all;
 
 RUN apt-get install --yes build-essential \
-                          gcc-multilib \
-                          apt-utils \
-                          curl \
-                          perl \
-                          zip \
-                          unzip \
-                          expat \
-                          libexpat-dev \
-                          libtbb-dev
+                            gcc-multilib \
+                            apt-utils \
+                            curl \
+                            perl \
+                            zip \
+                            unzip \
+                            expat \
+                            libexpat-dev \
+                            libtbb-dev
 
 RUN apt-get install --yes cpanminus
 
 RUN apt-get install --yes libxml-libxml-perl \
-                          libxml-dom-xpath-perl \
-                          libxml-libxml-simple-perl \
-                          libxml-dom-perl
+                            libxml-dom-xpath-perl \
+                            libxml-libxml-simple-perl \
+                            libxml-dom-perl
 
 RUN cpanm CPAN::Meta Statistics::Lite Bio::TreeIO
 
