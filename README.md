@@ -16,11 +16,6 @@
 
 ## Introduction
 
-<<<<<<< HEAD
-**nf-core/circrna** is a best-practice analysis pipeline for the quantification, miRNA target prediction and differential expression analysis of circular RNAs in RNA sequencing data. Currently, the pipeline only supports the identification of circular RNAs in Human RNA-Seq data.
-
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
-=======
 <!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
 **nf-core/circrna** is a bioinformatics best-practice analysis pipeline for circRNA quantification, differential expression analysis and miRNA target prediction of RNA-Seq data.
 
@@ -35,7 +30,6 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
->>>>>>> TEMPLATE
 
 ## Workflow
 
@@ -63,6 +57,7 @@ The diagram below gives an overview of the modules in `nf-core/circrna`:
 8. DESeq2 differential expression analysis ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html))
 
 Ouputs given by each step in the pipeline can be viewed at the [output documentation](https://nf-co.re/circrna/dev/output)
+>>>>>>> dev
 
 ## Quick Start
 
