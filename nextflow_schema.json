@@ -25,7 +25,7 @@
                     "fa_icon": "fas fa-random"
                 },
                 "save_rnaseq_intermediates": {
-                    "type": "string",
+                    "type": "boolean",
                     "default": "true",
                     "fa_icon": "fas fa-random",
                     "description": "Save RNA-Seq intermediates (Hisat2 BAM, StringTie outputs, DESeq2 results) to results",
@@ -69,7 +69,6 @@
                     "type": "string",
                     "fa_icon": "fas fa-dna",
                     "description": "Input data type, 'fastq' or 'bam'.",
-                    "help_text": "If the user wishes to save the converted raw FASTQ files, set `--save_bamtofastq true`",
                     "enum": [
                         "fastq",
                         "bam"
@@ -94,7 +93,7 @@
             "title": "Pipeline Options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Options for circRNA, miRNA predictions",
+            "description": "Options for circRNA quantification & filtering",
             "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
             "required": [
                 "tool",
