@@ -1,0 +1,3 @@
+files_unchanged:
+  - docs/README.md
+  - .github/workflows/linting.yml
