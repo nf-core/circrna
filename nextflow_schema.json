@@ -50,7 +50,7 @@
             "title": "Pipeline Options",
             "type": "object",
             "fa_icon": "fas fa-circle-notch",
-            "description": "Options for circRNA quantification & filtering",
+            "description": "Main workflow parameters.",
             "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
             "required": [
                 "tool",
