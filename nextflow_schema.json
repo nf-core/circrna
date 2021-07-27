@@ -639,13 +639,13 @@
     },
     "allOf": [
         {
-            "$ref": "#/definitions/save_intermediates"
-        },
-        {
             "$ref": "#/definitions/input_output_options"
         },
         {
             "$ref": "#/definitions/pipeline_options"
+        },
+        {
+            "$ref": "#/definitions/save_intermediates"
         },
         {
             "$ref": "#/definitions/reference_genome_files"
