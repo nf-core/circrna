@@ -18,11 +18,11 @@ A typical command for running the pipeline is as follows:
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --phenotype 'phenotype.csv'
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --phenotype 'phenotype.csv'
 ```
 
 Where input files are specified via the command line and analysis-specific parameters are passed to the workflow via configuration profiles, further described in the profile [documentation](https://nf-co.re/circrna/dev/usage#profile).
@@ -132,11 +132,11 @@ To invoke the `circrna_discovery` analysis module, specify the configuration pro
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --module 'circrna_discovery'
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --module 'circrna_discovery'
 ```
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#circrna-quantification).
@@ -149,12 +149,12 @@ The user may use one, all or any combination of circRNA quantification tools lis
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --module 'circrna_discovery' \
-  --tool 'ciriquant, dcc, find_circ'
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --module 'circrna_discovery' \
+    --tool 'ciriquant, dcc, find_circ'
 ```
 
 > When providing multiple tools, separate each entry with a comma.
@@ -171,14 +171,14 @@ To apply this filtering method, specify the `--bsj_reads` parameter in the confi
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
-  --module 'circrna_discovery' \
-  --tool 'ciriquant, dcc, find_circ' \
-  --bsj_reads 2
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --phenotype 'phenotype.csv' \
+    --module 'circrna_discovery' \
+    --tool 'ciriquant, dcc, find_circ' \
+    --bsj_reads 2
 ```
 
 Disable the filter by setting the value to 0.
@@ -191,14 +191,14 @@ To apply this filtering method, specify the `--tool_filter` parameter in the con
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --module 'circrna_discovery' \
-  --tool 'ciriquant, dcc, find_circ' \
-  --bsj_reads 2 \
-  --tool_filter 2
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --module 'circrna_discovery' \
+    --tool 'ciriquant, dcc, find_circ' \
+    --bsj_reads 2 \
+    --tool_filter 2
 ```
 
 > The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`.
@@ -211,11 +211,11 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --module 'circrna_discovery, mirna_prediction'
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --module 'circrna_discovery, mirna_prediction'
 ```
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
@@ -228,12 +228,12 @@ The user may wish to filter miRNAs predicted to bind the mature spliced sequence
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --module 'circrna_discovery, mirna_prediction'
-  --mfe -20.00
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --module 'circrna_discovery, mirna_prediction'
+    --mfe -20.00
 ```
 
 > If the user is interested in a specific family of miRNAs then a more appropriate filter may be applied (e.g let-7 has a MFE of ~ 27 Kcal/mol.)
@@ -246,12 +246,12 @@ To invoke the module, specify the `--module` parameter via the configuration pro
 
 ```bash
 nextflow run nf-core/circrna \
-  -profile <docker/singularity/podman/institute> \
-  --genome_version 'GRCh38' \
-  --input 'samples.csv' \
-  --input_type 'fastq' \
-  --phenotype 'phenotype.csv' \
-  --module 'circrna_discovery, differential_expression'
+    -profile <docker/singularity/podman/institute> \
+    --genome_version 'GRCh38' \
+    --input 'samples.csv' \
+    --input_type 'fastq' \
+    --phenotype 'phenotype.csv' \
+    --module 'circrna_discovery, differential_expression'
 ```
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#differential-expression-analysis).
@@ -276,27 +276,27 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
 
 * `docker`
-  * A generic configuration profile to be used with [Docker](https://docker.com/)
-  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+    * A generic configuration profile to be used with [Docker](https://docker.com/)
+    * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `singularity`
-  * A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+    * A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
+    * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `podman`
-  * A generic configuration profile to be used with [Podman](https://podman.io/)
-  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+    * A generic configuration profile to be used with [Podman](https://podman.io/)
+    * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `shifter`
-  * A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
-  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+    * A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
+    * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `charliecloud`
-  * A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-  * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+    * A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+    * Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 * `conda`
-  * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
-  * A generic configuration profile to be used with [Conda](https://conda.io/docs/)
-  * Pulls most software from [Bioconda](https://bioconda.github.io/)
+    * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
+    * A generic configuration profile to be used with [Conda](https://conda.io/docs/)
+    * Pulls most software from [Bioconda](https://bioconda.github.io/)
 * `test`
-  * A profile with a complete configuration for automated testing
-  * Includes links to test data so needs no other parameters
+    * A profile with a complete configuration for automated testing
+    * Includes links to test data so needs no other parameters
 
 ### `-resume`
 
