@@ -249,9 +249,9 @@ params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.
 params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
 params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
 
-ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : null
-ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : null
-ch_mature = params.mature ? Channel.value(file(params.mature)) : null
+ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : 'null'
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : 'null'
+ch_mature = params.mature && 'mirna_prediction' in module ? Channel.value(file(params.mature)) : 'null'
 ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 /*
@@ -267,7 +267,7 @@ process BWA_INDEX {
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    !params.bwa && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
+    !params.bwa && !params.genome && params.fasta && 'ciriquant' in tool && 'circrna_discovery' in module
 
     input:
     file(fasta) from ch_fasta
@@ -553,7 +553,7 @@ process GENE_ANNOTATION{
     file(gtf) from ch_gtf
 
     output:
-    file("${gtf.baseName}.txt") into ch_gene_txt
+    file("${gtf.baseName}.txt") into ch_gene
 
     script:
     """
@@ -561,8 +561,6 @@ process GENE_ANNOTATION{
     perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
     """
 }
-
-ch_gene = params.gene_annotation ? Channel.value(file(params.gene_annotation)) : ch_gene_txt
 
 /*
 ================================================================================
@@ -576,7 +574,7 @@ if(params.input_type == 'bam'){
         tag "${base}"
         label 'process_medium'
         publishDir params.outdir, mode: params.publish_dir_mode,
-            saveAs: { params.save_bamtofastq ? "quality_control/SamToFastq/${it}" : null }
+            saveAs: { params.save_qc_intermediates ? "quality_control/SamToFastq/${it}" : null }
 
         input:
         tuple val(base), file(bam) from ch_input
@@ -633,7 +631,7 @@ if(params.trim_fastq){
        tag "${base}"
        label 'process_medium'
        publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
-           saveAs: { params.save_trimmed ? "BBDUK/${it}" : null }
+           saveAs: { params.save_qc_intermediates ? "quality_control/BBDUK/${it}" : null }
 
        input:
        tuple val(base), file(fastq) from trimming_reads
@@ -1606,16 +1604,31 @@ process MIRNA_PREDICTION{
     """
     miranda $mirbase $fasta -strict -out ${prefix}.bindsites.out -quiet
     echo "miRNA Target Score Energy_KcalMol Query_Start Query_End Subject_Start Subject_End Aln_len Subject_Identity Query_Identity" | tr ' ' '\t' > ${prefix}.miRanda.txt
-    grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
 
-    # format for targetscan
-    cat $fasta | grep ">" | sed 's/>//g' > id
-    cat $fasta | grep -v ">" > seq
-    echo "0000" > species
-    paste id species seq > ${prefix}_ts.txt
+    # Add catch here for non hits (supply NAs to outfile)
+    # Making the decision that if miRanda fails, then the miRNA analysis for this circRNA exits cleanly.
+    # Happy to rework in the future, but do not want pipeline failing on low confidence circRNA calls.
+    ## exit code 1 = fail, 0 = success
+    if grep -A 1 -q "Scores for this hit:" ${prefix}.bindsites.out;
+    then
+        grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
 
-    # run targetscan
-    targetscan_70.pl $mirbase_txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+        ##format for targetscan
+        cat $fasta | grep ">" | sed 's/>//g' > id
+        cat $fasta | grep -v ">" > seq
+        echo "0000" > species
+        paste id species seq > ${prefix}_ts.txt
+
+        # run targetscan
+        targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+    else
+        ## Add NA's to miRanda cols:
+        printf "%0.sNA\t" {1..11} >> ${prefix}.miRanda.txt
+        ## Construct TargetScan header
+        echo "a_Gene_ID miRNA_family_ID species_ID MSA_start MSA_end UTR_start UTR_end Group_num Site_type miRNA_in_this_species Group_type Species_in_this_group Species_in_this_group_with_this_site_type ORF_overlap" | tr ' ' '\t' > ${prefix}.targetscan.txt
+        ## Add NA's to file
+        printf "%0.sNA\t" {1..13} >> ${prefix}.targetscan.txt
+    fi
     """
 }
 
@@ -1639,20 +1652,27 @@ process MIRNA_TARGETS{
     script:
     def species_id = species + "-"
     """
-    ## use file name to derive bed12 coordiantes.
-    echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
-    mv master_bed12.bed circ.bed.tmp
+    ## As before, we have a catch for NA miRNA pred files.
+    grep -v "miRNA" $miranda | if grep -q "NA";
+    then
+        touch ${base}_fail_catch_miRNA_targets.txt
+        touch ${base}_fail_catch.pdf
+    else
+        ## use file name to derive bed12 coordiantes.
+        echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
+        bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
+        mv master_bed12.bed circ.bed.tmp
 
-    ## Prep exon track for circlize
-    cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
-    bash ${projectDir}/bin/prep_circos.sh bed12.tmp
+        ## Prep exon track for circlize
+        cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
+        bash ${projectDir}/bin/prep_circos.sh bed12.tmp
 
-    ## add mature spl len (+ 1 bp)
-    awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
-    paste circ.bed.tmp ml > circ.bed
+        ## add mature spl len (+ 1 bp)
+        awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
+        paste circ.bed.tmp ml > circ.bed
 
-    Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
+        Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
+    fi
     """
 }
 
@@ -1713,9 +1733,10 @@ process STRINGTIE{
 process DEA{
     label 'process_medium'
     publishDir "${params.outdir}/differential_expression", pattern: "circRNA", mode: params.publish_dir_mode
-    publishDir "${params.outdir}/differential_expression", pattern: "RNA-Seq", mode: params.publish_dir_mode
     publishDir "${params.outdir}/differential_expression", pattern: "boxplots", mode: params.publish_dir_mode
     publishDir "${params.outdir}/quality_control", pattern: "DESeq2_QC", mode: params.publish_dir_mode
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "RNA-Seq",
+        saveAs: { params.save_rnaseq_intermediates ? "differential_expression/intermediates/${it}" : null }
 
     when:
     'differential_expression' in module
@@ -1739,6 +1760,9 @@ process DEA{
     prepDE.py -i samples.txt
 
     Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${projectDir}/bin/ensemblDatabase_map.txt
+
+    mv gene_count_matrix.csv RNA-Seq
+    mv transcript_count_matrix.csv RNA-Seq
     """
 }
 
