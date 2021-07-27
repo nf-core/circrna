@@ -167,12 +167,10 @@ summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
-if('mirna_prediction' in module) summary['Minimum free energy'] = params.mfe
 
 summary['Genome version'] = params.genome
 if(params.fasta)           summary['Reference FASTA']   = params.fasta
 if(params.gtf)             summary['Reference GTF']     = params.gtf
-if(params.gene_annotation) summary['Custom annotation'] = params.gene_annotation
 if(params.bowtie)    summary['Bowtie indices']    = params.bowtie
 if(params.bowtie2)   summary['Bowtie2 indices']   = params.bowtie2
 if(params.bwa)       summary['BWA indices']       = params.bwa
@@ -503,7 +501,7 @@ process SPLIT_CHROMOSOMES{
 
     output:
     path("*.fa", includeInputs:true) into publish_chromosomes
-    val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into chromosomes_dir
+    val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into ch_chromosomes
 
     shell:
     '''
@@ -519,8 +517,6 @@ process SPLIT_CHROMOSOMES{
     fi
     '''
 }
-
-ch_chromosomes = params.chromosomes ? Channel.value(params.chromosomes) : chromosomes_dir
 
 process CIRIQUANT_YML{
 
@@ -569,7 +565,7 @@ process GENE_ANNOTATION{
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    !params.gene_annotation && params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
+    params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
