@@ -273,6 +273,54 @@ ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : 'null'
 ch_mature = params.mature && 'mirna_prediction' in module ? Channel.value(file(params.mature)) : 'null'
 ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
+/*
+================================================================================
+                           SOFTWARE VERSIONS
+================================================================================
+*/
+
+process get_software_versions {
+    publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
+    saveAs: {filename ->
+      if (filename.indexOf(".csv") > 0) filename
+      else null
+    }
+
+    output:
+    file 'software_versions_mqc.yaml' into software_versions_yaml
+    file "software_versions.csv"
+
+    script:
+    java_mem = ''
+    if(task.memory){
+        tmem = task.memory.toBytes()
+        java_mem = "-Xms${tmem} -Xmx${tmem}"
+    }
+    """
+    echo $workflow.manifest.version > v_pipeline.txt
+    echo $workflow.nextflow.version > v_nextflow.txt
+    bbduk.sh --version > v_bbduk.txt
+    bedtools --version > v_bedtools.txt
+    bowtie --verion > v_bowtie.txt
+    bowtie2 --version > v_bowtie2.txt
+    bwa > v_bwa.txt
+    CIRCexplorer2 --version > v_circexplorer2.txt
+    CIRIquant --version > v_ciriquant.txt
+    java --version > v_java.txt
+    mapsplice.py --version > v_mapsplice.txt
+    miranda -v > v_miranda.txt
+    echo "v5.26.2" > v_perl.txt
+    echo \$(R --version 2>&1) > v_R.txt
+    echo "0.3.4" > v_segemehl.txt
+    picard SamToFastq --version > v_picard.txt
+    python --version > v_python.txt
+    samtools --version > v_samtools.txt
+    STAR --version > v_star.txt
+    stringtie --version > v_stringtie.txt
+    targetscan_70.pl -v > v_targetscan.txt
+    scrape_software_versions.py > software_versions_mqc.yaml
+    """
+}
 
 /*
 ================================================================================
