@@ -48,7 +48,7 @@ if (params.help) {
   How can I avoid these WARN messages? They look bad when the workflow deploys.
   Thanks
 
-  btw rest of index channels are staged under their respective process, hence lack of ch_bwa etc below.
+  - rest of index channels are staged under their respective process, hence lack of ch_bwa etc below.
 /*
 
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
@@ -76,7 +76,7 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
 
 // Check Tools selected
 toolList = defineToolList()
-tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
+def tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool selected, see --help for more information."
 
 // Check Modules selected
@@ -93,8 +93,8 @@ if(params.phenotype){
    ch_phenotype = Channel.empty()
 }
 
-// Check BBDUK params
 /*
+  Check BBDUK params
   check adapters file exists
   check combinations of parameters have been supplied correctly
 */
