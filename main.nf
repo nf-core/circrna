@@ -29,16 +29,42 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 
 def json_schema = "$projectDir/nextflow_schema.json"
 if (params.help) {
-    def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
+    def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh37' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
     log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
     exit 0
 }
 
 /*
 ================================================================================
-                          Check parameters
+                          Collect parameters
 ================================================================================
 */
+
+/*
+  Comment to reviwer
+  The workflow prints:
+  WARN: Access to undefined parameter `fasta` -- Initialise it to a default value eg. `params.fasta = some_value`
+  when using --genome. I get the same warning for (example) Bowtie when the workflow does not use MapSplice (which requires Bowtie indices).
+  How can I avoid these WARN messages? They look bad when the workflow deploys.
+  Thanks
+
+  btw rest of index channels are staged under their respective process, hence lack of ch_bwa etc below.
+/*
+
+params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
+params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
+params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
+params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
+params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
+params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
+params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
+params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
+params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
+
+ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : 'null'
+ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : 'null'
+ch_mature = params.mature && 'mirna_prediction' in module ? Channel.value(file(params.mature)) : 'null'
+ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 if (params.validate_params) {
     NfcoreSchema.validateParameters(params, json_schema, log)
@@ -58,14 +84,8 @@ moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
 
-/*
- * The below index parameters are allowed to be empty (they will be generated if empty)
- * Mainly concerned about valid file extensions when provided (advanced checks not capable in Schema)
- */
-
 // Check phenotype file and stage the channel
 // (Must not have NA's, must have 'condition' as colname)
-
 if(params.phenotype){
    pheno_file = file(params.phenotype)
    ch_phenotype = examine_phenotype(pheno_file)
@@ -76,7 +96,7 @@ if(params.phenotype){
 // Check BBDUK params
 /*
   check adapters file exists
-  check combinations of parameters have been supplied
+  check combinations of parameters have been supplied correctly
 */
 
 if(params.trim_fastq){
@@ -91,10 +111,10 @@ if(params.trim_fastq){
    }
 }
 
-// Check filtering params
+// Establish number tools selected
 tools_selected = tool.size()
 
-// Check '--tool_filter'' does not exceed number of tools selected
+// Check '--tool_filter' does not exceed number of tools selected
 if(tools_selected > 1 && params.tool_filter > tools_selected){
   exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' (${params.tool_filter}) exceeds the number of tools selected (${params.tool}). Please select a value less than or equal to the number of quantification tools selected ($tools_selected).\n\nPlease check the help documentation."
 }
@@ -109,14 +129,19 @@ if(has_extension(params.input, "csv")){
 }else if(params.input && !has_extension(params.input, "csv")){
 
    log.info ""
-   log.info "Input data log info:"
-   log.info "No input sample CSV file provided, attempting to read from path instead."
-   log.info "Reading input data from path: ${params.input}\n"
+   log.info "No input sample CSV file provided. attempting to read from path instead."
+   log.info "Attempting to read from path instead: ${params.input}\n"
    log.info ""
 
    ch_input = retrieve_input_paths(params.input, params.input_type)
 
 }
+
+/*
+  Comment to reviewer
+  The below was simply copy and pasted from other pipelines.
+  I have no idea what it does or if it is correct as I do not have access to AWS
+*/
 
 // Check AWS batch settings
 if (workflow.profile.contains('awsbatch')) {
@@ -129,11 +154,21 @@ if (workflow.profile.contains('awsbatch')) {
     if (params.tracedir.startsWith('s3:')) exit 1, 'Specify a local tracedir or run without trace! S3 cannot be used for tracefiles.'
 }
 
+/*
+  Comment to reviewer
+  Very inexperienced with MultiQC parts of workflows, not sure what the below files are used for.
+*/
+
 // Stage config files
 ch_multiqc_config = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
 ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
 ch_output_docs = file("$projectDir/docs/output.md", checkIfExists: true)
 ch_output_docs_images = file("$projectDir/docs/images/", checkIfExists: true)
+
+// params.name
+custom_runName = params.name
+if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
+
 /*
 ================================================================================
                         PRINTING PARAMETER SUMMARY
@@ -142,23 +177,19 @@ ch_output_docs_images = file("$projectDir/docs/images/", checkIfExists: true)
 
 log.info NfcoreSchema.params_summary_log(workflow, params, json_schema)
 
-// Has the run name been specified by the user?
-// This has the bonus effect of catching both -name and --name
-custom_runName = params.name
-if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
-
+// Header log info
 def summary = [:]
-if (workflow.revision)        summary['Pipeline Release']    = workflow.revision
+if(workflow.revision)        summary['Pipeline Release'] = workflow.revision
 summary['Run Name']          = custom_runName ?: workflow.runName
-if (workflow.containerEngine) summary['Container'] = "${workflow.containerEngine} - ${workflow.container}"
+if(workflow.containerEngine) summary['Container'] = "${workflow.containerEngine} - ${workflow.container}"
 summary['Max Resources']     = "${params.max_memory} memory, ${params.max_cpus} cpus, ${params.max_time} time per job"
-summary['Config Files']   = workflow.configFiles.join(', ')
-summary['Launch dir']  = workflow.launchDir
-summary['Output dir']  = params.outdir
+summary['Config Files']      = workflow.configFiles.join(', ')
+summary['Launch dir']        = workflow.launchDir
+summary['Output dir']        = params.outdir
 summary['Publish dir mode']  = params.publish_dir_mode
-summary['Working dir'] = workflow.workDir
-summary['Script dir']  = workflow.projectDir
-summary['User']        = workflow.userName
+summary['Working dir']       = workflow.workDir
+summary['Script dir']        = workflow.projectDir
+summary['User']              = workflow.userName
 
 summary['Input']             = params.input
 summary['Input type']        = params.input_type
@@ -166,28 +197,28 @@ summary['circRNA tool(s)']   = params.tool
 summary['modules']           = params.module
 if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
 summary['BSJ filter']        = params.bsj_reads
-if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
+if(tools_selected > 1)       summary['Tool filter'] = params.tool_filter
 
-summary['Genome version'] = params.genome
-if(params.fasta)           summary['Reference FASTA']   = params.fasta
-if(params.gtf)             summary['Reference GTF']     = params.gtf
-if(params.bowtie)    summary['Bowtie indices']    = params.bowtie
-if(params.bowtie2)   summary['Bowtie2 indices']   = params.bowtie2
-if(params.bwa)       summary['BWA indices']       = params.bwa
-if(params.fasta_fai)       summary['SAMtoolsindex']    = params.fasta_fai
-if(params.hisat2)    summary['HISAT2 indices']    = params.hisat2
-if(params.star)      summary ['STAR indices']     = params.star
+summary['Genome']            = params.genome
+if(params.fasta)             summary['Reference FASTA']   = params.fasta
+if(params.gtf)               summary['Reference GTF']     = params.gtf
+if(params.bowtie)            summary['Bowtie indices']    = params.bowtie
+if(params.bowtie2)           summary['Bowtie2 indices']   = params.bowtie2
+if(params.bwa)               summary['BWA indices']       = params.bwa
+if(params.fasta_fai)         summary['SAMtoolsindex']     = params.fasta_fai
+if(params.hisat2)            summary['HISAT2 indices']    = params.hisat2
+if(params.star)              summary ['STAR indices']     = params.star
 
-summary['Skip BBDUK']     = params.trim_fastq
+summary['Trim Fastq?']       = params.trim_fastq
 if(params.trim_fastq){
-                           summary['BBDUK']             = "Enabled"
-if(params.adapters)        summary['Adapter file']      = params.adapters
-if(params.k)               summary['k']                 = params.k
-if(params.ktrim)           summary['ktrim']             = params.ktrim
-if(params.hdist)           summary['hdist']             = params.hdist
-if(params.trimq)           summary['trimq']             = params.trimq
-if(params.qtrim)           summary['qtrim']             = params.qtrim
-if(params.minlen)          summary['minlen']            = params.minlen
+                             summary['BBDUK']             = "Enabled"
+if(params.adapters)          summary['Adapter file']      = params.adapters
+if(params.k)                 summary['k']                 = params.k
+if(params.ktrim)             summary['ktrim']             = params.ktrim
+if(params.hdist)             summary['hdist']             = params.hdist
+if(params.trimq)             summary['trimq']             = params.trimq
+if(params.qtrim)             summary['qtrim']             = params.qtrim
+if(params.minlen)            summary['minlen']            = params.minlen
 }
 
 if('circexplorer2' in tool || 'circrna_finder' in tool || 'dcc' in tool){
@@ -252,27 +283,6 @@ Channel.from(summary.collect{ [it.key, it.value] })
     """.stripIndent() }
     .set { ch_workflow_summary }
 
-
-/*
-================================================================================
-                            Stage Parameters
-================================================================================
-*/
-
-params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
-params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
-params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
-params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
-params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
-params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
-params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
-params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
-params.species   = params.genome ? params.genomes[params.genome].species_id?: false : false
-
-ch_fasta = params.fasta ? Channel.value(file(params.fasta)) : 'null'
-ch_gtf = params.gtf ? Channel.value(file(params.gtf)) : 'null'
-ch_mature = params.mature && 'mirna_prediction' in module ? Channel.value(file(params.mature)) : 'null'
-ch_species = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 /*
 ================================================================================
