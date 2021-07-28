@@ -1260,6 +1260,9 @@ process FIND_ANCHORS{
     """
 }
 
+// avoid input collision when iGenomes index comes pre-packaged with ref fasta file.
+ch_avoid_collisions = ch_bowtie2_find_circ.flatten().filter{ file -> file.getFileName().toString().endWith(".bt2") }
+
 process FIND_CIRC{
     tag "${base}"
     label 'process_high'
@@ -1274,9 +1277,9 @@ process FIND_CIRC{
 
     input:
     tuple val(base), file(anchors) from ch_anchors
-    val(fasta) from ch_fasta
+    file(fasta) from ch_fasta
     file(fai) from ch_fai
-    file(bowtie2_index) from ch_bowtie2_find_circ.collect()
+    file(bowtie2_index) from ch_avoid_collisions.collect()
     val(fasta_chr_path) from ch_chromosomes
     file(gtf_filt) from ch_gtf_filtered
 
