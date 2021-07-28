@@ -299,25 +299,24 @@ process get_software_versions {
     """
     echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
-    bbduk.sh --version > v_bbduk.txt
-    bedtools --version > v_bedtools.txt
-    bowtie --verion > v_bowtie.txt
-    bowtie2 --version > v_bowtie2.txt
-    bwa > v_bwa.txt
-    CIRCexplorer2 --version > v_circexplorer2.txt
-    CIRIquant --version > v_ciriquant.txt
-    java --version > v_java.txt
-    mapsplice.py --version > v_mapsplice.txt
-    miranda -v > v_miranda.txt
+    echo "37.62" > v_bbduk.txt
+    echo "2.29.2" > v_bedtools.txt
+    echo "1.2.3" > v_bowtie.txt
+    echo "2.3.5.1" > v_bowtie2.txt
+    echo "0.7.17" > v_bwa.txt
+    echo "2.3.8" > v_circexplorer2.txt
+    echo "1.1.1" > v_ciriquant.txt
+    echo "8.0.92" > v_java.txt
+    echo "2.2.1" > v_mapsplice.txt
+    echo "3.3a" > v_miranda.txt
     echo "v5.26.2" > v_perl.txt
     echo \$(R --version 2>&1) > v_R.txt
     echo "0.3.4" > v_segemehl.txt
-    picard SamToFastq --version > v_picard.txt
-    python --version > v_python.txt
-    samtools --version > v_samtools.txt
-    STAR --version > v_star.txt
-    stringtie --version > v_stringtie.txt
-    targetscan_70.pl -v > v_targetscan.txt
+    echo "2.24.1" > v_picard.txt
+    echo "2.7.15" > v_python.txt
+    echo "1.10" > v_samtools.txt
+    echo "2.6.1d" > v_star.txt
+    echo "2.1.1" > v_stringtie.txt
     scrape_software_versions.py > software_versions_mqc.yaml
     """
 }

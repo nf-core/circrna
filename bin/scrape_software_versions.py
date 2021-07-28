@@ -6,25 +6,24 @@ import re
 regexes = {
     "nf-core/circrna": ["v_pipeline.txt", r"(\S+)"],
     "Nextflow": ["v_nextflow.txt", r"(\S+)"],
-    "BBDUK": ["v_bbduk.txt", r"BBDuk version (\S+)"],
-    "BEDTools": ["v_bedtools.txt", r"bedtools (\S+)"],
-    "Bowtie": ["v_bowtie.txt", r"version (\S+)"],
-    "Bowtie2": ["v_bowtie2.txt", r"version (\S+)"],
-    "BWA": ["v_bwa.txt", r"Version: (\S+)"],
+    "BBDUK": ["v_bbduk.txt", r"(\S+)"],
+    "BEDTools": ["v_bedtools.txt", r"(\S+)"],
+    "Bowtie": ["v_bowtie.txt", r"(\S+)"],
+    "Bowtie2": ["v_bowtie2.txt", r"(\S+)"],
+    "BWA": ["v_bwa.txt", r"(\S+)"],
     "CIRCexplorer2": ["v_circexplorer2.txt", r"(\S+)"],
-    "CIRIquant": ["v_ciriquant.txt", r"CIRIquant  -(\S+)"],
-    "Java": ["v_java.txt", r"openjdk (\S+)"],
-    "MapSplice": ["v_mapsplice.txt", r"mapsplice.py: MapSplice (\S+)"],
-    "miRanda": ["v_miranda.txt", r"miranda (\S+)"],
+    "CIRIquant": ["v_ciriquant.txt", r"(\S+)"],
+    "Java": ["v_java.txt", r"(\S+)"],
+    "MapSplice": ["v_mapsplice.txt", r"(\S+)"],
+    "miRanda": ["v_miranda.txt", r"(\S+)"],
     "Perl": ["v_perl.txt", r"(\S+)"],
     "SamToFastq": ["v_picard.txt", r"(\S+)"],
-    "Python": ["v_python.txt", r"Python (\S+)"],
-    "R": ["v_R.txt", r"R version (\S+)"],
-    "SAMtools": ["v_samtools.txt", r"samtools (\S+)"],
+    "Python": ["v_python.txt", r"(\S+)"],
+    "R": ["v_R.txt", r"(\S+)"],
+    "SAMtools": ["v_samtools.txt", r"(\S+)"],
     "Segemehl": ["v_segemehl.txt", r"(\S+)"],
-    "STAR": ["v_star.txt", r"STAR_(\S+)"],
+    "STAR": ["v_star.txt", r"(\S+)"],
     "StringTie": ["v_stringtie.txt", r"(\S+)"],
-    "TargetScan": ["v_targetscan.txt", r"Version (\S+)"]
 }
 results = OrderedDict()
 results["nf-core/circrna"] = '<span style="color:#999999;">N/A</span>'
@@ -41,15 +40,12 @@ results["Java"] = '<span style="color:#999999;">N/A</span>'
 results["MapSplice"] = '<span style="color:#999999;">N/A</span>'
 results["miRanda"] = '<span style="color:#999999;">N/A</span>'
 results["Perl"] = '<span style="color:#999999;">N/A</span>'
-results["Picard"] = '<span style="color:#999999;">N/A</span>'
-results["Pip"] = '<span style="color:#999999;">N/A</span>'
+results["SamToFastq"] = '<span style="color:#999999;">N/A</span>'
 results["Python"] = '<span style="color:#999999;">N/A</span>'
 results["R"] = '<span style="color:#999999;">N/A</span>'
-results["ViennaRNA"] = '<span style="color:#999999;">N/A</span>'
 results["SAMtools"] = '<span style="color:#999999;">N/A</span>'
 results["STAR"] = '<span style="color:#999999;">N/A</span>'
 results["StringTie"] = '<span style="color:#999999;">N/A</span>'
-results["TargetScan"] = '<span style="color:#999999;">N/A</span>'
 
 # Search each file using its regex
 for k, v in regexes.items():
