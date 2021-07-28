@@ -1261,7 +1261,7 @@ process FIND_ANCHORS{
 }
 
 // avoid input collision when iGenomes index comes pre-packaged with ref fasta file.
-ch_avoid_collisions = ch_bowtie2_find_circ.flatten().filter{ file -> file.getFileName().toString().endWith(".bt2") }
+ch_avoid_collisions = ch_bowtie2_find_circ.flatten().filter{ file -> file.getFileName().toString().endsWith(".bt2") }
 
 process FIND_CIRC{
     tag "${base}"
