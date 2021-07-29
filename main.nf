@@ -706,7 +706,7 @@ process BBDUK {
     path adapters from params.adapters
 
     output:
-    tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+    tuple val(base), file('*.trim.fq.gz') into trim_reads_ch, fastqc_trim_reads
     file("*BBDUK.txt") into bbduk_stats_ch
 
     script:
@@ -735,11 +735,7 @@ process BBDUK {
     """
 }
 
-if(params.trim_fastq){
-  (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
-}else{
-  aligner_reads = raw_reads
-}
+aligner_reads = params.trim_fastq ? trim_reads_ch : raw_reads
 
 process FASTQC_BBDUK {
     tag "${base}"
