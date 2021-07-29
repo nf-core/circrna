@@ -633,39 +633,39 @@ process GENE_ANNOTATION{
 ================================================================================
 */
 
-if(params.input_type == 'bam'){
+process BAM_TO_FASTQ{
+    tag "${base}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode,
+        saveAs: { params.save_qc_intermediates ? "quality_control/SamToFastq/${it}" : null }
 
-   process BAM_TO_FASTQ{
-        tag "${base}"
-        label 'process_medium'
-        publishDir params.outdir, mode: params.publish_dir_mode,
-            saveAs: { params.save_qc_intermediates ? "quality_control/SamToFastq/${it}" : null }
+    when:
+    params.input_type == 'bam'
 
-        input:
-        tuple val(base), file(bam) from ch_input
+    input:
+    tuple val(base), file(bam) from ch_input
 
-        output:
-        tuple val(base), file('*.fq.gz') into fastq_built
+    output:
+    tuple val(base), file('*.fq.gz') into fastq_built
 
-        script:
-        """
-        picard \\
-            -Xmx${task.memory.toGiga()}g \\
-            SamToFastq \\
-            I=$bam \\
-            F=${base}_R1.fq.gz \\
-            F2=${base}_R2.fq.gz \\
-            VALIDATION_STRINGENCY=LENIENT
-        """
-   }
-
-   (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
-
-}else if(params.input_type == 'fastq'){
-
-   (fastqc_reads, trimming_reads, raw_reads) = ch_input.into(3)
-
+    script:
+    """
+    picard \\
+        -Xmx${task.memory.toGiga()}g \\
+        SamToFastq \\
+        I=$bam \\
+        F=${base}_R1.fq.gz \\
+        F2=${base}_R2.fq.gz \\
+        VALIDATION_STRINGENCY=LENIENT
+    """
 }
+
+if(params.input_type == 'bam'){
+   (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
+}else if(params.input_type == 'fastq'){
+   (fastqc_reads, trimming_reads, raw_reads) = ch_input.into(3)
+}
+
 
 process FASTQC_RAW {
     tag "${base}"
@@ -690,70 +690,73 @@ process FASTQC_RAW {
 ================================================================================
 */
 
+process BBDUK {
+    tag "${base}"
+    label 'process_medium'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
+        saveAs: { params.save_qc_intermediates ? "quality_control/BBDUK/${it}" : null }
+
+    when:
+    params.trim_fastq
+
+    input:
+    tuple val(base), file(fastq) from trimming_reads
+    path adapters from params.adapters
+
+    output:
+    tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+    file("*BBDUK.txt") into bbduk_stats_ch
+
+    script:
+    def adapter = params.adapters ? "ref=${params.adapters}" : ''
+    def k = params.k ? "k=${params.k}" : ''
+    def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
+    def hdist = params.hdist ? "hdist=${params.hdist}" : ''
+    def trimq = params.trimq ? "trimq=${params.trimq}" : ''
+    def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
+    def minlen = params.minlen ? "minlen=${params.minlen}" : ''
+    """
+    bbduk.sh \\
+        -Xmx${task.memory.toGiga()}g \\
+        threads=${task.cpus} \\
+        in1=${fastq[0]} \\
+        in2=${fastq[1]} \\
+        out1=${base}_R1.trim.fq.gz \\
+        out2=${base}_R2.trim.fq.gz \\
+        $adapter \\
+        $k \\
+        $ktrim \\
+        $trimq \\
+        $qtrim \\
+        $minlen \\
+        stats=${base}_BBDUK.txt
+    """
+}
+
 if(params.trim_fastq){
+  (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
+}else{
+  aligner_reads = raw_reads
+}
 
-   process BBDUK {
-       tag "${base}"
-       label 'process_medium'
-       publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.fq.gz",
-           saveAs: { params.save_qc_intermediates ? "quality_control/BBDUK/${it}" : null }
+process FASTQC_BBDUK {
+    tag "${base}"
+    label 'process_low'
+    label 'py3'
 
-       input:
-       tuple val(base), file(fastq) from trimming_reads
-       path adapters from params.adapters
+    when:
+    params.trim_fastq
 
-       output:
-       tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
-       file("*BBDUK.txt") into bbduk_stats_ch
+    input:
+    tuple val(base), file(fastq) from fastqc_trim_reads
 
-       script:
-       def adapter = params.adapters ? "ref=${params.adapters}" : ''
-       def k = params.k ? "k=${params.k}" : ''
-       def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
-       def hdist = params.hdist ? "hdist=${params.hdist}" : ''
-       def trimq = params.trimq ? "trimq=${params.trimq}" : ''
-       def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
-       def minlen = params.minlen ? "minlen=${params.minlen}" : ''
-       """
-       bbduk.sh \\
-           -Xmx${task.memory.toGiga()}g \\
-           threads=${task.cpus} \\
-           in1=${fastq[0]} \\
-           in2=${fastq[1]} \\
-           out1=${base}_R1.trim.fq.gz \\
-           out2=${base}_R2.trim.fq.gz \\
-           $adapter \\
-           $k \\
-           $ktrim \\
-           $trimq \\
-           $qtrim \\
-           $minlen \\
-           stats=${base}_BBDUK.txt
-       """
-   }
+    output:
+    file ("*.{html,zip}") into fastqc_trimmed
 
-   // trimmed reads into 2 channels:
-   (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
-
-   process FASTQC_BBDUK {
-       tag "${base}"
-       label 'process_low'
-       label 'py3'
-
-       input:
-       tuple val(base), file(fastq) from fastqc_trim_reads
-
-       output:
-       file ("*.{html,zip}") into fastqc_trimmed
-
-       script:
-       """
-       fastqc -q $fastq --threads ${task.cpus}
-       """
-   }
-
-}else if(!params.trim_fastq){
-   aligner_reads = raw_reads
+    script:
+    """
+    fastqc -q $fastq --threads ${task.cpus}
+    """
 }
 
 (star_pass1_reads, star_pass2_reads, find_circ_reads, ciriquant_reads, mapsplice_reads, segemehl_reads, dcc_mate1_reads, dcc_mate2_reads, hisat_reads) = aligner_reads.into(9)
@@ -1841,6 +1844,7 @@ process DEA{
 */
 
 process MULTIQC{
+    label 'py3'
     label 'process_low'
     publishDir "${params.outdir}/quality_control/MultiQC", mode: params.publish_dir_mode,
         pattern: "*.html"
