@@ -117,6 +117,8 @@ if(has_extension(params.input, "csv")){
 
 }
 
+(bam_input, fastq_input) = ch_input.into(2)
+
 // Check AWS batch settings
 if (workflow.profile.contains('awsbatch')) {
     // AWSBatch sanity checking
@@ -643,7 +645,7 @@ process BAM_TO_FASTQ{
     params.input_type == 'bam'
 
     input:
-    tuple val(base), file(bam) from ch_input
+    tuple val(base), file(bam) from bam_input
 
     output:
     tuple val(base), file('*.fq.gz') into fastq_built
@@ -663,7 +665,7 @@ process BAM_TO_FASTQ{
 if(params.input_type == 'bam'){
    (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
 }else if(params.input_type == 'fastq'){
-   (fastqc_reads, trimming_reads, raw_reads) = ch_input.into(3)
+   (fastqc_reads, trimming_reads, raw_reads) = fastq_input.into(3)
 }
 
 
