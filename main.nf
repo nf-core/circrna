@@ -1834,7 +1834,41 @@ process DEA{
     """
 }
 
+/*
+================================================================================
+                                   MultiQC
+================================================================================
+*/
 
+process MULTIQC{
+    label 'process_low'
+    publishDir "${params.outdir}/quality_control/MultiQC", mode: params.publish_dir_mode,
+        pattern: "*.html"
+
+    input:
+    file(raw_fastqc) from fastqc_raw.collect().ifEmpty([])
+    file(trim_fastqc) from fastqc_trimmed.collect().ifEmpty([])
+    file(BBDUK_stats) from bbduk_stats_ch.collect().ifEmpty([])
+    file(multiqc_config) from ch_multiqc_config
+    file(mqc_custom_config) from ch_multiqc_custom_config.collect().ifEmpty([])
+    file('software_versions/*') from software_versions_yaml.collect()
+    file workflow_summary from ch_workflow_summary.collectFile(name: "workflow_summary_mqc.yaml")
+
+    output:
+    file("*.html") into multiqc_out
+
+    script:
+    rtitle = ''
+    rfilename = ''
+    if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) {
+        rtitle = "--title \"${workflow.runName}\""
+        rfilename = "--filename " + workflow.runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report"
+    }
+    custom_config_file = params.multiqc_config ? "--config $mqc_custom_config" : ''
+    """
+    multiqc . -f $rtitle $rfilename $custom_config_file
+    """
+}
 
 /*
 ================================================================================
