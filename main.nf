@@ -362,7 +362,7 @@ ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.
 process SAMTOOLS_INDEX {
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: { params.save_reference ? "reference_genome/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/SamtoolsIndex/${it}" : null }
 
     when:
     !params.fasta_fai && params.fasta
