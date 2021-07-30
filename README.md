@@ -71,6 +71,7 @@ Refer to [usage documentation](https://nf-co.re/circrna/usage) for exapanded det
     2. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
     3. Filter results, miRNAs must be called by both tools
 9. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+10. MultiQC report [`MultiQC`](http://multiqc.info/)
 
 Ouputs given by each step in the pipeline can be viewed in the [output documentation](https://nf-co.re/circrna/dev/output)
 

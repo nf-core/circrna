@@ -2,13 +2,13 @@
 
 It is recommended that first time users run `nf-core/circrna` with the minimal test dataset either locally or on a HPC, referring to the [output documentation](https://nf-co.re/circrna/dev/output) before running a full analysis.
 
-```bash
+```console
 nextflow run nf-core/circrna -profile test
 ```
 
 Run the test dataset on a HPC:
 
-```bash
+```console
 nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
 ```
 
@@ -16,24 +16,25 @@ nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
 
 A typical command for running the pipeline is as follows:
 
-```bash
+```console
 nextflow run nf-core/circrna \
     -profile <docker/singularity/podman/institute> \
-    --genome_version 'GRCh38' \
+    --genome 'GRCh37' \
     --input 'samples.csv' \
-    --input_type 'fastq' \
-    --phenotype 'phenotype.csv'
+    --input_type 'fastq'
 ```
 
-Where input files are specified via the command line and analysis-specific parameters are passed to the workflow via configuration profiles, further described in the profile [documentation](https://nf-co.re/circrna/dev/usage#profile).
+By default, `nf-core/circrna` runs the circRNA discovery analysis module using `CIRCexplorer2`. The above command will perform circRNA quantification using these tools on ENSEMBL GRCh37 reference annotation files as defined in the iGenomes config.
 
 ### Updating the pipeline
 
-When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
+To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
-```bash
+```console
 nextflow pull nf-core/circrna
 ```
+
+When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since.
 
 ### Reproducibility
 
@@ -53,21 +54,21 @@ The simplest way to pass input data to `nf-core/circrna` is by providing the pat
 
 #### fastq
 
-```bash
+```console
 --input "/data/*_r{1,2}.fastq.gz"
 ```
 
 ##### bam
 
-```bash
+```console
 --input "/data/*.bam"
 ```
 
-> Beware that providing a path to input data will result in samples being named according to the common tuple key based on the glob pattern supplied (i.e Channel.fromFilePairs("*_r{1,2}.fq.gz")). Take this into consideration when designing your phenotype file for differential expression analysis.
+> Beware that providing a path to input data will result in samples being named according to the common tuple key based on the glob pattern supplied. Take this into consideration when designing your phenotype file for differential expression analysis.
 
 ### `--input samples.csv`
 
-Alternatively the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
+Alternatively, the user may wish to provide a CSV file containing the absolute paths to input fastq/bam files.
 
 The headers of the CSV file must be: `Sample_ID,Read1,Read2,Bam`.
 
@@ -99,13 +100,29 @@ Valid examples for fastq/bam input data in a CSV file is given below:
 
 ### `--phenotype`
 
-When running the differential expression analysis module, an input `phenotype.csv` file is required.
+When running the differential expression analysis module, an input `phenotype.csv` file is required to specify levels for `DESeq2`. At a minimum, the user must supply one column of levels for `DESeq2` which **must be called condition**. This should be the primary contrast of interest in your experiment (e.g case vs. control). If additional columns are supplied to the phenotype file, they will be controlled for in the linear mixed model. A brief proof of concept is given below in R notation:
 
-It is recommended to use a `samples.csv` input CSV file in conjunction with a `phenotype.csv` file as the `Sample_ID` column **must match** the first column of the `phenotype.csv` file.
+```R
+colnames(phenotype)
+ [1] 'Sample_ID' 'condition'
 
-A valid example of a `phenotype.csv` file (matching the input CSV files above) is given below:
+print(dds$design)
+ [1] ' ~ condition'
+```
 
-| samples          | condition |
+```R
+colnames(phenotype)
+ [1] 'Sample_ID' 'condition' 'replicates' 'location'
+
+print(dds$design)
+ [1] ' ~ location + replicates + condition'
+```
+
+It is recommended to use an input CSV file in conjunction with your phenotype file as the `Sample_ID` column **must match** the first column of the `phenotype.csv` file.
+
+A valid example of a `phenotype.csv` file (matching the TCGA example input CSV file above) is given below:
+
+| Sample_ID        | condition |
 | ---------------- | --------- |
 | TCGA-EJ-7783-11A | control   |
 | TCGA-G9-6365-11A | control   |
@@ -113,8 +130,6 @@ A valid example of a `phenotype.csv` file (matching the input CSV files above) i
 | TCGA-CH-5772-01A | tumor     |
 | TCGA-EJ-5518-01A | tumor     |
 | TCGA-KK-A8I4-01A | tumor     |
-
-> The response variable must be named `condition`, as these values are hard coded within the automated differential expression analysis script!
 
 ## Analysis modules
 
