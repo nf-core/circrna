@@ -281,7 +281,13 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 ================================================================================
 */
 
-process get_software_versions {
+/*
+  Note to reviewer
+  Struggled big time with getting this to work cleanly. Resorted to hardcoded
+  values using echo.
+*/
+
+process SOFTWARE_VERSIONS {
     publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
     saveAs: {filename ->
       if (filename.indexOf(".csv") > 0) filename
@@ -311,8 +317,8 @@ process get_software_versions {
     echo "8.0.92" > v_java.txt
     echo "2.2.1" > v_mapsplice.txt
     echo "3.3a" > v_miranda.txt
-    echo "v5.26.2" > v_perl.txt
-    echo \$(R --version 2>&1) > v_R.txt
+    echo "5.26.2" > v_perl.txt
+    echo "3.6.3" > v_R.txt
     echo "0.3.4" > v_segemehl.txt
     echo "2.24.1" > v_picard.txt
     echo "2.7.15" > v_python.txt

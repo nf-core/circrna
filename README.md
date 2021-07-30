@@ -12,36 +12,13 @@
 
 ## Introduction
 
-**nf-core/circrna** is a best-practice analysis pipeline for the quantification, miRNA target prediction and differential expression analysis of circular RNAs in RNA sequencing data. Currently, the pipeline only supports the identification of circular RNAs in Human RNA-Seq data.
+**nf-core/circrna** is a best-practice analysis pipeline for the quantification, miRNA target prediction and differential expression analysis of circular RNAs in paired-end RNA sequencing data.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
-## Workflow
-
-The diagram below gives an overview of the modules in `nf-core/circrna`:
-
 <p markdown="1" align="center">
-<img src="docs/images/workflow.png" alt="workflow" width="100%">
+<img src="docs/images/nf-core-workflow.png" alt="workflow" width="100%">
 </p>
-
-## Pipeline Summary
-
-1. Download reference genome files ([`Gencode`](https://www.gencodegenes.org/))
-2. Download miRNA database files ([`miRbase`](http://www.mirbase.org/ftp.shtml), [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi))
-3. Adapter trimming ([`BBDUK`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/))
-4. Read QC ([`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-5. Generate genome indices
-6. circRNA quantification
-    1. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
-    2. [`STAR`](https://github.com/alexdobin/STAR) -> [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-    3. [`STAR`](https://github.com/alexdobin/STAR) -> [`DCC`](https://github.com/dieterich-lab/DCC)
-    4. [`HISAT2`](http://daehwankimlab.github.io/hisat2/) -> [`CIRI2`](https://sourceforge.net/projects/ciri/files/CIRI2/) -> [`BWA`](http://bio-bwa.sourceforge.net/) -> [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
-    5. [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) -> [`find circ`](https://github.com/marvin-jens/find_circ)
-    6. [`Bowtie`](http://bowtie-bio.sourceforge.net/index.shtml) -> [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
-7. miRNA target prediction ([`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html), [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi))
-8. DESeq2 differential expression analysis ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html))
-
-Ouputs given by each step in the pipeline can be viewed at the [output documentation](https://nf-co.re/circrna/dev/output)
 
 ## Quick Start
 
@@ -63,7 +40,39 @@ Ouputs given by each step in the pipeline can be viewed at the [output documenta
     nextflow run nf-core/circrna -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'circexplorer2' --input 'samples.csv' --input_type 'fastq' --phenotype 'phenotype.csv'
     ```
 
-See [usage docs](https://nf-co.re/circrna/usage) for all of the available options when running the pipeline.
+Refer to [usage documentation](https://nf-co.re/circrna/usage) for exapanded details on running each analysis module.
+
+## Pipeline Summary
+
+1. Input type conversion [`SamToFastq`](https://gatk.broadinstitute.org/hc/en-us/articles/360036485372-SamToFastq-Picard-)
+2. Raw read quality control [`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+3. Adapter trimming + read filtering [`BBDUK`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/)
+4. circRNA quantification
+    1. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+    2. [`STAR`](https://github.com/alexdobin/STAR) -> [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+    3. [`STAR`](https://github.com/alexdobin/STAR) -> [`DCC`](https://github.com/dieterich-lab/DCC)
+    4. [`HISAT2`](http://daehwankimlab.github.io/hisat2/) -> [`CIRI2`](https://sourceforge.net/projects/ciri/files/CIRI2/) -> [`BWA`](http://bio-bwa.sourceforge.net/) -> [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+    5. [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) -> [`find circ`](https://github.com/marvin-jens/find_circ)
+    6. [`Bowtie`](http://bowtie-bio.sourceforge.net/index.shtml) -> [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+    7. [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/) -> [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+5. circRNA filtering
+    1. Filter candidate circRNAs by number of reads spanning back-splice junction
+6. circRNA annotation
+    1. Annotate candidates as circRNA, ciRNA or EI-circRNA
+    2. Calculate mature spliced length
+    3. Export mature spliced length as FASTA file
+    4. Annotate parent gene, underlying transcripts.
+    5. Export information as customised BED12 file
+7. circRNA count matrix
+    1. Combine results of quantification tools to produce counts matrix for downstream statistical analysis
+    2. Require circRNAs in matrix to be called by at least *n* quantification tools (consensus filtering)
+8. miRNA target prediction
+    1. [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
+    2. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+    3. Filter results, miRNAs must be called by both tools
+9. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+
+Ouputs given by each step in the pipeline can be viewed in the [output documentation](https://nf-co.re/circrna/dev/output)
 
 ## Documentation
 
@@ -121,13 +130,12 @@ In addition, references of tools and data used in this pipeline are as follows:
     * **pvclust** Suzuki R., Shimodaira H., (2006). Pvclust: an R package for assessing the uncertainty in hierarchical clustering, Bioinformatics, 22(12), 1540–1542. Available at: [https://doi.org/10.1093/bioinformatics/btl117](https://doi.org/10.1093/bioinformatics/btl117). Download: [https://cran.r-project.org/web/packages/pvclust/index.html](https://cran.r-project.org/web/packages/pvclust/index.html)
     * **tximport** Soneson C, Love MI, Robinson MD (2015). Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research, 4. Avaialable at: [https://doi.org/10.12688/f1000research.7563.1](https://doi.org/10.12688/f1000research.7563.1). Download: [http://bioconductor.org/packages/release/bioc/html/tximport.html](http://bioconductor.org/packages/release/bioc/html/tximport.html)
 * **SAMtools** Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., … 1000 Genome Project Data Processing Subgroup. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics , 25(16), 2078–2079. [https://doi.org/10.1093/bioinformatics/btp352](https://doi.org/10.1093/bioinformatics/btp352). Download: [http://www.htslib.org/](http://www.htslib.org/)
+* **Segemehl** Hoffmann S, Otto C, Kurtz S, Sharma CM, Khaitovich P, Vogel J, Stadler PF, Hackermueller J: "Fast mapping of short sequences with mismatches, insertions and deletions using index structures", PLoS Comput Biol (2009) vol. 5 (9) pp. e1000502. Available at: [https://doi.org/10.1371/journal.pcbi.1000502](https://doi.org/10.1371/journal.pcbi.1000502). Download: [https://www.bioinf.uni-leipzig.de/Software/segemehl/](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 * **STAR** Dobin, A., Davis, C. A., Schlesinger, F., Drenkow, J., Zaleski, C., Jha, S., Batut, P., Chaisson, M., & Gingeras, T. R. (2013). STAR: ultrafast universal RNA-seq aligner. Bioinformatics (Oxford, England), 29(1), 15–21. Available at: [https://doi.org/10.1093/bioinformatics/bts635](https://doi.org/10.1093/bioinformatics/bts635). Download: [https://github.com/alexdobin/STAR](https://github.com/alexdobin/STAR)
 * **StringTie** Pertea, M., Pertea, G., Antonescu, C. et al. (2015). StringTie enables improved reconstruction of a transcriptome from RNA-seq reads. Nat Biotechnol 33, 290–295. Available at: [https://doi.org/10.1038/nbt.3122](https://doi.org/10.1038/nbt.3122). Download: [https://ccb.jhu.edu/software/stringtie/](https://ccb.jhu.edu/software/stringtie/)
 * **TargetScan** Agarwal V, Bell GW, Nam JW, Bartel DP. (2015). Predicting effective microRNA target sites in mammalian mRNAs. Elife, 4:e05005. Available at: [https://doi.org/10.7554/elife.05005](https://doi.org/10.7554/elife.05005). Download: [http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
 * **ViennaRNA** Lorenz, R., Bernhart, S.H., Höner zu Siederdissen, C. et al. (2011). ViennaRNA Package 2.0. Algorithms Mol Biol 6, 26. Available at: [https://doi.org/10.1186/1748-7188-6-26](https://doi.org/10.1186/1748-7188-6-26). Download: [https://www.tbi.univie.ac.at/RNA/#download](https://www.tbi.univie.ac.at/RNA/#download)
 
-## Data References
+## Test data References
 
-This repository generated test data using:
-
-* **CIRI_simulator.pl** Gao, Y., Wang, J. & Zhao, F. (2015). CIRI: an efficient and unbiased algorithm for de novo circular RNA identification. Genome Biol 16, 4. Available at: [https://doi.org/10.1186/s13059-014-0571-3](https://doi.org/10.1186/s13059-014-0571-3). Download: [https://sourceforge.net/projects/ciri/](https://sourceforge.net/projects/ciri/)
+Dong Cao (2021). An autoregulation loop in fust-1 for circular RNA regulation in Caenorhabditis elegans. Biorxiv. Available at: [https://doi.org/10.1101/2021.03.22.436400](https://doi.org/10.1101/2021.03.22.436400).
