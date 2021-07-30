@@ -351,6 +351,8 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
+`Segemehl` implements split read alignment mode for reads that failed the attempt of collinear alignment. The algorithm will  consider circular alignments. Circular splits are output to `${sample_id}.sngl.bed` and parsed using customised scripts to produce counts representative of `Segemehl` quantification.
+
 ### Count Matrix
 
 <details markdown="1">
@@ -361,7 +363,7 @@ This achieves the highest sensitivity for novel junction alignment. For instance
 
 </details>
 
-`nf-core/circrna` produces a counts matrix of circRNA read counts for each sample. circRNAs with BSJ reads < 2 have been removed during the quantification step, with a further filtering step included depending on the number of quantification tools selected. If the user has selected more than one circRNA quantification tool, `nf-core/circrna` will demand that a circRNA be called by at least two quantification tools or else it is removed. This approach is recommended to reduce the number of false positives.
+`nf-core/circrna` produces a counts matrix of circRNA read counts for each sample. circRNAs with BSJ reads < `--bsj_reads <int>` have been removed during the quantification step, with a further filtering step included depending on the number of quantification tools selected. If the user has selected more than one circRNA quantification tool, `nf-core/circrna` will demand that a circRNA be called by at least two quantification tools or else it is removed. This approach is recommended to reduce the number of false positives.
 
 ## miRNA Prediction
 
