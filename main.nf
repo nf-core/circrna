@@ -263,7 +263,7 @@ Channel.from(summary.collect{ [it.key, it.value] })
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
 params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
-params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
+params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: 'null' : 'null'
 params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
 params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
 params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
