@@ -263,7 +263,7 @@ Channel.from(summary.collect{ [it.key, it.value] })
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
 params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
-params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: 'null' : 'null'
+params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
 params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
 params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
 params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
@@ -356,8 +356,16 @@ process BWA_INDEX {
     bwa index $fasta -p BWAIndex/${fasta.baseName}
     """
 }
+/*
+  comment to reviewer
+  What I think I'm doing below is:
+  1. If igenomes db selected, use those first.
+  2. If no igenomes, expect a path instead.
+  3. If neither, use built index.
+  'ciriquant' in tool used again here to avoid false being passed to file() arg
+*/
 
-ch_bwa = params.genome ? Channel.value(file(params.bwa)) : params.bwa ? Channel.value(file(params.bwa)) : bwa_built
+ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : params.bwa && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : bwa_built
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
