@@ -982,6 +982,7 @@ process STAR_2PASS{
         --outReadsUnmapped None \\
         --outSAMtype BAM SortedByCoordinate \\
         --outSAMunmapped Within \\
+        --outBAMsortingBinsN 150 \\
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
         ${readFilesCommand} \\
         --readFilesIn ${reads} \\
