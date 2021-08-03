@@ -30,7 +30,7 @@ find_circ_id <- with(find_circ, paste0(V1, sep="_", V2, sep="_", V3, sep="_", V4
 
 
 # write ids to file for bash command
-# accept circRNAs in at least 2 tools. 
+# accept circRNAs in at least 2 tools.
 
 dir.create("tool_id")
 write.table(ciriquant_id, "tool_id/ciriquant.txt", row.names=F, sep="\t", quote=F)

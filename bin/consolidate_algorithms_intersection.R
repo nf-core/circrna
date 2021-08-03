@@ -41,9 +41,9 @@ stage_data <- function(samples, n_tools){
 
   samples <- read.csv(samples, sep="\t", header=F, stringsAsFactors=FALSE)
   inputdata$samples <- samples
-	inputdata$n_tools <- n_tools
+    inputdata$n_tools <- n_tools
 
-	return(inputdata)
+    return(inputdata)
 }
 
 
@@ -52,7 +52,7 @@ stage_data <- function(samples, n_tools){
 main <- function(inputdata){
 
   samples <- inputdata$samples
-	n_tools <- inputdata$n_tools
+    n_tools <- inputdata$n_tools
 
   ## intit lists
   dflist <- list()

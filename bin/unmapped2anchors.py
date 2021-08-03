@@ -91,19 +91,19 @@ def handle_read(read):
         return
 
     seq,qual = read_f(read.seq),read_f(read.qual)
-    
+
     # minimal quality scores
     nq = numpy.fromstring(qual,dtype=numpy.uint8) - 35
     if nq[:options.asize].mean() < options.minqual or nq[-options.asize:].mean() < options.minqual:
         # read is junk
         #print "qual.fail",nq[:options.asize].mean(),nq[-options.asize:].mean()
         return
-    
+
     if options.rev == "P":
         perm_A.append((seq[:options.asize],qual[:options.asize]))
         perm_B.append((seq[-options.asize:],qual[-options.asize:]))
         perm_I.append((seq[options.asize:-options.asize:],qual[options.asize:-options.asize:]))
-        
+
         if len(perm_burn_in) < N_perm:
             # collect some reads for permutation control first.
             perm_burn_in.append(read)
@@ -112,18 +112,18 @@ def handle_read(read):
         A_seq,A_qual = randomchoice(perm_A)
         B_seq,B_qual = randomchoice(perm_B)
         I_seq,I_qual = randomchoice(perm_I)
-        
+
         seq,qual = A_seq+I_seq+B_seq,A_qual+I_qual+B_qual
-        
+
     if options.rev == "C":
         seq = rev_comp(seq)
         qual = reverse(qual)
-    
+
     print "@%s_A__%s" % (read.qname,seq)
     print A_f(seq[:options.asize])
     print "+"
     print A_f(qual[:options.asize])
-        
+
     print "@%s_B" % read.qname
     print B_f(seq[-options.asize:])
     print "+"

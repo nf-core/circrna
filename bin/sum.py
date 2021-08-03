@@ -8,7 +8,7 @@ cols = [abs(c)-1 for c in cols]
 name = "sum"
 if len(sys.argv) > 2:
     name = sys.argv[2]
-    
+
 for line in sys.stdin:
     if line.startswith("#"):
         print line.rstrip()+'\t%s' % name
@@ -22,4 +22,3 @@ for line in sys.stdin:
 
     data.append(str(res))
     print "\t".join(data)
-

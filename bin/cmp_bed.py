@@ -15,14 +15,14 @@ def read_to_hash(fname,ds=0,de=0,flank=0,cover=False):
 
         #print (chrom,start,end,sense)
         pos[(chrom,start,end,sense)] = line
-        
+
         if flank:
             for x in xrange(flank):
                 pos[(chrom,start-x,end,sense)] = line
                 pos[(chrom,start+x,end,sense)] = line
                 pos[(chrom,start,end-x,sense)] = line
                 pos[(chrom,start,end+x,sense)] = line
-        
+
         #if cover:
             #for x in xrange
     return pos
@@ -43,12 +43,12 @@ for circ,line in marv.items():
         else:
             print anna[circ]
         #print "M",line
-        N['overlap'] += 1        
+        N['overlap'] += 1
         del anna[circ]
     else:
         N['input2_not_in_input1'] += 1
     #print len(anna.keys())
-        
+
 for k,l in anna.items():
     #if "HEK" in l:
         print "MISSING\t%s" % l
@@ -56,7 +56,7 @@ for k,l in anna.items():
 
 for k in sorted(N.keys()):
     sys.stderr.write("%s\t%d\n" % (k,N[k]))
-        
+
 found = N['overlap']
 detected = N['unique_input2']
 total = N['unique_input1']

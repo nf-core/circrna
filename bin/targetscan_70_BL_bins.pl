@@ -56,19 +56,19 @@ $VERBOSE = "";
 
 if (! $ARGV[0])
 {
-	print STDERR "\nCalculate median branch length from each UTR alignment\n";
-	print STDERR "  and then assign to a UTR bin.\n";
-	print STDERR "\nUSAGE: $0 tabbedAlignmentFile > Gene_BL_bin_file\n";
-	print STDERR "Ex: $0 UTR_Sequences_sample.txt > UTRs_median_BLs_bins.txt\n";
-	print STDERR "\ntabbedAlignmentFile fields: <seqID> <species> <sequence>\n";
-	print STDERR "    where <species> belongs to the set of NCBI Taxonomy IDs\n";
-	print STDERR "    (such as 9606 for human) used by TargetScanHuman and Mouse 5.\n";
-	print STDERR "\nGene_BL_bin_file fields: <seqID> <branch_length> <bin[1-10]>\n\n";
+    print STDERR "\nCalculate median branch length from each UTR alignment\n";
+    print STDERR "  and then assign to a UTR bin.\n";
+    print STDERR "\nUSAGE: $0 tabbedAlignmentFile > Gene_BL_bin_file\n";
+    print STDERR "Ex: $0 UTR_Sequences_sample.txt > UTRs_median_BLs_bins.txt\n";
+    print STDERR "\ntabbedAlignmentFile fields: <seqID> <species> <sequence>\n";
+    print STDERR "    where <species> belongs to the set of NCBI Taxonomy IDs\n";
+    print STDERR "    (such as 9606 for human) used by TargetScanHuman and Mouse 5.\n";
+    print STDERR "\nGene_BL_bin_file fields: <seqID> <branch_length> <bin[1-10]>\n\n";
 
-	exit;
+    exit;
 }
 
-# Read the unbinned 3' UTR tree 
+# Read the unbinned 3' UTR tree
 READ_TREE($treeFile);
 
 # What thresholds are we using to assign a UTR to a bin (using BL)?
@@ -80,42 +80,42 @@ $lastGeneID = " ";
 open (ALIGNMENT_TABS, $UTRfile) || die "Cannot open $UTRfile for reading: $!";
 while (<ALIGNMENT_TABS>)
 {
-	# Read the UTR alignment
+    # Read the UTR alignment
 
-	# CDC2L6	9606	CCCACUCCCU---CU---------
+    # CDC2L6	9606	CCCACUCCCU---CU---------
 
-	chomp;
-	s/\r//g;
-	
-	@f = split (/\t/, $_);
-	
-	if ($geneID && $f[0] ne $lastGeneID)	# Process the last block of sequences
-	{
-		if ($VERBOSE)
-		{
-			print STDERR "Processing $lastGeneID...\n";
-		}
-		
-		# Process an alignment for a UTR (gene) to get median BL and then bin
-		getSpeciesListBLwithRefNt(0);
-		
-		$medianBLthisUTR = processUTRbranchLengths($lastGeneID);
-		$binThisUTR = assignBLtoBin($medianBLthisUTR);
-		
-		print "$lastGeneID\t$medianBLthisUTR\t$binThisUTR\n";
-		
-		# Reset
-		$geneID = "";
-		@species = ();
-		%speciesToFinalAlignment = ();
-	}
-	
-	$geneID = $f[0];
-	$species2alignment{$f[1]} = "$f[2]";
-		
-	push @species, $f[1];
-	
-	$lastGeneID = $geneID;
+    chomp;
+    s/\r//g;
+
+    @f = split (/\t/, $_);
+
+    if ($geneID && $f[0] ne $lastGeneID)	# Process the last block of sequences
+    {
+        if ($VERBOSE)
+        {
+            print STDERR "Processing $lastGeneID...\n";
+        }
+
+        # Process an alignment for a UTR (gene) to get median BL and then bin
+        getSpeciesListBLwithRefNt(0);
+
+        $medianBLthisUTR = processUTRbranchLengths($lastGeneID);
+        $binThisUTR = assignBLtoBin($medianBLthisUTR);
+
+        print "$lastGeneID\t$medianBLthisUTR\t$binThisUTR\n";
+
+        # Reset
+        $geneID = "";
+        @species = ();
+        %speciesToFinalAlignment = ();
+    }
+
+    $geneID = $f[0];
+    $species2alignment{$f[1]} = "$f[2]";
+
+    push @species, $f[1];
+
+    $lastGeneID = $geneID;
 }
 
 ###  Get the last one
@@ -131,247 +131,247 @@ print "$lastGeneID\t$medianBLthisUTR\t$binThisUTR\n";
 
 sub getSpeciesListBLwithRefNt
 {
-	# Get a list of species with the same nt at this position as the reference genome
+    # Get a list of species with the same nt at this position as the reference genome
 
-	my $printDetails = shift;
+    my $printDetails = shift;
 
-	$alignmentLength = length ($species2alignment{$refGenome});
-	
-	for ($i = 0; $i < $alignmentLength; $i++)
-	{
-		$keep = 0;
-		$ntsThisPos = "";
-	
-		foreach $species (@species)
-		{
-			$posThisSpecies{$species} = substr($species2alignment{$species}, $i, 1);
-			
-			if ($posThisSpecies{$species} ne "-")
-			{
-				$keep++;
-			}
-		}
-		
-		if ($keep)
-		{
-			foreach $species (@species)
-			{
-				$speciesToFinalAlignment{$species} .= $posThisSpecies{$species};
-				
-				# Make a string of all nts at this position
-				$ntsThisPos .= $posThisSpecies{$species};				
-			}
-						
-			#
-			#
-			#
-			# Set reference nt according to ref genome 
-			#
-			#
-			#
-			
-			$consensusThisPos = "$posThisSpecies{$refGenome}"; 
-			
-			# Skip positions with a gap in the reference genome
-			if  ($consensusThisPos ne "-")
-			{
-				# Compare each nt to consensus and count the ones that agree
+    $alignmentLength = length ($species2alignment{$refGenome});
 
-				$consensusForBranchLength = uc($consensusThisPos);
+    for ($i = 0; $i < $alignmentLength; $i++)
+    {
+        $keep = 0;
+        $ntsThisPos = "";
 
-				@speciesForBranchCalc = ();
+        foreach $species (@species)
+        {
+            $posThisSpecies{$species} = substr($species2alignment{$species}, $i, 1);
 
-				foreach $species (@species)
-				{
-					$ntThisPos = $posThisSpecies{$species};
+            if ($posThisSpecies{$species} ne "-")
+            {
+                $keep++;
+            }
+        }
 
-					if ( lc($ntThisPos) eq lc($consensusForBranchLength))
-					{
-						push @speciesForBranchCalc, $species;
-					}
-				}
-				
-				# Sort all species in this list (to reduce number of combinations)
-				@speciesForBranchCalc = sort @speciesForBranchCalc;
-				
-				$speciesThisPos = "@speciesForBranchCalc";
+        if ($keep)
+        {
+            foreach $species (@species)
+            {
+                $speciesToFinalAlignment{$species} .= $posThisSpecies{$species};
 
-				###  Get branch length for this set of species at this position
+                # Make a string of all nts at this position
+                $ntsThisPos .= $posThisSpecies{$species};
+            }
 
-				if ($speciesThisPos !~ /\s+/)	# Only one species in list
-				{
-					$branchLength = 0;
-				}
-				elsif ($speciesListToBL{$speciesThisPos})
-				{
-					$branchLength = $speciesListToBL{$speciesThisPos};
-				}
-				else
-				{
-					@include_orgs = split (/ /, $speciesThisPos);
+            #
+            #
+            #
+            # Set reference nt according to ref genome
+            #
+            #
+            #
 
-					$branchLength = get_branch_length(@include_orgs);
+            $consensusThisPos = "$posThisSpecies{$refGenome}";
 
-					# Save in memory
-					$speciesListToBL{$speciesThisPos} = $branchLength;
-				}
-				push @branchLengthsThisUTR, $branchLength;
+            # Skip positions with a gap in the reference genome
+            if  ($consensusThisPos ne "-")
+            {
+                # Compare each nt to consensus and count the ones that agree
 
-				if ($printDetails)
-				{
-					print "$geneID\t$i\t$consensusForBranchLength\t$speciesThisPos\t$branchLength\n";
-				}
-			}
-		}
-	}
+                $consensusForBranchLength = uc($consensusThisPos);
+
+                @speciesForBranchCalc = ();
+
+                foreach $species (@species)
+                {
+                    $ntThisPos = $posThisSpecies{$species};
+
+                    if ( lc($ntThisPos) eq lc($consensusForBranchLength))
+                    {
+                        push @speciesForBranchCalc, $species;
+                    }
+                }
+
+                # Sort all species in this list (to reduce number of combinations)
+                @speciesForBranchCalc = sort @speciesForBranchCalc;
+
+                $speciesThisPos = "@speciesForBranchCalc";
+
+                ###  Get branch length for this set of species at this position
+
+                if ($speciesThisPos !~ /\s+/)	# Only one species in list
+                {
+                    $branchLength = 0;
+                }
+                elsif ($speciesListToBL{$speciesThisPos})
+                {
+                    $branchLength = $speciesListToBL{$speciesThisPos};
+                }
+                else
+                {
+                    @include_orgs = split (/ /, $speciesThisPos);
+
+                    $branchLength = get_branch_length(@include_orgs);
+
+                    # Save in memory
+                    $speciesListToBL{$speciesThisPos} = $branchLength;
+                }
+                push @branchLengthsThisUTR, $branchLength;
+
+                if ($printDetails)
+                {
+                    print "$geneID\t$i\t$consensusForBranchLength\t$speciesThisPos\t$branchLength\n";
+                }
+            }
+        }
+    }
 }
 
-sub READ_TREE 
+sub READ_TREE
 {
-	# Read a precomputed phylogenetic tree
+    # Read a precomputed phylogenetic tree
 
-	my $treefile = shift;
-	my $input = new Bio::TreeIO(-file   => $treefile,
-					-format => "newick");
-	$tree = $input->next_tree;
+    my $treefile = shift;
+    my $input = new Bio::TreeIO(-file   => $treefile,
+                    -format => "newick");
+    $tree = $input->next_tree;
 
-	foreach my $org (@all_orgs) 
-	{
-		($nodes{$org}) = $tree->find_node(-id => $org);
-	}
+    foreach my $org (@all_orgs)
+    {
+        ($nodes{$org}) = $tree->find_node(-id => $org);
+    }
 }
 
 sub GET_BL_THRESHOLDS
-{	
-	# Make s hash of BL thresholds
-	
-	$bin = 1;
-	
-	foreach $BL_threshold (@BL_thresholds)
-	{
-		$maxBLThisBin{$BL_threshold} = $bin;
-		$bin++;
-	}
+{
+    # Make s hash of BL thresholds
+
+    $bin = 1;
+
+    foreach $BL_threshold (@BL_thresholds)
+    {
+        $maxBLThisBin{$BL_threshold} = $bin;
+        $bin++;
+    }
 }
 
-sub get_branch_length 
+sub get_branch_length
 {
-	# Calculate branch length from a list of species IDs
-	#
-	# This section of code largely written by Robin Friedman, MIT
+    # Calculate branch length from a list of species IDs
+    #
+    # This section of code largely written by Robin Friedman, MIT
 
-	my @orgs = @_;
-	
-	my %ref_ancestors;	# keys are internal ids, values are objects
-	my %ref_cumul_dist;	# keys are internal ids, values 
+    my @orgs = @_;
 
-	# are cumulative distance from node1 to given node
-	my $place = $nodes{$refGenome};		# start at node1
-	my $cumul_dist = 0;
-	
-	my @save = ();
-	while ( $place )
-	{
-		my $id = $place->internal_id;
-		push(@save, $id);
+    my %ref_ancestors;	# keys are internal ids, values are objects
+    my %ref_cumul_dist;	# keys are internal ids, values
 
-		@{$ref_ancestors{$id}} = @save;
-		$ref_cumul_dist{$id} = $cumul_dist;
-		if ($place->branch_length) 
-		{
-			$cumul_dist += $place->branch_length; # include current branch
-		}
-		
-		$place = $place->ancestor;
-	}
-	
-	# now climb up node2, for each node checking whether 
-	# it's in node1_ancestors
-	my %included_nodes = ();
-	my $total_dist = 0;
+    # are cumulative distance from node1 to given node
+    my $place = $nodes{$refGenome};		# start at node1
+    my $cumul_dist = 0;
 
-	foreach my $org (@orgs) 
-	{
-		$place = $nodes{$org};	# start at leaf node
-		$cumul_dist = 0;
+    my @save = ();
+    while ( $place )
+    {
+        my $id = $place->internal_id;
+        push(@save, $id);
 
-		@save = ();
-		while ( $place )
-		{
-			$id = $place->internal_id;
-			push(@save, $id);
+        @{$ref_ancestors{$id}} = @save;
+        $ref_cumul_dist{$id} = $cumul_dist;
+        if ($place->branch_length)
+        {
+            $cumul_dist += $place->branch_length; # include current branch
+        }
 
-			if($included_nodes{$id}) 
-			{
-				$total_dist += $cumul_dist;
-		
-				last;
-			}
-			if(defined $ref_ancestors{$id}) 
-			{
-				# we're at lca
-				$total_dist += $ref_cumul_dist{$id} + $cumul_dist;
-	
-				for (my $i = @{$ref_ancestors{$id}}-1; $i >= 0; $i--) 
-				{
-					my $cur = ${$ref_ancestors{$id}}[$i];
+        $place = $place->ancestor;
+    }
 
-					if($included_nodes{$cur}) 
-					{
-						$total_dist -= $ref_cumul_dist{$cur};
+    # now climb up node2, for each node checking whether
+    # it's in node1_ancestors
+    my %included_nodes = ();
+    my $total_dist = 0;
 
-						last;
-					}
-					else 
-					{
-						$included_nodes{$ref_ancestors{$id}[$i]} = 1;
-					}
-				}
-				
-				$included_nodes{$id} = 1;
-				last;
-			}
-			$included_nodes{$id} = 1;
+    foreach my $org (@orgs)
+    {
+        $place = $nodes{$org};	# start at leaf node
+        $cumul_dist = 0;
 
-			# include current branch length in next iteration
-			$cumul_dist += $place->branch_length || 0;
-			
-			$place = $place->ancestor;
-		}
-	}
-	
-	return $total_dist;
+        @save = ();
+        while ( $place )
+        {
+            $id = $place->internal_id;
+            push(@save, $id);
+
+            if($included_nodes{$id})
+            {
+                $total_dist += $cumul_dist;
+
+                last;
+            }
+            if(defined $ref_ancestors{$id})
+            {
+                # we're at lca
+                $total_dist += $ref_cumul_dist{$id} + $cumul_dist;
+
+                for (my $i = @{$ref_ancestors{$id}}-1; $i >= 0; $i--)
+                {
+                    my $cur = ${$ref_ancestors{$id}}[$i];
+
+                    if($included_nodes{$cur})
+                    {
+                        $total_dist -= $ref_cumul_dist{$cur};
+
+                        last;
+                    }
+                    else
+                    {
+                        $included_nodes{$ref_ancestors{$id}[$i]} = 1;
+                    }
+                }
+
+                $included_nodes{$id} = 1;
+                last;
+            }
+            $included_nodes{$id} = 1;
+
+            # include current branch length in next iteration
+            $cumul_dist += $place->branch_length || 0;
+
+            $place = $place->ancestor;
+        }
+    }
+
+    return $total_dist;
 }
 
 sub processUTRbranchLengths
 {
-	# Get the median of all branch lengths for a UTR
+    # Get the median of all branch lengths for a UTR
 
-	my $medianBLthisUTR = median(@branchLengthsThisUTR);
-	
-	@branchLengthsThisUTR = ();
-	
-	return $medianBLthisUTR;
+    my $medianBLthisUTR = median(@branchLengthsThisUTR);
+
+    @branchLengthsThisUTR = ();
+
+    return $medianBLthisUTR;
 }
 
 sub assignBLtoBin
 {
-	# Use BL thresholds to assign a UTR to a bin
+    # Use BL thresholds to assign a UTR to a bin
 
-	my $BL = shift;
-	my $binthisBL;
-	
-	$binthisBL = 1;
-	
-	my @thresholds = sort { $a <=> $b } keys %maxBLThisBin;
-	
-	foreach my $threshold (@thresholds) 
-	{
-		if ($BL > $threshold)
-		{
-			$binthisBL = $maxBLThisBin{$threshold};
-		}
-	}
-	
-	return $binthisBL;
+    my $BL = shift;
+    my $binthisBL;
+
+    $binthisBL = 1;
+
+    my @thresholds = sort { $a <=> $b } keys %maxBLThisBin;
+
+    foreach my $threshold (@thresholds)
+    {
+        if ($BL > $threshold)
+        {
+            $binthisBL = $maxBLThisBin{$threshold};
+        }
+    }
+
+    return $binthisBL;
 }

@@ -22,4 +22,3 @@ for line in sys.stdin:
 
     if valid:
         print line,
-

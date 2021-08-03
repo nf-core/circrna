@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-## Stage files 
+## Stage files
 
 fasta=$1
 input_file=$2
@@ -9,7 +9,7 @@ input_file=$2
 
 awk '{if($13 > 1) print $0}' $input_file > filtered.circrna.txt
 
-## Generate circRNA fasta file 
+## Generate circRNA fasta file
 
 base=$(echo $input_file | cut -f 1 -d.)
 counter=0

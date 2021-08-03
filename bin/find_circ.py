@@ -68,14 +68,14 @@ class mmap_fasta(object):
         ofs_start = l_start * self.skip + start + self.ofs
         ofs_end = l_end * self.skip + end + self.ofs
         #print "ofs",ofs_start,ofs_end
-        
+
         s = self.mmap[ofs_start:ofs_end].replace(self.skip_char,"")
         L = end-start
         if len(s) == L:
             return s
         else:
             return s+"N"*(L-len(s))
-        return 
+        return
 
 class Accessor(object):
     supports_write = False
@@ -101,7 +101,7 @@ def to_bool(obj):
         return False
     else:
         return bool(obj)
-        
+
 class Track(object):
     """
     Abstraction of chromosome-wide adressable data like sequences, coverage, scores etc.
@@ -136,7 +136,7 @@ class Track(object):
         kwargs['dim'] = self.dim
 
         if "w" in mode:
-            # make sure the path exists right away so that the accessors 
+            # make sure the path exists right away so that the accessors
             # can flush the actual data there!
             from sequence_data.io import ensure_path
             ensure_path(self.path)
@@ -168,7 +168,7 @@ class Track(object):
         if not self.accessor.supports_write:
             self.logger.warning("save() called on a track with only read-access supporting accessors. Ignored!")
             return
-      
+
         self.logger.debug("save(): writing '%s'" % self.path)
 
         def to_str(obj):
@@ -206,7 +206,7 @@ class Track(object):
     def get_sum(self,chrom,start,end,sense):
         acc = self.load(chrom,sense)
         return acc.get_sum(start,end,sense)
-        
+
     def get_identifier(self,chrom,sense):
         if self.sense_specific:
             return chrom+sense
@@ -293,10 +293,10 @@ if options.reads2samples:
     samples = [line.rstrip().split('\t') for line in file(options.reads2samples)]
 else:
     samples = []
-    
+
 samples.append(('','unknown'))
 
-        
+
 minmapscore = options.asize * (-2)
 from collections import defaultdict
 
@@ -309,7 +309,7 @@ class Hit(object):
         self.edits = []
         self.overlaps = []
         self.n_hits = []
-        
+
     def add(self,read,A,B,dist,ov,n_hits):
         self.reads.append(read)
         self.edits.append(dist)
@@ -321,14 +321,14 @@ class Hit(object):
         bopt = dict(B.tags)
         qA = aopt.get('AS') - aopt.get('XS',minmapscore)
         qB = bopt.get('AS') - bopt.get('XS',minmapscore)
-       
+
         self.mapquals.append((qA+qB,qA,qB))
-        
+
         for (prefix,tiss) in samples:
             if A.qname.startswith(prefix):
                 self.tissues[tiss] += 1
                 break
-    
+
         self.uniq.add((read,tiss))
         self.uniq.add((rev_comp(read),tiss))
 
@@ -336,11 +336,11 @@ class Hit(object):
     def scores(self,chrom,start,end,sense):
         n_reads = len(self.reads)
         n_uniq = len(self.uniq) / 2
-        
+
         total_mq,best_qual_A,best_qual_B = sorted(self.mapquals,reverse=True)[0]
 
-        wiggle = numpy.arange(-options.wiggle,options.wiggle+1)   
-        
+        wiggle = numpy.arange(-options.wiggle,options.wiggle+1)
+
         spliced_at_begin = 0
         for x in wiggle:
             begin = (chrom,start+x,sense)
@@ -359,8 +359,8 @@ class Hit(object):
         tissues = sorted(self.tissues.keys())
         tiss_counts = [str(self.tissues[k]) for k in tissues]
         return (n_reads,n_uniq,best_qual_A,best_qual_B,spliced_at_begin,spliced_at_end,tissues,tiss_counts,min(self.edits),min(self.overlaps),min(self.n_hits))
-                
-        
+
+
 loci = defaultdict(list)
 circs = defaultdict(Hit)
 splices = defaultdict(Hit)
@@ -375,14 +375,14 @@ def find_breakpoints(A,B,read,chrom,margin=options.margin,maxdist=options.maxdis
     def mismatches(a,b):
         a,b = fromstring(a,dtype=byte), fromstring(b,dtype=byte)
         return (a != b).sum()
-        
+
     L = len(read)
     hits = []
     #print "readlen",L
     #print " "*2+read
     eff_a = options.asize-margin
     internal = read[eff_a:-eff_a].upper()
-        
+
     flank = L - 2*eff_a + 2
 
     A_flank = genome.get(chrom,A.aend-margin,A.aend-margin + flank,'+').upper()
@@ -395,8 +395,8 @@ def find_breakpoints(A,B,read,chrom,margin=options.margin,maxdist=options.maxdis
     l = L - 2*eff_a
     for x in range(l+1):
         spliced = A_flank[:x] + B_flank[x+2:]
-        dist = mismatches(spliced,internal)        
-        
+        dist = mismatches(spliced,internal)
+
         #bla = A_flank[:x].lower() + B_flank[x+2:]
         #print " "*(eff_a+2)+bla,dist
 
@@ -405,13 +405,13 @@ def find_breakpoints(A,B,read,chrom,margin=options.margin,maxdist=options.maxdis
             ov = margin-x
         if l-x < margin:
             ov = margin-(l-x)
-        
+
         if dist <= maxdist:
             gt = A_flank[x:x+2]
             ag = B_flank[x:x+2]
             #print x,gt,ag
             #print "MATCH", A_flank[x:x+2].lower(),B_flank[-(l-x)-2:-(l-x)].upper()
-            
+
             start,end = B.pos+margin-l+x,A.aend-margin+x+1
             start,end = min(start,end),max(start,end)
             if gt == 'GT' and ag == 'AG':
@@ -425,13 +425,13 @@ def find_breakpoints(A,B,read,chrom,margin=options.margin,maxdist=options.maxdis
     if len(hits) < 2:
         return hits
 
-    # return only hits that are tied with the best candidate by edit distance and anchor overlap. 
+    # return only hits that are tied with the best candidate by edit distance and anchor overlap.
     # Hits are still sorted, with low edit distance beating low anchor overlap
     hits = sorted(hits)
     best = hits[0]
     return [h for h in hits if (h[0] == best[0]) and (h[1] == best[1])]
-    
-    
+
+
 sam = pysam.Samfile('-','r')
 try:
     for A,B in grouper(2,sam):
@@ -452,24 +452,24 @@ try:
         if numpy.abs(dist) < options.asize:
             N['overlapping_anchors'] += 1
             continue
-        
+
         if (A.is_reverse and dist > 0) or (not A.is_reverse and dist < 0):
             # get original read sequence
             read = A.qname.split('__')[1]
             chrom = sam.getrname(A.tid)
-            
+
             if A.is_reverse:
                 #print "ISREVERSE"
                 A,B = B,A
                 read = rev_comp(read)
-                            
+
             bp = find_breakpoints(A,B,read,chrom)
             if not bp:
                 N['circ_no_bp'] += 1
             else:
                 N['circ_reads'] += 1
 
-            n_hits = len(bp) 
+            n_hits = len(bp)
             for h in bp:
                 #print h
                 # for some weird reason for circ we need a correction here
@@ -480,28 +480,28 @@ try:
         if (A.is_reverse and dist < 0) or (not A.is_reverse and dist > 0):
             read = A.qname.split('__')[1]
             chrom = sam.getrname(A.tid)
-            
+
             if A.is_reverse:
                 #print "ISREVERSE"
                 A,B = B,A
                 read = rev_comp(read)
-                            
+
             bp = find_breakpoints(A,B,read,chrom)
             if not bp:
                 N['splice_no_bp'] += 1
             else:
                 N['spliced_reads'] += 1
-            n_hits = len(bp)                
+            n_hits = len(bp)
             for h in bp:
                 #print h
                 dist,ov,chrom,start,end,sense = h
                 h = (chrom,start,end,sense)
                 splices[h].add(read,A,B,dist,ov,n_hits)
-                
+
                 # remember the spliced reads at these sites
                 loci[(chrom,start,sense)].append(splices[h])
                 loci[(chrom,end,sense)].append(splices[h])
-            
+
     #break
 except KeyboardInterrupt:
     pass
@@ -513,17 +513,17 @@ def output(cand,prefix):
         #print c
         chrom,start,end,sense = c
         n_reads,n_uniq,best_qual,best_other,spliced_at_begin,spliced_at_end,tissues,tiss_counts,min_edit,min_anchor_ov,n_hits = hit.scores(chrom,start,end,sense)
-        
+
         if best_other < options.min_uniq_qual:
             N['anchor_not_uniq'] += 1
             continue
-        
+
         name = "%s%s_%06d" % (options.prefix,prefix,n)
         n += 1
         #sys.stderr.write("%s\t%s\n" % (name,"\t".join(sorted(reads))))
         for r in hit.reads:
             sys.stderr.write("%s\t%s\n" % (name,r))
-        
+
         bed = [chrom,start-1,end,name,n_reads,sense,n_uniq,best_qual,best_other,spliced_at_begin,spliced_at_end,",".join(tissues),",".join(tiss_counts),min_edit,min_anchor_ov,n_hits]
         print "\t".join([str(b) for b in bed])
 

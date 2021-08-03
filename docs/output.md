@@ -2,18 +2,18 @@
 
 ## Introduction
 
-This documentation describes the output of `nf-core/circrna` for the test dataset which runs all 3 modules in the workflow: `circRNA discovery` , `miRNA prediction` and `differential expression` analysis of circular RNAs in RNA-Seq data.  
+This documentation describes the output of `nf-core/circrna` for the test dataset which runs all 3 modules in the workflow: `circRNA discovery` , `miRNA prediction` and `differential expression` analysis of circular RNAs in RNA-Seq data.
 
 A full run of the workflow will produce the following directory output structure:
 
 ```console
 |-- results/
-       |-- circrna_discovery
-       |-- differential_expression
-       |-- mirna_prediction
-       |-- pipeline_info
-       |-- quality_control
-       |-- reference_genome
+        |-- circrna_discovery
+        |-- differential_expression
+        |-- mirna_prediction
+        |-- pipeline_info
+        |-- quality_control
+        |-- reference_genome
 ```
 
 ## Pipeline Overview
@@ -23,7 +23,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 * [Quality Control](#quality-control)
     * [SAM to Fastq](#sam-to-fastq) - Convert SAM/BAM to fastq
     * [BBDUK](#bbduk) - Adapter trimming, quality and length filtering
-    * [DESeq2](#deseq2) - Quality control plots from `DESeq2` analysis  
+    * [DESeq2](#deseq2) - Quality control plots from `DESeq2` analysis
     * [MultiQC](#multiqc) - Consolidated fastqc reports
 * [Genome index files](#genome-index-files)
 * [circRNA quantification](#circrna-quantification)
@@ -289,7 +289,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
     * `deletions.txt`: Report of deletions.
     * `Fusion output files`:
         * `fusions_raw.txt`: raw fusion junctions without filtering
-        * `fusion_candidates.txt`: filtered fusion junctions  
+        * `fusion_candidates.txt`: filtered fusion junctions
         * `fusions_well_annotated.txt`:  annotated fusion junction candidates (align to annotation file provided)
         * `fusions_not_well_annotated.txt`: fusions that do not align with supplied annotations
     * `circular_RNAs.txt`: circular RNAs reported.
@@ -510,10 +510,10 @@ Sample outputs from `control_vs_lung` are given below, one of 6 `DESeq2` results
         </p>
 
     * `control_vs_lung`
-          * `*boxplot.pdf`: Boxplot of differentially expressed circRNAs in `control_vs_melanoma`.
-          <p markdown="1" align="center">
-          <img src="images/output/de/boxplots/melanoma.png" alt="circRNA boxplot" width="500">
-          </p>
+        * `*boxplot.pdf`: Boxplot of differentially expressed circRNAs in `control_vs_melanoma`.
+        <p markdown="1" align="center">
+        <img src="images/output/de/boxplots/melanoma.png" alt="circRNA boxplot" width="500">
+        </p>
 
 </details>
 

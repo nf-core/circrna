@@ -94,11 +94,11 @@ miRNAs <- function(inputdata){
     miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
     colnames(miRs) <- c("miRNA", "Start", "End")
   #}else{
-   # mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= as.numeric(mfe))
+    # mir_df <- subset(mir_df, mir_df$Energy_KcalMol <= as.numeric(mfe))
   #  mir_df <- mir_df[order(mir_df$MSA_start, -abs(mir_df$Score)),]
-   # mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
+    # mir_df <- mir_df[!duplicated(mir_df$MSA_start),]
   #  miRs <- subset(mir_df, select=c(miRNA, MSA_start, MSA_end))
-   # colnames(miRs) <- c("miRNA", "Start", "End")
+    # colnames(miRs) <- c("miRNA", "Start", "End")
   #}
 
   ## Calculate where the miRNAs fall in the context of the exons of the circRNA
@@ -112,30 +112,30 @@ miRNAs <- function(inputdata){
   }else{
     circlize_mirs <- data.frame(ncol(5))
     for(n in 1:nrow(x)){
-      if(n==1){
+    if(n==1){
         exon_1 <- miRs[which(miRs$Start < x$V3[n]),]
         if(dim(exon_1)[1]==0){
-          rm(exon_1)
+        rm(exon_1)
         }else{
-          exon_1$value = 1
-          exon_1$chr <- "exon1"
-          exon_1 <- exon_1[,c(5,2,3,4,1)]
-          circlize_mirs <- exon_1
+        exon_1$value = 1
+        exon_1$chr <- "exon1"
+        exon_1 <- exon_1[,c(5,2,3,4,1)]
+        circlize_mirs <- exon_1
         }
-      }else{
+    }else{
         exon <- miRs[which(miRs$Start >=  sum(x$V3[0:(n-1)]) & miRs$Start < sum(x$V3[0:n])),]
         if(dim(exon)[1]==0){
-          rm(exon)
+        rm(exon)
         }else{
-          exon$value = 1
-          exon$chr <- paste("exon", n, sep="")
-          subtract_me <- sum(x$V3[0:(n-1)])
-          exon$Start <- (exon$Start) - subtract_me
-          exon$End <- (exon$End) - subtract_me
-          exon <- exon[,c(5,2,3,4,1)]
-          circlize_mirs <- rbind(circlize_mirs, exon)
+        exon$value = 1
+        exon$chr <- paste("exon", n, sep="")
+        subtract_me <- sum(x$V3[0:(n-1)])
+        exon$Start <- (exon$Start) - subtract_me
+        exon$End <- (exon$End) - subtract_me
+        exon <- exon[,c(5,2,3,4,1)]
+        circlize_mirs <- rbind(circlize_mirs, exon)
         }
-      }
+    }
     }
   }
 

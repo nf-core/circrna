@@ -176,7 +176,7 @@ nextflow run nf-core/circrna \
 
 #### circRNA filtering
 
-`nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.  
+`nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.
 
 ##### BSJ reads
 

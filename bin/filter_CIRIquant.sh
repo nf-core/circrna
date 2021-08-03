@@ -1,4 +1,4 @@
-#!/usr/bin/bash 
+#!/usr/bin/bash
 
 input=$1
 base=$(basename $input .gtf)

@@ -259,9 +259,9 @@ class NfcoreSchema {
         return new_params
     }
 
-     /*
-     * This method tries to read a JSON params file
-     */
+    /*
+    * This method tries to read a JSON params file
+    */
     private static LinkedHashMap params_load(String json_schema) {
         def params_map = new LinkedHashMap()
         try {
@@ -357,28 +357,28 @@ class NfcoreSchema {
         def Map schema_definitions = (Map) new JsonSlurper().parseText(json).get('definitions')
         def Map schema_properties = (Map) new JsonSlurper().parseText(json).get('properties')
         /* Tree looks like this in nf-core schema
-         * definitions <- this is what the first get('definitions') gets us
-             group 1
-               title
-               description
-                 properties
-                   parameter 1
-                     type
-                     description
-                   parameter 2
-                     type
-                     description
-             group 2
-               title
-               description
-                 properties
-                   parameter 1
-                     type
-                     description
-         * properties <- parameters can also be ungrouped, outside of definitions
+        * definitions <- this is what the first get('definitions') gets us
+            group 1
+                title
+                description
+                properties
+                    parameter 1
+                    type
+                    description
+                    parameter 2
+                    type
+                    description
+            group 2
+                title
+                description
+                properties
+                    parameter 1
+                    type
+                    description
+        * properties <- parameters can also be ungrouped, outside of definitions
             parameter 1
-             type
-             description
+            type
+            description
         */
 
         // Grouped params
@@ -404,8 +404,8 @@ class NfcoreSchema {
     }
 
     /*
-     * Get maximum number of characters across all parameter names
-     */
+    * Get maximum number of characters across all parameter names
+    */
     private static Integer params_max_chars(params_map) {
         Integer max_chars = 0
         for (group in params_map.keySet()) {
@@ -420,8 +420,8 @@ class NfcoreSchema {
     }
 
     /*
-     * Beautify parameters for --help
-     */
+    * Beautify parameters for --help
+    */
     private static String params_help(workflow, params, json_schema, command) {
         Map colors = log_colours(params.monochrome_logs)
         Integer num_hidden = 0
@@ -478,8 +478,8 @@ class NfcoreSchema {
     }
 
     /*
-     * Groovy Map summarising parameters/workflow options used by the pipeline
-     */
+    * Groovy Map summarising parameters/workflow options used by the pipeline
+    */
     private static LinkedHashMap params_summary_map(workflow, params, json_schema) {
         // Get a selection of core Nextflow workflow options
         def Map workflow_summary = [:]
@@ -547,8 +547,8 @@ class NfcoreSchema {
     }
 
     /*
-     * Beautify parameters for summary and return as string
-     */
+    * Beautify parameters for summary and return as string
+    */
     private static String params_summary_log(workflow, params, json_schema) {
         Map colors = log_colours(params.monochrome_logs)
         String output  = ''

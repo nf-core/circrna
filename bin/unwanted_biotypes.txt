@@ -33,7 +33,7 @@ scRNA_pseudogene
 rRNA_pseudogene
 misc_RNA_pseudogene
 miRNA_pseudogene
-vaultRNA/vault_RNA 
+vaultRNA/vault_RNA
 disrupted_domain
 macro_lncRNA
 artifact

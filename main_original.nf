@@ -2,7 +2,7 @@
 
 /*
 ================================================================================
-                              nf-core/circrna
+                            nf-core/circrna
 ================================================================================
 Started August 2020.
 Dev version to nf-core Feb 2021.
@@ -22,7 +22,7 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 
 /*
 ================================================================================
-                              Print Help
+                            Print Help
 ================================================================================
 */
 
@@ -35,7 +35,7 @@ if (params.help) {
 
 /*
 ================================================================================
-                          Check parameters
+                        Check parameters
 ================================================================================
 */
 
@@ -65,47 +65,47 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
 // Check BWA index
 if(params.bwa_index){
 
-   bwa_path_files = params.bwa_index + "/*"
+    bwa_path_files = params.bwa_index + "/*"
 
-   Channel
-         .fromPath(bwa_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it ->
+    Channel
+        .fromPath(bwa_path_files, checkIfExists: true)
+        .flatten()
+        .map{ it ->
 
-               if(!has_extension(it, ".ann") && !has_extension(it, ".amb") && !has_extension(it, ".bwt") && !has_extension(it, ".pac") && !has_extension(it, ".sa")){
-                  exit 1, "[nf-core/circrna] error: BWA index file ($it) has an incorrect extension. Are you sure they are BWA indices?"
-               }
-         }
+                if(!has_extension(it, ".ann") && !has_extension(it, ".amb") && !has_extension(it, ".bwt") && !has_extension(it, ".pac") && !has_extension(it, ".sa")){
+                exit 1, "[nf-core/circrna] error: BWA index file ($it) has an incorrect extension. Are you sure they are BWA indices?"
+                }
+        }
 }
 
 // Check STAR index
 if(params.star_index){
 
-   starList = defineStarFiles()
+    starList = defineStarFiles()
 
-   star_path_files = params.star_index + "/*"
+    star_path_files = params.star_index + "/*"
 
-   Channel
-         .fromPath(star_path_files, checkIfExists: true)
-         .flatten()
-         .map{ it -> it.getName()}
-         .collect()
-         .flatten()
-         .map{ it ->
+    Channel
+        .fromPath(star_path_files, checkIfExists: true)
+        .flatten()
+        .map{ it -> it.getName()}
+        .collect()
+        .flatten()
+        .map{ it ->
 
-               if(!starList.contains(it)){
-                  exit 1, "[nf-core/circrna] error: Incorrect index file ($it) is in the STAR directory provided.\n\nPlease check your STAR indices are valid:\n$starList."
-               }
-          }
+                if(!starList.contains(it)){
+                exit 1, "[nf-core/circrna] error: Incorrect index file ($it) is in the STAR directory provided.\n\nPlease check your STAR indices are valid:\n$starList."
+                }
+        }
 }
 
 // Check phenotype file and stage the channel
 
 if(params.phenotype){
-   pheno_file = file(params.phenotype)
-   ch_phenotype = examine_phenotype(pheno_file)
+    pheno_file = file(params.phenotype)
+    ch_phenotype = examine_phenotype(pheno_file)
 } else {
-   ch_phenotype = Channel.empty()
+    ch_phenotype = Channel.empty()
 }
 
 
@@ -113,17 +113,17 @@ if(params.phenotype){
 
 // Check adapters
 if(!params.skip_trim){
-   if(params.adapters){
-      adapters = file(params.adapters, checkIfExists: true)
-      // Check all adapter trimming flags are provided
-      if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
-         exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
-      }
+    if(params.adapters){
+    adapters = file(params.adapters, checkIfExists: true)
+    // Check all adapter trimming flags are provided
+    if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
+        exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
+    }
     }
     // Check all quality trimming flags are provided
     if(params.trimq && !params.qtrim || !params.trimq && params.qtrim){
-       exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
-   }
+        exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
+    }
 }
 
 // Check filtering params
@@ -138,18 +138,18 @@ if(tools_selected > 1 && params.tool_filter > tools_selected){
 
 if(has_extension(params.input, "csv")){
 
-   csv_file = file(params.input, checkIfExists: true)
-   ch_input_sample = extract_data(csv_file)
+    csv_file = file(params.input, checkIfExists: true)
+    ch_input_sample = extract_data(csv_file)
 
 }else if(params.input && !has_extension(params.input, "csv")){
 
-   log.info ""
-   log.info "Input data log info:"
-   log.info "No input sample CSV file provided, attempting to read from path instead."
-   log.info "Reading input data from path: ${params.input}\n"
-   log.info ""
+    log.info ""
+    log.info "Input data log info:"
+    log.info "No input sample CSV file provided, attempting to read from path instead."
+    log.info "Reading input data from path: ${params.input}\n"
+    log.info ""
 
-   ch_input_sample = retrieve_input_paths(params.input, params.input_type)
+    ch_input_sample = retrieve_input_paths(params.input, params.input_type)
 
 }
 
@@ -201,7 +201,7 @@ if(params.star_index)      summary ['STAR indices']     = params.star_index
 
 summary['Skip BBDUK']     = params.skip_trim
 if(params.skip_trim == false){
-                           summary['BBDUK']             = "Enabled"
+                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
 if(params.ktrim)           summary['ktrim']             = params.ktrim
@@ -273,7 +273,7 @@ checkHostname()
 
 /*
 ================================================================================
-                          Export software versions
+                        Export software versions
 ================================================================================
 */
 
@@ -452,7 +452,7 @@ process download_targetscan{
 
 /*
 ================================================================================
-                          2. Create Genome Indices
+                        2. Create Genome Indices
 ================================================================================
 */
 
@@ -643,7 +643,7 @@ ch_bowtie2_index = params.bowtie2_index ? Channel.value(file(bowtie2_path_files)
 
 /*
 ================================================================================
-                      3. Misc. circRNA requirements
+                    3. Misc. circRNA requirements
 ================================================================================
 */
 
@@ -672,10 +672,10 @@ process split_fasta{
 
     if [[ $n_chr -gt 1 ]];
     then
-      awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
-      rm !{fasta}
+    awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
+    rm !{fasta}
     else
-      :
+    :
     fi
     '''
 }
@@ -713,21 +713,21 @@ process ciriquant_yml{
     touch travis.yml
     printf "name: ciriquant\n\
     tools:\n\
-     bwa: \$BWA\n\
-     hisat2: \$HISAT2\n\
-     stringtie: \$STRINGTIE\n\
-     samtools: \$SAMTOOLS\n\n\
+    bwa: \$BWA\n\
+    hisat2: \$HISAT2\n\
+    stringtie: \$STRINGTIE\n\
+    samtools: \$SAMTOOLS\n\n\
     reference:\n\
-     fasta: ${fasta_path}\n\
-     gtf: ${gtf_path}\n\
-     bwa_index: ${bwa_path}/${index_prefix}\n\
-     hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
+    fasta: ${fasta_path}\n\
+    gtf: ${gtf_path}\n\
+    bwa_index: ${bwa_path}/${index_prefix}\n\
+    hisat_index: ${hisat2_path}/${index_prefix}" >> travis.yml
     """
 }
 
 /*
 ================================================================================
-                          4. Process Input Data
+                        4. Process Input Data
 ================================================================================
 */
 
@@ -737,7 +737,7 @@ process ciriquant_yml{
 
 if(params.input_type == 'bam'){
 
-   process bam_to_fq{
+    process bam_to_fq{
 
         label 'process_low'
 
@@ -759,13 +759,13 @@ if(params.input_type == 'bam'){
             F2=${base}_R2.fq.gz \\
             VALIDATION_STRINGENCY=LENIENT
         """
-   }
+    }
 
-   (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
+    (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
 
 }else if(params.input_type == 'fastq'){
 
-   (fastqc_reads, trimming_reads, raw_reads) = ch_input_sample.into(3)
+    (fastqc_reads, trimming_reads, raw_reads) = ch_input_sample.into(3)
 
 }
 
@@ -820,7 +820,7 @@ process multiqc_raw {
 
 /*
 ================================================================================
-                           5. Fastq Trimming
+                            5. Fastq Trimming
 ================================================================================
 */
 
@@ -830,97 +830,97 @@ process multiqc_raw {
 
 if(params.skip_trim == false){
 
-   process bbduk {
+    process bbduk {
 
-       label 'process_medium'
+        label 'process_medium'
 
-       publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: params.publish_dir_mode
+        publishDir "${params.outdir}/quality_control/preprocessing/BBDUK", pattern: "*fq.gz", mode: params.publish_dir_mode
 
-       input:
-       tuple val(base), file(fastq) from trimming_reads
-       path adapters from params.adapters
+        input:
+        tuple val(base), file(fastq) from trimming_reads
+        path adapters from params.adapters
 
-       output:
-       tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
-       file("*BBDUK.txt") into bbduk_stats_ch
+        output:
+        tuple val(base), file('*.trim.fq.gz') into trim_reads_ch
+        file("*BBDUK.txt") into bbduk_stats_ch
 
-       script:
-       def adapter = params.adapters ? "ref=${params.adapters}" : ''
-       def k = params.k ? "k=${params.k}" : ''
-       def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
-       def hdist = params.hdist ? "hdist=${params.hdist}" : ''
-       def trimq = params.trimq ? "trimq=${params.trimq}" : ''
-       def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
-       def minlen = params.minlen ? "minlen=${params.minlen}" : ''
-       """
-       bbduk.sh \\
-           -Xmx4g \\
-           threads=${task.cpus} \\
-           in1=${fastq[0]} \\
-           in2=${fastq[1]} \\
-           out1=${base}_R1.trim.fq.gz \\
-           out2=${base}_R2.trim.fq.gz \\
-           $adapter \\
-           $k \\
-           $ktrim \\
-           $trimq \\
-           $qtrim \\
-           $minlen \\
-           stats=${base}_BBDUK.txt
-       """
-   }
+        script:
+        def adapter = params.adapters ? "ref=${params.adapters}" : ''
+        def k = params.k ? "k=${params.k}" : ''
+        def ktrim = params.ktrim ? "ktrim=${params.ktrim}" : ''
+        def hdist = params.hdist ? "hdist=${params.hdist}" : ''
+        def trimq = params.trimq ? "trimq=${params.trimq}" : ''
+        def qtrim = params.qtrim ? "qtrim=${params.qtrim}" : ''
+        def minlen = params.minlen ? "minlen=${params.minlen}" : ''
+        """
+        bbduk.sh \\
+            -Xmx4g \\
+            threads=${task.cpus} \\
+            in1=${fastq[0]} \\
+            in2=${fastq[1]} \\
+            out1=${base}_R1.trim.fq.gz \\
+            out2=${base}_R2.trim.fq.gz \\
+            $adapter \\
+            $k \\
+            $ktrim \\
+            $trimq \\
+            $qtrim \\
+            $minlen \\
+            stats=${base}_BBDUK.txt
+        """
+    }
 
-   // trimmed reads into 2 channels:
-   (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
+    // trimmed reads into 2 channels:
+    (fastqc_trim_reads, aligner_reads) = trim_reads_ch.into(2)
 
   /*
     STEP 5.2: FastQC on trimmed reads
   */
 
-   process FastQC_trim {
+    process FastQC_trim {
 
-       label 'py3'
+        label 'py3'
 
-       publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode: params.publish_dir_mode
+        publishDir "${params.outdir}/quality_control/fastqc/trimmed", mode: params.publish_dir_mode
 
-       input:
-       tuple val(base), file(fastq) from fastqc_trim_reads
+        input:
+        tuple val(base), file(fastq) from fastqc_trim_reads
 
-       output:
-       file ("*.{html,zip}") into fastqc_trimmed
+        output:
+        file ("*.{html,zip}") into fastqc_trimmed
 
-       script:
-       """
-       fastqc -q $fastq
-       """
-   }
+        script:
+        """
+        fastqc -q $fastq
+        """
+    }
 
   /*
   STEP 5.3: MultiQC on trimmed reads
   */
 
-   process multiqc_trim {
+    process multiqc_trim {
 
-       label 'py3'
+        label 'py3'
 
-       publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
+        publishDir "${params.outdir}/quality_control/multiqc", mode: params.publish_dir_mode
 
-       input:
-       file(htmls) from fastqc_trimmed.collect()
-       file(bbduk_stats) from bbduk_stats_ch.collect()
-       file ('software_versions/*') from software_versions_trim.collect()
-       file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
+        input:
+        file(htmls) from fastqc_trimmed.collect()
+        file(bbduk_stats) from bbduk_stats_ch.collect()
+        file ('software_versions/*') from software_versions_trim.collect()
+        file workflow_summary from workflow_summary_trim.collectFile(name: "workflow_summary_mqc.yaml")
 
-       output:
-       file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
+        output:
+        file("Trimmed_Reads_MultiQC.html") into multiqc_trim_out
 
-       script:
-       """
-       multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
-       """
-   }
+        script:
+        """
+        multiqc -i "Trimmed_Reads_MultiQC" -b "nf-circ pipeline" -n "Trimmed_Reads_MultiQC.html" .
+        """
+    }
 }else if(params.skip_trim == true){
-   aligner_reads = raw_reads
+    aligner_reads = raw_reads
 }
 
 /*
@@ -931,7 +931,7 @@ if(params.skip_trim == false){
 
 /*
 ================================================================================
-                           6. circRNA Discovery
+                            6. circRNA Discovery
 ================================================================================
 */
 
@@ -1233,7 +1233,7 @@ process dcc_mate2{
     output:
     tuple val(base), file("mate2") into dcc_mate2
 
-	  script:
+    script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
     mkdir -p mate2
@@ -1473,48 +1473,48 @@ process mapsplice_align{
 
     script:
     if(fastq[0].toString().endsWith('.gz')){
-       prefix = gtf.toString() - ~/.gtf/
-       strip1 = fastq[0].toString() - ~/.gz/
-       strip2 = fastq[1].toString() - ~/.gz/
-       """
-       gzip -d --force ${fastq[0]}
-       gzip -d --force ${fastq[1]}
+        prefix = gtf.toString() - ~/.gtf/
+        strip1 = fastq[0].toString() - ~/.gz/
+        strip2 = fastq[1].toString() - ~/.gz/
+        """
+        gzip -d --force ${fastq[0]}
+        gzip -d --force ${fastq[1]}
 
-       mapsplice.py \\
-           -c $mapsplice_ref \\
-           -x $prefix \\
-           -1 ${strip1} \\
-           -2 ${strip2} \\
-           -p ${task.cpus} \\
-           --bam \\
-           --seglen 25 \\
-           --min-intron ${params.alignIntronMin} \\
-           --max-intron ${params.alignIntronMax} \\
-           --min-map-len 40 \\
-           --fusion-non-canonical \\
-           --min-fusion-distance 200 \\
-           --gene-gtf $gtf \\
-           -o $base
-       """
+        mapsplice.py \\
+            -c $mapsplice_ref \\
+            -x $prefix \\
+            -1 ${strip1} \\
+            -2 ${strip2} \\
+            -p ${task.cpus} \\
+            --bam \\
+            --seglen 25 \\
+            --min-intron ${params.alignIntronMin} \\
+            --max-intron ${params.alignIntronMax} \\
+            --min-map-len 40 \\
+            --fusion-non-canonical \\
+            --min-fusion-distance 200 \\
+            --gene-gtf $gtf \\
+            -o $base
+        """
     }else{
-       prefix = gtf.toString() - ~/.gtf/
-       """
-       mapsplice.py \\
-           -c $mapsplice_ref \\
-           -x $prefix \\
-           -1 ${fastq[0]} \\
-           -2 ${fastq[1]} \\
-           -p ${task.cpus} \\
-           --bam \\
-           --seglen 25 \\
-           --min-intron ${params.alignIntronMin} \\
-           --max-intron ${params.alignIntronMax} \\
-           --min-map-len 40 \\
-           --fusion-non-canonical \\
-           --min-fusion-distance 200 \\
-           --gene-gtf $gtf \\
-           -o $base
-       """
+        prefix = gtf.toString() - ~/.gtf/
+        """
+        mapsplice.py \\
+            -c $mapsplice_ref \\
+            -x $prefix \\
+            -1 ${fastq[0]} \\
+            -2 ${fastq[1]} \\
+            -p ${task.cpus} \\
+            --bam \\
+            --seglen 25 \\
+            --min-intron ${params.alignIntronMin} \\
+            --max-intron ${params.alignIntronMax} \\
+            --min-map-len 40 \\
+            --fusion-non-canonical \\
+            --min-fusion-distance 200 \\
+            --gene-gtf $gtf \\
+            -o $base
+        """
     }
 }
 
@@ -1562,93 +1562,93 @@ process mapsplice_parse{
 
 if(tools_selected > 1){
 
-   // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
-   // Causes WARN: input caridnality does not match (due to null items), but script works.
-   // No WARN if ciriquant selected in tool?
-   combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
+    // Attempted BUG fix: remainder: true, allow empty channels (null in tuple, input.1 etc in workdir)
+    // Causes WARN: input caridnality does not match (due to null items), but script works.
+    // No WARN if ciriquant selected in tool?
+    combined_tool = ciriquant_results.join(circexplorer2_results, remainder: true).join(dcc_results, remainder: true).join(circrna_finder_results, remainder: true).join(find_circ_results, remainder: true).join(mapsplice_results, remainder: true)
 
-   process consolidate_algorithms{
+    process consolidate_algorithms{
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
+        input:
+        tuple val(base), file(ciriquant), file(circexplorer2), file(dcc), file(circrna_finder), file(find_circ), file(mapsplice) from combined_tool
 
-       output:
-       file("${base}.bed") into sample_counts
+        output:
+        file("${base}.bed") into sample_counts
 
-       script:
-       """
-       ## make tool output csv file
-       files=\$(ls *.bed)
+        script:
+        """
+        ## make tool output csv file
+        files=\$(ls *.bed)
 
-       for i in \$files; do
-           printf "\$i\n" >> samples.csv
-       done
+        for i in \$files; do
+            printf "\$i\n" >> samples.csv
+        done
 
-       ## Add catch for empty file in tool output
-       bash ${projectDir}/bin/check_empty.sh
+        ## Add catch for empty file in tool output
+        bash ${projectDir}/bin/check_empty.sh
 
-       ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
-       ## remove duplicate IDs, keep highest count.
-       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
+        ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
+        ## remove duplicate IDs, keep highest count.
+        Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
 
-       mv combined_counts.bed ${base}.bed
-       """
-   }
+        mv combined_counts.bed ${base}.bed
+        """
+    }
 
-   process get_counts_combined{
+    process get_counts_combined{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
+        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       file(bed) from sample_counts.collect()
+        input:
+        file(bed) from sample_counts.collect()
 
-       output:
-       file("circRNA_matrix.txt") into circRNA_counts
-       file("matrix.txt") into matrix
+        output:
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("matrix.txt") into matrix
 
-       script:
-       """
-       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-       Rscript ${projectDir}/bin/reformat_count_matrix.R
-       """
-   }
+        script:
+        """
+        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        """
+    }
 }else{
 
-   single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results)
+    single_tool = ciriquant_results.mix(circexplorer2_results, dcc_results, circrna_finder_results, find_circ_results, mapsplice_results)
 
-   process get_counts_single{
+    process get_counts_single{
 
-       publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
+        publishDir "${params.outdir}/circrna_discovery/count_matrix", pattern: "matrix.txt", mode: params.publish_dir_mode
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       file(bed) from single_tool.collect()
-       val(tool) from params.tool
+        input:
+        file(bed) from single_tool.collect()
+        val(tool) from params.tool
 
-       output:
-       file("circRNA_matrix.txt") into circRNA_counts
-       file("matrix.txt") into matrix
+        output:
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("matrix.txt") into matrix
 
-       script:
-       """
-       # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
-       for b in *.bed; do
-           foo=\${b%".bed"};
-           bar=\${foo%"_${tool}"};
-           mv \$b \${bar}.bed
-       done
+        script:
+        """
+        # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
+        for b in *.bed; do
+            foo=\${b%".bed"};
+            bar=\${foo%"_${tool}"};
+            mv \$b \${bar}.bed
+        done
 
-       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-       Rscript ${projectDir}/bin/reformat_count_matrix.R
-       """
+        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        """
     }
 }
 
@@ -2032,7 +2032,7 @@ process diff_exp{
 
 /*
 ================================================================================
-                           Auxiliary functions
+                            Auxiliary functions
 ================================================================================
 */
 
@@ -2149,9 +2149,9 @@ def extract_data(csvFile){
 
         // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
         if(bam.matches('NA')){
-           [ samples, [read1, read2] ]
+            [ samples, [read1, read2] ]
         }else{
-           [ samples, bam ]
+            [ samples, bam ]
         }
 
         }
@@ -2160,43 +2160,43 @@ def extract_data(csvFile){
 // If no input CSV provided, parse input directory containing files.
 def retrieve_input_paths(input, type){
 
-      if(type == 'fastq'){
+    if(type == 'fastq'){
 
-         fastq_files = input
-         Channel
-               .fromFilePairs(fastq_files)
-               .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
-               .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', 'fq.gz', fastq' or 'fq'."}
-               .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
-               .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
-               .set{reads_for_csv}
+        fastq_files = input
+        Channel
+                .fromFilePairs(fastq_files)
+                .filter{ it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
+                .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', 'fq.gz', fastq' or 'fq'."}
+                .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
+                .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
+                .set{reads_for_csv}
 
-      }else if(type == 'bam'){
+    }else if(type == 'bam'){
 
-         bam_files = input
-         Channel
-               .fromFilePairs(bam_files, size: 1)
-               .filter{ it =~/.*.bam/}
-               .map{ row -> [row[0], [row[1][0]]]}
-               .ifEmpty{exit 1, "[nf-core/circrna] error: Cannot find bam file matching: ${bam_files}"}
-               .set{reads_for_csv}
-      }
+        bam_files = input
+        Channel
+                .fromFilePairs(bam_files, size: 1)
+                .filter{ it =~/.*.bam/}
+                .map{ row -> [row[0], [row[1][0]]]}
+                .ifEmpty{exit 1, "[nf-core/circrna] error: Cannot find bam file matching: ${bam_files}"}
+                .set{reads_for_csv}
+    }
 
-      reads_for_csv
-                  .map{
+    reads_for_csv
+                .map{
 
-                  def samples = it[0]
-                  def read1 = (type == 'bam') ? 'NA' : return_file(it[1][0])
-                  def read2 = (type == 'bam') ? 'NA' : return_file(it[1][1])
-                  def bam =   (type == 'fastq') ? 'NA' : return_file(it[1][0])
+                def samples = it[0]
+                def read1 = (type == 'bam') ? 'NA' : return_file(it[1][0])
+                def read2 = (type == 'bam') ? 'NA' : return_file(it[1][1])
+                def bam =   (type == 'fastq') ? 'NA' : return_file(it[1][0])
 
-                  if(bam.matches('NA')){
-                     [ samples, [read1, read2] ]
-                  }else{
-                     [ samples, bam ]
-                  }
+                if(bam.matches('NA')){
+                    [ samples, [read1, read2] ]
+                }else{
+                    [ samples, bam ]
+                }
 
-                  }
+                }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
 }
 
@@ -2232,7 +2232,7 @@ def examine_phenotype(pheno){
 
 /*
 ================================================================================
-                           nf-core functions
+                            nf-core functions
 ================================================================================
 */
 
@@ -2350,7 +2350,7 @@ workflow.onComplete {
             // Catch failures and try with plaintext
             def mail_cmd = [ 'mail', '-s', subject, '--content-type=text/html', email_address ]
             if ( mqc_report.size() <= params.max_multiqc_email_size.toBytes() ) {
-              mail_cmd += [ '-A', mqc_report ]
+            mail_cmd += [ '-A', mqc_report ]
             }
             mail_cmd.execute() << email_html
             log.info "[nf-core/circrna] Sent summary e-mail to $email_address (mail)"

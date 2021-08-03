@@ -2,7 +2,7 @@
 
 /*
 ================================================================================
-                              nf-core/circrna
+                            nf-core/circrna
 ================================================================================
 Started August 2020.
 Dev version to nf-core Feb 2021.
@@ -22,7 +22,7 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 
 /*
 ================================================================================
-                              Print Help
+                            Print Help
 ================================================================================
 */
 
@@ -35,7 +35,7 @@ if (params.help) {
 
 /*
 ================================================================================
-                          Check parameters
+                        Check parameters
 ================================================================================
 */
 
@@ -66,10 +66,10 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
 // (Must not have NA's, must have 'condition' as colname)
 
 if(params.phenotype){
-   pheno_file = file(params.phenotype)
-   ch_phenotype = examine_phenotype(pheno_file)
+    pheno_file = file(params.phenotype)
+    ch_phenotype = examine_phenotype(pheno_file)
 } else {
-   ch_phenotype = Channel.empty()
+    ch_phenotype = Channel.empty()
 }
 
 // Check BBDUK params
@@ -79,15 +79,15 @@ if(params.phenotype){
 */
 
 if(params.trim_fastq){
-   if(params.adapters){
-      adapters = file(params.adapters, checkIfExists: true)
-      if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
-         exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
-      }
+    if(params.adapters){
+    adapters = file(params.adapters, checkIfExists: true)
+    if(!params.k && !params.ktrim || !params.k && params.ktrim || params.k && !params.ktrim){
+        exit 1, "[nf-core/circrna] error: Adapter file provided for trimming but missing values for '--k' and/or '--ktrim'.Please provide values for '--k' and '--ktrim'.\n\nPlease check the parameter documentation online."
+    }
     }
     if(params.trimq && !params.qtrim || !params.trimq && params.qtrim){
-       exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
-   }
+        exit 1, "[nf-core/circrna] error: Both '--trimq' and '--qtrim' are required to perform quality filtering - only one has been provided.\n\nPlease check the parameter documentation online."
+    }
 }
 
 // Check filtering params
@@ -102,18 +102,18 @@ if(tools_selected > 1 && params.tool_filter > tools_selected){
 
 if(has_extension(params.input, "csv")){
 
-   csv_file = file(params.input, checkIfExists: true)
-   ch_input = extract_data(csv_file)
+    csv_file = file(params.input, checkIfExists: true)
+    ch_input = extract_data(csv_file)
 
 }else if(params.input && !has_extension(params.input, "csv")){
 
-   log.info ""
-   log.info "Input data log info:"
-   log.info "No input sample CSV file provided, attempting to read from path instead."
-   log.info "Reading input data from path: ${params.input}\n"
-   log.info ""
+    log.info ""
+    log.info "Input data log info:"
+    log.info "No input sample CSV file provided, attempting to read from path instead."
+    log.info "Reading input data from path: ${params.input}\n"
+    log.info ""
 
-   ch_input = retrieve_input_paths(params.input, params.input_type)
+    ch_input = retrieve_input_paths(params.input, params.input_type)
 
 }
 
@@ -181,7 +181,7 @@ if(params.star)      summary ['STAR indices']     = params.star
 
 summary['Skip BBDUK']     = params.trim_fastq
 if(params.trim_fastq){
-                           summary['BBDUK']             = "Enabled"
+                            summary['BBDUK']             = "Enabled"
 if(params.adapters)        summary['Adapter file']      = params.adapters
 if(params.k)               summary['k']                 = params.k
 if(params.ktrim)           summary['ktrim']             = params.ktrim
@@ -277,7 +277,7 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 
 /*
 ================================================================================
-                           SOFTWARE VERSIONS
+                            SOFTWARE VERSIONS
 ================================================================================
 */
 
@@ -290,8 +290,8 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 process SOFTWARE_VERSIONS {
     publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
     saveAs: {filename ->
-      if (filename.indexOf(".csv") > 0) filename
-      else null
+    if (filename.indexOf(".csv") > 0) filename
+    else null
     }
 
     output:
@@ -356,6 +356,7 @@ process BWA_INDEX {
     bwa index $fasta -p BWAIndex/${fasta.baseName}
     """
 }
+
 /*
   comment to reviewer
   What I think I'm doing below is:
@@ -393,7 +394,7 @@ process HISAT2_INDEX {
     tag "${fasta}"
     label 'process_medium'
     publishDir params.outdir, mode: params.publish_dir_mode,
-       saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
+        saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
     when:
     !params.hisat && params.fasta && ('differential_expression' in module || 'ciriquant' in tool)
@@ -529,7 +530,7 @@ ch_segemehl = params.segemehl ? Channel.value(file(params.segemehl)) : segemehl_
 
 /*
 ================================================================================
-                           Misc circRNA Requirements
+                            Misc circRNA Requirements
 ================================================================================
 */
 
@@ -573,10 +574,10 @@ process SPLIT_CHROMOSOMES{
 
     if [[ $n_chr -gt 1 ]];
     then
-      awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
-      rm !{fasta}
+    awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
+    rm !{fasta}
     else
-      :
+    :
     fi
     '''
 }
@@ -610,15 +611,15 @@ process CIRIQUANT_YML{
     touch travis.yml
     printf "name: ciriquant\n\
     tools:\n\
-     bwa: \$BWA\n\
-     hisat2: \$HISAT2\n\
-     stringtie: \$STRINGTIE\n\
-     samtools: \$SAMTOOLS\n\n\
+    bwa: \$BWA\n\
+    hisat2: \$HISAT2\n\
+    stringtie: \$STRINGTIE\n\
+    samtools: \$SAMTOOLS\n\n\
     reference:\n\
-     fasta: ${fasta_path}\n\
-     gtf: ${gtf_path}\n\
-     bwa_index: ${bwa_path}/${bwa_prefix}\n\
-     hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
+    fasta: ${fasta_path}\n\
+    gtf: ${gtf_path}\n\
+    bwa_index: ${bwa_path}/${bwa_prefix}\n\
+    hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
     """
 }
 
@@ -677,9 +678,9 @@ process BAM_TO_FASTQ{
 }
 
 if(params.input_type == 'bam'){
-   (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
+    (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
 }else if(params.input_type == 'fastq'){
-   (fastqc_reads, trimming_reads, raw_reads) = fastq_input.into(3)
+    (fastqc_reads, trimming_reads, raw_reads) = fastq_input.into(3)
 }
 
 
@@ -775,7 +776,7 @@ process FASTQC_BBDUK {
 
 /*
 ================================================================================
-                     circRNA quantification + annotation
+                    circRNA quantification + annotation
 ================================================================================
 */
 
@@ -1179,7 +1180,7 @@ process DCC_MATE2{
     output:
     tuple val(base), file("mate2") into dcc_mate2
 
-	  script:
+    script:
     def readFilesCommand = reads[0].toString().endsWith('.gz') ? "--readFilesCommand zcat" : ''
     """
     mkdir -p mate2
@@ -1412,21 +1413,21 @@ process MAPSPLICE_ALIGN{
     $handleGzip_R2
 
     mapsplice.py \\
-       -c $mapsplice_ref \\
-       -x $prefix \\
-       -1 ${read1} \\
-       -2 ${read2} \\
-       -p ${task.cpus} \\
-       --bam \\
-       --seglen 25 \\
-       --min-intron ${params.alignIntronMin} \\
-       --max-intron ${params.alignIntronMax} \\
-       --min-map-len 40 \\
-       --fusion-non-canonical \\
-       --min-fusion-distance 200 \\
-       --gene-gtf $gtf \\
-       -o $base
-   """
+        -c $mapsplice_ref \\
+        -x $prefix \\
+        -1 ${read1} \\
+        -2 ${read2} \\
+        -p ${task.cpus} \\
+        --bam \\
+        --seglen 25 \\
+        --min-intron ${params.alignIntronMin} \\
+        --max-intron ${params.alignIntronMax} \\
+        --min-map-len 40 \\
+        --fusion-non-canonical \\
+        --min-fusion-distance 200 \\
+        --gene-gtf $gtf \\
+        -o $base
+    """
 }
 
 /*
@@ -1558,92 +1559,92 @@ process SEGEMEHL{
 
 /*
 ================================================================================
-                         Generate circRNA count matrix
+                        Generate circRNA count matrix
 ================================================================================
 */
 
 quantification_results = ciriquant_results.mix(circexplorer2_results, circrna_finder_results, dcc_results, find_circ_results, mapsplice_results, segemehl_results)
 
 if(tools_selected > 1){
-   process MERGE_TOOLS{
-       tag "${base}"
+    process MERGE_TOOLS{
+        tag "${base}"
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       tuple val(base), file(bed) from quantification_results.groupTuple()
+        input:
+        tuple val(base), file(bed) from quantification_results.groupTuple()
 
-       output:
-       file("${base}.bed") into sample_counts
+        output:
+        file("${base}.bed") into sample_counts
 
-       script:
-       """
-       ## make list of files for R to read
-       ls *.bed > samples.csv
+        script:
+        """
+        ## make list of files for R to read
+        ls *.bed > samples.csv
 
-       ## Add catch for empty bed file and delete
-       bash ${projectDir}/bin/check_empty.sh
+        ## Add catch for empty bed file and delete
+        bash ${projectDir}/bin/check_empty.sh
 
-       ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
-       ## remove duplicate IDs, keep highest count.
-       Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
+        ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
+        ## remove duplicate IDs, keep highest count.
+        Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
 
-       mv combined_counts.bed ${base}.bed
-       """
-   }
-   process COUNT_MATRIX_COMBINED{
-       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
+        mv combined_counts.bed ${base}.bed
+        """
+    }
+    process COUNT_MATRIX_COMBINED{
+        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       file(bed) from sample_counts.collect()
+        input:
+        file(bed) from sample_counts.collect()
 
-       output:
-       file("circRNA_matrix.txt") into circRNA_counts
-       file("count_matrix.txt") into matrix
+        output:
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("count_matrix.txt") into matrix
 
-       script:
-       """
-       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-       Rscript ${projectDir}/bin/reformat_count_matrix.R
-       """
-   }
+        script:
+        """
+        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        """
+    }
 }else{
-   process COUNT_MATRIX_SINGLE{
-       publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
+    process COUNT_MATRIX_SINGLE{
+        publishDir "${params.outdir}/circrna_discovery", pattern: "count_matrix.txt", mode: params.publish_dir_mode
 
-       when:
-       'circrna_discovery' in module
+        when:
+        'circrna_discovery' in module
 
-       input:
-       file(bed) from quantification_results.collect()
-       val(tool) from params.tool
+        input:
+        file(bed) from quantification_results.collect()
+        val(tool) from params.tool
 
-       output:
-       file("circRNA_matrix.txt") into circRNA_counts
-       file("count_matrix.txt") into matrix
+        output:
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("count_matrix.txt") into matrix
 
-       script:
-       """
-       # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
-       for b in *.bed; do
-           basename=\${b%".bed"};
-           sample_name=\${basename%"_${tool}"};
-           mv \$b \${sample_name}.bed
-       done
+        script:
+        """
+        # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
+        for b in *.bed; do
+            basename=\${b%".bed"};
+            sample_name=\${basename%"_${tool}"};
+            mv \$b \${sample_name}.bed
+        done
 
-       python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-       Rscript ${projectDir}/bin/reformat_count_matrix.R
-       """
+        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        """
     }
 }
 
 /*
 ================================================================================
-                             miRNA Prediction
+                            miRNA Prediction
 ================================================================================
 */
 
@@ -1852,7 +1853,7 @@ process DEA{
 
 /*
 ================================================================================
-                                   MultiQC
+                                    MultiQC
 ================================================================================
 */
 
@@ -1889,7 +1890,7 @@ process MULTIQC{
 
 /*
 ================================================================================
-                           Auxiliary functions
+                            Auxiliary functions
 ================================================================================
 */
 
@@ -1976,9 +1977,9 @@ def extract_data(csvFile){
 
         // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
         if(bam.matches('NA')){
-           [ samples, [read1, read2] ]
+            [ samples, [read1, read2] ]
         }else{
-           [ samples, bam ]
+            [ samples, bam ]
         }
 
         }
@@ -1987,43 +1988,43 @@ def extract_data(csvFile){
 // If no input CSV provided, parse input directory containing files.
 def retrieve_input_paths(input, type){
 
-      if(type == 'fastq'){
+    if(type == 'fastq'){
 
-         fastq_files = input
-         Channel
-               .fromFilePairs(fastq_files)
-               .filter { it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
-               .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', '.fq.gz', .fastq' or '.fq'."}
-               .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
-               .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
-               .set{reads_for_csv}
+        fastq_files = input
+        Channel
+                .fromFilePairs(fastq_files)
+                .filter { it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
+                .ifEmpty{exit 1, "[nf-core/circrna] error: Your FASTQ files do not have the appropriate extension of either '.fastq.gz', '.fq.gz', .fastq' or '.fq'."}
+                .map{ row -> [ row[0], [ row[1][0], row[1][1] ]]}
+                .ifEmpty{exit 1, "[nf-core/circrna] error: --input was empty - no files supplied"}
+                .set{reads_for_csv}
 
-      }else if(type == 'bam'){
+    }else if(type == 'bam'){
 
-         bam_files = input
-         Channel
-               .fromFilePairs(bam_files, size: 1)
-               .filter{ it =~/.*.bam/}
-               .map{ row -> [row[0], [row[1][0]]]}
-               .ifEmpty{exit 1, "[nf-core/circrna] error: Cannot find bam file matching: ${bam_files}"}
-               .set{reads_for_csv}
-      }
+        bam_files = input
+        Channel
+                .fromFilePairs(bam_files, size: 1)
+                .filter{ it =~/.*.bam/}
+                .map{ row -> [row[0], [row[1][0]]]}
+                .ifEmpty{exit 1, "[nf-core/circrna] error: Cannot find bam file matching: ${bam_files}"}
+                .set{reads_for_csv}
+    }
 
-      reads_for_csv
-                  .map{
+    reads_for_csv
+                .map{
 
-                  def samples = it[0]
-                  def read1 = (type == 'bam') ? 'NA' : return_file(it[1][0])
-                  def read2 = (type == 'bam') ? 'NA' : return_file(it[1][1])
-                  def bam =   (type == 'fastq') ? 'NA' : return_file(it[1][0])
+                def samples = it[0]
+                def read1 = (type == 'bam') ? 'NA' : return_file(it[1][0])
+                def read2 = (type == 'bam') ? 'NA' : return_file(it[1][1])
+                def bam =   (type == 'fastq') ? 'NA' : return_file(it[1][0])
 
-                  if(bam.matches('NA')){
-                     [ samples, [read1, read2] ]
-                  }else{
-                     [ samples, bam ]
-                  }
+                if(bam.matches('NA')){
+                    [ samples, [read1, read2] ]
+                }else{
+                    [ samples, bam ]
+                }
 
-                  }
+                }
                 .ifEmpty{exit 1, "[nf-core/circrna] error: Invalid file paths with --input"}
 }
 
@@ -2054,7 +2055,7 @@ def examine_phenotype(pheno){
 
 /*
 ================================================================================
-                           nf-core functions
+                            nf-core functions
 ================================================================================
 */
 
@@ -2172,7 +2173,7 @@ workflow.onComplete {
             // Catch failures and try with plaintext
             def mail_cmd = [ 'mail', '-s', subject, '--content-type=text/html', email_address ]
             if ( mqc_report.size() <= params.max_multiqc_email_size.toBytes() ) {
-              mail_cmd += [ '-A', mqc_report ]
+            mail_cmd += [ '-A', mqc_report ]
             }
             mail_cmd.execute() << email_html
             log.info "[nf-core/circrna] Sent summary e-mail to $email_address (mail)"

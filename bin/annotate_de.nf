@@ -12,24 +12,24 @@
 
  process fetch_de_circ_id{
 
-         input:
-           file(circrna_dir) from circrna_dir_fetch
+        input:
+            file(circrna_dir) from circrna_dir_fetch
 
-         output:
-           file("*.bed") into de_bed_files
+        output:
+            file("*.bed") into de_bed_files
 
-         when: 'differential_expression' in module
+        when: 'differential_expression' in module
 
-         script:
-         up_reg = "${circrna_dir}/*up_regulated_differential_expression.txt"
-       	down_reg = "${circrna_dir}/*down_regulated_differential_expression.txt"
-         """
-         grep -v "baseMean" $up_reg > up_reg_noheader.txt
-         cat $down_reg up_reg_noheader.txt > de_circs.txt
+        script:
+        up_reg = "${circrna_dir}/*up_regulated_differential_expression.txt"
+            down_reg = "${circrna_dir}/*down_regulated_differential_expression.txt"
+        """
+        grep -v "baseMean" $up_reg > up_reg_noheader.txt
+        cat $down_reg up_reg_noheader.txt > de_circs.txt
 
-         # make dummy files out of these to place in channel
-         awk '{print \$1}' de_circs.txt | grep -v "ID" | while read -r line; do touch \${line}.bed12.bed; done
-         """
+        # make dummy files out of these to place in channel
+        awk '{print \$1}' de_circs.txt | grep -v "ID" | while read -r line; do touch \${line}.bed12.bed; done
+        """
  }
 
  // de circrna dummy bed files in de_bed_files channel, map to get simpleName
@@ -49,31 +49,31 @@
 
  process de_plots{
 
-         publishDir "${params.outdir}/differential_expression/circrna_expression_plots", pattern:"*.pdf", mode:'copy'
+        publishDir "${params.outdir}/differential_expression/circrna_expression_plots", pattern:"*.pdf", mode:'copy'
 
-       	input:
-       		file(phenotype) from ch_phenotype
-       		tuple val(base), file(bed), file(parent_gene), file(mature_length), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
+            input:
+                file(phenotype) from ch_phenotype
+                tuple val(base), file(bed), file(parent_gene), file(mature_length), file(circRNA), file(rnaseq) from ch_report.combine(ch_DESeq2_dirs)
 
-       	output:
-       		file("*.pdf") into de_plots
-           file("*DESeq2_stats.txt") into de_stats
+            output:
+                file("*.pdf") into de_plots
+            file("*DESeq2_stats.txt") into de_stats
 
-         when: 'differential_expression' in module
+        when: 'differential_expression' in module
 
-       	script:
-       	up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
-       	down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
-       	circ_counts = "${circRNA}/DESeq2_normalized_counts.txt"
-       	gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
-       	"""
-       	# merge upreg, downreg info
-         grep -v "baseMean" $up_reg > up_reg_noheader.txt
-         cat $down_reg up_reg_noheader.txt > de_circ.txt
+            script:
+            up_reg = "${circRNA}/*up_regulated_differential_expression.txt"
+            down_reg = "${circRNA}/*down_regulated_differential_expression.txt"
+            circ_counts = "${circRNA}/DESeq2_normalized_counts.txt"
+            gene_counts = "${rnaseq}/DESeq2_normalized_counts.txt"
+            """
+            # merge upreg, downreg info
+        grep -v "baseMean" $up_reg > up_reg_noheader.txt
+        cat $down_reg up_reg_noheader.txt > de_circ.txt
 
-       	# Make plots and generate circRNA info
-       	Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype
-       	"""
+            # Make plots and generate circRNA info
+            Rscript ${projectDir}/bin/circ_report.R de_circ.txt $circ_counts $gene_counts $parent_gene $bed $mature_length $phenotype
+            """
  }
 
  // collect all from previous process
@@ -84,24 +84,24 @@
 
  process master_report{
 
-         publishDir "${params.outdir}/differential_expression/circrna_diff_exp_stats", mode:'copy'
+        publishDir "${params.outdir}/differential_expression/circrna_diff_exp_stats", mode:'copy'
 
-       	input:
-       		file(reports) from de_stats.collect()
+            input:
+                file(reports) from de_stats.collect()
 
-       	output:
-       		file("*circRNAs.txt") into final_out
+            output:
+                file("*circRNAs.txt") into final_out
 
-         when: 'differential_expression' in module
+        when: 'differential_expression' in module
 
-       	script:
-       	"""
-       	# remove header, add manually
-       	cat *.txt > merged.txt
-       	grep -v "Log2FC" merged.txt > no_headers.txt
-       	echo "circRNA_ID Type Mature_Length Parent_Gene Strand Log2FC pvalue Adjusted_pvalue" | tr ' ' '\t' > headers.txt
-       	cat headers.txt no_headers.txt > merged_reports.txt
+            script:
+            """
+            # remove header, add manually
+            cat *.txt > merged.txt
+            grep -v "Log2FC" merged.txt > no_headers.txt
+            echo "circRNA_ID Type Mature_Length Parent_Gene Strand Log2FC pvalue Adjusted_pvalue" | tr ' ' '\t' > headers.txt
+            cat headers.txt no_headers.txt > merged_reports.txt
 
-       	Rscript ${projectDir}/bin/annotate_report.R
-       	"""
+            Rscript ${projectDir}/bin/annotate_report.R
+            """
  }
