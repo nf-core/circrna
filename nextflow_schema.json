@@ -149,7 +149,13 @@
                 },
                 "fasta": {
                     "type": "string",
+<<<<<<< HEAD
+                    "format": "file-path",
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+=======
                     "fa_icon": "fas fa-font",
+>>>>>>> dev
                     "description": "Path to FASTA genome file.",
                     "help_text": "Must be provided if --genome null ",
                     "pattern": "\\.(fa|fasta)$"
