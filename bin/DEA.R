@@ -193,10 +193,10 @@ ens2symbol <- function(mat, inputdata){
 
         mat$ensembl_gene_id <- rownames(mat)
         info <- getBM(attributes=c("ensembl_gene_id","external_gene_name"),
-                      filters = c("ensembl_gene_id"),
-                      values = mat$ensembl_gene_id,
-                      mart = mart,
-                      useCache=FALSE)
+                        filters = c("ensembl_gene_id"),
+                        values = mat$ensembl_gene_id,
+                        mart = mart,
+                        useCache=FALSE)
 
         tmp <- merge(mat, info, by="ensembl_gene_id")
         tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
@@ -210,10 +210,10 @@ ens2symbol <- function(mat, inputdata){
 
         mat$ensembl_gene_id_version <- rownames(mat)
         info <- getBM(attributes=c("ensembl_gene_id_version","external_gene_name"),
-                  filters = c("ensembl_gene_id_version"),
-                  values = mat$ensembl_gene_id_version,
-                  mart = mart,
-                  useCache=FALSE)
+                    filters = c("ensembl_gene_id_version"),
+                    values = mat$ensembl_gene_id_version,
+                    mart = mart,
+                    useCache=FALSE)
 
         tmp <- merge(mat, info, by="ensembl_gene_id_version")
         tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
@@ -257,15 +257,15 @@ annotate_de_genes <- function(df, inputdata){
 
     df$external_gene_name <- rownames(df)
     info <- getBM(attributes=c("external_gene_name",
-                               "chromosome_name",
-                               "start_position",
-                               "end_position",
-                               "strand",
-                               "entrezgene_description"),
-                  filters = c("external_gene_name"),
-                  values = rownames(df),
-                  mart = mart,
-                  useCache=FALSE)
+                                "chromosome_name",
+                                "start_position",
+                                "end_position",
+                                "strand",
+                                "entrezgene_description"),
+                    filters = c("external_gene_name"),
+                    values = rownames(df),
+                    mart = mart,
+                    useCache=FALSE)
 
     tmp <- merge(df, info, by="external_gene_name")
     tmp$strand <- gsub("-1", "-", tmp$strand)
@@ -621,21 +621,21 @@ make_boxplots <- function(de, cts, contrast){
         colnames(mat) <- names;
 
         p1 <- ggboxplot(mat, x="condition", y="counts",
-                       fill="condition", palette = "npg",
-                       title = paste(circ_id),
-                       ylab = "normalized counts", xlab="",
-                       add = c("dotplot"),
-                       add.params = list(size=0.5, jitter=0.1),
-                       legend = "none",
-                       bxp.errorbar = T,
-                       bxp.errorbar.width = 0.2, width=0.3,
-                       ggtheme = theme_classic()) +
-                       rotate_x_text(angle = 0) +
-                       theme(plot.title = element_text(face = "bold", size=16, hjust = 0.5)) +
-                       theme(axis.text.x = element_text( colour = "black", size=14)) +
-                       theme(axis.title.y = element_text(size=14, face = "italic")) +
-                       theme(axis.title.x = element_blank()) +
-                       theme(axis.text.y = element_text(color = "black", size=10))
+                        fill="condition", palette = "npg",
+                        title = paste(circ_id),
+                        ylab = "normalized counts", xlab="",
+                        add = c("dotplot"),
+                        add.params = list(size=0.5, jitter=0.1),
+                        legend = "none",
+                        bxp.errorbar = T,
+                        bxp.errorbar.width = 0.2, width=0.3,
+                        ggtheme = theme_classic()) +
+                        rotate_x_text(angle = 0) +
+                        theme(plot.title = element_text(face = "bold", size=16, hjust = 0.5)) +
+                        theme(axis.text.x = element_text( colour = "black", size=14)) +
+                        theme(axis.title.y = element_text(size=14, face = "italic")) +
+                        theme(axis.title.x = element_blank()) +
+                        theme(axis.text.y = element_text(color = "black", size=10))
 
         pdf(file.path(dir, paste(circ_id, "boxplot.pdf", sep="_")))
         plot(p1)
