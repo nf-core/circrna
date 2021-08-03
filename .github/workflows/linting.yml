@@ -46,7 +46,6 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           allow-repeats: false
 
-<<<<<<< HEAD
   EditorConfig:
     runs-on: ubuntu-latest
     steps:
@@ -61,8 +60,6 @@ jobs:
 
       - name: Run ECLint check
         run: editorconfig-checker -exclude README.md $(git ls-files | grep -v test)
-=======
->>>>>>> dev
 
   YAML:
     runs-on: ubuntu-latest
