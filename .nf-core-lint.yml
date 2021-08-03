@@ -1,3 +1,5 @@
 files_unchanged:
   - docs/README.md
   - .github/workflows/linting.yml
+
+template_strings: FALSE
