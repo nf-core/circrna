@@ -686,12 +686,12 @@ process BAM_TO_FASTQ{
     """
 }
 
+// fastq_input staged on line 116
 if(params.input_type == 'bam'){
     (fastqc_reads, trimming_reads, raw_reads) = fastq_built.into(3)
 }else if(params.input_type == 'fastq'){
     (fastqc_reads, trimming_reads, raw_reads) = fastq_input.into(3)
 }
-
 
 process FASTQC_RAW {
     tag "${base}"
@@ -789,13 +789,9 @@ process FASTQC_BBDUK {
 ================================================================================
 */
 
-process CIRIQUANT{
+process CIRIQUANT_ALIGN{
     tag "${base}"
     label 'process_high'
-
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
 
@@ -805,16 +801,9 @@ process CIRIQUANT{
     input:
     tuple val(base), file(fastq) from ciriquant_reads
     file(ciriquant_yml) from ch_ciriquant_yml
-    file(gtf_filt) from ch_gtf_filtered
-    file(fasta) from ch_fasta
-    file(fai) from ch_fai
 
     output:
-    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
     tuple val(base), file("${base}") into ciriquant_intermediates
-    tuple val(base), file("${base}.bed") into ciriquant_annotated
-    tuple val(base), file("fasta/*") into ciriquant_fasta
-    tuple val(base), file("${base}.log") into ciriquant_annotation_logs
 
     script:
     """
@@ -826,8 +815,36 @@ process CIRIQUANT{
         --no-gene \\
         -o ${base} \\
         -p ${base}
+    """
+}
 
-    cp ${base}/${base}.gtf .
+process CIRIQUANT_PARSE{
+    tag "${base}"
+    label 'process_medium'
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
+        saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRIquant/intermediates/${it}" : null }
+
+    when:
+    'ciriquant' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(ciriquant_dir) from ciriquant_intermediates
+    file(gtf_filt) from ch_gtf_filtered
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+
+    output:
+    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
+    tuple val(base), file("${base}.bed") into ciriquant_annotated
+    tuple val(base), file("fasta/*") into ciriquant_fasta
+    tuple val(base), file("${base}.log") into ciriquant_annotation_logs
+
+    script:
+    """
+    cp ${ciriquant_dir}/${base}.gtf .
 
     ## extract counts (convert float/double to int [no loss of information])
     grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
@@ -1162,6 +1179,7 @@ process DCC_MATE1{
         --outReadsUnmapped None \\
         --outSAMtype BAM SortedByCoordinate \\
         --outSAMunmapped Within \\
+        --outBAMsortingBinsN 150 \\
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
         ${readFilesCommand} \\
         --readFilesIn ${reads} \\
@@ -1220,6 +1238,7 @@ process DCC_MATE2{
         --outReadsUnmapped None \\
         --outSAMtype BAM SortedByCoordinate \\
         --outSAMunmapped Within \\
+        --outBAMsortingBinsN 150 \\
         --outSJfilterOverhangMin ${params.outSJfilterOverhangMin} \\
         ${readFilesCommand} \\
         --readFilesIn ${reads} \\
@@ -1333,7 +1352,8 @@ process FIND_ANCHORS{
     """
 }
 
-// avoid input collision when iGenomes index comes pre-packaged with ref fasta file.
+// avoid input collision here because iGenomes index comes pre-packaged with ref fasta file.
+// Filter out the ref fasta file from pre-built index so I can use file(fasta) when --genome null
 ch_avoid_collisions = ch_bowtie2_find_circ.flatten().filter{ file -> file.getFileName().toString().endsWith(".bt2") }
 
 process FIND_CIRC{
@@ -1498,12 +1518,9 @@ process MAPSPLICE_PARSE{
     """
 }
 
-process SEGEMEHL{
+process SEGEMEHL_ALIGN{
     tag "${base}"
     label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/Segemehl/intermediates/${it}" : null }
 
@@ -1513,16 +1530,11 @@ process SEGEMEHL{
     input:
     tuple val(base), file(fastq) from segemehl_reads
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
     file(idx) from ch_segemehl
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
-    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
     tuple val(base), file("${base}") into segemehl_intermediates
-    tuple val(base), file("${base}.bed") into segemehl_annotated
-    tuple val(base), file("fasta/*") into segemehl_fasta
-    tuple val(base), file("${base}.log") into segemehl_logs
+    tuple val(base), file("${base}/${base}_collapsed.bed") into segemehl_collapsed_counts
 
     script:
     def handleSam = params.save_quantification_intermediates ? "samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam" : "rm -rf ${base}/${base}.sam"
@@ -1543,9 +1555,36 @@ process SEGEMEHL{
     # Segemehl does not preserve strand information, nor account for it
     # when collapsing and counting reads using haarz.x. This is my own fix which does.
     grep ';C;' ${base}/${base}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${base}/${base}_collapsed.bed
+    """
+}
 
-    # now let user filter by BSJ read count param.
-    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
+process SEGEMEHL_PARSE{
+    tag "${base}"
+    label 'process_medium'
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
+
+    when:
+    'segemehl' in tool && 'circrna_discovery' in module
+
+    input:
+    tuple val(base), file(intermediate_dir) from segemehl_collapsed_counts
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+    file(idx) from ch_segemehl
+    file(gtf_filt) from ch_gtf_filtered
+
+    output:
+    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
+    tuple val(base), file("${base}.bed") into segemehl_annotated
+    tuple val(base), file("fasta/*") into segemehl_fasta
+    tuple val(base), file("${base}.log") into segemehl_logs
+
+    script:
+    """
+    # Let user filter by BSJ read count param.
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${intermediate_dir}/${base}_collapsed.bed > ${base}_segemehl.bed
 
     ## Annotation
     awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > circs.bed
