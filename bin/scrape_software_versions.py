@@ -7,7 +7,7 @@ regexes = {
     "nf-core/circrna": ["v_pipeline.txt", r"(\S+)"],
     "Nextflow": ["v_nextflow.txt", r"(\S+)"],
     "BBDUK": ["v_bbduk.txt", r"(\S+)"],
-    "BEDTools": ["v_bedtools.txt", r"(\S+)"],
+    "BEDtools": ["v_bedtools.txt", r"(\S+)"],
     "Bowtie": ["v_bowtie.txt", r"(\S+)"],
     "Bowtie2": ["v_bowtie2.txt", r"(\S+)"],
     "BWA": ["v_bwa.txt", r"(\S+)"],

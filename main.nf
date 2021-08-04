@@ -290,13 +290,13 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 process SOFTWARE_VERSIONS {
     publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
     saveAs: {filename ->
-        if (filename.indexOf(".csv") > 0) filename
+        if (filename.indexOf(".tsv") > 0) filename
         else null
     }
 
     output:
     file 'software_versions_mqc.yaml' into software_versions_yaml
-    file "software_versions.csv"
+    file "software_versions.tsv"
 
     script:
     """
