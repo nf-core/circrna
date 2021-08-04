@@ -1567,7 +1567,7 @@ process SEGEMEHL_PARSE{
     'segemehl' in tool && 'circrna_discovery' in module
 
     input:
-    tuple val(base), file(intermediate_dir) from segemehl_collapsed_counts
+    tuple val(base), file(collapsed_counts) from segemehl_collapsed_counts
     file(fasta) from ch_fasta
     file(fai) from ch_fai
     file(idx) from ch_segemehl
@@ -1582,7 +1582,7 @@ process SEGEMEHL_PARSE{
     script:
     """
     # Let user filter by BSJ read count param.
-    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${intermediate_dir}/${base}_collapsed.bed > ${base}_segemehl.bed
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' $collapsed_counts > ${base}_segemehl.bed
 
     ## Annotation
     awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > circs.bed
