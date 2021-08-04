@@ -48,6 +48,7 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
 }
 
 // Check Tools selected
+// Is schema enumerate case sensitive? Seems easier to let toLowerCase take care of misplaced caps from user.
 toolList = defineToolList()
 tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unknown tool selected, see --help for more information."
@@ -56,11 +57,6 @@ if (!checkParameterList(tool, toolList)) exit 1, "[nf-core/circrna] error: Unkno
 moduleList = defineModuleList()
 module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
 if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: Unknown module selected, see --help for more information."
-
-/*
- * The below index parameters are allowed to be empty (they will be generated if empty)
- * Mainly concerned about valid file extensions when provided (advanced checks not capable in Schema)
- */
 
 // Check phenotype file and stage the channel
 // (Must not have NA's, must have 'condition' as colname)
@@ -75,7 +71,7 @@ if(params.phenotype){
 // Check BBDUK params
 /*
   check adapters file exists
-  check combinations of parameters have been supplied
+  check combinations of parameters have been supplied correctly
 */
 
 if(params.trim_fastq){
@@ -135,6 +131,7 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yaml", checkIfExists
 ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
 ch_output_docs = file("$projectDir/docs/output.md", checkIfExists: true)
 ch_output_docs_images = file("$projectDir/docs/images/", checkIfExists: true)
+
 /*
 ================================================================================
                         PRINTING PARAMETER SUMMARY
@@ -149,35 +146,42 @@ custom_runName = params.name
 if (!(workflow.runName ==~ /[a-z]+_[a-z]+/)) custom_runName = workflow.runName
 
 def summary = [:]
-if (workflow.revision)        summary['Pipeline Release']    = workflow.revision
-summary['Run Name']          = custom_runName ?: workflow.runName
+if (workflow.revision)        summary['Pipeline Release'] = workflow.revision
+summary['Run Name']           = custom_runName ?: workflow.runName
 if (workflow.containerEngine) summary['Container'] = "${workflow.containerEngine} - ${workflow.container}"
-summary['Max Resources']     = "${params.max_memory} memory, ${params.max_cpus} cpus, ${params.max_time} time per job"
-summary['Config Files']   = workflow.configFiles.join(', ')
-summary['Launch dir']  = workflow.launchDir
-summary['Output dir']  = params.outdir
-summary['Publish dir mode']  = params.publish_dir_mode
-summary['Working dir'] = workflow.workDir
-summary['Script dir']  = workflow.projectDir
-summary['User']        = workflow.userName
+summary['Max Resources']      = "${params.max_memory} memory, ${params.max_cpus} cpus, ${params.max_time} time per job"
+summary['Config Files']       = workflow.configFiles.join(', ')
+summary['Launch dir']         = workflow.launchDir
+summary['Output dir']         = params.outdir
+summary['Publish dir mode']   = params.publish_dir_mode
+summary['Working dir']        = workflow.workDir
+summary['Script dir']         = workflow.projectDir
+summary['User']               = workflow.userName
 
-summary['Input']             = params.input
-summary['Input type']        = params.input_type
-summary['circRNA tool(s)']   = params.tool
-summary['modules']           = params.module
-if('differential_expression' in module) summary['Phenotype design'] = params.phenotype
-summary['BSJ filter']        = params.bsj_reads
+summary['Input']              = params.input
+summary['Input type']         = params.input_type
+if('differential_expression' in module) summary['Phenotype file'] = params.phenotype
+summary['circRNA tool(s)']    = params.tool
+summary['modules']            = params.module
+summary['BSJ filter']         = params.bsj_reads
 if(tools_selected > 1) summary['Tool filter'] = params.tool_filter
 
-summary['Genome version'] = params.genome
-if(params.fasta)           summary['Reference FASTA']   = params.fasta
-if(params.gtf)             summary['Reference GTF']     = params.gtf
-if(params.bowtie)    summary['Bowtie indices']    = params.bowtie
-if(params.bowtie2)   summary['Bowtie2 indices']   = params.bowtie2
-if(params.bwa)       summary['BWA indices']       = params.bwa
-if(params.fasta_fai)       summary['SAMtoolsindex']    = params.fasta_fai
-if(params.hisat2)    summary['HISAT2 indices']    = params.hisat2
-if(params.star)      summary ['STAR indices']     = params.star
+summary['Genome']             = params.genome
+if(params.fasta)              summary['Reference FASTA']   = params.fasta
+if(params.gtf)                summary['Reference GTF']     = params.gtf
+if(params.bowtie)             summary['Bowtie indices']    = params.bowtie
+if(params.bowtie2)            summary['Bowtie2 indices']   = params.bowtie2
+if(params.bwa)                summary['BWA indices']       = params.bwa
+if(params.fasta_fai)          summary['SAMtools index']    = params.fasta_fai
+if(params.hisat)              summary['HISAT2 indices']    = params.hisat2
+if(params.star)               summary ['STAR indices']     = params.star
+if(params.segemehl)           summary ['Segemehl index']   = params.segemehl
+
+summary['Save reference files']              = params.save_reference
+summary['Save QC intermediates']             = params.save_qc_intermediates
+summary['Save RNASeq intermediates']         = params.save_rnaseq_intermediates
+summary['Save Quantification intermediates'] = params.save_quantification_intermediates
+summary['Save miRNA predictions']            = params.save_mirna_predictions
 
 summary['Skip BBDUK']     = params.trim_fastq
 if(params.trim_fastq){
@@ -259,6 +263,12 @@ Channel.from(summary.collect{ [it.key, it.value] })
                             Stage Parameters
 ================================================================================
 */
+
+/* Note to reviewer:
+ * I get warning messages when the parameters are not used by the workflow (for e.g when tool that uses bowtie not used):
+ * 'WARN: Access to undefined parameter `bowtie` -- Initialise it to a default value eg. `params.bowtie = some_value`'
+ * Is there a way to stop these warnings from printing or is it ok to leave as is
+ */
 
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
 params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
@@ -353,12 +363,14 @@ process BWA_INDEX {
 }
 
 /*
-  comment to reviewer
-  What I think I'm doing below is:
-  1. If igenomes db selected, use those first.
-  2. If no igenomes, expect a path instead.
-  3. If neither, use built index.
-  'ciriquant' in tool used again here to avoid false being passed to file() arg
+ * Note to reviewer:
+ * I'll verbalise what I think I am doing here, please let me know if there are contradictions in the code.
+ * 1. If igenomes '--genome' param passed to script, use pre-built indices from igenomes.
+ * 2. If path to indices is provided && --genome is null, use the path.
+ * 3. If neither are available, last resort is to build the indices.
+ *
+ * Had to include '&& ciriquant' below or else it attempts to stage 'false' in file channel, breaks workflow.
+ * This does not happen with other index channels which is confusing.
 */
 
 ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : params.bwa && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : bwa_built
@@ -410,6 +422,8 @@ process HISAT2_INDEX {
     """
 }
 
+// Hisat2 not available from igenomes so this is more straight forward, path or else build.
+// CIRIquant only wants path to index files, does not need files symlinked in work dir hence path not built here.
 ch_hisat = params.hisat ? Channel.value(file(params.hisat)) : hisat_path
 
 process STAR_INDEX {
