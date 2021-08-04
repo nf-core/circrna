@@ -1813,6 +1813,7 @@ process MIRNA_TARGETS{
 ================================================================================
 */
 
+// converseley to CIRIquant using Hisat2, this proc does need the index files. stage as new channel
 ch_hisat_index_files = params.hisat ? Channel.value(file("${params.hisat}/*")) :  hisat_built
 
 process HISAT_ALIGN{
