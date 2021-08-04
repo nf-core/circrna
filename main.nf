@@ -282,16 +282,16 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 */
 
 /*
-  Note to reviewer
-  Struggled big time with getting this to work cleanly. Resorted to hardcoded
-  values using echo.
+  Note to reviewer:
+  I struggled capturing tool versions, particularly with the regexes in 'scrape_software_versions.py'
+  For now, the process is hardcoded.
 */
 
 process SOFTWARE_VERSIONS {
     publishDir "${params.outdir}/pipeline_info", mode: params.publish_dir_mode,
     saveAs: {filename ->
-    if (filename.indexOf(".csv") > 0) filename
-    else null
+        if (filename.indexOf(".csv") > 0) filename
+        else null
     }
 
     output:
@@ -299,11 +299,6 @@ process SOFTWARE_VERSIONS {
     file "software_versions.csv"
 
     script:
-    java_mem = ''
-    if(task.memory){
-        tmem = task.memory.toBytes()
-        java_mem = "-Xms${tmem} -Xmx${tmem}"
-    }
     """
     echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
