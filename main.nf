@@ -620,15 +620,15 @@ process CIRIQUANT_YML{
     touch travis.yml
     printf "name: ciriquant\n\
     tools:\n\
-    bwa: \$BWA\n\
-    hisat2: \$HISAT2\n\
-    stringtie: \$STRINGTIE\n\
-    samtools: \$SAMTOOLS\n\n\
+     bwa: \$BWA\n\
+     hisat2: \$HISAT2\n\
+     stringtie: \$STRINGTIE\n\
+     samtools: \$SAMTOOLS\n\n\
     reference:\n\
-    fasta: ${fasta_path}\n\
-    gtf: ${gtf_path}\n\
-    bwa_index: ${bwa_path}/${bwa_prefix}\n\
-    hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
+     fasta: ${fasta_path}\n\
+     gtf: ${gtf_path}\n\
+     bwa_index: ${bwa_path}/${bwa_prefix}\n\
+     hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
     """
 }
 
