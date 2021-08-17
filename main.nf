@@ -375,6 +375,12 @@ process BWA_INDEX {
 
 ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : params.bwa && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : bwa_built
 
+if(params.genome && 'ciriquant' in tool){
+    file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
+    ch_bwa.map{ it -> it.copyTo("${params.outdir}/reference_genome/BWAIndex")}
+    ch_bwa = "${params.outdir}/reference_genome/BWAIndex"
+}
+
 process SAMTOOLS_INDEX {
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -599,12 +605,6 @@ process SPLIT_CHROMOSOMES{
  * (structure of bwa on iGenomes is frustrating)
  * Attempt to place in directory for YML proc
  */
-
-if(params.genome && 'ciriquant' in tool && file(params.bwa).exists()){
-    file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
-    file(params.bwa).copyTo("${params.outdir}/reference_genome/BWAIndex")
-    ch_bwa = "${params.outdir}/reference_genome/BWAIndex"
-}
 
 ch_bwa.view()
 
