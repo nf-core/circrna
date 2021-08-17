@@ -377,7 +377,7 @@ ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) 
 
 if(params.genome && 'ciriquant' in tool){
     file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
-    ch_bwa.map{ it -> it.copyTo("${params.outdir}/reference_genome/BWAIndex")}
+    ch_bwa.flatten().map{ it -> it.copyTo("${params.outdir}/reference_genome/BWAIndex")}
     ch_bwa = "${params.outdir}/reference_genome/BWAIndex"
 }
 
