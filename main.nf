@@ -375,12 +375,6 @@ process BWA_INDEX {
 
 ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : params.bwa && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : bwa_built
 
-if(params.genome && 'ciriquant' in tool){
-    file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
-    ch_bwa.flatten().map{ it -> it.copyTo("${params.outdir}/reference_genome/BWAIndex")}
-    ch_bwa = "${params.outdir}/reference_genome/BWAIndex"
-}
-
 process SAMTOOLS_INDEX {
     tag "${fasta}"
     publishDir params.outdir, mode: params.publish_dir_mode,
@@ -600,11 +594,17 @@ process SPLIT_CHROMOSOMES{
 /*
  * DEBUG
  * No signature of method: nextflow.util.BlankSeparatedList.toRealPath() is applicable for argument types: () values: []
- * error in below process (--genome, no params passed to gtf/fasta/etc.. )
+ * error in below YML process (--genome, no params passed to gtf/fasta/etc.. )
  * I suspect this is because bwa_built is a directory (BWAIndex), whilst params.bwa from iGenomes is a collection of files
  * (structure of bwa on iGenomes is frustrating)
- * Attempt to place in directory for YML proc
+ * If iGenomes bwa used, place the files in a directory so it matches bwa_built and "path" method.
  */
+
+if(params.genome && 'ciriquant' in tool){
+    file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
+    ch_bwa.flatten().map{ it -> it.copyTo("${params.outdir}/reference_genome/BWAIndex")}
+    ch_bwa = Channel.value(file("${params.outdir}/reference_genome/BWAIndex"))
+}
 
 process CIRIQUANT_YML{
 
