@@ -591,6 +591,17 @@ process SPLIT_CHROMOSOMES{
     '''
 }
 
+/*
+ * DEBUG
+ * No signature of method: nextflow.util.BlankSeparatedList.toRealPath() is applicable for argument types: () values: []
+ * error in below proc
+ */
+
+ch_gtf.view()
+ch_fasta.view()
+ch_bwa.view()
+ch_hisat.view()
+
 process CIRIQUANT_YML{
 
     when:
