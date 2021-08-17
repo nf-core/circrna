@@ -606,8 +606,6 @@ process SPLIT_CHROMOSOMES{
  * Attempt to place in directory for YML proc
  */
 
-ch_bwa.view()
-
 process CIRIQUANT_YML{
 
     when:
