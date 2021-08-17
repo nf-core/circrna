@@ -594,13 +594,19 @@ process SPLIT_CHROMOSOMES{
 /*
  * DEBUG
  * No signature of method: nextflow.util.BlankSeparatedList.toRealPath() is applicable for argument types: () values: []
- * error in below proc
+ * error in below process (--genome, no params passed to gtf/fasta/etc.. )
+ * I suspect this is because bwa_built is a directory (BWAIndex), whilst params.bwa from iGenomes is a collection of files
+ * (structure of bwa on iGenomes is frustrating)
+ * Attempt to place in directory for YML proc
  */
 
-ch_gtf.view()
-ch_fasta.view()
+if(params.genome && 'ciriquant' in tool && file(params.bwa).exists()){
+    file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
+    file(params.bwa).copyTo("${params.outdir}/reference_genome/BWAIndex")
+    ch_bwa = "${params.outdir}/reference_genome/BWAIndex"
+}
+
 ch_bwa.view()
-ch_hisat.view()
 
 process CIRIQUANT_YML{
 
@@ -622,6 +628,7 @@ process CIRIQUANT_YML{
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
+
     """
     BWA=`whereis bwa | cut -f2 -d':'`
     HISAT2=`whereis hisat2 | cut -f2 -d':'`
