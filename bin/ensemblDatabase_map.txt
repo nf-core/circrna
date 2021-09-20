@@ -15,3 +15,4 @@ rno	useMart(biomart = "ensembl", dataset = "rnorvegicus_gene_ensembl", host="htt
 sbi	useMart(biomart = "plants_mart", dataset = "sbicolor_eg_gene", host="plants.ensembl.org", archive=FALSE)
 ssc	useMart(biomart = "ensembl", dataset = "sscrofa_gene_ensembl", host="https://www.ensembl.org", archive=FALSE)
 zma	useMart(biomart = "plants_mart", dataset = "zmays_eg_gene", host="plants.ensembl.org", archive=FALSE)
+mml	useMart(biomart = "ensembl", dataset = "mmulatta_gene_ensembl", host="https://www.ensembl.org", archive=FALSE)
