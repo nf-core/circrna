@@ -399,7 +399,7 @@ ch_fai = params.genome ? Channel.value(file(params.fasta_fai)) : params.fasta_fa
 
 process HISAT2_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/Hisat2Index/${it}" : null }
 
@@ -460,7 +460,7 @@ ch_star = params.genome ? Channel.value(file(params.star)) : params.star ? Chann
 
 process BOWTIE_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/BowtieIndex/${it}" : null }
 
@@ -486,7 +486,7 @@ ch_bowtie = params.genome ? Channel.fromPath("${params.bowtie}*") : params.bowti
 
 process BOWTIE2_INDEX {
     tag "${fasta}"
-    label 'process_medium'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/Bowtie2Index/${it}" : null }
 
@@ -513,7 +513,7 @@ ch_bowtie2 = params.genome ? Channel.fromPath("${params.bowtie2}*") : params.bow
 
 process SEGEMEHL_INDEX{
     tag "${fasta}"
-    label 'proces_medium'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/SegemehlIndex/${it}" : null }
 
