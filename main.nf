@@ -271,7 +271,7 @@ Channel.from(summary.collect{ [it.key, it.value] })
  */
 
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
-params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false
+//params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false # I don't trust iGenomes has this for all species. Trivial to make in terms of run time.
 params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
 params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
 params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
@@ -377,6 +377,7 @@ ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) 
 
 process SAMTOOLS_INDEX {
     tag "${fasta}"
+    label 'process_low'
     publishDir params.outdir, mode: params.publish_dir_mode,
         saveAs: { params.save_reference ? "reference_genome/SamtoolsIndex/${it}" : null }
 
@@ -395,7 +396,7 @@ process SAMTOOLS_INDEX {
     """
 }
 
-ch_fai = params.genome ? Channel.value(file(params.fasta_fai)) : params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
+ch_fai = params.fasta_fai ? Channel.value(file(params.fasta_fai)) : fai_built
 
 process HISAT2_INDEX {
     tag "${fasta}"
