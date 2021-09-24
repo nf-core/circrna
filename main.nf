@@ -655,13 +655,13 @@ process GENE_ANNOTATION{
         saveAs: { params.save_reference ? "reference_genome/${it}" : null }
 
     when:
-    params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
+    !params.circexplorer2_annotation && params.gtf && ('circexplorer2' || 'mapsplice' in tool) && 'circrna_discovery' in module
 
     input:
     file(gtf) from ch_gtf
 
     output:
-    file("${gtf.baseName}.txt") into ch_gene
+    file("${gtf.baseName}.txt") into ch_gene_txt
 
     script:
     """
@@ -669,6 +669,8 @@ process GENE_ANNOTATION{
     perl -alne '\$"="\t";print "@F[11,0..9]"' ${gtf.baseName}.genepred > ${gtf.baseName}.txt
     """
 }
+
+ch_gene = params.circexplorer2_annotation ? Channel.value(file(params.circexplorer2_annotation)) : ch_gene_txt
 
 /*
 ================================================================================
