@@ -808,7 +808,7 @@ process FASTQC_BBDUK {
 ================================================================================
 */
 
-process CIRIQUANT_ALIGN{
+process CIRIQUANT{
     tag "${base}"
     label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
@@ -823,6 +823,8 @@ process CIRIQUANT_ALIGN{
 
     output:
     tuple val(base), file("${base}") into ciriquant_intermediates
+    tuple val(base), val("CIRIquant"), file("${base}_ciriquant_circs.bed") into ciriquant_annotated
+    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
 
     script:
     """
@@ -834,33 +836,8 @@ process CIRIQUANT_ALIGN{
         --no-gene \\
         -o ${base} \\
         -p ${base}
-    """
-}
 
-process CIRIQUANT_PARSE{
-    tag "${base}"
-    label 'process_medium'
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/CIRIquant/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
-
-    when:
-    'ciriquant' in tool && 'circrna_discovery' in module
-
-    input:
-    tuple val(base), file(ciriquant_dir) from ciriquant_intermediates
-    file(gtf_filt) from ch_gtf_filtered
-    file(fasta) from ch_fasta
-    file(fai) from ch_fai
-
-    output:
-    tuple val(base), file("${base}_ciriquant.bed") into ciriquant_results
-    tuple val(base), file("${base}.bed") into ciriquant_annotated
-    tuple val(base), file("fasta/*") into ciriquant_fasta
-    tuple val(base), file("${base}.log") into ciriquant_annotation_logs
-
-    script:
-    """
+    ## Apply Filtering
     cp ${ciriquant_dir}/${base}.gtf .
 
     ## extract counts (convert float/double to int [no loss of information])
@@ -877,22 +854,8 @@ process CIRIQUANT_PARSE{
 
     rm ${base}.gtf
 
-    ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_ciriquant.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    ## Re-work for Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_ciriquant.bed > ${base}_ciriquant_circs.bed
     """
 }
 
@@ -1040,10 +1003,6 @@ process STAR_2PASS{
 process CIRCEXPLORER2{
     tag "${base}"
     label 'process_medium'
-
-    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/CIRCexplorer2/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/CIRCexplorer2/intermediates/${it}" : null }
 
@@ -1053,16 +1012,12 @@ process CIRCEXPLORER2{
     input:
     tuple val(base), file(chimeric_reads) from circexplorer2_input
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
     file(gene_annotation) from ch_gene
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
+    tupl eval(base), file("${base}") into circexplorer2_intermediates
     tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
-    tuple val(base), file("${base}") into circexplorer2_intermediates
-    tuple val(base), file("${base}.bed") into circexplorer2_annotated
-    tuple val(base), file("fasta/*") into circexplorer2_fasta
-    tuple val(base), file("${base}.log") into circexplorer2_logs
+    tuple val(base), val("CIRCexplorer2"), file("${base}_circexplorer2_circs.bed") into circexplorer2_annotated
 
     script:
     """
@@ -1074,31 +1029,14 @@ process CIRCEXPLORER2{
 
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_circexplorer2.bed
 
-    ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circexplorer2.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    ## Re-work for Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circexplorer2.bed > ${base}_circexplorer2_circs.bed
     """
 }
 
 process CIRCRNA_FINDER{
     tag "${base}"
     label 'process_medium'
-    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/circRNA_Finder/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/circRNA_Finder/intermediates/${it}" : null }
 
@@ -1108,15 +1046,11 @@ process CIRCRNA_FINDER{
     input:
     tuple val(base), file(star_dir) from circrna_finder_input
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_circrna_finder.bed") into circrna_finder_results
     tuple val(base), file("${base}") into circrna_finder_intermediates
-    tuple val(base), file("${base}.bed") into circrna_finder_annotated
-    tuple val(base), file("fasta/*") into circrna_finder_fasta
-    tuple val(base), file("${base}.log") into circrna_finder_logs
+    tuple val(base), val("circRNA_Finder"), file("${base}_circrna_finder_circs.bed") into circrna_finder_annotated
 
     script:
     """
@@ -1130,21 +1064,7 @@ process CIRCRNA_FINDER{
     mv *.Chimeric.out.sorted.* ${base}
 
     ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circrna_finder.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_circrna_finder.bed > ${base}_circrna_finder_circs.bed
     """
 }
 
@@ -1272,9 +1192,6 @@ process DCC{
     tag "${base}"
     label 'py3'
     label 'process_medium'
-    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/DCC/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/DCC/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
@@ -1285,15 +1202,11 @@ process DCC{
     tuple val(base), file(pairs), file(mate1), file(mate2) from ch_dcc_dirs
     file(gtf) from ch_gtf
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_dcc.bed") into dcc_results
     tuple val(base), file("${base}") into dcc_intermediates
-    tuple val(base), file("${base}.bed") into dcc_annotated
-    tuple val(base), file("fasta/*") into dcc_fasta
-    tuple val(base), file("${base}.log") into dcc_logs
+    tuple val(base), val("DCC"), file("${base}_dcc_circs.bed") into dcc_annotated
 
     script:
     COJ="Chimeric.out.junction"
@@ -1321,21 +1234,7 @@ process DCC{
     find . -maxdepth 1 -mindepth 1 -type f -not -name ${base}_dcc.bed -print0 | xargs -0 mv -t ${base}/
 
     ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_dcc.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_dcc.bed > ${base}_dcc_circs.bed
     """
 }
 
@@ -1376,9 +1275,6 @@ ch_avoid_collisions = ch_bowtie2_find_circ.flatten().filter{ file -> file.getFil
 process FIND_CIRC{
     tag "${base}"
     label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/find_circ/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/find_circ/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.sites.*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/find_circ/intermediates/${base}/${it}" : null }
 
@@ -1388,17 +1284,13 @@ process FIND_CIRC{
     input:
     tuple val(base), file(anchors) from ch_anchors
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
     file(bowtie2_index) from ch_avoid_collisions.collect()
     val(fasta_chr_path) from ch_chromosomes
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_find_circ.bed") into find_circ_results
     tuple val(base), file("*.sites.*") into find_circ_intermediates
-    tuple val(base), file("${base}.bed") into find_circ_annotated
-    tuple val(base), file("fasta/*") into find_circ_fasta
-    tuple val(base), file("${base}.log") into find_circ_logs
+    tuple val(base), val("find_circ"), file("${base}_find_circ_circs.bed") into find_circ_annotated
 
     script:
     """
@@ -1411,21 +1303,7 @@ process FIND_CIRC{
     tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
 
     ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_find_circ.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi ${fasta.baseName}.fa -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_find_circ.bed > ${base}_find_circ_circs.bed
     """
 }
 
@@ -1483,9 +1361,6 @@ process MAPSPLICE_ALIGN{
 process MAPSPLICE_PARSE{
     tag "${base}"
     label 'process_medium'
-    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/MapSplice/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/MapSplice/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}/*",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/MapSplice/intermediates/${it}" : null }
 
@@ -1495,16 +1370,12 @@ process MAPSPLICE_PARSE{
     input:
     tuple val(base), file(raw_fusion) from mapsplice_fusion
     file(fasta) from ch_fasta
-    file(fai) from ch_fai
     file(gene_annotation) from ch_gene
-    file(gtf_filt) from ch_gtf_filtered
 
     output:
     tuple val(base), file("${base}_mapsplice.bed") into mapsplice_results
     tuple val(base), file("${base}/*") into mapsplice_intermediates
-    tuple val(base), file("${base}.bed") into mapsplice_annotated
-    tuple val(base), file("fasta/*") into mapsplice_fasta
-    tuple val(base), file("${base}.log") into mapsplice_logs
+    tuple val(base), val("MapSplice"), file("${base}_mapsplice_circs.bed") into mapsplice_annotated
 
     script:
     """
@@ -1517,21 +1388,7 @@ process MAPSPLICE_PARSE{
     awk '{if(\$13 >= ${params.bsj_reads}) print \$0}' ${base}/${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${base}_mapsplice.bed
 
     ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_mapsplice.bed > circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
-    mv master_bed12.bed ${base}.bed.tmp
-
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
-    bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
-    ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_mapsplice.bed > ${base}_mapsplice_circs.bed
     """
 }
 
@@ -1551,7 +1408,8 @@ process SEGEMEHL_ALIGN{
 
     output:
     tuple val(base), file("${base}") into segemehl_intermediates
-    tuple val(base), file("${base}/${base}_collapsed.bed") into segemehl_collapsed_counts
+    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
+    tuple val(base), val("Segemehl"), file("${base}_segemehl_circs.bed") into segemehl_annotated
 
     script:
     def handleSam = params.save_quantification_intermediates ? "samtools view -hbS ${base}/${base}.sam > ${base}/${base}.bam && rm ${base}/${base}.sam" : "rm -rf ${base}/${base}.sam"
@@ -1569,58 +1427,81 @@ process SEGEMEHL_ALIGN{
 
     $handleSam
 
-    # Segemehl does not preserve strand information, nor account for it
-    # when collapsing and counting reads using haarz.x. This is my own fix which does.
+    ## Segemehl does not preserve strand information, nor account for it
+    ## when collapsing and counting reads using haarz.x. This is my own fix which does.
     grep ';C;' ${base}/${base}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${base}/${base}_collapsed.bed
+
+    ## Let user filter by BSJ read count param.
+    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' ${base}/${base}_collapsed.bed > ${base}_segemehl.bed
+
+    ## Re-work for Annotation
+    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > ${base}_segemehl_circs.bed
     """
 }
 
-process SEGEMEHL_PARSE{
-    tag "${base}"
-    label 'process_medium'
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
-    publishDir "${params.outdir}/circrna_discovery/Segemehl/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
 
-    when:
-    'segemehl' in tool && 'circrna_discovery' in module
+// collect circrna info from each alignment process
+ch_circs = ciriquant_annotated.mix(circexplorer2_annotated, dcc_annotated, circrna_finder_annotated, find_circ_annotated, mapsplice_annotated, segemehl_annotated)
+
+
+process ANNOTATION{
+    tag "${base}"
+    label 'process_high'
+    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
+    publishDir "${params.outdir}/circrna_discovery/${tool}/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
 
     input:
-    tuple val(base), file(collapsed_counts) from segemehl_collapsed_counts
-    file(fasta) from ch_fasta
-    file(fai) from ch_fai
-    file(idx) from ch_segemehl
+    tuple val(base), val(tool), file(circs) from ch_circs
     file(gtf_filt) from ch_gtf_filtered
 
     output:
-    tuple val(base), file("${base}_segemehl.bed") into segemehl_results
-    tuple val(base), file("${base}.bed") into segemehl_annotated
-    tuple val(base), file("fasta/*") into segemehl_fasta
-    tuple val(base), file("${base}.log") into segemehl_logs
+    tuple val(base), val(tool), file("${base}.bed") into ch_annotation
+    tuple val(base), file("${base}.log") into annotation_logs
 
     script:
     """
-    # Let user filter by BSJ read count param.
-    awk -v OFS="\t" -v BSJ=${params.bsj_reads} '{if(\$5>=BSJ) print \$0}' $collapsed_counts > ${base}_segemehl.bed
-
-    ## Annotation
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${base}_segemehl.bed > circs.bed
+    mv $circs circs.bed
     bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
     mv master_bed12.bed ${base}.bed.tmp
 
-    ## FASTA sequences
-    cut -d\$'\t' -f1-12 ${base}.bed.tmp > bed12.tmp
+    ## isolate exon blocks
+    awk -FS="\t" '{print \$11}' > mature_len.tmp
+
+    ## sum exon block values
+    awk -v FS="," '{for(i=t=0;i<NF;) t+=\$++i; \$0=t}1' mature_len.tmp > mature_length
+
+    ## concat to annotation file.
+    paste ${base}.bed.tmp mature_length > ${base}.bed
+    """
+
+}
+
+
+process FASTA{
+    tag "${base}"
+    label 'process_low'
+    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+
+    input:
+    tuple val(base), val(tool), file(bed) from ch_annotation
+    file(fasta) from ch_fasta
+
+    output:
+    tuple val(base), file("fasta/*") into ch_mature_len_fasta
+
+    script:
+    """
+    ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
+    cut -d\$'\t' -f1-12 ${base}.bed > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
     ## output to dir
     mkdir -p fasta
     awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
-    ## mature spliced len for annotation file
-    for f in fasta/*.fa; do grep -v '>' \$f | wc -c ; done &> mature.txt
-    paste ${base}.bed.tmp mature.txt > ${base}.bed
     """
 }
+
 
 /*
 ================================================================================
@@ -1729,7 +1610,8 @@ process TARGETSCAN_DATABASE{
     """
 }
 
-mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
+//mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
+mirna_input = ch_mature_len_fasta.unique().transpose()
 
 process MIRNA_PREDICTION{
     tag "${base}"
