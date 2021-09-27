@@ -1435,7 +1435,7 @@ ch_circs = ciriquant_annotated.mix(circexplorer2_annotated, dcc_annotated, circr
 
 
 process ANNOTATION{
-    tag "${base}"
+    tag "${base}:${tool}"
     label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "${base}.bed"
     publishDir "${params.outdir}/circrna_discovery/${tool}/annotation_logs", mode: params.publish_dir_mode, pattern: "${base}.log"
@@ -1468,7 +1468,7 @@ process ANNOTATION{
 
 
 process FASTA{
-    tag "${base}"
+    tag "${base}:${tool}"
     label 'process_low'
     publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
 
