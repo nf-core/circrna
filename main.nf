@@ -562,35 +562,25 @@ process FILTER_GTF{
     """
 }
 
-process SPLIT_CHROMOSOMES{
-    tag "${fasta}"
-    publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: { params.save_reference ? "reference_genome/chromosomes/${it}" : null }
 
-    when:
-    params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
+if(params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module){
+    file("${params.outdir}/reference_genome/chromosomes").mkdirs()
+    ch_fasta.splitFasta(record: [id:true])
+            .map{ record -> record.id.toString() }
+            .flatten()
+            .set{ ID }
 
-    input:
-    file(fasta) from ch_fasta
+    ch_fasta.splitFasta(file: true)
+            .flatten()
+            .merge(ID).map{ it ->
+                            file = it[0]
+                            chr_id = it[1]
+                            file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
+                          }
 
-    output:
-    path("*.fa", includeInputs:true) into publish_chromosomes
-    val("${launchDir}/${params.outdir}/reference_genome/chromosomes") into ch_chromosomes
-
-    shell:
-    '''
-    ## Add catch for test datasets (uses only 1 chr, no action needed -> includeInputs:true)
-    n_chr=$(grep '>' !{fasta} | wc -l)
-
-    if [[ $n_chr -gt 1 ]];
-    then
-    awk '/^>/ {F=substr($0, 2, length($0))".fa"; print >F;next;} {print >> F;}' < !{fasta}
-    rm !{fasta}
-    else
-    :
-    fi
-    '''
+    ch_chromosomes = Channel.value("${params.outdir}/reference_genome/chromosomes")
 }
+
 
 /*
  * DEBUG
