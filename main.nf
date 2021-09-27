@@ -578,7 +578,7 @@ if(params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_disc
                             file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
                           }
 
-    ch_chromosomes = Channel.value("${params.outdir}/reference_genome/chromosomes")
+    ch_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
 }
 
 
