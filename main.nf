@@ -838,7 +838,7 @@ process CIRIQUANT{
         -p ${base}
 
     ## Apply Filtering
-    cp ${ciriquant_dir}/${base}.gtf .
+    cp ${base}/${base}.gtf .
 
     ## extract counts (convert float/double to int [no loss of information])
     grep -v "#" ${base}.gtf | awk '{print \$14}' | cut -d '.' -f1 > counts
