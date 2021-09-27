@@ -1015,7 +1015,7 @@ process CIRCEXPLORER2{
     file(gene_annotation) from ch_gene
 
     output:
-    tupl eval(base), file("${base}") into circexplorer2_intermediates
+    tuple val(base), file("${base}") into circexplorer2_intermediates
     tuple val(base), file("${base}_circexplorer2.bed") into circexplorer2_results
     tuple val(base), val("CIRCexplorer2"), file("${base}_circexplorer2_circs.bed") into circexplorer2_annotated
 
