@@ -563,14 +563,12 @@ process FILTER_GTF{
 }
 
 
-if(params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module){
+if(('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module){
     file("${params.outdir}/reference_genome/chromosomes").mkdirs()
     ch_fasta.splitFasta(record: [id:true])
             .map{ record -> record.id.toString() }
             .flatten()
             .set{ ID }
-
-    n_files = ID.size()
 
     ch_fasta.splitFasta(file: true)
             .flatten()
@@ -580,12 +578,9 @@ if(params.fasta && ('mapsplice' in tool || 'find_circ' in tool) && 'circrna_disc
                             file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
                           }
 
-    count_dir = new File("${launchDir}/${params.outdir}/reference_genome/chromosomes/").listFiles().count{ it.name ==~ /.*fa/ }
-
-    if( count_dir == n_files ){
-        ch_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
-    }
+    ch_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
 }
+
 
 
 /*
