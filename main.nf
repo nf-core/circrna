@@ -578,10 +578,10 @@ if(('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
                             file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
                           }
 
-    ch_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
+    stage_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
 }
 
-
+ch_chromosomes = ('mapsplice' in tool || 'find_circ' in tool) ? stage_chromosomes : 'null'
 
 /*
  * DEBUG
