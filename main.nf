@@ -26,7 +26,7 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 ================================================================================
 */
 
-def json_schema = "$projectDir/nextflow_schema.json"
+def json_schema = "$workflow.projectDir/nextflow_schema.json"
 if (params.help) {
     def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
     log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
@@ -127,10 +127,10 @@ if (workflow.profile.contains('awsbatch')) {
 }
 
 // Stage config files
-ch_multiqc_config = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
+ch_multiqc_config = file("$workflow.projectDir/assets/multiqc_config.yaml", checkIfExists: true)
 ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
-ch_output_docs = file("$projectDir/docs/output.md", checkIfExists: true)
-ch_output_docs_images = file("$projectDir/docs/images/", checkIfExists: true)
+ch_output_docs = file("$workflow.projectDir/docs/output.md", checkIfExists: true)
+ch_output_docs_images = file("$workflow.projectDir/docs/images/", checkIfExists: true)
 
 /*
 ================================================================================
@@ -412,7 +412,7 @@ process HISAT2_INDEX {
 
     output:
     file("${fasta.baseName}.*.ht2") into hisat_built
-    val("${launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
+    val("${workflow.launchDir}/${params.outdir}/reference_genome/Hisat2Index") into hisat_path
 
     script:
     """
@@ -558,7 +558,7 @@ process FILTER_GTF{
 
     script:
     """
-    grep -vf ${projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf ${workflow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     """
 }
 
@@ -578,7 +578,7 @@ if(('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
                             file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
                           }
 
-    stage_chromosomes = Channel.value("${launchDir}/${params.outdir}/reference_genome/chromosomes")
+    stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/reference_genome/chromosomes")
 }
 
 ch_chromosomes = ('mapsplice' in tool || 'find_circ' in tool) ? stage_chromosomes : 'null'
@@ -1286,10 +1286,10 @@ process FIND_CIRC{
     script:
     """
     bowtie2 -p ${task.cpus} --reorder --mm -D 20 --score-min=C,-15,0 -q -x ${fasta.baseName} \\
-    -U $anchors | python ${projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
+    -U $anchors | python ${workflow.projectDir}/bin/find_circ.py -G $fasta_chr_path -p ${base} -s ${base}.sites.log > ${base}.sites.bed 2> ${base}.sites.reads
 
     ## filtering
-    grep circ ${base}.sites.bed | grep -v chrM | python ${projectDir}/bin/sum.py -2,3 | python ${projectDir}/bin/scorethresh.py -16 1 | python ${projectDir}/bin/scorethresh.py -15 2 | python ${projectDir}/bin/scorethresh.py -14 2 | python ${projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${projectDir}/bin/scorethresh.py 8,9 35 | python ${projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
+    grep circ ${base}.sites.bed | grep -v chrM | python ${workflow.projectDir}/bin/sum.py -2,3 | python ${workflow.projectDir}/bin/scorethresh.py -16 1 | python ${workflow.projectDir}/bin/scorethresh.py -15 2 | python ${workflow.projectDir}/bin/scorethresh.py -14 2 | python ${workflow.projectDir}/bin/scorethresh.py 7 ${params.bsj_reads} | python ${workflow.projectDir}/bin/scorethresh.py 8,9 35 | python ${workflow.projectDir}/bin/scorethresh.py -17 100000 >> ${base}.txt
 
     tail -n +2 ${base}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${base}_find_circ.bed
 
@@ -1452,7 +1452,7 @@ process ANNOTATION{
     script:
     """
     mv $circs circs.bed
-    bash ${projectDir}/bin/annotate_outputs.sh &> ${base}.log
+    bash ${workflow.projectDir}/bin/annotate_outputs.sh &> ${base}.log
     mv master_bed12.bed ${base}.bed.tmp
 
     ## isolate exon blocks
@@ -1521,11 +1521,11 @@ if(tools_selected > 1){
         ls *.bed > samples.csv
 
         ## Add catch for empty bed file and delete
-        bash ${projectDir}/bin/check_empty.sh
+        bash ${workflow.projectDir}/bin/check_empty.sh
 
         ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
         ## remove duplicate IDs, keep highest count.
-        Rscript ${projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
+        Rscript ${workflow.projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $params.tool_filter
 
         mv combined_counts.bed ${base}.bed
         """
@@ -1545,8 +1545,8 @@ if(tools_selected > 1){
 
         script:
         """
-        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
 }else{
@@ -1573,8 +1573,8 @@ if(tools_selected > 1){
             mv \$b \${sample_name}.bed
         done
 
-        python ${projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
-        Rscript ${projectDir}/bin/reformat_count_matrix.R
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
 }
@@ -1597,7 +1597,7 @@ process TARGETSCAN_DATABASE{
 
     script:
     """
-    bash ${projectDir}/bin/targetscan_format.sh $mature
+    bash ${workflow.projectDir}/bin/targetscan_format.sh $mature
     """
 }
 
@@ -1683,18 +1683,18 @@ process MIRNA_TARGETS{
     else
         ## use file name to derive bed12 coordiantes.
         echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
-        bash ${projectDir}/bin/annotate_outputs.sh &> circ.log
+        bash ${workflow.projectDir}/bin/annotate_outputs.sh &> circ.log
         mv master_bed12.bed circ.bed.tmp
 
         ## Prep exon track for circlize
         cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
-        bash ${projectDir}/bin/prep_circos.sh bed12.tmp
+        bash ${workflow.projectDir}/bin/prep_circos.sh bed12.tmp
 
         ## add mature spl len (+ 1 bp)
         awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
         paste circ.bed.tmp ml > circ.bed
 
-        Rscript ${projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
+        Rscript ${workflow.projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
     fi
     """
 }
@@ -1783,7 +1783,7 @@ process DEA{
 
     prepDE.py -i samples.txt
 
-    Rscript ${projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${projectDir}/bin/ensemblDatabase_map.txt
+    Rscript ${workflow.projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${workflow.projectDir}/bin/ensemblDatabase_map.txt
 
     mv gene_count_matrix.csv RNA-Seq
     mv transcript_count_matrix.csv RNA-Seq
@@ -2086,18 +2086,18 @@ workflow.onComplete {
 
     // Render the TXT template
     def engine = new groovy.text.GStringTemplateEngine()
-    def tf = new File("$projectDir/assets/email_template.txt")
+    def tf = new File("$workflow.projectDir/assets/email_template.txt")
     def txt_template = engine.createTemplate(tf).make(email_fields)
     def email_txt = txt_template.toString()
 
     // Render the HTML template
-    def hf = new File("$projectDir/assets/email_template.html")
+    def hf = new File("$workflow.projectDir/assets/email_template.html")
     def html_template = engine.createTemplate(hf).make(email_fields)
     def email_html = html_template.toString()
 
     // Render the sendmail template
-    def smail_fields = [ email: email_address, subject: subject, email_txt: email_txt, email_html: email_html, projectDir: "$projectDir", mqcFile: mqc_report, mqcMaxSize: params.max_multiqc_email_size.toBytes() ]
-    def sf = new File("$projectDir/assets/sendmail_template.txt")
+    def smail_fields = [ email: email_address, subject: subject, email_txt: email_txt, email_html: email_html, projectDir: "$workflow.projectDir", mqcFile: mqc_report, mqcMaxSize: params.max_multiqc_email_size.toBytes() ]
+    def sf = new File("$workflow.projectDir/assets/sendmail_template.txt")
     def sendmail_template = engine.createTemplate(sf).make(smail_fields)
     def sendmail_html = sendmail_template.toString()
 
