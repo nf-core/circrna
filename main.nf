@@ -1783,6 +1783,12 @@ process DEA{
 
     prepDE.py -i samples.txt
 
+    ## prepDE && circRNA counts headers are sorted where uppercase preceedes lowercase i.e Z before a
+    ## reformat the phenotype file to match the order of the samples.
+    head -n 1 $phenotype > header
+    tail -n +2 $phenotype | LC_COLLATE=C sort > sorted_pheno
+    cat header sorted_pheno > tmp && rm phenotype.csv && mv tmp phenotype.csv
+
     Rscript ${workflow.projectDir}/bin/DEA.R gene_count_matrix.csv $phenotype $circ_matrix $species ${workflow.projectDir}/bin/ensemblDatabase_map.txt
 
     mv gene_count_matrix.csv RNA-Seq
