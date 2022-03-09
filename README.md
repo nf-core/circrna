@@ -17,7 +17,7 @@
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 <p markdown="1" align="center">
-<img src="docs/images/nf-core-circrna-workflow.png" alt="workflow" width="75%" height="75%">
+<img src="docs/images/workflow.png" alt="workflow" width="100%" height="100%">
 </p>
 
 ## Quick Start
