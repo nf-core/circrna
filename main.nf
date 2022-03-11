@@ -1446,7 +1446,7 @@ process ANNOTATION{
     file(gtf_filt) from ch_gtf_filtered
 
     output:
-    tuple val(base), val(tool), file("${base}.bed") into ch_annotation
+    tuple val(base), val(tool), file("${base}.bed") into ch_annotation, ch_mirna_targets
     tuple val(base), file("${base}.log") into annotation_logs
 
     script:
@@ -1659,9 +1659,7 @@ process MIRNA_TARGETS{
 
     input:
     tuple val(base), val(tool), file(miranda), file(targetscan) from mirna_prediction
-    file(fasta) from ch_fasta
-    file(fai) from ch_fai
-    file(filt_gtf) from ch_gtf_filtered
+    tuple val(base), val(tool), file(bed12) from ch_mirna_targets
     val(species) from ch_species
 
     output:
@@ -1671,19 +1669,8 @@ process MIRNA_TARGETS{
     script:
     def species_id = species + "-"
     """
-    ## As before, we have a catch for NA miRNA pred files.
-    grep -v "miRNA" $miranda | if grep -q "NA";
-    then
-        touch ${base}_fail_catch_miRNA_targets.txt
-        touch ${base}_fail_catch.pdf
-    else
-        ## use file name to derive bed12 coordiantes.
-        echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
-        bash ${workflow.projectDir}/bin/annotate_outputs.sh &> circ.log
-        mv master_bed12.bed circ.bed.tmp
-
         ## Prep exon track for circlize
-        cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
+        cut -d\$'\t' -f1-12 $bed12 > bed12.tmp
         bash ${workflow.projectDir}/bin/prep_circos.sh bed12.tmp
 
         ## add mature spl len (+ 1 bp)
