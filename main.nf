@@ -1471,14 +1471,14 @@ process ANNOTATION{
 process FASTA{
     tag "${base}:${tool}"
     label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*.fa"
 
     input:
     tuple val(base), val(tool), file(bed) from ch_annotation
     file(fasta) from ch_fasta
 
     output:
-    tuple val(base), file("fasta/*") into ch_mature_len_fasta
+    tuple val(base), val(tool), file("${base}.fa") into ch_mature_len_fasta
 
     script:
     """
@@ -1486,10 +1486,7 @@ process FASTA{
     cut -d\$'\t' -f1-12 ${base}.bed > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
     ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${base}.fa && rm circ_seq.tmp
     """
 }
 
@@ -1602,20 +1599,20 @@ process TARGETSCAN_DATABASE{
 }
 
 //mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
-mirna_input = ch_mature_len_fasta.unique().transpose()
+//mirna_input = ch_mature_len_fasta.unique().transpose()
 
 process MIRNA_PREDICTION{
     tag "${base}"
     label 'process_low'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
-        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${base}/${it}" : null }
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${tool}/${base}/${it}" : null }
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
-        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${base}/${it}" : null }
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${tool}/${base}/${it}" : null }
     when:
     'mirna_prediction' in module
 
     input:
-    tuple val(base), file(fasta) from mirna_input
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_fasta
     file(mirbase) from ch_mature
     file(mirbase_txt) from ch_mature_txt
 
