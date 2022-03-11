@@ -1617,7 +1617,7 @@ process MIRNA_PREDICTION{
     file(mirbase_txt) from ch_mature_txt
 
     output:
-    tuple val(base), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
+    tuple val(base), val(tool), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1636,8 +1636,7 @@ process MIRNA_PREDICTION{
         ##format for targetscan
         cat $fasta | grep ">" | sed 's/>//g' > id
         cat $fasta | grep -v ">" > seq
-        echo "0000" > species
-        paste id species seq > ${prefix}_ts.txt
+        paste id seq | awk '{printf("%s\t0000\t%s\n", \$1, \$2);}' > ${prefix}_ts.txt
 
         # run targetscan
         targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
@@ -1655,11 +1654,11 @@ process MIRNA_PREDICTION{
 process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
-    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
+    publishDir "${params.outdir}/mirna_prediction/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
+    publishDir "${params.outdir}/mirna_prediction/${tool}/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
-    tuple val(base), file(miranda), file(targetscan) from mirna_prediction
+    tuple val(base), val(tool), file(miranda), file(targetscan) from mirna_prediction
     file(fasta) from ch_fasta
     file(fai) from ch_fai
     file(filt_gtf) from ch_gtf_filtered
