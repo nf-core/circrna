@@ -1456,7 +1456,7 @@ process ANNOTATION{
     mv master_bed12.bed ${base}.bed.tmp
 
     ## isolate exon blocks
-    awk -FS="\t" '{print \$11}' ${base}.bed.tmp > mature_len.tmp
+    awk -v FS="\t" '{print \$11}' ${base}.bed.tmp > mature_len.tmp
 
     ## sum exon block values
     awk -v FS="," '{for(i=t=0;i<NF;) t+=\$++i; \$0=t}1' mature_len.tmp > mature_length
