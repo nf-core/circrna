@@ -1446,7 +1446,7 @@ process ANNOTATION{
     file(gtf_filt) from ch_gtf_filtered
 
     output:
-    tuple val(base), val(tool), file("${base}.bed") into ch_annotation, ch_mirna_targets
+    tuple val(base), val(tool), file("${base}.bed") into ch_annotation, ch_mirna_targets_bed12
     tuple val(base), file("${base}.log") into annotation_logs
 
     script:
@@ -1651,6 +1651,8 @@ process MIRNA_PREDICTION{
     """
 }
 
+ch_targets = mirna_prediction.join(ch_mirna_targets_bed12, by:[0,1])
+
 process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
@@ -1658,8 +1660,7 @@ process MIRNA_TARGETS{
     publishDir "${params.outdir}/mirna_prediction/${tool}/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
-    tuple val(base), val(tool), file(miranda), file(targetscan) from mirna_prediction
-    tuple val(base), val(tool), file(bed12) from ch_mirna_targets
+    tuple val(base), val(tool), file(miranda), file(targetscan), file(bed12) from ch_targets
     val(species) from ch_species
 
     output:
