@@ -1664,7 +1664,7 @@ process TARGETSCAN{
     """
 }
 
-ch_mirna_targets = ch_miranda_results.join(ch_mirna_targets_bed12, by:[0,1])
+ch_mirna_targets = ch_miranda_results.join(ch_targetscan_results, by:[0,1])
 
 ch_targets = ch_mirna_targets.join(ch_mirna_targets_bed12, by:[0,1])
 
