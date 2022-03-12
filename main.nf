@@ -1694,7 +1694,7 @@ process MIRNA_TARGETS{
     bedtools intersect -a miranda.bed -b targetscan.bed > ${base}.mirnas.tmp
     bedtools intersect -a targetscan.bed -b miranda.bed | awk '{print \$6}' > mirna_type
     paste ${base}.mirnas.tmp mirna_type | awk -v OFS="\t" '{print \$4, \$1, \$2, \$3, \$5, \$6, \$7}' > ${base}.mirna_targets.tmp
-    sed -e '1i\circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type' ${base}.mirna_targets.tmp > ${base}.miRNA_targets.txt
+    echo -e "circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type" | cat - ${base}.mirna_targets.tmp > ${base}.miRNA_targets.txt
     """
 }
 
