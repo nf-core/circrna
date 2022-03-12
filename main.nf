@@ -1673,29 +1673,28 @@ process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
     publishDir "${params.outdir}/mirna_prediction/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
-    publishDir "${params.outdir}/mirna_prediction/${tool}/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
 
     input:
     tuple val(base), val(tool), file(miranda), file(targetscan), file(bed12) from ch_targets
-    val(species) from ch_species
 
     output:
-    tuple val(base), file("*.pdf") into circos_plots
     tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
 
     script:
-    def species_id = species + "-"
     """
-        ## Prep exon track for circlize
-        cut -d\$'\t' -f1-12 $bed12 > bed12.tmp
-        bash ${workflow.projectDir}/bin/prep_circos.sh bed12.tmp
+    ## reformat and sort miRanda, TargetScan outputs.
+    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5}' > ${base}.targetscan_reformat.txt
+    tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' > ${base}.miranda_reformat.txt
 
-        ## add mature spl len (+ 1 bp)
-        awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
-        paste circ.bed.tmp ml > circ.bed
+    ## convert to BED
+    awk -v OFS="\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' ${base}.targetscan_reformat.txt > targetscan.bed
+    awk -v OFS="\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' ${base}.miranda_reformat.txt | sed 's/^[^-]*-//g' > miranda.bed
 
-        Rscript ${workflow.projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
-    fi
+    ## intersect, consolidate miRanda, TargetScan information about miRs.
+    bedtools intersect -a miranda.bed -b targetscan.bed > ${base}.mirnas.tmp
+    bedtools intersect -a targetscan.bed -b miranda.bed | awk '{print \$6}' > mirna_type
+    paste ${base}.mirnas.tmp mirna_type | awk -v OFS="\t" '{print \$4, \$1, \$2, \$3, \$5, \$6, \$7}' > ${base}.mirna_targets.tmp
+    sed -e '1i\circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type' ${base}.mirna_targets.tmp > ${base}.miRNA_targets.txt
     """
 }
 
