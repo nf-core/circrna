@@ -1601,13 +1601,11 @@ process TARGETSCAN_DATABASE{
 //mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
 //mirna_input = ch_mature_len_fasta.unique().transpose()
 
-process MIRNA_PREDICTION{
+process MIRANDA{
     tag "${base}"
     label 'process_low'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
         saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${tool}/${base}/${it}" : null }
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
-        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${tool}/${base}/${it}" : null }
     when:
     'mirna_prediction' in module
 
@@ -1617,7 +1615,7 @@ process MIRNA_PREDICTION{
     file(mirbase_txt) from ch_mature_txt
 
     output:
-    tuple val(base), val(tool), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
+    tuple val(base), val(tool), file("*.miRanda.txt"), file("*.targetscan.txt") into ch_miranda_results
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1627,19 +1625,12 @@ process MIRNA_PREDICTION{
 
     # Add catch here for non hits (supply NAs to outfile)
     # Making the decision that if miRanda fails, then the miRNA analysis for this circRNA exits cleanly.
-    # Happy to rework in the future, but do not want pipeline failing on low confidence circRNA calls.
+    # Happy to rework in the future, but do not want pipeline failing on circrnas with no MRE sites.
+    # targetscan produces far more results, have not observed it producing empty reults.
     ## exit code 1 = fail, 0 = success
     if grep -A 1 -q "Scores for this hit:" ${prefix}.bindsites.out;
     then
         grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
-
-        ##format for targetscan
-        cat $fasta | grep ">" | sed 's/>//g' > id
-        cat $fasta | grep -v ">" > seq
-        paste id seq | awk -v OFS="\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
-
-        # run targetscan
-        targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
     else
         ## Add NA's to miRanda cols:
         printf "%0.sNA\t" {1..11} >> ${prefix}.miRanda.txt
@@ -1651,7 +1642,37 @@ process MIRNA_PREDICTION{
     """
 }
 
-ch_targets = mirna_prediction.join(ch_mirna_targets_bed12, by:[0,1])
+
+process TARGETCAN{
+    tag "${base}"
+    label 'process_low'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${tool}/${base}/${it}" : null }
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_fasta
+    file(mirbase_txt) from ch_mature_txt
+
+    output:
+    tuple val(base), val(tool), file("*.targetscan.txt") into ch_targetscan_results
+
+    script:
+    """
+    ##format for targetscan
+    cat $fasta | grep ">" | sed 's/>//g' > id
+    cat $fasta | grep -v ">" > seq
+    paste id seq | awk -v OFS="\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
+
+    # run targetscan
+    targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+    """
+}
+
+ch_mirna_targets = ch_miranda_results.join(ch_mirna_targets_bed12, by:[0,1])
+
+ch_targets = ch_mirna_targets.join(ch_mirna_targets_bed12, by:[0,1])
 
 process MIRNA_TARGETS{
     tag "${base}"
