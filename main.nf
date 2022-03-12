@@ -1478,7 +1478,7 @@ process FASTA{
     file(fasta) from ch_fasta
 
     output:
-    tuple val(base), val(tool), file("${base}.fa") into ch_mature_len_fasta
+    tuple val(base), val(tool), file("${base}.fa") into ch_mature_len_miranda, ch_mature_len_targetscan
 
     script:
     """
@@ -1598,8 +1598,6 @@ process TARGETSCAN_DATABASE{
     """
 }
 
-//mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
-//mirna_input = ch_mature_len_fasta.unique().transpose()
 
 process MIRANDA{
     tag "${base}"
@@ -1610,7 +1608,7 @@ process MIRANDA{
     'mirna_prediction' in module
 
     input:
-    tuple val(base), val(tool), file(fasta) from ch_mature_len_fasta
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_miranda
     file(mirbase) from ch_mature
     file(mirbase_txt) from ch_mature_txt
 
@@ -1634,16 +1632,12 @@ process MIRANDA{
     else
         ## Add NA's to miRanda cols:
         printf "%0.sNA\t" {1..11} >> ${prefix}.miRanda.txt
-        ## Construct TargetScan header
-        echo "a_Gene_ID miRNA_family_ID species_ID MSA_start MSA_end UTR_start UTR_end Group_num Site_type miRNA_in_this_species Group_type Species_in_this_group Species_in_this_group_with_this_site_type ORF_overlap" | tr ' ' '\t' > ${prefix}.targetscan.txt
-        ## Add NA's to file
-        printf "%0.sNA\t" {1..13} >> ${prefix}.targetscan.txt
     fi
     """
 }
 
 
-process TARGETCAN{
+process TARGETSCAN{
     tag "${base}"
     label 'process_low'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
@@ -1652,7 +1646,7 @@ process TARGETCAN{
     'mirna_prediction' in module
 
     input:
-    tuple val(base), val(tool), file(fasta) from ch_mature_len_fasta
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_targetscan
     file(mirbase_txt) from ch_mature_txt
 
     output:
