@@ -1613,7 +1613,7 @@ process MIRANDA{
     file(mirbase_txt) from ch_mature_txt
 
     output:
-    tuple val(base), val(tool), file("*.miRanda.txt"), into ch_miranda_results
+    tuple val(base), val(tool), file("*.miRanda.txt") into ch_miranda_results
 
     script:
     prefix = fasta.toString() - ~/.fa/
