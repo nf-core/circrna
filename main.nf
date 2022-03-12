@@ -1653,6 +1653,7 @@ process TARGETSCAN{
     tuple val(base), val(tool), file("*.targetscan.txt") into ch_targetscan_results
 
     script:
+    prefix = fasta.toString() - ~/.fa/
     """
     ##format for targetscan
     cat $fasta | grep ">" | sed 's/>//g' > id
