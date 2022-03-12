@@ -114,7 +114,7 @@ checkinputdata <- function(phenotype){
         giveError("Not enough samples per condition to perform DE analysis!")
     }
 
-    # Rename sex to gender, how progressive!
+    # Rename sex to gender..
     if("sex" %in% names(pheno)){
         print("Renaming sex to gender in phenotype file")
         rename <- gsub("sex", "gender", names(pheno))
@@ -183,10 +183,15 @@ ens2symbol <- function(mat, inputdata){
         filter = "external_gene_name"
     }
 
-    ## set up Mart
-    mart_call <- as.character(subset(map$command, map$species == species))
-    print("ENS2SYMBOL")
-    mart <- eval(str2expression(mart_call))
+    if(filter == "external_gene_name"){
+        print("Using external gene name as gene symbol")
+    }else{
+        print("Setting up Mart to convert ENS IDs to gene symbols")
+        ## set up Mart
+        mart_call <- as.character(subset(map$command, map$species == species))
+        print("ENS2SYMBOL")
+        mart <- eval(str2expression(mart_call))
+    }
 
     ## now go about converting ENS2SYMBOL
     if(filter == "ensembl_gene_id"){
