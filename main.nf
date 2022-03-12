@@ -1672,7 +1672,7 @@ ch_targets = ch_mirna_targets.join(ch_mirna_targets_bed12, by:[0,1])
 process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
+    publishDir "${params.outdir}/mirna_prediction/${tool}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
 
     input:
     tuple val(base), val(tool), file(miranda), file(targetscan), file(bed12) from ch_targets
