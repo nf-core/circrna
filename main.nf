@@ -1683,7 +1683,7 @@ process MIRNA_TARGETS{
     script:
     """
     ## reformat and sort miRanda, TargetScan outputs.
-    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5}' > ${base}.targetscan_reformat.txt
+    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5, \$9}' > ${base}.targetscan_reformat.txt
     tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' > ${base}.miranda_reformat.txt
 
     ## convert to BED
