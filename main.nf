@@ -1682,18 +1682,18 @@ process MIRNA_TARGETS{
 
     script:
     """
-    ## reformat and sort miRanda, TargetScan outputs.
-    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5, \$9}' > ${base}.targetscan_reformat.txt
-    tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' > ${base}.miranda_reformat.txt
-
-    ## convert to BED
-    awk -v OFS="\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' ${base}.targetscan_reformat.txt > targetscan.bed
-    awk -v OFS="\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' ${base}.miranda_reformat.txt | sed 's/^[^-]*-//g' > miranda.bed
+    ## reformat and sort miRanda, TargetScan outputs, convert to BED for overlaps.
+    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5, \$9}' | awk -v OFS="\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' > targetscan.bed
+    tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' | awk -v OFS="\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' | sed 's/^[^-]*-//g' > miranda.bed
 
     ## intersect, consolidate miRanda, TargetScan information about miRs.
-    bedtools intersect -a miranda.bed -b targetscan.bed > ${base}.mirnas.tmp
+    ## -wa to output miRanda hits - targetscan makes it difficult to resolve duplicate miRNAs at MRE sites.
+    bedtools intersect -a miranda.bed -b targetscan.bed -wa > ${base}.mirnas.tmp
     bedtools intersect -a targetscan.bed -b miranda.bed | awk '{print \$6}' > mirna_type
-    paste ${base}.mirnas.tmp mirna_type | awk -v OFS="\t" '{print \$4, \$1, \$2, \$3, \$5, \$6, \$7}' > ${base}.mirna_targets.tmp
+
+    ## remove duplicate miRNA entries at MRE sites.
+    ## strategy: sory by circs, sort by start position, sort by site type - the goal is to take the best site type (i.e rank site type found at MRE site).
+    paste ${base}.mirnas.tmp mirna_type | sort -k3,3 -k2n -k7r | awk -v OFS="\t" '{print \$4,\$1,\$2,\$3,\$5,\$6,\$7}' | awk -F "\t" '{if (!seen[\$1,\$2,\$3,\$4,\$5,\$6]++)print}' | sort -k1,1 -k3n > ${base}.mirna_targets.tmp
     echo -e "circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type" | cat - ${base}.mirna_targets.tmp > ${base}.miRNA_targets.txt
     """
 }
