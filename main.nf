@@ -536,7 +536,7 @@ process SEGEMEHL_INDEX{
     """
 }
 
-ch_segemehl = params.segemehl ? Channel.fromPath("${params.segemehl}*.idx", checkIfExists: true) : segemehl_built
+ch_segemehl = params.segemehl ? Channel.value(file("${params.segemehl}*.idx")) : segemehl_built
 
 /*
 ================================================================================
