@@ -251,46 +251,6 @@ get_downregulated <- function(df){
 
 }
 
-
-annotate_de_genes <- function(df, inputdata){
-
-    map <- inputdata$map
-    species <- inputdata$species
-    print("ANNOTATE DE GENES")
-    mart_call <- as.character(subset(map$command, map$species == species))
-    mart <- eval(str2expression(mart_call))
-
-    df$external_gene_name <- rownames(df)
-    info <- getBM(attributes=c("external_gene_name",
-                                "chromosome_name",
-                                "start_position",
-                                "end_position",
-                                "strand",
-                                "entrezgene_description"),
-                    filters = c("external_gene_name"),
-                    values = rownames(df),
-                    mart = mart,
-                    useCache=FALSE)
-
-    tmp <- merge(df, info, by="external_gene_name")
-    tmp$strand <- gsub("-1", "-", tmp$strand)
-    tmp$strand <- gsub("1", "+", tmp$strand)
-    tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
-
-    output_col <- c("Gene", "Chromosome", "Start", "Stop", "Strand", "Description", "Log2FC", "P-value", "Adj P-value")
-    tmp <- subset(tmp, select=c(external_gene_name, chromosome_name, start_position, end_position, strand, entrezgene_description, log2FoldChange, pvalue, padj))
-    colnames(tmp) <- output_col
-
-    if(min(tmp$Log2FC) > 0){
-        tmp <- tmp[order(-tmp$Log2FC),]
-    }else{
-        tmp <- tmp[order(tmp$Log2FC),]
-    }
-
-    return(tmp)
-
-}
-
 # Data type provided at end of script to activate RNA-Seq / circRNA analysis.
 DESeq2 <- function(inputdata, data_type){
 
@@ -381,8 +341,8 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir, inputda
     global_heatmap(de, log2, contrast, outdir)
 
     if(outdir == "RNA-Seq/"){
-        up_regulated <- annotate_de_genes(up_regulated, inputdata)
-        down_regulated <- annotate_de_genes(down_regulated, inputdata)
+        up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
+        down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
     }else{
         up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
         down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
