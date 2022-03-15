@@ -1542,7 +1542,9 @@ if(tools_selected > 1){
 
         script:
         """
-        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
+        ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
+        awk -v n=10 '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
         Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
@@ -1570,7 +1572,9 @@ if(tools_selected > 1){
             mv \$b \${sample_name}.bed
         done
 
-        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
+        ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
+        awk -v n=10 '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
         Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
