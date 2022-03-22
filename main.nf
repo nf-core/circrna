@@ -1609,7 +1609,7 @@ process TARGETSCAN_DATABASE{
 
 process MIRANDA{
     tag "${base}"
-    label 'process_high'
+    label 'process_long'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
         saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${tool}/${base}/${it}" : null }
     when:
@@ -1647,7 +1647,7 @@ process MIRANDA{
 
 process TARGETSCAN{
     tag "${base}"
-    label 'process_high'
+    label 'process_long'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
         saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${tool}/${base}/${it}" : null }
     when:
