@@ -1182,7 +1182,7 @@ ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 process DCC{
     tag "${base}"
     label 'py3'
-    label 'process_medium'
+    label 'process_high'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
