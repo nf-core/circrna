@@ -1470,7 +1470,6 @@ process ANNOTATION{
 
 process FASTA{
     tag "${base}:${tool}"
-    label 'process_high'
     publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*.fa"
 
     input:
