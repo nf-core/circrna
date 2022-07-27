@@ -1922,7 +1922,11 @@ def extract_data(csvFile){
 
         // output tuple mimicking fromFilePairs if FASTQ provided, else tuple for BAM
         if(bam.matches('NA')){
-            [ samples, [read1, read2] ]
+            if(read2.matches('NA')){
+                [ samples, read1 ]
+            }else{
+                [ samples, [read1, read2] ]
+            }
         }else{
             [ samples, bam ]
         }
