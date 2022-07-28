@@ -1726,9 +1726,16 @@ process HISAT_ALIGN{
     tuple val(base), file("${base}.bam") into hisat_bam
 
     script:
-    """
-    hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
-    """
+    if(fastq[1]){
+        """
+        hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -1 ${fastq[0]} -2 ${fastq[1]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
+        """
+    }
+    else{
+        """
+        hisat2 -p ${task.cpus} --dta -q -x ${fasta.baseName} -U ${fastq[0]} -t | samtools view -bS - | samtools sort --threads ${task.cpus} -m 2G - > ${base}.bam
+        """
+    }
 }
 
 process STRINGTIE{
