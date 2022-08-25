@@ -274,7 +274,7 @@ params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false 
 //params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false # I don't trust iGenomes has this for all species. Trivial to make in terms of run time.
 params.gtf       = params.genome ? params.genomes[params.genome].gtf ?: false : false
 params.bwa       = params.genome && 'ciriquant' in tool ? params.genomes[params.genome].bwa ?: false : false
-params.star      = params.genome && ('circexplorer2' || 'dcc' || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
+params.star      = params.genome && ('circexplorer2' in tool || 'dcc' in tool || 'circrna_finder' in tool) ? params.genomes[params.genome].star ?: false : false
 params.bowtie    = params.genome && 'mapsplice' in tool ? params.genomes[params.genome].bowtie ?: false : false
 params.bowtie2   = params.genome && 'find_circ' in tool ? params.genomes[params.genome].bowtie2 ?: false : false
 params.mature    = params.genome && 'mirna_prediction' in module ? params.genomes[params.genome].mature ?: false : false
@@ -536,7 +536,7 @@ process SEGEMEHL_INDEX{
     """
 }
 
-ch_segemehl = params.segemehl ? Channel.fromPath("${params.segemehl}*.idx", checkIfExists: true) : segemehl_built
+ch_segemehl = params.segemehl ? Channel.value(file("${params.segemehl}*.idx")) : segemehl_built
 
 /*
 ================================================================================
@@ -1182,7 +1182,7 @@ ch_dcc_dirs = dcc_pairs.join(dcc_mate1).join(dcc_mate2)
 process DCC{
     tag "${base}"
     label 'py3'
-    label 'process_medium'
+    label 'process_dcc'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "${base}",
         saveAs: { params.save_quantification_intermediates ? "circrna_discovery/DCC/intermediates/${base}/${it}" : null }
 
@@ -1446,7 +1446,7 @@ process ANNOTATION{
     file(gtf_filt) from ch_gtf_filtered
 
     output:
-    tuple val(base), val(tool), file("${base}.bed") into ch_annotation
+    tuple val(base), val(tool), file("${base}.bed") into ch_annotation, ch_mirna_targets_bed12
     tuple val(base), file("${base}.log") into annotation_logs
 
     script:
@@ -1456,7 +1456,7 @@ process ANNOTATION{
     mv master_bed12.bed ${base}.bed.tmp
 
     ## isolate exon blocks
-    awk -FS="\t" '{print \$11}' ${base}.bed.tmp > mature_len.tmp
+    awk -v FS="\t" '{print \$11}' ${base}.bed.tmp > mature_len.tmp
 
     ## sum exon block values
     awk -v FS="," '{for(i=t=0;i<NF;) t+=\$++i; \$0=t}1' mature_len.tmp > mature_length
@@ -1470,15 +1470,14 @@ process ANNOTATION{
 
 process FASTA{
     tag "${base}:${tool}"
-    label 'process_high'
-    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "fasta/*"
+    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*.fa"
 
     input:
     tuple val(base), val(tool), file(bed) from ch_annotation
     file(fasta) from ch_fasta
 
     output:
-    tuple val(base), file("fasta/*") into ch_mature_len_fasta
+    tuple val(base), val(tool), file("${base}.fa") into ch_mature_len_miranda, ch_mature_len_targetscan
 
     script:
     """
@@ -1486,10 +1485,7 @@ process FASTA{
     cut -d\$'\t' -f1-12 ${base}.bed > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
     ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > circ_seq.fa && rm circ_seq.tmp
-    ## output to dir
-    mkdir -p fasta
-    awk -F '>' '/^>/ {F=sprintf("fasta/%s.fa",\$2); print > F;next;} {print >> F;}' < circ_seq.fa
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${base}.fa && rm circ_seq.tmp
     """
 }
 
@@ -1545,7 +1541,11 @@ if(tools_selected > 1){
 
         script:
         """
-        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
+        ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
+        n_samps=\$(ls *.bed | wc -l)
+        canon=\$(awk -v a="\$n_samps" 'BEGIN {print a + 4}')
+        awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
         Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
@@ -1573,7 +1573,11 @@ if(tools_selected > 1){
             mv \$b \${sample_name}.bed
         done
 
-        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > circRNA_matrix.txt
+        python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
+        ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
+        n_samps=\$(ls *.bed | wc -l)
+        canon=\$(awk -v a="\$n_samps" 'BEGIN {print a + 4}')
+        awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
         Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
         """
     }
@@ -1601,26 +1605,22 @@ process TARGETSCAN_DATABASE{
     """
 }
 
-//mirna_input = ciriquant_fasta.mix(circexplorer2_fasta, circrna_finder_fasta, dcc_fasta, mapsplice_fasta, find_circ_fasta, segemehl_fasta).unique().transpose()
-mirna_input = ch_mature_len_fasta.unique().transpose()
 
-process MIRNA_PREDICTION{
+process MIRANDA{
     tag "${base}"
-    label 'process_low'
+    label 'process_long'
     publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.miRanda.txt",
-        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${base}/${it}" : null }
-    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
-        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${base}/${it}" : null }
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/miRanda/${tool}/${base}/${it}" : null }
     when:
     'mirna_prediction' in module
 
     input:
-    tuple val(base), file(fasta) from mirna_input
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_miranda
     file(mirbase) from ch_mature
     file(mirbase_txt) from ch_mature_txt
 
     output:
-    tuple val(base), file("*.miRanda.txt"), file("*.targetscan.txt") into mirna_prediction
+    tuple val(base), val(tool), file("*.miRanda.txt") into ch_miranda_results
 
     script:
     prefix = fasta.toString() - ~/.fa/
@@ -1630,72 +1630,78 @@ process MIRNA_PREDICTION{
 
     # Add catch here for non hits (supply NAs to outfile)
     # Making the decision that if miRanda fails, then the miRNA analysis for this circRNA exits cleanly.
-    # Happy to rework in the future, but do not want pipeline failing on low confidence circRNA calls.
+    # Happy to rework in the future, but do not want pipeline failing on circrnas with no MRE sites.
+    # targetscan produces far more results, have not observed it producing empty reults.
     ## exit code 1 = fail, 0 = success
     if grep -A 1 -q "Scores for this hit:" ${prefix}.bindsites.out;
     then
         grep -A 1 "Scores for this hit:" ${prefix}.bindsites.out | sort | grep ">" | cut -c 2- | tr ' ' '\t' >> ${prefix}.miRanda.txt
-
-        ##format for targetscan
-        cat $fasta | grep ">" | sed 's/>//g' > id
-        cat $fasta | grep -v ">" > seq
-        echo "0000" > species
-        paste id species seq > ${prefix}_ts.txt
-
-        # run targetscan
-        targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
     else
         ## Add NA's to miRanda cols:
         printf "%0.sNA\t" {1..11} >> ${prefix}.miRanda.txt
-        ## Construct TargetScan header
-        echo "a_Gene_ID miRNA_family_ID species_ID MSA_start MSA_end UTR_start UTR_end Group_num Site_type miRNA_in_this_species Group_type Species_in_this_group Species_in_this_group_with_this_site_type ORF_overlap" | tr ' ' '\t' > ${prefix}.targetscan.txt
-        ## Add NA's to file
-        printf "%0.sNA\t" {1..13} >> ${prefix}.targetscan.txt
     fi
     """
 }
 
+
+process TARGETSCAN{
+    tag "${base}"
+    label 'process_long'
+    publishDir params.outdir, mode: params.publish_dir_mode, pattern: "*.targetscan.txt",
+        saveAs: { params.save_mirna_predictions ? "mirna_prediction/TargetScan/${tool}/${base}/${it}" : null }
+    when:
+    'mirna_prediction' in module
+
+    input:
+    tuple val(base), val(tool), file(fasta) from ch_mature_len_targetscan
+    file(mirbase_txt) from ch_mature_txt
+
+    output:
+    tuple val(base), val(tool), file("*.targetscan.txt") into ch_targetscan_results
+
+    script:
+    prefix = fasta.toString() - ~/.fa/
+    """
+    ##format for targetscan
+    cat $fasta | grep ">" | sed 's/>//g' > id
+    cat $fasta | grep -v ">" > seq
+    paste id seq | awk -v OFS="\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
+
+    # run targetscan
+    targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+    """
+}
+
+ch_mirna_targets = ch_miranda_results.join(ch_targetscan_results, by:[0,1])
+
+ch_targets = ch_mirna_targets.join(ch_mirna_targets_bed12, by:[0,1])
+
 process MIRNA_TARGETS{
     tag "${base}"
     label 'process_low'
-    publishDir "${params.outdir}/mirna_prediction/${base}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
-    publishDir "${params.outdir}/mirna_prediction/${base}/pdf", mode: params.publish_dir_mode, pattern: "*.pdf"
+    publishDir "${params.outdir}/mirna_prediction/${tool}", mode: params.publish_dir_mode, pattern: "*miRNA_targets.txt"
 
     input:
-    tuple val(base), file(miranda), file(targetscan) from mirna_prediction
-    file(fasta) from ch_fasta
-    file(fai) from ch_fai
-    file(filt_gtf) from ch_gtf_filtered
-    val(species) from ch_species
+    tuple val(base), val(tool), file(miranda), file(targetscan), file(bed12) from ch_targets
 
     output:
-    tuple val(base), file("*.pdf") into circos_plots
     tuple val(base), file("*miRNA_targets.txt") into circrna_mirna_targets
 
     script:
-    def species_id = species + "-"
     """
-    ## As before, we have a catch for NA miRNA pred files.
-    grep -v "miRNA" $miranda | if grep -q "NA";
-    then
-        touch ${base}_fail_catch_miRNA_targets.txt
-        touch ${base}_fail_catch.pdf
-    else
-        ## use file name to derive bed12 coordiantes.
-        echo *.miRanda.txt | sed -E 's/^(chr[^:]+):([0-9]+)-([0-9]+):([^.]+).*/\\1\\t\\2\\t\\3\\t\\4/' | awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, "0", \$4}' > circs.bed
-        bash ${workflow.projectDir}/bin/annotate_outputs.sh &> circ.log
-        mv master_bed12.bed circ.bed.tmp
+    ## reformat and sort miRanda, TargetScan outputs, convert to BED for overlaps.
+    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5, \$9}' | awk -v OFS="\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' > targetscan.bed
+    tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' | awk -v OFS="\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' | sed 's/^[^-]*-//g' > miranda.bed
 
-        ## Prep exon track for circlize
-        cut -d\$'\t' -f1-12 circ.bed.tmp > bed12.tmp
-        bash ${workflow.projectDir}/bin/prep_circos.sh bed12.tmp
+    ## intersect, consolidate miRanda, TargetScan information about miRs.
+    ## -wa to output miRanda hits - targetscan makes it difficult to resolve duplicate miRNAs at MRE sites.
+    bedtools intersect -a miranda.bed -b targetscan.bed -wa > ${base}.mirnas.tmp
+    bedtools intersect -a targetscan.bed -b miranda.bed | awk '{print \$6}' > mirna_type
 
-        ## add mature spl len (+ 1 bp)
-        awk '{print \$11}' circ.bed.tmp | awk -F',' '{for(i=1;i<=NF;i++) printf "%s\\n", \$i}' | awk 'BEGIN {total=0} {total += \$1} END {print total + 1}' > ml
-        paste circ.bed.tmp ml > circ.bed
-
-        Rscript ${workflow.projectDir}/bin/mirna_circos.R circ.bed $miranda $targetscan circlize_exons.txt $species_id
-    fi
+    ## remove duplicate miRNA entries at MRE sites.
+    ## strategy: sory by circs, sort by start position, sort by site type - the goal is to take the best site type (i.e rank site type found at MRE site).
+    paste ${base}.mirnas.tmp mirna_type | sort -k3,3 -k2n -k7r | awk -v OFS="\t" '{print \$4,\$1,\$2,\$3,\$5,\$6,\$7}' | awk -F "\t" '{if (!seen[\$1,\$2,\$3,\$4,\$5,\$6]++)print}' | sort -k1,1 -k3n > ${base}.mirna_targets.tmp
+    echo -e "circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type" | cat - ${base}.mirna_targets.tmp > ${base}.miRNA_targets.txt
     """
 }
 

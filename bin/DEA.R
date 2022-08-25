@@ -114,7 +114,7 @@ checkinputdata <- function(phenotype){
         giveError("Not enough samples per condition to perform DE analysis!")
     }
 
-    # Rename sex to gender, how progressive!
+    # Rename sex to gender..
     if("sex" %in% names(pheno)){
         print("Renaming sex to gender in phenotype file")
         rename <- gsub("sex", "gender", names(pheno))
@@ -183,10 +183,15 @@ ens2symbol <- function(mat, inputdata){
         filter = "external_gene_name"
     }
 
-    ## set up Mart
-    mart_call <- as.character(subset(map$command, map$species == species))
-    print("ENS2SYMBOL")
-    mart <- eval(str2expression(mart_call))
+    if(filter == "external_gene_name"){
+        print("Using external gene name as gene symbol")
+    }else{
+        print("Setting up Mart to convert ENS IDs to gene symbols")
+        ## set up Mart
+        mart_call <- as.character(subset(map$command, map$species == species))
+        print("ENS2SYMBOL")
+        mart <- eval(str2expression(mart_call))
+    }
 
     ## now go about converting ENS2SYMBOL
     if(filter == "ensembl_gene_id"){
@@ -243,46 +248,6 @@ get_downregulated <- function(df){
     key <- intersect(rownames(df)[which(df$log2FoldChange<=-1)], rownames(df)[which(df$pvalue<=0.05)])
     results <- as.data.frame((df)[which(rownames(df) %in% key),])
     return(results)
-
-}
-
-
-annotate_de_genes <- function(df, inputdata){
-
-    map <- inputdata$map
-    species <- inputdata$species
-    print("ANNOTATE DE GENES")
-    mart_call <- as.character(subset(map$command, map$species == species))
-    mart <- eval(str2expression(mart_call))
-
-    df$external_gene_name <- rownames(df)
-    info <- getBM(attributes=c("external_gene_name",
-                                "chromosome_name",
-                                "start_position",
-                                "end_position",
-                                "strand",
-                                "entrezgene_description"),
-                    filters = c("external_gene_name"),
-                    values = rownames(df),
-                    mart = mart,
-                    useCache=FALSE)
-
-    tmp <- merge(df, info, by="external_gene_name")
-    tmp$strand <- gsub("-1", "-", tmp$strand)
-    tmp$strand <- gsub("1", "+", tmp$strand)
-    tmp$external_gene_name <- make.names(tmp$external_gene_name, unique = T)
-
-    output_col <- c("Gene", "Chromosome", "Start", "Stop", "Strand", "Description", "Log2FC", "P-value", "Adj P-value")
-    tmp <- subset(tmp, select=c(external_gene_name, chromosome_name, start_position, end_position, strand, entrezgene_description, log2FoldChange, pvalue, padj))
-    colnames(tmp) <- output_col
-
-    if(min(tmp$Log2FC) > 0){
-        tmp <- tmp[order(-tmp$Log2FC),]
-    }else{
-        tmp <- tmp[order(tmp$Log2FC),]
-    }
-
-    return(tmp)
 
 }
 
@@ -376,8 +341,8 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir, inputda
     global_heatmap(de, log2, contrast, outdir)
 
     if(outdir == "RNA-Seq/"){
-        up_regulated <- annotate_de_genes(up_regulated, inputdata)
-        down_regulated <- annotate_de_genes(down_regulated, inputdata)
+        up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
+        down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
     }else{
         up_regulated <- tibble::rownames_to_column(up_regulated, "ID")
         down_regulated <- tibble::rownames_to_column(down_regulated, "ID")
