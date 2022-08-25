@@ -286,7 +286,7 @@ DESeq2 <- function(inputdata, data_type){
         design = inputdata$design)
         tmp <- DESeq(tmp, quiet=TRUE)
 
-        sizefactors <- sizeFactors(tmp)
+        sizefactors <- estimateSizeFactorsForMatrix(counts(tmp))
         rm(tmp)
 
         dds <- DESeqDataSetFromMatrix(
