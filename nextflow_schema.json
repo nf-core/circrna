@@ -194,11 +194,13 @@
                 },
                 "fasta_fai": {
                     "type": "string",
+                    "default": null,
                     "description": "Path to SAMtools index file.",
                     "fa_icon": "fab fa-stripe-s"
                 },
                 "segemehl": {
                     "type": "string",
+                    "default": null,
                     "fa_icon": "fab fa-stripe-s",
                     "description": "Path to Segemehl Index file",
                     "help_text": "Automatically generated if set null. Alternatively, provide path to Segemehl index file."
@@ -489,13 +491,6 @@
                     "default": true,
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
-                },
-                "name": {
-                    "type": "string",
-                    "description": "Workflow name.",
-                    "fa_icon": "fas fa-fingerprint",
-                    "hidden": true,
-                    "help_text": "A custom name for the pipeline run. Unlike the core nextflow `-name` option with one hyphen this parameter can be reused multiple times, for example if using `-resume`. Passed through to steps such as MultiQC and used for things like report filenames and titles."
                 },
                 "email": {
                     "type": "string",

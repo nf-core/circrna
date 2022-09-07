@@ -8,4 +8,6 @@ files_unchanged:
   - bin/markdown_to_html.py
   - lib/NfcoreSchema.groovy
 
-template_strings: FALSE
+lint:
+  actions_awsfulltest: False
+  template_strings: FALSE
