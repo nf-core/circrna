@@ -1,1 +1,11 @@
 repository_type: pipeline
+
+files_unchanged:
+  - docs/README.md
+  - .github/workflows/linting.yml
+  - .github/workflows/branch.yml
+  - .github/workflows/linting_comment.yml
+  - bin/markdown_to_html.py
+  - lib/NfcoreSchema.groovy
+
+template_strings: FALSE
