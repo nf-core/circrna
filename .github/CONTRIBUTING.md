@@ -18,7 +18,7 @@ If you'd like to write some code for nf-core/circrna, the standard workflow is a
 1. Check that there isn't already an issue about your idea in the [nf-core/circrna issues](https://github.com/nf-core/circrna/issues) to avoid duplicating work. If there isn't one already, please create one so that others know you're working on this
 2. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [nf-core/circrna repository](https://github.com/nf-core/circrna) to your GitHub account
 3. Make the necessary changes / additions within your forked repository following [Pipeline conventions](#pipeline-contribution-conventions)
-4. Use `nf-core schema build` and add any new parameters to the pipeline JSON schema (requires [nf-core tools](https://github.com/nf-core/tools) >= 1.10).
+4. Use `nf-core schema build .` and add any new parameters to the pipeline JSON schema (requires [nf-core tools](https://github.com/nf-core/tools) >= 1.10).
 5. Submit a Pull Request against the `dev` branch and wait for the code to be reviewed and merged
 
 If you're not used to this workflow with git, you can start with some [docs from GitHub](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests) or even their [excellent `git` resources](https://try.github.io/).
@@ -79,7 +79,7 @@ If you wish to contribute a new step, please use the following coding standards:
 
 Parameters should be initialised / defined with default values in `nextflow.config` under the `params` scope.
 
-Once there, use `nf-core schema build` to add to `nextflow_schema.json`.
+Once there, use `nf-core schema build .` to add to `nextflow_schema.json`.
 
 ### Default processes resource requirements
 
