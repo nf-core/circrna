@@ -117,7 +117,7 @@ singular_report <- function(inputdata){
     de_df <- inputdata$de
     circ_de_info <- de_df[which(rownames(de_df) %in% file_name),]
     numcols <- c("log2FoldChange", "pvalue", "padj")
-  circ_de_info[numcols] <- sapply(circ_de_info[numcols],as.numeric)
+    circ_de_info[numcols] <- sapply(circ_de_info[numcols],as.numeric)
     log2fc <- round(circ_de_info$log2FoldChange, digits=3)
     pval <- signif(circ_de_info$pvalue, digits=3)
     adj.pval <- signif(circ_de_info$padj, digits=3)
@@ -149,7 +149,7 @@ prep_plots <- function(inputdata){
     # it is possible that the parent gene is not in the RNA matrix
     # the df is transposed, check if columns are ifEmpty
 
-  # boxplots dont need rna and satisfy process output (*.pdf)
+    # boxplots dont need rna and satisfy process output (*.pdf)
     circ_df <- cbind(circ_df, pheno)
     circ_df$type <- "circRNA"
 
@@ -203,8 +203,8 @@ make_boxplot <- function(circ_df, inputdata){
                                 theme(axis.title.x = element_blank()) +
                                 theme(axis.text.y = element_text(color = "black", size=10))
 
-  pdf(paste(circ_id, "boxplot.pdf", sep="_"))
-  plot(p1)
+    pdf(paste(circ_id, "boxplot.pdf", sep="_"))
+    plot(p1)
     dev.off()
 }
 
@@ -226,12 +226,9 @@ make_lineplot <- function(merged_df, inputdata){
             theme(axis.text.y = element_text(color = "black", size=10))
 
     pdf(paste(circ_id, gene_id, "expression.pdf", sep="_"))
-  plot(p2)
-  dev.off()
+    plot(p2)
+    dev.off()
 }
-
-
-
 
 # Packages + Error traceback (really handy for explicit error tracing)
 options(error=function()traceback(2))

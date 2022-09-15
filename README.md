@@ -32,30 +32,30 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 2. Raw read quality control [`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 3. Adapter trimming + read filtering [`BBDUK`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/)
 4. circRNA quantification
-   1. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
-   2. [`STAR`](https://github.com/alexdobin/STAR) -> [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-   3. [`STAR`](https://github.com/alexdobin/STAR) -> [`DCC`](https://github.com/dieterich-lab/DCC)
-   4. [`HISAT2`](http://daehwankimlab.github.io/hisat2/) -> [`CIRI2`](https://sourceforge.net/projects/ciri/files/CIRI2/) -> [`BWA`](http://bio-bwa.sourceforge.net/) -> [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
-   5. [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) -> [`find circ`](https://github.com/marvin-jens/find_circ)
-   6. [`Bowtie`](http://bowtie-bio.sourceforge.net/index.shtml) -> [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
-   7. [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/) -> [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
-5. circRNA filtering
-   1. Filter candidate circRNAs by number of reads spanning back-splice junction
-6. circRNA annotation
-   1. Annotate candidates as circRNA, ciRNA or EI-circRNA
-   2. Calculate mature spliced length
-   3. Export mature spliced length as FASTA file
-   4. Annotate parent gene, underlying transcripts.
-   5. Export information as customised BED12 file
-7. circRNA count matrix
-   1. Combine results of quantification tools to produce counts matrix for downstream statistical analysis
-   2. Require circRNAs in matrix to be called by at least _n_ quantification tools (consensus filtering)
-8. miRNA target prediction
-   1. [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
-   2. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
-   3. Filter results, miRNAs must be called by both tools
-9. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
-10. MultiQC report [`MultiQC`](http://multiqc.info/)
+5. [`STAR`](https://github.com/alexdobin/STAR) -> [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+6. [`STAR`](https://github.com/alexdobin/STAR) -> [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+7. [`STAR`](https://github.com/alexdobin/STAR) -> [`DCC`](https://github.com/dieterich-lab/DCC)
+8. [`HISAT2`](http://daehwankimlab.github.io/hisat2/) -> [`CIRI2`](https://sourceforge.net/projects/ciri/files/CIRI2/) -> [`BWA`](http://bio-bwa.sourceforge.net/) -> [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+9. [`Bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) -> [`find circ`](https://github.com/marvin-jens/find_circ)
+10. [`Bowtie`](http://bowtie-bio.sourceforge.net/index.shtml) -> [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+11. [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/) -> [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+12. circRNA filtering
+13. Filter candidate circRNAs by number of reads spanning back-splice junction
+14. circRNA annotation
+15. Annotate candidates as circRNA, ciRNA or EI-circRNA
+16. Calculate mature spliced length
+17. Export mature spliced length as FASTA file
+18. Annotate parent gene, underlying transcripts.
+19. Export information as customised BED12 file
+20. circRNA count matrix
+21. Combine results of quantification tools to produce counts matrix for downstream statistical analysis
+22. Require circRNAs in matrix to be called by at least _n_ quantification tools (consensus filtering)
+23. miRNA target prediction
+24. [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
+25. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+26. Filter results, miRNAs must be called by both tools
+27. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+28. MultiQC report [`MultiQC`](http://multiqc.info/)
 
 Ouputs given by each step in the pipeline can be viewed in the [output documentation](https://nf-co.re/circrna/dev/output)
 
@@ -67,22 +67,22 @@ Ouputs given by each step in the pipeline can be viewed in the [output documenta
 
 3. Download the pipeline and test it on a minimal dataset with a single command:
 
-   ```console
-   nextflow run nf-core/circrna -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
-   ```
+```console
+nextflow run nf-core/circrna -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
+```
 
-   Note that some form of configuration will be needed so that Nextflow knows how to fetch the required software. This is usually done in the form of a config profile (`YOURPROFILE` in the example command above). You can chain multiple config profiles in a comma-separated string.
+Note that some form of configuration will be needed so that Nextflow knows how to fetch the required software. This is usually done in the form of a config profile (`YOURPROFILE` in the example command above). You can chain multiple config profiles in a comma-separated string.
 
-   > - The pipeline comes with config profiles called `docker`, `singularity`, `podman`, `shifter`, `charliecloud` and `conda` which instruct the pipeline to use the named tool for software management. For example, `-profile test,docker`.
-   > - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
-   > - If you are using `singularity`, please use the [`nf-core download`](https://nf-co.re/tools/#downloading-pipelines-for-offline-use) command to download images first, before running the pipeline. Setting the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) Nextflow options enables you to store and re-use the images from a central location for future pipeline runs.
-   > - If you are using `conda`, it is highly recommended to use the [`NXF_CONDA_CACHEDIR` or `conda.cacheDir`](https://www.nextflow.io/docs/latest/conda.html) settings to store the environments in a central location for future pipeline runs.
+> - The pipeline comes with config profiles called `docker`, `singularity`, `podman`, `shifter`, `charliecloud` and `conda` which instruct the pipeline to use the named tool for software management. For example, `-profile test,docker`.
+> - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
+> - If you are using `singularity`, please use the [`nf-core download`](https://nf-co.re/tools/#downloading-pipelines-for-offline-use) command to download images first, before running the pipeline. Setting the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) Nextflow options enables you to store and re-use the images from a central location for future pipeline runs.
+> - If you are using `conda`, it is highly recommended to use the [`NXF_CONDA_CACHEDIR` or `conda.cacheDir`](https://www.nextflow.io/docs/latest/conda.html) settings to store the environments in a central location for future pipeline runs.
 
 4. Start running your own analysis!
 
-   ```console
-   nextflow run nf-core/circrna -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'circexplorer2' --input 'samples.csv' --input_type 'fastq' --phenotype 'phenotype.csv'
-   ```
+```console
+nextflow run nf-core/circrna -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'circexplorer2' --input 'samples.csv' --input_type 'fastq' --phenotype 'phenotype.csv'
+```
 
 ## Documentation
 
