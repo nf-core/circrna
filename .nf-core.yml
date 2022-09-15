@@ -2,7 +2,6 @@ repository_type: pipeline
 
 files_unchanged:
   - docs/README.md
-  - .github/workflows/linting.yml
   - .github/workflows/branch.yml
   - .github/workflows/linting_comment.yml
   - bin/markdown_to_html.py
@@ -11,3 +10,5 @@ files_unchanged:
 lint:
   actions_awsfulltest: False
   template_strings: FALSE
+  files_unchanged:
+    - .github/workflows/linting.yml
