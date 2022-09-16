@@ -10,11 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and write results.",
-            "required": [
-                "input",
-                "input_type",
-                "outdir"
-            ],
+            "required": ["input", "input_type", "outdir"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -26,10 +22,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-dna",
                     "description": "Input data type, 'fastq' or 'bam'.",
-                    "enum": [
-                        "fastq",
-                        "bam"
-                    ]
+                    "enum": ["fastq", "bam"]
                 },
                 "outdir": {
                     "type": "string",
@@ -52,10 +45,7 @@
             "fa_icon": "fas fa-circle-notch",
             "description": "Main workflow parameters.",
             "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
-            "required": [
-                "tool",
-                "module"
-            ],
+            "required": ["tool", "module"],
             "properties": {
                 "tool": {
                     "type": "string",
@@ -194,11 +184,13 @@
                 },
                 "fasta_fai": {
                     "type": "string",
+                    "default": null,
                     "description": "Path to SAMtools index file.",
                     "fa_icon": "fab fa-stripe-s"
                 },
                 "segemehl": {
                     "type": "string",
+                    "default": null,
                     "fa_icon": "fab fa-stripe-s",
                     "description": "Path to Segemehl Index file",
                     "help_text": "Automatically generated if set null. Alternatively, provide path to Segemehl index file."
@@ -260,11 +252,7 @@
                     "description": "Which end of reads to perform kmer trimming",
                     "default": "r",
                     "help_text": "Specify which end of the reads to perform kmer trimming on. Options are 'r', 'l', and 'f' (right, left, don't trim).",
-                    "enum": [
-                        "r",
-                        "l",
-                        "f"
-                    ]
+                    "enum": ["r", "l", "f"]
                 },
                 "hdist": {
                     "type": "integer",
@@ -286,11 +274,7 @@
                     "description": "Which end of reads to perform quality trimming",
                     "default": "r",
                     "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are 'r', 'l' and 'rl' (right, left, both).",
-                    "enum": [
-                        "r",
-                        "l",
-                        "rl"
-                    ]
+                    "enum": ["r", "l", "rl"]
                 },
                 "minlen": {
                     "type": "integer",
@@ -379,13 +363,7 @@
                     "description": "Mode of shared memory usage for the genome files",
                     "fa_icon": "fas fa-sliders-h",
                     "help_text": "Users can select a variety of options depending on their resource configuration:\n\n1. `LoadAndKeep`: load genome into shared and keep it in memory after run\n2. `LoadAndRemove`: load genome into shared but remove it after run\n3. `LoadAndExit`: load genome into shared memory and exit, keeping the genome in memory for future runs\n4. `Remove`: do not map anything, just remove loaded genome from memory\n5. `NoSharedMemory`: do not use shared memory, each job will have its own private copy of the genome",
-                    "enum": [
-                        "LoadAndKeep",
-                        "LoadAndRemove",
-                        "LoadAndExit",
-                        "Remove",
-                        "NoSharedMemory"
-                    ]
+                    "enum": ["LoadAndKeep", "LoadAndRemove", "LoadAndExit", "Remove", "NoSharedMemory"]
                 },
                 "limitSjdbInsertNsj": {
                     "type": "integer",
@@ -474,14 +452,7 @@
                     "description": "Method used to save pipeline results to output directory.",
                     "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
                     "fa_icon": "fas fa-copy",
-                    "enum": [
-                        "symlink",
-                        "rellink",
-                        "link",
-                        "copy",
-                        "copyNoFollow",
-                        "move"
-                    ]
+                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"]
                 },
                 "validate_params": {
                     "type": "boolean",
@@ -489,13 +460,6 @@
                     "default": true,
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
-                },
-                "name": {
-                    "type": "string",
-                    "description": "Workflow name.",
-                    "fa_icon": "fas fa-fingerprint",
-                    "hidden": true,
-                    "help_text": "A custom name for the pipeline run. Unlike the core nextflow `-name` option with one hyphen this parameter can be reused multiple times, for example if using `-resume`. Passed through to steps such as MultiQC and used for things like report filenames and titles."
                 },
                 "email": {
                     "type": "string",

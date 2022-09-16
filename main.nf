@@ -7,16 +7,18 @@
 Started August 2020.
 Dev version to nf-core Feb 2021.
 --------------------------------------------------------------------------------
- @Homepage
- https://github.com/nf-core/circrna
- -------------------------------------------------------------------------------
- @Documentation
- https://nf-co.re/circrna
---------------------------------------------------------------------------------
- @Authors
- Barry Digby (@BarryDigby)
+    @Homepage
+    https://github.com/nf-core/circrna
+    -------------------------------------------------------------------------------
+    @Documentation
+    https://nf-co.re/circrna
+    --------------------------------------------------------------------------------
+    @Authors
+    Barry Digby (@BarryDigby)
 --------------------------------------------------------------------------------
 */
+
+nextflow.enable.dsl=1
 
 log.info Headers.nf_core(workflow, params.monochrome_logs)
 
@@ -26,10 +28,10 @@ log.info Headers.nf_core(workflow, params.monochrome_logs)
 ================================================================================
 */
 
-def json_schema = "$workflow.projectDir/nextflow_schema.json"
+def json_schema = "$projectDir/nextflow_schema.json"
 if (params.help) {
     def command = "nextflow run nf-core/circrna -profile singularity --input '*_R{1,2}.fastq.gz' --input_type 'fastq' --genome 'GRCh38' --module 'circrna_discovery, mirna_prediction, differential_expression' --tool 'CIRCexplorer2' --phenotype 'metadata.csv' "
-    log.info NfcoreSchema.params_help(workflow, params, json_schema, command)
+    log.info NfcoreSchema.paramsHelp(workflow, params, command)
     exit 0
 }
 
@@ -40,7 +42,7 @@ if (params.help) {
 */
 
 if (params.validate_params) {
-    NfcoreSchema.validateParameters(params, json_schema, log)
+    NfcoreSchema.validateParameters(workflow, params, log)
 }
 
 if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)){
@@ -70,8 +72,8 @@ if(params.phenotype){
 
 // Check BBDUK params
 /*
-  check adapters file exists
-  check combinations of parameters have been supplied correctly
+    check adapters file exists
+    check combinations of parameters have been supplied correctly
 */
 
 if(params.trim_fastq){
@@ -91,7 +93,7 @@ tools_selected = tool.size()
 
 // Check '--tool_filter'' does not exceed number of tools selected
 if(tools_selected > 1 && params.tool_filter > tools_selected){
-  exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' (${params.tool_filter}) exceeds the number of tools selected (${params.tool}). Please select a value less than or equal to the number of quantification tools selected ($tools_selected).\n\nPlease check the help documentation."
+    exit 1, "[nf-core/circrna] error: The parameter '--tool_filter' (${params.tool_filter}) exceeds the number of tools selected (${params.tool}). Please select a value less than or equal to the number of quantification tools selected ($tools_selected).\n\nPlease check the help documentation."
 }
 
 // Check Input data (if !csv choose path)
@@ -138,7 +140,7 @@ ch_output_docs_images = file("$workflow.projectDir/docs/images/", checkIfExists:
 ================================================================================
 */
 
-log.info NfcoreSchema.params_summary_log(workflow, params, json_schema)
+log.info NfcoreSchema.paramsSummaryLog(workflow, params)
 
 // Has the run name been specified by the user?
 // This has the bonus effect of catching both -name and --name
@@ -265,10 +267,10 @@ Channel.from(summary.collect{ [it.key, it.value] })
 */
 
 /* Note to reviewer:
- * I get warning messages when the parameters are not used by the workflow (for e.g when tool that uses bowtie not used):
- * 'WARN: Access to undefined parameter `bowtie` -- Initialise it to a default value eg. `params.bowtie = some_value`'
- * Is there a way to stop these warnings from printing or is it ok to leave as is
- */
+* I get warning messages when the parameters are not used by the workflow (for e.g when tool that uses bowtie not used):
+* 'WARN: Access to undefined parameter `bowtie` -- Initialise it to a default value eg. `params.bowtie = some_value`'
+* Is there a way to stop these warnings from printing or is it ok to leave as is
+*/
 
 params.fasta     = params.genome ? params.genomes[params.genome].fasta ?: false : false
 //params.fasta_fai = params.genome ? params.genomes[params.genome].fasta_fai ?: false : false # I don't trust iGenomes has this for all species. Trivial to make in terms of run time.
@@ -292,9 +294,9 @@ ch_species = params.genome ? Channel.value(params.species) : Channel.value(param
 */
 
 /*
-  Note to reviewer:
-  I struggled capturing tool versions, particularly with the regexes in 'scrape_software_versions.py'
-  For now, the process is hardcoded.
+    Note to reviewer:
+    I struggled capturing tool versions, particularly with the regexes in 'scrape_software_versions.py'
+    For now, the process is hardcoded.
 */
 
 process SOFTWARE_VERSIONS {
@@ -363,14 +365,14 @@ process BWA_INDEX {
 }
 
 /*
- * Note to reviewer:
- * I'll verbalise what I think I am doing here, please let me know if there are contradictions in the code.
- * 1. If igenomes '--genome' param passed to script, use pre-built indices from igenomes.
- * 2. If path to indices is provided && --genome is null, use the path.
- * 3. If neither are available, last resort is to build the indices.
- *
- * Had to include '&& ciriquant' below or else it attempts to stage 'false' in file channel, breaks workflow.
- * This does not happen with other index channels which is confusing.
+* Note to reviewer:
+* I'll verbalise what I think I am doing here, please let me know if there are contradictions in the code.
+* 1. If igenomes '--genome' param passed to script, use pre-built indices from igenomes.
+* 2. If path to indices is provided && --genome is null, use the path.
+* 3. If neither are available, last resort is to build the indices.
+*
+* Had to include '&& ciriquant' below or else it attempts to stage 'false' in file channel, breaks workflow.
+* This does not happen with other index channels which is confusing.
 */
 
 ch_bwa = params.genome && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : params.bwa && 'ciriquant' in tool ? Channel.value(file(params.bwa)) : bwa_built
@@ -576,7 +578,7 @@ if(('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
                             file = it[0]
                             chr_id = it[1]
                             file.copyTo("${params.outdir}/reference_genome/chromosomes/${chr_id}.fa")
-                          }
+                        }
 
     stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/reference_genome/chromosomes")
 }
@@ -584,13 +586,13 @@ if(('mapsplice' in tool || 'find_circ' in tool) && 'circrna_discovery' in module
 ch_chromosomes = ('mapsplice' in tool || 'find_circ' in tool) ? stage_chromosomes : 'null'
 
 /*
- * DEBUG
- * No signature of method: nextflow.util.BlankSeparatedList.toRealPath() is applicable for argument types: () values: []
- * error in below YML process (--genome, no params passed to gtf/fasta/etc.. )
- * I suspect this is because bwa_built is a directory (BWAIndex), whilst params.bwa from iGenomes is a collection of files
- * (structure of bwa on iGenomes is frustrating)
- * If iGenomes bwa used, place the files in a directory so it matches bwa_built and "path" method.
- */
+* DEBUG
+* No signature of method: nextflow.util.BlankSeparatedList.toRealPath() is applicable for argument types: () values: []
+* error in below YML process (--genome, no params passed to gtf/fasta/etc.. )
+* I suspect this is because bwa_built is a directory (BWAIndex), whilst params.bwa from iGenomes is a collection of files
+* (structure of bwa on iGenomes is frustrating)
+* If iGenomes bwa used, place the files in a directory so it matches bwa_built and "path" method.
+*/
 
 if(params.genome && 'ciriquant' in tool){
     file("${params.outdir}/reference_genome/BWAIndex").mkdirs()
@@ -628,15 +630,15 @@ process CIRIQUANT_YML{
     touch travis.yml
     printf "name: ciriquant\n\
     tools:\n\
-     bwa: \$BWA\n\
-     hisat2: \$HISAT2\n\
-     stringtie: \$STRINGTIE\n\
-     samtools: \$SAMTOOLS\n\n\
+    bwa: \$BWA\n\
+    hisat2: \$HISAT2\n\
+    stringtie: \$STRINGTIE\n\
+    samtools: \$SAMTOOLS\n\n\
     reference:\n\
-     fasta: ${fasta_path}\n\
-     gtf: ${gtf_path}\n\
-     bwa_index: ${bwa_path}/${bwa_prefix}\n\
-     hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
+    fasta: ${fasta_path}\n\
+    gtf: ${gtf_path}\n\
+    bwa_index: ${bwa_path}/${bwa_prefix}\n\
+    hisat_index: ${hisat}/${hisat_prefix}" >> travis.yml
     """
 }
 
@@ -1346,7 +1348,7 @@ process MAPSPLICE_ALIGN{
 }
 
 /*
-  STEP 6.7.2: MapSplice quantification
+    STEP 6.7.2: MapSplice quantification
 */
 
 process MAPSPLICE_PARSE{
@@ -1984,7 +1986,7 @@ def retrieve_input_paths(input, type){
 
 def examine_phenotype(pheno){
 
-  Channel
+    Channel
         .fromPath(pheno)
         .splitCsv(header: true, sep: ',')
         .map{ row ->

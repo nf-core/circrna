@@ -52,11 +52,11 @@ RUN cp *.pl /opt/conda/envs/nf-core-circrna-1.0.0/bin
 RUN chmod 777 filterCirc.awk && cp filterCirc.awk /opt/conda/envs/nf-core-circrna-1.0.0/bin
 
 ## TargetScan Executables
-RUN curl --output ./targetscan_70.zip http://www.targetscan.org/vert_72/vert_72_data_download/targetscan_70.zip
+RUN wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/targetscan_70.zip
 RUN unzip targetscan_70.zip
-RUN curl --output ./targetscan_70_BL_PCT.zip http://www.targetscan.org/vert_72/vert_72_data_download/targetscan_70_BL_PCT.zip
+RUN wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/targetscan_70_BL_PCT.zip
 RUN unzip targetscan_70_BL_PCT.zip
-RUN curl --output ./TargetScan7_context_scores.zip http://www.targetscan.org/vert_72/vert_72_data_download/TargetScan7_context_scores.zip
+RUN wget --no-check-certificate http://www.targetscan.org/vert_72/vert_72_data_download/TargetScan7_context_scores.zip
 RUN unzip TargetScan7_context_scores.zip
 RUN chmod 777 targetscan_70.pl && mv targetscan_70.pl /opt/conda/envs/nf-core-circrna-1.0.0/bin
 RUN chmod 777 TargetScan7_BL_PCT/targetscan_70_BL_bins.pl && mv TargetScan7_BL_PCT/targetscan_70_BL_bins.pl /opt/conda/envs/nf-core-circrna-1.0.0/bin
