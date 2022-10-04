@@ -74,9 +74,8 @@
 
 - **ViennaRNA** Lorenz, R., Bernhart, S.H., Höner zu Siederdissen, C. et al. (2011). ViennaRNA Package 2.0. Algorithms Mol Biol 6, 26. Available at: [https://doi.org/10.1186/1748-7188-6-26](https://doi.org/10.1186/1748-7188-6-26). Download: [https://www.tbi.univie.ac.at/RNA/#download](https://www.tbi.univie.ac.at/RNA/#download)
 
-## Test data References
-
-Dong Cao (2021). An autoregulation loop in fust-1 for circular RNA regulation in Caenorhabditis elegans. Biorxiv. Available at: [https://doi.org/10.1101/2021.03.22.436400](https://doi.org/10.1101/2021.03.22.436400).
+- [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
+  > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
 
 ## Software packaging/containerisation tools
 

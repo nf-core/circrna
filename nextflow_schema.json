@@ -26,7 +26,7 @@
                     "fa_icon": "fas fa-folder-open",
                     "default": "./results"
                 },
-                "phenotype": {
+                "email": {
                     "type": "string",
                     "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
                     "fa_icon": "fas fa-journal-whills",
@@ -52,7 +52,7 @@
                     "default": "circexplorer2",
                     "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
                 },
-                "module": {
+                "multiqc_title": {
                     "type": "string",
                     "fa_icon": "fas fa-sliders-h",
                     "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
@@ -238,12 +238,12 @@
                 }
             }
         },
-        "read_trimming_and_adapter_removal": {
-            "title": "Read trimming & adapter removal",
+        "institutional_config_options": {
+            "title": "Institutional config options",
             "type": "object",
-            "fa_icon": "fas fa-cut",
-            "description": "Parameters for BBDUK",
-            "help_text": "BBDUK read filtering is deployed when `--trim_fastq true`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+            "fa_icon": "fas fa-university",
+            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
+            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
             "properties": {
                 "skip_trimming": {
                     "type": "boolean",
@@ -251,7 +251,7 @@
                     "description": "Perform read filtering + trimming?",
                     "help_text": "If set to true, trimgalore! is executed. If false, the process is skipped and raw reads will be supplied to circRNA quantification tools."
                 },
-                "adapters": {
+                "custom_config_base": {
                     "type": "string",
                     "fa_icon": "fas fa-file-alt",
                     "description": "Reference adapter file supplied to BBDUK",
@@ -261,48 +261,29 @@
                     "default": "${projectDir}/bin/adapters.fa",
                     "pattern": "\\.(fa|fasta)$"
                 },
-                "k": {
-                    "type": "integer",
-                    "fa_icon": "fab fa-kickstarter",
-                    "description": "Specifies K-mer size to use for adapter removal",
-                    "default": 12,
-                    "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k 32` removes all reads that have a 32 kmer match with the adapter sequences provided."
-                },
-                "ktrim": {
+                "config_profile_name": {
                     "type": "string",
-                    "fa_icon": "fas fa-exchange-alt",
-                    "description": "Which end of reads to perform kmer trimming",
-                    "default": "r",
-                    "help_text": "Specify which end of the reads to perform kmer trimming on. Options are 'r', 'l', and 'f' (right, left, don't trim).",
-                    "enum": ["r", "l", "f"]
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
                 },
-                "hdist": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-ruler-horizontal",
-                    "description": "Maximum Hamming distance for reference kmers",
-                    "default": 1,
-                    "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n> Warning: setting `--hdist` to values higher than 1 will result in high memory usage."
-                },
-                "trimq": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-award",
-                    "description": "Trimming performed on regions in reads with an average Phred score below specified value",
-                    "default": 20,
-                    "help_text": "> NB: This action is performed after adapter removal if specified."
-                },
-                "qtrim": {
+                "config_profile_description": {
                     "type": "string",
-                    "fa_icon": "fas fa-exchange-alt",
-                    "description": "Which end of reads to perform quality trimming",
-                    "default": "r",
-                    "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are 'r', 'l' and 'rl' (right, left, both).",
-                    "enum": ["r", "l", "rl"]
+                    "description": "Institutional config description.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
                 },
-                "minlen": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-ruler-horizontal",
-                    "description": "Remove reads below length *n*",
-                    "default": 30
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Institutional config contact information.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Institutional config URL link.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
                 }
             }
         },
@@ -517,7 +498,7 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/pipeline_options"
+            "$ref": "#/definitions/reference_genome_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
