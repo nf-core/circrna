@@ -42,8 +42,6 @@ jobs:
 
       - name: Check code lints with Black
         uses: psf/black@stable
-        with:
-          options: "--exclude 'scorethresh|find_circ|sum|cmp_bed|merge_bed|unmapped2anchors'"
 
       # If the above check failed, post a comment on the PR explaining the failure
       - name: Post PR comment
