@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+library(CircTest)
+
 args = commandArgs(trailingOnly = TRUE)
 
 circ = read.table(args[1], header=T, sep=",")
