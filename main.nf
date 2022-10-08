@@ -1539,8 +1539,8 @@ if(tools_selected > 1){
         file(bed) from sample_counts.collect()
 
         output:
-        file("circRNA_matrix.txt") into circRNA_counts, circRNA_CLR
-        file("count_matrix.txt") into matrix
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("count_matrix.txt") into matrix, matrix_CLR
 
         script:
         """
@@ -1564,8 +1564,8 @@ if(tools_selected > 1){
         val(tool) from params.tool
 
         output:
-        file("circRNA_matrix.txt") into circRNA_counts, circRNA_CLR
-        file("count_matrix.txt") into matrix
+        file("circRNA_matrix.txt") into circRNA_counts
+        file("count_matrix.txt") into matrix, matrix_CLR
 
         script:
         """
@@ -1813,7 +1813,7 @@ process PREP_CLR{
 
     input:
     file(stringtie_gtf) from stringtie_gtf_CLR.collect()
-    file(circrna_matrix) from circRNA_CLR
+    file(circrna_matrix) from matrix_CLR
     file(gtf) from gtf_CLR
 
     output:
