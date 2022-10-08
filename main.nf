@@ -1817,7 +1817,7 @@ process PREP_CLR{
     file(gtf) from gtf_CLR
 
     output:
-    file("circ.csv"), file("linear.csv") into circular_linear_ratio
+    path("circ.csv"), path("linear.csv") into circular_linear_ratio
 
     script:
     """
