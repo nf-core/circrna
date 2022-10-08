@@ -1826,7 +1826,7 @@ process PREP_CLR{
     prepDE.py -i samples.txt
 
     # generate circrna BED file.
-    tail -n +2 $circrna_matrix | awk '{print $1}' > IDs.txt
+    tail -n +2 $circrna_matrix | awk '{print \$1}' > IDs.txt
     bash ${workflow.projectDir}/bin/ID_to_BED.sh IDs.txt
     cat *.bed > merged.txt && rm IDs.txt && rm *.bed && mv merged.txt circs.bed
 
