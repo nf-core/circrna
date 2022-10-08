@@ -1817,7 +1817,8 @@ process PREP_CLR{
     file(gtf) from gtf_CLR
 
     output:
-    path("circ.csv"), path("linear.csv") into circular_linear_ratio
+    file("circ.csv") into circular_linear_ratio_circrna
+    file("linear.csv") into circular_linear_ratio_linear
 
     script:
     """
@@ -1849,7 +1850,8 @@ process CLR{
     'differential_expression' in module
 
     input:
-    file(circ_csv), file(linear_csv) from circular_linear_ratio
+    file(circ_csv) from circular_linear_ratio_circrna
+    file(linear_csv) from circular_linear_ratio_linear
     file(pheno) from CLR_phenotype
 
     output:
