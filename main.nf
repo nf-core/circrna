@@ -66,9 +66,7 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
 if(params.phenotype){
     pheno_file = file(params.phenotype)
     ch_phenotype = examine_phenotype(pheno_file)
-    ch_phenotype.map{ it ->
-                      pheno = file(it)
-                      return pheno }.set{ DEA_phenotype, CLR_phenotype }
+    (DEA_phenotype, CLR_phenotype) = ch_phenotype.into(2)
 } else {
     ch_phenotype = Channel.empty()
 }
