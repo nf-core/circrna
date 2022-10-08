@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-circ_mat = read.table("count_matrix.txt", header=T, sep="\t", check.names = FALSE, stringsAsFactors = F, row.names = "ID")
+circ_mat = read.table("circRNA_matrix.txt", header=T, sep="\t", check.names = FALSE, stringsAsFactors = F, row.names = "ID")
 gene_mat = read.table("gene_count_matrix.csv", sep=",", header=T, row.names="gene_id", stringsAsFactors = F)
 map = read.table("circrna_host-gene.txt", header = F, sep="\t", stringsAsFactors = F)
 
