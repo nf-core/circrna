@@ -1,6 +1,7 @@
 #!/usr/bin/env R
 
 library(CircTest)
+library(ggplot2)
 
 args = commandArgs(trailingOnly = TRUE)
 
