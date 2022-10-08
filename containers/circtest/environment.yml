@@ -1,0 +1,5 @@
+name: circtest
+channels:
+  - conda-forge
+dependencies:
+  - r-base

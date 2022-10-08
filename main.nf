@@ -66,6 +66,7 @@ if (!checkParameterList(module, moduleList)) exit 1, "[nf-core/circrna] error: U
 if(params.phenotype){
     pheno_file = file(params.phenotype)
     ch_phenotype = examine_phenotype(pheno_file)
+    ch_phenotype.set{ DEA_phenotype, CLR_phenotype }
 } else {
     ch_phenotype = Channel.empty()
 }
@@ -556,7 +557,7 @@ process FILTER_GTF{
     file(gtf) from ch_gtf
 
     output:
-    file("filt.gtf") into ch_gtf_filtered
+    file("filt.gtf") into ch_gtf_filtered, gtf_CLR
 
     script:
     """
@@ -1538,7 +1539,7 @@ if(tools_selected > 1){
         file(bed) from sample_counts.collect()
 
         output:
-        file("circRNA_matrix.txt") into circRNA_counts
+        file("circRNA_matrix.txt") into circRNA_counts, circRNA_CLR
         file("count_matrix.txt") into matrix
 
         script:
@@ -1563,7 +1564,7 @@ if(tools_selected > 1){
         val(tool) from params.tool
 
         output:
-        file("circRNA_matrix.txt") into circRNA_counts
+        file("circRNA_matrix.txt") into circRNA_counts, circRNA_CLR
         file("count_matrix.txt") into matrix
 
         script:
@@ -1753,7 +1754,7 @@ process STRINGTIE{
     file(gtf) from ch_gtf
 
     output:
-    file("${base}") into stringtie_dir
+    file("${base}") into stringtie_dir, stringtie_gtf_CLR
 
     script:
     """
@@ -1776,7 +1777,7 @@ process DEA{
     input:
     file(gtf_dir) from stringtie_dir.collect()
     file(circ_matrix) from circRNA_counts
-    file(phenotype) from ch_phenotype
+    file(phenotype) from DEA_phenotype
     val(species) from ch_species
 
     output:
@@ -1801,6 +1802,62 @@ process DEA{
 
     mv gene_count_matrix.csv RNA-Seq
     mv transcript_count_matrix.csv RNA-Seq
+    """
+}
+
+process PREP_CLR{
+    label 'process_medium'
+
+    when:
+    'differential_expression' in module
+
+    input:
+    file(stringtie_gtf) from stringtie_gtf_CLR.collect()
+    file(circrna_matrix) from circRNA_CLR
+    file(gtf) from gtf_CLR
+
+    output:
+    file("circ.csv"), ("linear.csv") into circular_linear_ratio
+
+    script:
+    """
+    # re-create gene_count matrix
+    for i in \$(ls -d */); do sample=\${i%"/"}; file=\${sample}.gtf; touch samples.txt; printf "\$sample\t\${i}\${file}\n" >> samples.txt; done
+    prepDE.py -i samples.txt
+
+    # generate circrna BED file.
+    tail -n +2 $circrna_matrix | awk '{print $1}' > IDs.txt
+    bash ${workflow.projectDir}/bin/ID_to_BED.sh IDs.txt
+    cat *.bed > merged.txt && rm IDs.txt && rm *.bed && mv merged.txt circs.bed
+
+    # Re-use annotation script to identify the host gene.
+    bash ${workflow.projectDir}/bin/annotate_outputs.sh &> annotation.log
+    awk -v OFS="\t" '{print \$4, \$14}' master_bed12.bed > circrna_host-gene.txt
+
+    # Prepare circTest files
+    Rscript ${workflow.projectDir}/bin/prepare_circ_test.R
+    """
+}
+
+
+process CLR{
+    label 'circtest'
+    publishDir "${params.outdir}/differential_expression/ratio_tests", pattern: "*.pdf", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/differential_expression/ratio_tests/RData", pattern: "*.RData", mode: params.publish_dir_mode
+
+    when:
+    'differential_expression' in module
+
+    input:
+    file(circ_csv), file(linear_csv) from circular_linear_ratio
+    file(pheno) from CLR_phenotype
+
+    output:
+    file("*") into clr_out
+
+    script:
+    """
+    Rscript ${workflow.projectDir}/bin/circ_test.R $circ_csv $linear_csv $pheno
     """
 }
 
