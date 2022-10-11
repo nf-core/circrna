@@ -1490,6 +1490,7 @@ process FASTA{
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${base}.fa && rm circ_seq.tmp
     ## add backsplice sequence for miRanda TargetScan, publish canonical FASTA to results.
+    rm $fasta
     bash ${workflow.projectDir}/bin/backsplice_gen.sh ${base}.fa
     """
 }
