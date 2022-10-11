@@ -74,6 +74,11 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
     rownames(circ) <- circ$circ
     circ <- subset(circ, select=-c(Chr, Start, Stop, Strand, circ))
 
+    # R converts '-' to '.' in colnames here and results in failures.
+    # If you need to make this 'smarter' check that colnames contains '.',
+    # compare gsub to colnames(gene_mat), then apply.
+    colnames(circ) <- gsub("\\.", "-", colnames(circ))
+
     ## add pseudocount of 1
     gene_mat <- gene_mat + 1
     circ <- circ + 1
@@ -523,7 +528,7 @@ volcano_plot <- function(res, contrast, outdir){
                         pCutoff=0.05,
                         title="Volcano Plot",
                         subtitle=paste(contrast),
-                        legendVisible=F,
+                        #legendVisible=F,
                         caption = paste0('Total Genes = ', nrow(res)),
                         xlim=c(min_width, max_width),
                         ylim=c(0, max_height),
