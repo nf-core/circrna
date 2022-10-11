@@ -1472,7 +1472,7 @@ process ANNOTATION{
 
 process FASTA{
     tag "${base}:${tool}"
-    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*.fa"
+    publishDir "${params.outdir}/circrna_discovery/${tool}/${base}", mode: params.publish_dir_mode, pattern: "*.fasta"
 
     input:
     tuple val(base), val(tool), file(bed) from ch_annotation
@@ -1480,6 +1480,7 @@ process FASTA{
 
     output:
     tuple val(base), val(tool), file("${base}.fa") into ch_mature_len_miranda, ch_mature_len_targetscan
+    file("${base}.fasta") into publish_circ_mature_seq
 
     script:
     """
@@ -1488,6 +1489,8 @@ process FASTA{
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${base}.fa && rm circ_seq.tmp
+    ## add backsplice sequence for miRanda TargetScan, publish canonical FASTA to results.
+    bash ${workflow.projectDir}/bin/backsplice_gen.sh ${base}.fa
     """
 }
 
