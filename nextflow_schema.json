@@ -361,6 +361,7 @@
                 },
                 "multiqc_title": {
                     "type": "string",
+                    "description": "The title to use in the MultiQC report.",
                     "default": null
                 }
             }
