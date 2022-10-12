@@ -14,13 +14,16 @@
             "properties": {
                 "input": {
                     "type": "string",
-                    "format": "file-path",
+                    "fa_icon": "fas fa-copy",
                     "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "schema": "assets/schema_input.json",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/circrna/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the absolute path to FASTQ/BAM files.",
+                    "help_text": "There are two ways to supply input data to nf-core/circrna:\n\n1. Provide the path to the directory containing FASTQ or BAM files, with the appropriate wildcard glob pattern *e.g:*\n```bash\n--input \"/data/*_r{1,2}.fastq.gz\"\n```\n2. Provide a CSV file containing the absolute paths to FASTQ or BAM files *e.g:*\n\n| Sample_ID    | Read1                          | Read2                          | Bam  |\n|------------- |------------------------------- |------------------------------- |----- |\n| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |\n| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |\n| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |\n| lung_rep1   | /data/lung_rep1_r1.fastq.gz   | /data/lung_rep1_r2.fastq.gz   | NA   |\n| lung_rep2   | /data/lung_rep2_r1.fastq.gz   | /data/lung_rep2_r2.fastq.gz   | NA   |\n| lung_rep3   | /data/lung_rep3_r1.fastq.gz   | /data/lung_rep3_r2.fastq.gz   | NA   |\n| melanoma_rep1   | /data/melanoma_rep1_r1.fastq.gz   | /data/melanoma_rep1_r2.fastq.gz   | NA   |\n| melanoma_rep2   | /data/melanoma_rep2_r1.fastq.gz   | /data/melanoma_rep2_r2.fastq.gz   | NA   |\n| melanoma_rep3   | /data/melanoma_rep3_r1.fastq.gz   | /data/melanoma_rep3_r2.fastq.gz   | NA   |\n\n When supplying BAM files to the CSV file, set Read1 & Read2 columns to 'NA'."
+                },
+                "input_type": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dna",
+                    "description": "Input data type, 'fastq' or 'bam'.",
+                    "enum": ["fastq", "bam"]
                 },
                 "outdir": {
                     "type": "string",
@@ -30,12 +33,23 @@
                 },
                 "email": {
                     "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                },
-                "multiqc_title": {
+                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
+                    "fa_icon": "fas fa-journal-whills",
+                    "mimetype": "text/csv",
+                    "help_text": "The response variable containing the phenotype of primary interest in the experiment must have the column name condition. An example phenotype file is given below:\n\n| Sample_ID | condition | replicates |\n|---------|-----------|------------|\n| control_rep1  | control   | 1          |\n| control_rep2  | control   | 2          |\n| control_rep3  | control   | 3          |\n| lung_rep1  | lung      | 1          |\n| lung_rep2  | lung      | 2          |\n| lung_rep3  | lung      | 3          |\n| melanoma_rep1  | melanoma  | 1          |\n| melanoma_rep2  | melanoma  | 2          |\n| melanoma_rep3  | melanoma  | 3          |\n\nThis will produce the DESeq2 design formula '~ replicates + condition' i.e all columns not named condition will be controlled for in the linear mixed model.",
+                    "pattern": "\\.csv$"
+                }
+            }
+        },
+        "pipeline_options": {
+            "title": "Pipeline Options",
+            "type": "object",
+            "fa_icon": "fas fa-circle-notch",
+            "description": "Main workflow parameters.",
+            "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
+            "required": ["tool", "module"],
+            "properties": {
+                "tool": {
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
@@ -60,8 +74,65 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
+                    "help_text": "Must be provided if --genome null"
+                },
+                "gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "mimetype": "text/plain",
+                    "description": "Path to reference GTF file.",
+                    "help_text": "If left empty, the parameter `--genome` must be supplied and the reference GTF file will be automatically downloaded.\n```bash\n--gtf \"/reference/GRCh38.gtf\"\n```\n\n*N.B:* The pipleine has been developed using reference files, UCSC/ENSEMBL files have not been tested.",
+                    "pattern": "\\.gtf$"
+                },
+                "mature": {
+                    "type": "string",
+                    "description": "Path to FASTA file with mature miRNAs.",
+                    "mimetype": "text/plain",
+                    "help_text": "Typically this will be the `mature.fa` file from miRBase. Can be given either as a plain text `.fa` file or a compressed `.gz` file.",
+                    "fa_icon": "fas fa-wheelchair"
+                },
+                "species": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dog",
+                    "description": "String identifying species.",
+                    "help_text": "Check conf/igenomes.config file & bin/ensemblDatabase_map.txt for inspiration.. "
+                },
+                "bowtie": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to Bowtie index files.",
+                    "help_text": "Automatically generated if set to null. Alternatively, provide the absolute path to Bowtie indices directory e.g:\n/data/reference_genome/BowtieIndex"
+                },
+                "bowtie2": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to Bowtie2 index files.",
+                    "help_text": "Automatically generated if left empty. Alternatively, provide the absolute path to the Bowtie2 indices directory e.g:\n/data/reference_genome/Bowtie2Index"
+                },
+                "bwa": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to BWA index directory.",
+                    "help_text": "Automatically generated if left empty. Alternatively, provide the absolute path to BWA indices directory e.g:\n/data/reference_genome/BWAIndex\n"
+                },
+                "fasta_fai": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Path to SAMtools index file.",
+                    "fa_icon": "fab fa-stripe-s"
+                },
+                "segemehl": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fab fa-stripe-s",
+                    "description": "Path to Segemehl Index file",
+                    "help_text": "Automatically generated if set null. Alternatively, provide path to Segemehl index file."
+                },
+                "star": {
+                    "type": "string",
+                    "fa_icon": "far fa-star",
+                    "description": "Path to STAR index directory.",
+                    "help_text": "Automatically generated if left empty. Alternatively, provide the absolute path to STAR indices directory e.g:\n/data/reference_genome/STARIndex"
                 },
                 "igenomes_base": {
                     "type": "string",
@@ -96,11 +167,13 @@
                 },
                 "custom_config_base": {
                     "type": "string",
-                    "description": "Base directory for Institutional configs.",
-                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-                    "hidden": true,
-                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
-                    "fa_icon": "fas fa-users-cog"
+                    "fa_icon": "fas fa-file-alt",
+                    "description": "Reference adapter file supplied to BBDUK",
+                    "deafult": "adapters.fa",
+                    "mimetype": "text/plain",
+                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
+                    "default": "${projectDir}/bin/adapters.fa",
+                    "pattern": "\\.(fa|fasta)$"
                 },
                 "config_profile_name": {
                     "type": "string",
