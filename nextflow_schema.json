@@ -356,5 +356,9 @@
         {
             "$ref": "#/definitions/generic_options"
         }
+        ,
+        {
+            "$ref": "#/definitions/pipeline_options"
+        }
     ]
 }
