@@ -16,22 +16,17 @@
                     "type": "string",
                     "fa_icon": "fas fa-copy",
                     "mimetype": "text/csv",
-                    "description": "Path to directory containing FASTQ/BAM files or a CSV file containing the absolute path to FASTQ/BAM files.",
+                    "description": "Path to directory containing FASTQ files or a CSV file containing the absolute path to FASTQ files.",
                     "help_text": "There are two ways to supply input data to nf-core/circrna:\n\n1. Provide the path to the directory containing FASTQ or BAM files, with the appropriate wildcard glob pattern *e.g:*\n```bash\n--input \"/data/*_r{1,2}.fastq.gz\"\n```\n2. Provide a CSV file containing the absolute paths to FASTQ or BAM files *e.g:*\n\n| Sample_ID    | Read1                          | Read2                          | Bam  |\n|------------- |------------------------------- |------------------------------- |----- |\n| control_rep1  | /data/control_rep1_r1.fastq.gz  | /data/control_rep1_r2.fastq.gz  | NA   |\n| control_rep2  | /data/control_rep2_r1.fastq.gz  | /data/control_rep2_r2.fastq.gz  | NA   |\n| control_rep3  | /data/control_rep3_r1.fastq.gz  | /data/control_rep3_r2.fastq.gz  | NA   |\n| lung_rep1   | /data/lung_rep1_r1.fastq.gz   | /data/lung_rep1_r2.fastq.gz   | NA   |\n| lung_rep2   | /data/lung_rep2_r1.fastq.gz   | /data/lung_rep2_r2.fastq.gz   | NA   |\n| lung_rep3   | /data/lung_rep3_r1.fastq.gz   | /data/lung_rep3_r2.fastq.gz   | NA   |\n| melanoma_rep1   | /data/melanoma_rep1_r1.fastq.gz   | /data/melanoma_rep1_r2.fastq.gz   | NA   |\n| melanoma_rep2   | /data/melanoma_rep2_r1.fastq.gz   | /data/melanoma_rep2_r2.fastq.gz   | NA   |\n| melanoma_rep3   | /data/melanoma_rep3_r1.fastq.gz   | /data/melanoma_rep3_r2.fastq.gz   | NA   |\n\n When supplying BAM files to the CSV file, set Read1 & Read2 columns to 'NA'."
-                },
-                "input_type": {
-                    "type": "string",
-                    "fa_icon": "fas fa-dna",
-                    "description": "Input data type, 'fastq' or 'bam'.",
-                    "enum": ["fastq", "bam"]
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "default": "./results"
                 },
-                "email": {
+                "phenotype": {
                     "type": "string",
                     "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
                     "fa_icon": "fas fa-journal-whills",
@@ -47,19 +42,46 @@
             "fa_icon": "fas fa-circle-notch",
             "description": "Main workflow parameters.",
             "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
-            "required": ["tool"],
+            "required": ["tool", "module"],
             "properties": {
                 "tool": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
-                    "default": "circexplorer2"
+                    "default": "circexplorer2",
+                    "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
                 },
-                "multiqc_title": {
+                "module": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "fa_icon": "fas fa-sliders-h",
+                    "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
+                    "mandatory": "circrna_discovery",
+                    "pattern": "^((circrna_discovery|mirna_prediction|differential_expression)?,?)*[^,]+$",
+                    "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n",
+                    "default": "circrna_discovery"
+                },
+                "bsj_reads": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum number of reads spanning circRNA back-splice junction required for circRNA to be output by workflow.",
+                    "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 0 (default).",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "tool_filter": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-intersection",
+                    "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\nPlease note this is only reflected in the circRNA count matrix generated.",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 6
+                },
+                "save_reference": {
+                    "type": "boolean",
+                    "description": "Save generated reference genome files such as indices, chromosome FASTA files.",
+                    "default": true
                 }
             }
         },
@@ -81,7 +103,8 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "Must be provided if --genome null"
+                    "help_text": "Must be provided if --genome null",
+                    "fa_icon": "fas fa-book"
                 },
                 "gtf": {
                     "type": "string",
@@ -158,6 +181,74 @@
                 }
             }
         },
+        "read_trimming_and_adapter_removal": {
+            "title": "Read trimming & adapter removal",
+            "type": "object",
+            "fa_icon": "fas fa-cut",
+            "description": "Parameters for BBDUK",
+            "help_text": "BBDUK read filtering is deployed when `--trim_fastq true`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+            "properties": {
+                "skip_trimming": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-fast-forward",
+                    "description": "Perform read filtering + trimming?",
+                    "help_text": "If set to true, trimgalore! is executed. If false, the process is skipped and raw reads will be supplied to circRNA quantification tools."
+                },
+                "adapters": {
+                    "type": "string",
+                    "fa_icon": "fas fa-file-alt",
+                    "description": "Reference adapter file supplied to BBDUK",
+                    "deafult": "adapters.fa",
+                    "mimetype": "text/plain",
+                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
+                    "default": "${projectDir}/bin/adapters.fa",
+                    "pattern": "\\.(fa|fasta)$"
+                },
+                "k": {
+                    "type": "integer",
+                    "fa_icon": "fab fa-kickstarter",
+                    "description": "Specifies K-mer size to use for adapter removal",
+                    "default": 12,
+                    "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k 32` removes all reads that have a 32 kmer match with the adapter sequences provided."
+                },
+                "ktrim": {
+                    "type": "string",
+                    "fa_icon": "fas fa-exchange-alt",
+                    "description": "Which end of reads to perform kmer trimming",
+                    "default": "r",
+                    "help_text": "Specify which end of the reads to perform kmer trimming on. Options are 'r', 'l', and 'f' (right, left, don't trim).",
+                    "enum": ["r", "l", "f"]
+                },
+                "hdist": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "Maximum Hamming distance for reference kmers",
+                    "default": 1,
+                    "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n> Warning: setting `--hdist` to values higher than 1 will result in high memory usage."
+                },
+                "trimq": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-award",
+                    "description": "Trimming performed on regions in reads with an average Phred score below specified value",
+                    "default": 20,
+                    "help_text": "> NB: This action is performed after adapter removal if specified."
+                },
+                "qtrim": {
+                    "type": "string",
+                    "fa_icon": "fas fa-exchange-alt",
+                    "description": "Which end of reads to perform quality trimming",
+                    "default": "r",
+                    "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are 'r', 'l' and 'rl' (right, left, both).",
+                    "enum": ["r", "l", "rl"]
+                },
+                "minlen": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "Remove reads below length *n*",
+                    "default": 30
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -174,13 +265,11 @@
                 },
                 "custom_config_base": {
                     "type": "string",
-                    "fa_icon": "fas fa-file-alt",
-                    "description": "Reference adapter file supplied to BBDUK",
-                    "deafult": "adapters.fa",
-                    "mimetype": "text/plain",
-                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
-                    "default": "${projectDir}/bin/adapters.fa",
-                    "pattern": "\\.(fa|fasta)$"
+                    "description": "Base directory for Institutional configs.",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "hidden": true,
+                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "fa_icon": "fas fa-users-cog"
                 },
                 "config_profile_name": {
                     "type": "string",
@@ -250,6 +339,12 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
+                "skip_fastqc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC quality control of the sequencing reads.",
+                    "fa_icon": "fas fa-terminal",
+                    "default": false
+                },
                 "help": {
                     "type": "boolean",
                     "description": "Display help text.",
@@ -264,6 +359,14 @@
                     "fa_icon": "fas fa-copy",
                     "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
                     "hidden": true
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
+                    "fa_icon": "fas fa-journal-whills",
+                    "mimetype": "text/csv",
+                    "help_text": "The response variable containing the phenotype of primary interest in the experiment must have the column name condition. An example phenotype file is given below:\n\n| Sample_ID | condition | replicates |\n|---------|-----------|------------|\n| control_rep1  | control   | 1          |\n| control_rep2  | control   | 2          |\n| control_rep3  | control   | 3          |\n| lung_rep1  | lung      | 1          |\n| lung_rep2  | lung      | 2          |\n| lung_rep3  | lung      | 3          |\n| melanoma_rep1  | melanoma  | 1          |\n| melanoma_rep2  | melanoma  | 2          |\n| melanoma_rep3  | melanoma  | 3          |\n\nThis will produce the DESeq2 design formula '~ replicates + condition' i.e all columns not named condition will be controlled for in the linear mixed model.",
+                    "pattern": "\\.csv$"
                 },
                 "email_on_fail": {
                     "type": "string",
@@ -361,6 +464,9 @@
         },
         {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/read_trimming_and_adapter_removal"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
