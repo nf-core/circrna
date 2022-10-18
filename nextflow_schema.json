@@ -26,7 +26,7 @@
                     "fa_icon": "fas fa-folder-open",
                     "default": "./results"
                 },
-                "email": {
+                "phenotype": {
                     "type": "string",
                     "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
                     "fa_icon": "fas fa-journal-whills",
@@ -253,13 +253,11 @@
                 },
                 "custom_config_base": {
                     "type": "string",
-                    "fa_icon": "fas fa-file-alt",
-                    "description": "Reference adapter file supplied to BBDUK",
-                    "deafult": "adapters.fa",
-                    "mimetype": "text/plain",
-                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
-                    "default": "${projectDir}/bin/adapters.fa",
-                    "pattern": "\\.(fa|fasta)$"
+                    "description": "Base directory for Institutional configs.",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "hidden": true,
+                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "fa_icon": "fas fa-users-cog"
                 },
                 "config_profile_name": {
                     "type": "string",
