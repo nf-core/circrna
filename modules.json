@@ -49,6 +49,10 @@
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
                     },
+                    "hisat2/extractsplicesites": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
                     "miranda": {
                         "branch": "master",
                         "git_sha": "270fc80f29c4dbb1a973ca1d7d748bdd56e97301"

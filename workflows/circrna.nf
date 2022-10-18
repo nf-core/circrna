@@ -51,23 +51,26 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
+// MODULES:
+
+// SUBWORKFLOWS:
 include { INPUT_CHECK       } from '../subworkflows/local/input_check'
 include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
 
-include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// MODULE: Installed directly from nf-core/modules
-include { FASTQC                      } from '../modules/nf-core/modules/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/modules/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/modules/cat/fastq/main'
+// MODULES:
+include { FASTQC                      } from '../modules/nf-core/fastqc/main'
+include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 
+// SUBWORKFLOWS:
+include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -81,7 +84,8 @@ workflow CIRCRNA {
 
     ch_versions = Channel.empty()
 
-    // SUBWORKFLOW: Validate input samplesheet & phenotype file
+    // SUBWORKFLOW:
+    // Validate input samplesheet & phenotype file
     INPUT_CHECK (
         ch_input,
         ch_phenotype.ifEmpty([])
@@ -104,7 +108,8 @@ workflow CIRCRNA {
     .set { ch_fastq }
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    // MODULE: Concatenate FastQ files from same sample if required
+    // MODULE:
+    // Concatenate FastQ files from same sample if required
     CAT_FASTQ (
         ch_fastq.multiple
     )
@@ -113,16 +118,19 @@ workflow CIRCRNA {
     .set { ch_cat_fastq }
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first().ifEmpty(null))
 
-
+    // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.
     PREPARE_GENOME (
         ch_fasta,
         ch_gtf
     )
 
-    // Stage the indices via newly created indices or iGenomes.
-    star = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
-
+    // Stage the indices via newly created indices, iGenomes or empty list if tool not selected.
+    bowtie_index = params.fasta ? params.bowtie ? Channel.fromPath(params.bowtie) : PREPARE_GENOME.out.bowtie : []
+    bowtie2_index = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2) : PREPARE_GENOME.out.bowtie2 : []
+    chromosomes = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
+    star_index = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
+    segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
     ch_versions = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!

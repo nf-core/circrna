@@ -82,6 +82,11 @@
                     "type": "boolean",
                     "description": "Save generated reference genome files such as indices, chromosome FASTA files.",
                     "default": true
+                },
+                "sjdboverhang": {
+                    "type": "integer",
+                    "description": "*only used at the genome generation step* tells STAR how many bases to concatenate from donor and acceptor sides of the junctions.",
+                    "default": 100
                 }
             }
         },
