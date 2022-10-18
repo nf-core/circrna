@@ -11,11 +11,28 @@ WorkflowCircrna.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+
+// Genome params
+params.fasta   = params.genome  ? params.genomes[ params.genome ].fasta ?: false : false
+params.gtf     = params.genome  ? params.genomes[ params.genome ].gtf ?: false : false
+params.bwa     = params.genome && params.tool.contains('ciriquant') ? params.genomes[ params.genome ].bwa ?: false : false
+params.star    = params.genome && ( params.tool.contains('circexplorer2') || params.tool.contains('dcc') || params.tool.contains('circrna_finder') ) ? params.genomes[ params.genome ].star ?: false : false
+params.bowtie  = params.genome && params.tool.contains('mapsplice') ? params.genomes[ params.genome ].bowtie ?: false : false
+params.bowtie2 = params.genome && params.tool.contains('find_circ') ? params.genomes[ params.genome ].bowtie2 ?: false : false
+params.mature  = params.genome && params.module.contains('mirna_prediction') ? params.genomes[ params.genome ].mature ?: false : false
+params.species = params.genome  ? params.genomes[ params.genome ].species_id ?: false : false
+
+ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
+ch_fasta       = params.fasta ? file(params.fasta) : 'null'
+ch_gtf         = params.gtf ? file(params.gtf) : 'null'
+ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : 'null'
+ch_species     = params.genome ? Channel.value(params.species) : Channel.value(params.species)
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,23 +51,22 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
-//
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { INPUT_CHECK       } from '../subworkflows/local/input_check'
+include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
 
+include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
 // MODULE: Installed directly from nf-core/modules
-//
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { FASTQC                      } from '../modules/nf-core/modules/fastqc/main'
+include { MULTIQC                     } from '../modules/nf-core/modules/multiqc/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
+include { CAT_FASTQ                   } from '../modules/nf-core/modules/cat/fastq/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,29 +81,63 @@ workflow CIRCRNA {
 
     ch_versions = Channel.empty()
 
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
+    // SUBWORKFLOW: Validate input samplesheet & phenotype file
     INPUT_CHECK (
-        ch_input
+        ch_input,
+        ch_phenotype.ifEmpty([])
     )
+    .reads
+    .map {
+        meta, fastq ->
+            meta.id = meta.id.split('_')[0..-2].join('_')
+            [ meta, fastq ] }
+    .dump(tag: 'map')
+    .groupTuple(by: [0])
+    .dump(tag: 'group')
+    .branch {
+        meta, fastq ->
+            single  : fastq.size() == 1
+                return [ meta, fastq.flatten() ]
+            multiple: fastq.size() > 1
+                return [ meta, fastq.flatten() ]
+    }
+    .set { ch_fastq }
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    //
-    // MODULE: Run FastQC
-    //
-    FASTQC (
-        INPUT_CHECK.out.reads
+    // MODULE: Concatenate FastQ files from same sample if required
+    CAT_FASTQ (
+        ch_fastq.multiple
     )
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+    .reads
+    .mix(ch_fastq.single)
+    .set { ch_cat_fastq }
+    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first().ifEmpty(null))
+
+
+    // Prepare index files &/or use iGenomes if chosen.
+    PREPARE_GENOME (
+        ch_fasta,
+        ch_gtf
+    )
+
+    // Stage the indices via newly created indices or iGenomes.
+    star = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
+
+    ch_versions = ch_versions.mix(PREPARE_GENOME.out.versions)
+
+    // MODULE: Run FastQC, trimgalore!
+    FASTQC_TRIMGALORE (
+        ch_cat_fastq,
+        params.skip_fastqc,
+        params.skip_trimming
+    )
+    ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 
-    //
     // MODULE: MultiQC
-    //
     workflow_summary    = WorkflowCircrna.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 
@@ -98,7 +148,7 @@ workflow CIRCRNA {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.fastqc_zip.collect{it[1]}.ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),

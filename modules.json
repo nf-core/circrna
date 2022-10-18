@@ -21,6 +21,10 @@
                         "branch": "master",
                         "git_sha": "e797efb47b0d3b2124753beb55dc83ab9512bceb"
                     },
+                    "cat/fastq": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
                     "circexplorer2/annotate": {
                         "branch": "master",
                         "git_sha": "e3ae75b5e54042683d5a1889fc733a4bf51f6819"
@@ -72,6 +76,10 @@
                     "stringtie/stringtie": {
                         "branch": "master",
                         "git_sha": "d0e6f468af1d51ce3ea4ac4fb5e58723eac3938c"
+                    },
+                    "trimgalore": {
+                        "branch": "master",
+                        "git_sha": "b51a69e30973c71950225c817ad07a3337d22c40"
                     }
                 }
             }
