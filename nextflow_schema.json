@@ -83,6 +83,11 @@
                     "description": "Save generated reference genome files such as indices, chromosome FASTA files.",
                     "default": true
                 },
+                "save_intermediates": {
+                    "type": "boolean",
+                    "description": "Save intermediate alignment files.",
+                    "default": true
+                },
                 "sjdboverhang": {
                     "type": "integer",
                     "description": "*only used at the genome generation step* tells STAR how many bases to concatenate from donor and acceptor sides of the junctions.",
