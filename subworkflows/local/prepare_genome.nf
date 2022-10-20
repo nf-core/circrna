@@ -18,20 +18,14 @@ workflow PREPARE_GENOME {
     ch_fasta = Channel.fromPath(fasta)
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
-     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
+    if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
         file("${params.outdir}/genome/chromosomes").mkdirs()
-        ch_fasta.splitFasta(record: [id:true])
+        ch_fasta.splitFasta( record: [id:true] )
                 .map{ record -> record.id.toString() }
-                .flatten()
                 .set{ ID }
 
-        ch_fasta.splitFasta(file: true)
-                .flatten()
-                .join(ID).map{ it ->
-                             file = it[0]
-                             chr_id = it[1]
-                             file.copyTo("${params.outdir}/genome/chromosomes/${chr_id}.fa")
-                       }
+        ch_fasta.splitFasta( file: true )
+                .merge( ID ).map{ file, id -> file.copyTo("${params.outdir}/genome/chromosomes/${id}.fa") }
 
     stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/genome/chromosomes")
     }
@@ -71,12 +65,12 @@ workflow PREPARE_GENOME {
     )
 
     // Collect versions
-    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions.first().ifEmpty(null))
-    ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions.first().ifEmpty(null))
-    ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions.first().ifEmpty(null))
-    ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions.first().ifEmpty(null))
-    ch_versions = ch_versions.mix(SEGEMEHL_INDEX.out.versions.first().ifEmpty(null))
-    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions.first().ifEmpty(null))
+    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
+    ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
+    ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
+    ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
+    ch_versions = ch_versions.mix(SEGEMEHL_INDEX.out.versions)
+    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
 
     emit:
     bowtie      = BOWTIE_BUILD.out.index

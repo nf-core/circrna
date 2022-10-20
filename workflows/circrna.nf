@@ -56,6 +56,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // SUBWORKFLOWS:
 include { INPUT_CHECK       } from '../subworkflows/local/input_check'
 include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
+include { CIRCRNA_DISCOVERY } from '../subworkflows/local/circrna_discovery'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,6 +84,10 @@ def multiqc_report = []
 workflow CIRCRNA {
 
     ch_versions = Channel.empty()
+
+    //
+    // 1. Pre-processing
+    //
 
     // SUBWORKFLOW:
     // Validate input samplesheet & phenotype file
@@ -140,6 +145,27 @@ workflow CIRCRNA {
         params.skip_trimming
     )
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
+    reads_for_circrna = FASTQC_TRIMGALORE.out.reads
+
+    //
+    // 2. circRNA Discovery
+    //
+
+    CIRCRNA_DISCOVERY(
+        reads_for_circrna,
+        ch_fasta,
+        ch_gtf,
+        bowtie_index,
+        bowtie2_index,
+        segemehl_index,
+        star_index,
+        params.bsj_reads
+    )
+
+    ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
+    segemehl_circrnas = CIRCRNA_DISCOVERY.out.segemehl_results
+    segemehl_circrnas.view()
+
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
