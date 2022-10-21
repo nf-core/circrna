@@ -163,9 +163,6 @@ workflow CIRCRNA {
     )
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
-    segemehl_circrnas = CIRCRNA_DISCOVERY.out.segemehl_results
-    segemehl_circrnas.view()
-
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
