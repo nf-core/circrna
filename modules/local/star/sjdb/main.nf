@@ -1,20 +1,18 @@
 process SJDB {
-    tag "${meta.id}"
     label 'process_single'
 
     input:
-    tuple val(meta), path(sjdb)
+    path(sjdb)
+    val(bsj_reads)
 
     output:
-    tuple val(meta), path("${prefix}.SJFile.tab"), emit: sjfile
+    path("dataset.SJ.out.tab"), emit: sjtab
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
-    prefix = task.ext.prefix ?: "${meta.id}"
     """
-    awk 'BEGIN {OFS="\t"; strChar[0]="."; strChar[1]="+"; strChar[2]="-";} {if(\$5>0){print \$1,\$2,\$3,strChar[\$4]}}' !{sjdb} > ${prefix}.SJFile.tab
+    cat *.tab | awk -v BSJ=${bsj_reads} '(\$7 >= BSJ && \$6==0)' | cut -f1-6 | sort | uniq > dataset.SJ.out.tab
     """
 }

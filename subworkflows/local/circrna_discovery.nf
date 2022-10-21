@@ -1,7 +1,14 @@
+
+include { ANNOTATION                  } from '../../modules/local/annotation/main'
+include { CIRCEXPLORER2_REFERENCE     } from '../../modules/local/circexplorer2/reference/main'
+include { CIRCEXPLORER2_PARSE         } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE      } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER        } from '../../modules/local/circexplorer2/filter/main'
 include { SEGEMEHL_ALIGN              } from '../../modules/nf-core/segemehl/align/main'
-include { SEGEMEHL_PARSE              } from '../../modules/local/segemehl/parse/main'
+include { SEGEMEHL_FILTER             } from '../../modules/local/segemehl/filter/main'
 include { STAR_ALIGN as STAR_1ST_PASS } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS } from '../../modules/nf-core/star/align/main'
+include { SJDB                        } from '../../modules/local/star/sjdb/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -18,42 +25,57 @@ workflow CIRCRNA_DISCOVERY {
     main:
     ch_versions = Channel.empty()
 
-    SEGEMEHL_ALIGN(
-        reads,
-        fasta,
-        segemehl_index
-    )
+    //
+    // SEGEMEHL WORKFLOW:
+    //
+    SEGEMEHL_ALIGN( reads, fasta, segemehl_index )
 
-    segemehl_parse = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  meta.tool = "segemehl"; return [ meta, results ] }
+    segemehl_filter = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  meta.tool = "segemehl"; return [ meta, results ] }
 
-    SEGEMEHL_PARSE(
-        segemehl_parse,
-        bsj_reads
-    )
+    SEGEMEHL_FILTER( segemehl_filter, bsj_reads )
 
-    STAR_1ST_PASS(
-        reads,
-        star_index,
-        gtf,
-        true,
-        '',
-        ''
-    )
+    //
+    // STAR WORFKLOW:
+    //
 
-    STAR_2ND_PASS(
-        reads,
-        star_index,
-        STAR_1ST_PASS.out.junction.collect(), // use Chimeric Junctions in place of GTF, implement in modules.config.
-        true,
-        '',
-        ''
-    )
+    STAR_1ST_PASS( reads, star_index, gtf, true, '', '' )
+
+    sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect()
+
+    SJDB( sjdb, bsj_reads )
+
+    STAR_2ND_PASS( reads, star_index, SJDB.out.sjtab, true, '', '' )
+
+    //
+    // CIRCEXPLORER2 WORKFLOW:
+    //
+
+    CIRCEXPLORER2_REFERENCE( gtf )
+
+    CIRCEXPLORER2_PARSE( STAR_2ND_PASS.out.junction )
+
+    CIRCEXPLORER2_ANNOTATE( CIRCEXPLORER2_PARSE.out.junction, fasta, CIRCEXPLORER2_REFERENCE.out.txt )
+
+    circexplorer2_filter = CIRCEXPLORER2_ANNOTATE.out.txt.map{ meta, txt -> meta.tool = "circexplorer2"; return [ meta, txt ] }
+
+    CIRCEXPLORER2_FILTER( circexplorer2_filter, bsj_reads )
+
+    //
+    // ANNOTATION WORKFLOW:
+    //
+
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results).view()
+
+    ANNOTATION( circrna_filtered, gtf )
 
     // collect versions
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)
     ch_versions = ch_versions.mix(SEGEMEHL_ALIGN.out.versions)
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
 
     emit:
-    segemehl_results = SEGEMEHL_PARSE.out.results
+
     versions = ch_versions
 }
