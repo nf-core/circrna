@@ -1,5 +1,7 @@
-include { SEGEMEHL_ALIGN } from '../../modules/nf-core/segemehl/align/main'
-include { SEGEMEHL_PARSE } from '../../modules/local/segemehl/parse/main'
+include { SEGEMEHL_ALIGN              } from '../../modules/nf-core/segemehl/align/main'
+include { SEGEMEHL_PARSE              } from '../../modules/local/segemehl/parse/main'
+include { STAR_ALIGN as STAR_1ST_PASS } from '../../modules/nf-core/star/align/main'
+include { STAR_ALIGN as STAR_2ND_PASS } from '../../modules/nf-core/star/align/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -22,7 +24,6 @@ workflow CIRCRNA_DISCOVERY {
         segemehl_index
     )
 
-    // append tool name to meta
     segemehl_parse = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  meta.tool = "segemehl"; return [ meta, results ] }
 
     SEGEMEHL_PARSE(
@@ -30,8 +31,27 @@ workflow CIRCRNA_DISCOVERY {
         bsj_reads
     )
 
-    // Collect versions
+    STAR_1ST_PASS(
+        reads,
+        star_index,
+        gtf,
+        true,
+        '',
+        ''
+    )
+
+    STAR_2ND_PASS(
+        reads,
+        star_index,
+        STAR_1ST_PASS.out.junction.collect(), // use Chimeric Junctions in place of GTF, implement in modules.config.
+        true,
+        '',
+        ''
+    )
+
+    // collect versions
     ch_versions = ch_versions.mix(SEGEMEHL_ALIGN.out.versions)
+    ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
 
     emit:
     segemehl_results = SEGEMEHL_PARSE.out.results
