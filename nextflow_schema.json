@@ -92,6 +92,21 @@
                     "type": "integer",
                     "description": "*only used at the genome generation step* tells STAR how many bases to concatenate from donor and acceptor sides of the junctions.",
                     "default": 100
+                },
+                "chimJunctionOverhangMin": {
+                    "type": "integer",
+                    "description": "Minimum overhang for a chimeric junction",
+                    "default": 10
+                },
+                "alignSJDBoverhangMin": {
+                    "type": "integer",
+                    "description": "Minimum overhang for annotated junctions",
+                    "default": 10
+                },
+                "chimSegmentMin": {
+                    "type": "integer",
+                    "description": "Minimum length of chimeric segment length. Must be set to a positive value to detect circular junctions.",
+                    "default": 10
                 }
             }
         },

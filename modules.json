@@ -39,7 +39,7 @@
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "f6a11408536fbee6cbea1f5977605011873de3ca"
                     },
                     "hisat2/align": {
                         "branch": "master",
