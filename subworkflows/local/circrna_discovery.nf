@@ -65,13 +65,13 @@ workflow CIRCRNA_DISCOVERY {
     // CIRCRNA_FINDER WORKFLOW:
     //
 
-    CIRCRNA_FINDER_FILTER( STAR_2ND_PASS.out.bam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab), fasta, bsj_reads )
+    CIRCRNA_FINDER_FILTER( STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab), fasta, bsj_reads )
 
     //
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results).view()
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results).view()
 
     ANNOTATION( circrna_filtered, gtf )
 
