@@ -4,6 +4,7 @@ include { CIRCEXPLORER2_REFERENCE     } from '../../modules/local/circexplorer2/
 include { CIRCEXPLORER2_PARSE         } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE      } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER        } from '../../modules/local/circexplorer2/filter/main'
+include { CIRCRNA_FINDER_FILTER       } from '../../modules/local/circrna_finder/filter/main'
 include { SEGEMEHL_ALIGN              } from '../../modules/nf-core/segemehl/align/main'
 include { SEGEMEHL_FILTER             } from '../../modules/local/segemehl/filter/main'
 include { STAR_ALIGN as STAR_1ST_PASS } from '../../modules/nf-core/star/align/main'
@@ -59,6 +60,14 @@ workflow CIRCRNA_DISCOVERY {
     circexplorer2_filter = CIRCEXPLORER2_ANNOTATE.out.txt.map{ meta, txt -> meta.tool = "circexplorer2"; return [ meta, txt ] }
 
     CIRCEXPLORER2_FILTER( circexplorer2_filter, bsj_reads )
+
+    //
+    // CIRCRNA_FINDER WORKFLOW:
+    //
+
+    circrna_finder = STAR_2ND_PASS.out.bam.join( STAR_2ND_PASS.out.junction, STAR_2ND_PASS.out.tab)
+
+    CIRCRNA_FINDER( circrna_finder, fasta, bsj_reads )
 
     //
     // ANNOTATION WORKFLOW:
