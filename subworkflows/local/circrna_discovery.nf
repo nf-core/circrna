@@ -65,9 +65,7 @@ workflow CIRCRNA_DISCOVERY {
     // CIRCRNA_FINDER WORKFLOW:
     //
 
-    circrna_finder = STAR_2ND_PASS.out.bam.join( STAR_2ND_PASS.out.junction, STAR_2ND_PASS.out.tab)
-
-    CIRCRNA_FINDER( circrna_finder, fasta, bsj_reads )
+    CIRCRNA_FINDER_FILTER( STAR_2ND_PASS.out.bam.join( STAR_2ND_PASS.out.junction, STAR_2ND_PASS.out.tab), fasta, bsj_reads )
 
     //
     // ANNOTATION WORKFLOW:

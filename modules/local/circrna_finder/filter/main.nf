@@ -5,7 +5,7 @@ process CIRCRNA_FINDER_FILTER {
     container 'barryd237/circrna_finder'
 
     input:
-    tuple val(meta), path(star_results)
+    tuple val(meta), path(bam), path(junction), path(tab)
     path fasta
     val bsj_reads
 
