@@ -14,6 +14,7 @@ process ANNOTATION {
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
     path("*.log")                         , emit: log
+    path  "versions.yml"                  , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -21,6 +22,7 @@ process ANNOTATION {
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = '377'
     """
     grep -vf ${worfklow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     mv $bed circs.bed
@@ -32,5 +34,11 @@ process ANNOTATION {
     awk -v FS="," '{for(i=t=0;i<NF;) t+=\$++i; \$0=t}1' mature_len.tmp > mature_length
 
     paste ${prefix}.bed.tmp mature_length > ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
+        ucsc: $VERSION
+    END_VERSIONS
     """
 }

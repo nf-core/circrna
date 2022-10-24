@@ -1,15 +1,21 @@
 
-include { ANNOTATION                  } from '../../modules/local/annotation/main'
-include { CIRCEXPLORER2_REFERENCE     } from '../../modules/local/circexplorer2/reference/main'
-include { CIRCEXPLORER2_PARSE         } from '../../modules/nf-core/circexplorer2/parse/main'
-include { CIRCEXPLORER2_ANNOTATE      } from '../../modules/nf-core/circexplorer2/annotate/main'
-include { CIRCEXPLORER2_FILTER        } from '../../modules/local/circexplorer2/filter/main'
-include { CIRCRNA_FINDER_FILTER       } from '../../modules/local/circrna_finder/filter/main'
-include { SEGEMEHL_ALIGN              } from '../../modules/nf-core/segemehl/align/main'
-include { SEGEMEHL_FILTER             } from '../../modules/local/segemehl/filter/main'
-include { STAR_ALIGN as STAR_1ST_PASS } from '../../modules/nf-core/star/align/main'
-include { STAR_ALIGN as STAR_2ND_PASS } from '../../modules/nf-core/star/align/main'
-include { SJDB                        } from '../../modules/local/star/sjdb/main'
+include { ANNOTATION                       } from '../../modules/local/annotation/main'
+include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN } from '../../modules/nf-core/bowtie2/align/main'
+include { SAMTOOLS_VIEW                    } from '../../modules/nf-core/samtools/view/main'
+include { SAMTOOLS_INDEX                   } from '../../modules/nf-core/samtools/index/main'
+include { FIND_CIRC_ANCHORS                } from '../../modules/local/find_circ/anchors/main'
+include { FIND_CIRC                        } from '../../modules/local/find_circ/find_circ/main'
+include { FIND_CIRC_FILTER                 } from '../../modules/local/find_circ/filter/main'
+include { CIRCEXPLORER2_REFERENCE          } from '../../modules/local/circexplorer2/reference/main'
+include { CIRCEXPLORER2_PARSE              } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE           } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER             } from '../../modules/local/circexplorer2/filter/main'
+include { CIRCRNA_FINDER_FILTER            } from '../../modules/local/circrna_finder/filter/main'
+include { SEGEMEHL_ALIGN                   } from '../../modules/nf-core/segemehl/align/main'
+include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/filter/main'
+include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
+include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
+include { SJDB                             } from '../../modules/local/star/sjdb/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -19,6 +25,7 @@ workflow CIRCRNA_DISCOVERY {
     gtf
     bowtie_index
     bowtie2_index
+    chromosomes
     segemehl_index
     star_index
     bsj_reads
@@ -68,10 +75,28 @@ workflow CIRCRNA_DISCOVERY {
     CIRCRNA_FINDER_FILTER( STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab), fasta, bsj_reads )
 
     //
+    // FIND_CIRC WORKFLOW:
+    //
+
+    FIND_CIRC_ALIGN( reads, bowtie2_index.collect(), false, true )
+
+    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.bam )
+
+    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), fasta, [] )
+
+    FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
+
+    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta, chromosomes )
+
+    find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> meta.tool = "find_circ"; return [ meta, bed ] }
+
+    FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
+
+    //
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results).view()
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results )
 
     ANNOTATION( circrna_filtered, gtf )
 
