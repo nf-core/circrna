@@ -61,6 +61,14 @@
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
                     },
+                    "samtools/index": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                    },
+                    "samtools/view": {
+                        "branch": "master",
+                        "git_sha": "202683bfc98ddecdd456ea73268e330bca2e5c5a"
+                    },
                     "segemehl/align": {
                         "branch": "master",
                         "git_sha": "a52cd7df53f3e88895362f2c8fd43cfe00fbf1a3"

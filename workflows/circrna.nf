@@ -157,6 +157,7 @@ workflow CIRCRNA {
         ch_gtf,
         bowtie_index,
         bowtie2_index,
+        chromosomes,
         segemehl_index,
         star_index,
         params.bsj_reads
