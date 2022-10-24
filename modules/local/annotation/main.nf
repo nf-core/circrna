@@ -22,7 +22,9 @@ process ANNOTATION {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
+    grep -vf ${worfklow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     mv $bed circs.bed
+
     bash ${workflow.projectDir}/bin/annotate_outputs.sh &> ${prefix}.log
     mv master_bed12.bed ${prefix}.bed.tmp
 
