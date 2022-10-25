@@ -24,7 +24,7 @@ process ANNOTATION {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '377'
     """
-    grep -vf ${worfklow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf ${workflow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     mv $bed circs.bed
 
     bash ${workflow.projectDir}/bin/annotate_outputs.sh &> ${prefix}.log
