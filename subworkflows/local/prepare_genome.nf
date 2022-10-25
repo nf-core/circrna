@@ -1,6 +1,7 @@
 
 include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build/main'
 include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build/main'
+include { BWA_INDEX           } from '../../modules/nf-core/bwa/index/main'
 include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites/main'
 include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build/main'
 include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate/main'
@@ -45,6 +46,10 @@ workflow PREPARE_GENOME {
         fasta_tuple
     )
 
+    BWA_INDEX (
+        fasta_tuple
+    )
+
     HISAT2_EXTRACTSPLICESITES(
         gtf
     )
@@ -67,6 +72,7 @@ workflow PREPARE_GENOME {
     // Collect versions
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
     ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
+    ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
     ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
     ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
     ch_versions = ch_versions.mix(SEGEMEHL_INDEX.out.versions)
@@ -75,6 +81,7 @@ workflow PREPARE_GENOME {
     emit:
     bowtie      = BOWTIE_BUILD.out.index
     bowtie2     = BOWTIE2_BUILD.out.index
+    bwa         = BWA_INDEX.out.index
     chromosomes = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
     hisat2      = HISAT2_BUILD.out.index
     star        = STAR_GENOMEGENERATE.out.index

@@ -6,6 +6,9 @@ include { SAMTOOLS_INDEX                   } from '../../modules/nf-core/samtool
 include { FIND_CIRC_ANCHORS                } from '../../modules/local/find_circ/anchors/main'
 include { FIND_CIRC                        } from '../../modules/local/find_circ/find_circ/main'
 include { FIND_CIRC_FILTER                 } from '../../modules/local/find_circ/filter/main'
+include { CIRIQUANT_YML                    } from '../../modules/local/ciriquant/yml/main'
+include { CIRIQUANT                        } from '../../modules/local/ciriquant/ciriquant/main'
+include { CIRIQUANT_FILTER                 } from '../../modules/local/ciriquant/filter/main'
 include { CIRCEXPLORER2_REFERENCE          } from '../../modules/local/circexplorer2/reference/main'
 include { CIRCEXPLORER2_PARSE              } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE           } from '../../modules/nf-core/circexplorer2/annotate/main'
@@ -25,7 +28,9 @@ workflow CIRCRNA_DISCOVERY {
     gtf
     bowtie_index
     bowtie2_index
+    bwa_index
     chromosomes
+    hisat2_index
     segemehl_index
     star_index
     bsj_reads
@@ -93,10 +98,20 @@ workflow CIRCRNA_DISCOVERY {
     FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
 
     //
+    // CIRIQUANT WORKFLOW:
+    //
+
+    CIRIQUANT_YML( gtf, fasta, bwa_index.map{ meta, index -> return index }, hisat2_index )
+
+    CIRIQUANT( reads, CIRIQUANT_YML.out.yml.collect() )
+
+    CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> meta.tool = "ciriquant"; return [ meta, gtf ] }, bsj_reads )
+
+    //
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results )
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results )
 
     ANNOTATION( circrna_filtered, gtf )
 
