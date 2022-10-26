@@ -19,6 +19,15 @@ include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
 include { SJDB                             } from '../../modules/local/star/sjdb/main'
+// TODO: ask reviewer about this warning, I can't make sense of it: WARN: A process with name 'DCC_MATE1_SJDB' is defined more than once in module script: /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf -- Make sure to not define the same function as process
+include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
+include { STAR_ALIGN as DCC_MATE1_2ND_PASS } from '../../modules/nf-core/star/align/main'
+include { SJDB as DCC_MATE1_SJDB           } from '../../modules/local/star/sjdb/main'
+include { STAR_ALIGN as DCC_MATE2_1ST_PASS } from '../../modules/nf-core/star/align/main'
+include { STAR_ALIGN as DCC_MATE2_2ND_PASS } from '../../modules/nf-core/star/align/main'
+include { SJDB as DCC_MATE2_SJDB           } from '../../modules/local/star/sjdb/main'
+include { DCC                              } from '../../modules/local/dcc/dcc/main'
+include { DCC_FILTER                       } from '../../modules/local/dcc/filter/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -108,10 +117,43 @@ workflow CIRCRNA_DISCOVERY {
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> meta.tool = "ciriquant"; return [ meta, gtf ] }, bsj_reads )
 
     //
+    // DCC WORKFLOW
+    //
+
+    mate1 = reads.map{ meta, reads -> return [ meta, reads[0] ] }
+
+    DCC_MATE1_1ST_PASS( mate1, star_index, gtf, true, '', '' )
+
+    DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
+
+    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, true, '', '' )
+
+    mate2 = reads.map{ meta, reads -> return [ meta, reads[1] ] }
+
+    DCC_MATE2_1ST_PASS( mate2, star_index, gtf, true, '', '' )
+
+    DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
+
+    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, true, '', '' )
+
+    dcc = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction ).join( DCC_MATE2_2ND_PASS.out.junction )
+
+    DCC( dcc, fasta, gtf )
+
+    DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+
+    //
+    // MAPSPLICE WORKFLOW:
+    //
+
+    
+
+
+    //
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results )
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results, DCC_FILTER.out.results )
 
     ANNOTATION( circrna_filtered, gtf )
 
