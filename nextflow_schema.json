@@ -113,22 +113,22 @@
                     "description": "Segment length. Default 25",
                     "default": 25
                 },
-                "min-intron": {
+                "min_intron": {
                     "type": "integer",
                     "description": "Minimum intron length. Default 20",
                     "default": 20
                 },
-                "max-intron": {
+                "max_intron": {
                     "type": "integer",
                     "description": "Maximum intron length. Default 1000000",
                     "default": 1000000
                 },
-                "min-map-len": {
+                "min_map_len": {
                     "type": "integer",
                     "description": "Minimum alignment length. Default 40",
                     "default": 40
                 },
-                "min-fusion-distance": {
+                "min_fusion_distance": {
                     "type": "integer",
                     "description": "Minimum distance between two gapped segments to be considered as fusion candidate. Must set to lower values to be sensitive to circular candidates (e.g 200).",
                     "default": 200
