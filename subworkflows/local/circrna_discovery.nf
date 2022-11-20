@@ -32,6 +32,7 @@ include { MAPSPLICE_ALIGN                  } from '../../modules/local/mapsplice
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
+include { FASTA        } from '../../modules/local/fasta/main'
 
 workflow CIRCRNA_DISCOVERY {
 
