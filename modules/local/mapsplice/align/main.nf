@@ -25,8 +25,8 @@ process MAPSPLICE_ALIGN {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = 'v2.2.1'
     def gtf_prefix = gtf.toString() - ~/.gtf/
-    def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d --force ${reads[0]}" : ''
-    def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d --force ${reads[1]}" : ''
+    def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
+    def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
     def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
     def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
     """

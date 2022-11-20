@@ -9,21 +9,16 @@ include { FIND_CIRC_FILTER                 } from '../../modules/local/find_circ
 include { CIRIQUANT_YML                    } from '../../modules/local/ciriquant/yml/main'
 include { CIRIQUANT                        } from '../../modules/local/ciriquant/ciriquant/main'
 include { CIRIQUANT_FILTER                 } from '../../modules/local/ciriquant/filter/main'
-include { CIRCEXPLORER2_REFERENCE          } from '../../modules/local/circexplorer2/reference/main'
-include { CIRCEXPLORER2_PARSE              } from '../../modules/nf-core/circexplorer2/parse/main'
-include { CIRCEXPLORER2_ANNOTATE           } from '../../modules/nf-core/circexplorer2/annotate/main'
-include { CIRCEXPLORER2_FILTER             } from '../../modules/local/circexplorer2/filter/main'
+include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REFERENCE } from '../../modules/local/circexplorer2/reference/main'
+include { CIRCEXPLORER2_PARSE as CIRCEXPLORER2_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE as CIRCEXPLORER2_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER as CIRCEXPLORER2_FILTER } from '../../modules/local/circexplorer2/filter/main'
 include { CIRCRNA_FINDER_FILTER            } from '../../modules/local/circrna_finder/filter/main'
 include { SEGEMEHL_ALIGN                   } from '../../modules/nf-core/segemehl/align/main'
 include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/filter/main'
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
-include { SJDB                             } from '../../modules/local/star/sjdb/main'
-// TODO: ask reviewer about this warning, I can't make sense of it:
-// WARN: A process with name 'DCC_MATE1_SJDB' is defined more than once in module script:
-// /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf
-// -- Make sure to not define the same function as process
-// This is only defined once in the 'include{}' section?
+include { SJDB as SJDB                     } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB           } from '../../modules/local/star/sjdb/main'
