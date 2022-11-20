@@ -19,8 +19,9 @@ include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
 include { SJDB                             } from '../../modules/local/star/sjdb/main'
-// TODO: ask reviewer about this warning, I can't make sense of it: WARN: A process with name
-// 'DCC_MATE1_SJDB' is defined more than once in module script: /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf
+// TODO: ask reviewer about this warning, I can't make sense of it:
+// WARN: A process with name 'DCC_MATE1_SJDB' is defined more than once in module script:
+// /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf
 // -- Make sure to not define the same function as process
 // This is only defined once in the 'include{}' section?
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
@@ -175,7 +176,7 @@ workflow CIRCRNA_DISCOVERY {
     ANNOTATION( circrna_filtered, gtf )
 
     // collect versions
-    // TODO: make sure to finish this. pay close attention to mulled containers. 
+    // TODO: make sure to finish this. pay close attention to mulled containers.
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)

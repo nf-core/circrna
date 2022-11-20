@@ -1,4 +1,3 @@
-
 process MAPSPLICE_ALIGN {
     tag "$meta.id"
     label 'process_high'
@@ -26,10 +25,10 @@ process MAPSPLICE_ALIGN {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = 'v2.2.1'
     def gtf_prefix = gtf.toString() - ~/.gtf/
-    def handleGzip_R1 = fastq[0].toString().endsWith('.gz') ? "gzip -d --force ${fastq[0]}" : ''
-    def handleGzip_R2 = fastq[1].toString().endsWith('.gz') ? "gzip -d --force ${fastq[1]}" : ''
-    def read1 = fastq[0].toString().endsWith('.gz') ? fastq[0].toString() - ~/.gz/ : fastq[0]
-    def read2 = fastq[1].toString().endsWith('.gz') ? fastq[1].toString() - ~/.gz/ : fastq[1]
+    def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d --force ${reads[0]}" : ''
+    def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d --force ${reads[1]}" : ''
+    def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
+    def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
     """
     $handleGzip_R1
     $handleGzip_R2
@@ -42,7 +41,7 @@ process MAPSPLICE_ALIGN {
         -p ${task.cpus} \\
         --bam \\
         --gene-gtf $gtf \\
-        -o $base \\
+        -o $prefix \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
