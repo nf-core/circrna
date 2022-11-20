@@ -19,7 +19,10 @@ include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
 include { SJDB                             } from '../../modules/local/star/sjdb/main'
-// TODO: ask reviewer about this warning, I can't make sense of it: WARN: A process with name 'DCC_MATE1_SJDB' is defined more than once in module script: /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf -- Make sure to not define the same function as process
+// TODO: ask reviewer about this warning, I can't make sense of it: WARN: A process with name
+// 'DCC_MATE1_SJDB' is defined more than once in module script: /Users/bdigby/Documents/GitHub/mine/circrna/./workflows/../subworkflows/local/circrna_discovery.nf
+// -- Make sure to not define the same function as process
+// This is only defined once in the 'include{}' section?
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB           } from '../../modules/local/star/sjdb/main'
@@ -28,6 +31,11 @@ include { STAR_ALIGN as DCC_MATE2_2ND_PASS } from '../../modules/nf-core/star/al
 include { SJDB as DCC_MATE2_SJDB           } from '../../modules/local/star/sjdb/main'
 include { DCC                              } from '../../modules/local/dcc/dcc/main'
 include { DCC_FILTER                       } from '../../modules/local/dcc/filter/main'
+include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference/main'
+include { MAPSPLICE_ALIGN                  } from '../../modules/local/mapsplice/align/main'
+include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -146,18 +154,28 @@ workflow CIRCRNA_DISCOVERY {
     // MAPSPLICE WORKFLOW:
     //
 
-    
+    MAPSPLICE_REFERENCE( gtf )
 
+    MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, gtf )
+
+    MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
+
+    MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
+
+    mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> meta.tool = "mapsplice"; return [ meta, txt ] }
+
+    MAPSPLICE_FILTER( mapsplice_filter, bsj_reads )
 
     //
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results, DCC_FILTER.out.results )
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results, DCC_FILTER.out.results, MAPSPLICE_FILTER.out.results )
 
     ANNOTATION( circrna_filtered, gtf )
 
     // collect versions
+    // TODO: make sure to finish this. pay close attention to mulled containers. 
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)
