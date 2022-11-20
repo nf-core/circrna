@@ -9,7 +9,7 @@ process MAPSPLICE_ALIGN {
 
     input:
     tuple val(meta), path(reads)
-    tuple val(meta2), path(index)
+    path bowtie_index
     path chromosomes
     path gtf
 
