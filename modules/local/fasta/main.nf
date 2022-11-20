@@ -25,15 +25,15 @@ process FASTA {
     def VERSION = '377'
     """
     ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
-    cut -d\$'\t' -f1-12 ${base}.bed > bed12.tmp
+    cut -d\$'\t' -f1-12 ${prefix}.bed > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
 
     ## clean fasta header
-    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${base}.fa && rm circ_seq.tmp
+    grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${prefix}.fa && rm circ_seq.tmp
 
     ## add backsplice sequence for miRanda Targetscan, publish canonical FASTA to results.
     rm $fasta
-    bash ${workflow.projectDir}/bin/backsplice_gen.sh ${base}.fa
+    bash ${workflow.projectDir}/bin/backsplice_gen.sh ${prefix}.fa
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
