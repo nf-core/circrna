@@ -170,6 +170,8 @@ workflow CIRCRNA_DISCOVERY {
 
     ANNOTATION( circrna_filtered, gtf )
 
+    FASTA( ANNOTATION.out.bed, fasta )
+
     // collect versions
     // TODO: make sure to finish this. pay close attention to mulled containers.
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
