@@ -16,6 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+tool = params.tool ? params.tool.split(',').collect{it.trim().toLowerCase()} : exit 1, 'No quantification tool selected.'
 
 // Genome params
 params.fasta   = params.genome  ? params.genomes[ params.genome ].fasta ?: false : false
