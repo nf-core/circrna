@@ -190,8 +190,9 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
+    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()
 
-    if( tool.size() > 1){
+    if( tools_selected.size() > 1){
 
         MERGE_TOOLS( ch_matrix.groupTuple(), tool_filter )
 
