@@ -8,6 +8,7 @@ process DCC_FILTER {
 
     output:
     tuple val(meta), path("${prefix}_dcc_circs.bed"), emit: results
+    tuple val(meta), path("${prefix}_dcc.bed")      , emit: matrix
 
     when:
     task.ext.when == null || task.ext.when

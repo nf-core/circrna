@@ -8,6 +8,7 @@ process SEGEMEHL_FILTER{
 
     output:
     tuple val(meta), path("${prefix}_segemehl_circs.bed"), emit: results
+    tuple val(meta), path("${prefix}_segemehl.bed")      , emit: matrix
 
     when:
     task.ext.when == null || task.ext.when

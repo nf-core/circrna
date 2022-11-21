@@ -5,12 +5,13 @@ process CIRCRNA_FINDER_FILTER {
     container 'barryd237/circrna_finder'
 
     input:
-    tuple val(meta), path(bam), path(junction), path(tab)
+    tuple val(meta), path(sam), path(junction), path(tab)
     path fasta
     val bsj_reads
 
     output:
     tuple val(meta), path("${prefix}_circrna_finder_circs.bed"), emit: results
+    tuple val(meta), path("${prefix}_circrna_finder.bed")      , emit: matrix
     path  "versions.yml"                                       , emit: versions
 
     when:
