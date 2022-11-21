@@ -8,6 +8,7 @@ process CIRIQUANT_FILTER {
 
     output:
     tuple val(meta), path("${prefix}_ciriquant_circs.bed"), emit: results
+    tuple val(meta), path("${prefix}_ciriquant.bed")      , emit: matrix
 
     when:
     task.ext.when == null || task.ext.when

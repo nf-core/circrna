@@ -33,6 +33,9 @@ include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/c
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
 include { FASTA        } from '../../modules/local/fasta/main'
+include { MERGE_TOOLS } from '../../modules/local/count_matrix/merge_tools/main'
+include { COUNTS_COMBINED } from '../../modules/local/count_matrix/combined/main'
+include { COUNTS_SINGLE } from '../../modules/local/count_matrix/single/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -48,6 +51,7 @@ workflow CIRCRNA_DISCOVERY {
     segemehl_index
     star_index
     bsj_reads
+    tool_filter
 
     main:
     ch_versions = Channel.empty()
@@ -66,8 +70,8 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     STAR_1ST_PASS( reads, star_index, gtf, true, '', '' )
-
-    sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect()
+    //TODO: ensure adding meta here does not comprimise collect().
+    sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ meta, tab ] }.collect()
 
     SJDB( sjdb, bsj_reads )
 
@@ -91,7 +95,11 @@ workflow CIRCRNA_DISCOVERY {
     // CIRCRNA_FINDER WORKFLOW:
     //
 
-    CIRCRNA_FINDER_FILTER( STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab), fasta, bsj_reads )
+    circrna_finder_stage = STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab)
+
+    circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> meta.tool = "circrna_finder"; return [ meta, sam, junction, tab ] }
+
+    CIRCRNA_FINDER_FILTER( circrna_finder_filter, fasta, bsj_reads )
 
     //
     // FIND_CIRC WORKFLOW:
@@ -171,7 +179,29 @@ workflow CIRCRNA_DISCOVERY {
 
     ANNOTATION( circrna_filtered, gtf )
 
+    //
+    // FASTA WORKFLOW:
+    //
+
     FASTA( ANNOTATION.out.bed, fasta )
+
+    //
+    // COUNT MATRIX WORKFLOW:
+    //
+
+    ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
+
+    if( tool.size() > 1){
+
+        MERGE_TOOLS( ch_matrix.groupTuple(), tool_filter )
+
+        COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
+
+    }else{
+
+        COUNTS_SINGLE( ch_matrix.collect() )
+
+    }
 
     // collect versions
     // TODO: make sure to finish this. pay close attention to mulled containers.
