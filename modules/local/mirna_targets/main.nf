@@ -19,7 +19,7 @@ process MIRNA_TARGETS {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
     ## reformat and sort miRanda, TargetScan outputs, convert to BED for overlaps.
     tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\t" '{print \$1, \$2, \$4, \$5, \$9}' | awk -v OFS="\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' > targetscan.bed
