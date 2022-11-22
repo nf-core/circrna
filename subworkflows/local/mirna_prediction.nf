@@ -33,7 +33,7 @@ workflow MIRNA_PREDICTION{
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
 
-    test = TARGETSCAN.out.map{ meta, it -> sample_id = it.simpleName; return [ meta, "${sample_id}.targetscan.txt" ]}.view()
+    test = TARGETSCAN.out.txt.join(MIRANDA.out.txt, circrna_bed12).view()
 
     emit:
     foo = "foo"
