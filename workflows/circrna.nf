@@ -189,12 +189,12 @@ workflow CIRCRNA {
     // 4. Differential tests
     //
 
-    DIFFERENTIAL_EXPRESSION(
+/*     DIFFERENTIAL_EXPRESSION(
         reads_for_diff_exp,
         ch_gtf,
         ch_fasta,
         hisat2_index
-    )
+    ) */
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
