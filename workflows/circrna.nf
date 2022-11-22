@@ -149,6 +149,7 @@ workflow CIRCRNA {
     )
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
     reads_for_circrna = FASTQC_TRIMGALORE.out.reads
+    reads_for_diff_exp = FASTQC_TRIMGALORE.out.reads
 
     //
     // 2. circRNA Discovery
@@ -171,10 +172,27 @@ workflow CIRCRNA {
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
+    //
+    // 3. miRNA target prediction
+    //
+
     MIRNA_PREDICTION(
         CIRCRNA_DISCOVERY.out.fasta,
         CIRCRNA_DISCOVERY.out.circrna_bed12,
         ch_mature
+    )
+
+    ch_versions = ch_versions(MIRNA_PREDICTION.out.versions)
+
+    //
+    // 4. Differential tests
+    //
+
+    DIFFERENTIAL_EXPRESSION(
+        reads_for_diff_exp,
+        ch_gtf,
+        ch_fasta,
+        hisat2_index
     )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
