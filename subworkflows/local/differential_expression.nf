@@ -1,6 +1,6 @@
 include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/main'
 include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites/main'
-include { STRINGTIE                 } from '../../modules/nf-core/stringtie/stringtie/main'
+include { STRINGTIE_STRINGTIE       } from '../../modules/nf-core/stringtie/stringtie/main'
 
 workflow DIFFERENTIAL_EXPRESSION {
 
