@@ -70,8 +70,8 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     STAR_1ST_PASS( reads, star_index, gtf, true, '', '' )
-    //TODO: ensure adding meta here does not comprimise collect().
-    sjdb = STAR_1ST_PASS.out.tab.collect()
+
+    sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect()
 
     SJDB( sjdb, bsj_reads )
 
