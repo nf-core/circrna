@@ -6,7 +6,7 @@ process SJDB {
     val(bsj_reads)
 
     output:
-    path("dataset.SJ.out.tab") emit: sjtab
+    path("dataset.SJ.out.tab"), emit: sjtab
 
     when:
     task.ext.when == null || task.ext.when
