@@ -33,7 +33,7 @@ process MIRNA_TARGETS {
     ## remove duplicate miRNA entries at MRE sites.
     ## strategy: sory by circs, sort by start position, sort by site type - the goal is to take the best site type (i.e rank site type found at MRE site).
     paste ${prefix}.mirnas.tmp mirna_type | sort -k3,3 -k2n -k7r | awk -v OFS="\t" '{print \$4,\$1,\$2,\$3,\$5,\$6,\$7}' | awk -F "\t" '{if (!seen[\$1,\$2,\$3,\$4,\$5,\$6]++)print}' | sort -k1,1 -k3n > ${prefix}.mirna_targets.tmp
-    echo -e "circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type" | cat - ${prefix}.mirna_targets.tmp > ${prefix}.miRNA_targets.txt
+    echo -e "circRNA\tmiRNA\tStart\tEnd\tScore\tEnergy_KcalMol\tSite_type" | cat - ${prefix}.mirna_targets.tmp > ${prefix}.mirna_targets.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
