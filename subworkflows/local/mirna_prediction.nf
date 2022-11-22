@@ -1,6 +1,7 @@
 include { TARGETSCAN_DATABASE } from '../../modules/local/targetscan/database/main'
 include { TARGETSCAN          } from '../../modules/local/targetscan/predict/main'
 include { MIRANDA             } from '../../modules/nf-core/miranda/main'
+include { MIRNA_TARGETS       } from '../../modules/local/mirna_targets/'
 
 workflow MIRNA_PREDICTION{
 
@@ -33,7 +34,10 @@ workflow MIRNA_PREDICTION{
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
 
-    test = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12).view()
+    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12).view()
+    MIRNA_TARGETS( consolidate_targets )
+
+    ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
 
     emit:
     foo = "foo"
