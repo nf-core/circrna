@@ -94,7 +94,7 @@ workflow CIRCRNA {
     // Validate input samplesheet & phenotype file
     INPUT_CHECK (
         ch_input,
-        ch_phenotype.ifEmpty([])
+        ch_phenotype
     )
     .reads
     .map {
