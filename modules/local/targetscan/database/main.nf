@@ -1,5 +1,5 @@
 process TARGETSCAN_DATABASE {
-    tag "$fasta"
+    tag "$mature"
     label 'process_low'
 
     input:

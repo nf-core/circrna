@@ -9,8 +9,8 @@ process TARGETSCAN {
     path(mature_txt)
 
     output:
-    tuple val(meta), path("${prefix}.targetscan.txt"), emit: results
-    path "versions.yml"                              , emit: versions
+    tuple val(meta), path("${prefix}.txt"), emit: txt
+    path "versions.yml"                   , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,7 +24,7 @@ process TARGETSCAN {
     cat $fasta | grep -v ">" > seq
     paste id seq | awk -v OFS="\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
     # run targetscan
-    targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.targetscan.txt
+    targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

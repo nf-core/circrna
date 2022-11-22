@@ -202,6 +202,7 @@ workflow CIRCRNA_DISCOVERY {
     } */
 
     emit:
+    circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
 }
