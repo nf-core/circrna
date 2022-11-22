@@ -89,10 +89,6 @@
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
                     },
-                    "stringtie/merge": {
-                        "branch": "master",
-                        "git_sha": "d0e6f468af1d51ce3ea4ac4fb5e58723eac3938c"
-                    },
                     "stringtie/stringtie": {
                         "branch": "master",
                         "git_sha": "d0e6f468af1d51ce3ea4ac4fb5e58723eac3938c"

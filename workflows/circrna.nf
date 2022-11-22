@@ -54,11 +54,10 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // MODULES:
 
 // SUBWORKFLOWS:
-include { INPUT_CHECK             } from '../subworkflows/local/input_check'
-include { PREPARE_GENOME          } from '../subworkflows/local/prepare_genome'
-include { CIRCRNA_DISCOVERY       } from '../subworkflows/local/circrna_discovery'
-include { MIRNA_PREDICTION        } from '../subworkflows/local/mirna_prediction'
-include { DIFFERENTIAL_EXPRESSION } from '../subworkflows/local/differential_expression'
+include { INPUT_CHECK       } from '../subworkflows/local/input_check'
+include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
+include { CIRCRNA_DISCOVERY } from '../subworkflows/local/circrna_discovery'
+include { MIRNA_PREDICTION  } from '../subworkflows/local/mirna_prediction'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,7 +94,7 @@ workflow CIRCRNA {
     // Validate input samplesheet & phenotype file
     INPUT_CHECK (
         ch_input,
-        ch_phenotype
+        ch_phenotype.ifEmpty([])
     )
     .reads
     .map {
@@ -137,7 +136,7 @@ workflow CIRCRNA {
     bowtie2_index  = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2) : PREPARE_GENOME.out.bowtie2 : []
     bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa) : PREPARE_GENOME.out.bwa : []
     chromosomes    = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
-    hisat2_index   = ( params.module.contains('differential_expression') || params.tool.contains('ciriquant') ) ? PREPARE_GENOME.out.hisat2 : []
+    hisat2_index   = params.tool.contains('ciriquant') ? PREPARE_GENOME.out.hisat2 : []
     star_index     = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
     segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
     ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
@@ -150,7 +149,6 @@ workflow CIRCRNA {
     )
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
     reads_for_circrna = FASTQC_TRIMGALORE.out.reads
-    reads_for_diff_exp = FASTQC_TRIMGALORE.out.reads
 
     //
     // 2. circRNA Discovery
@@ -173,28 +171,11 @@ workflow CIRCRNA {
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
-    //
-    // 3. miRNA target prediction
-    //
-
     MIRNA_PREDICTION(
         CIRCRNA_DISCOVERY.out.fasta,
         CIRCRNA_DISCOVERY.out.circrna_bed12,
         ch_mature
     )
-
-    ch_versions = ch_versions(MIRNA_PREDICTION.out.versions)
-
-    //
-    // 4. Differential tests
-    //
-
-/*     DIFFERENTIAL_EXPRESSION(
-        reads_for_diff_exp,
-        ch_gtf,
-        ch_fasta,
-        hisat2_index
-    ) */
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
