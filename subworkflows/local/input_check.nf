@@ -7,7 +7,7 @@ include { SAMPLESHEET_CHECK } from '../../modules/local/samplesheet_check'
 workflow INPUT_CHECK {
     take:
     samplesheet
-    ch_phenotype.ifEmpty([])
+    ch_phenotype
 
     main:
     phenotype = params.phenotype && params.module.contains('differential_expression') ? examine_phenotype(ch_phenotype) : Channel.empty()
