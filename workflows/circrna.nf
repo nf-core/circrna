@@ -132,14 +132,14 @@ workflow CIRCRNA {
     )
 
     // Stage the indices via newly created indices, iGenomes or empty list if tool not selected.
-    bowtie_index = params.fasta ? params.bowtie ? Channel.fromPath(params.bowtie) : PREPARE_GENOME.out.bowtie : []
-    bowtie2_index = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2) : PREPARE_GENOME.out.bowtie2 : []
-    bwa_index = params.fasta ? params.bwa ? Channel.fromPath(params.bwa) : PREPARE_GENOME.out.bwa : []
-    chromosomes = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
-    hisat2_index = params.tool.contains('ciriquant') ? PREPARE_GENOME.out.hisat2 : []
-    star_index = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
+    bowtie_index   = params.fasta ? params.bowtie ? Channel.fromPath(params.bowtie) : PREPARE_GENOME.out.bowtie : []
+    bowtie2_index  = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2) : PREPARE_GENOME.out.bowtie2 : []
+    bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa) : PREPARE_GENOME.out.bwa : []
+    chromosomes    = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
+    hisat2_index   = params.tool.contains('ciriquant') ? PREPARE_GENOME.out.hisat2 : []
+    star_index     = params.fasta ? params.star ? Channel.fromPath(params.star) : PREPARE_GENOME.out.star : []
     segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
-    ch_versions = ch_versions.mix(PREPARE_GENOME.out.versions)
+    ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
     FASTQC_TRIMGALORE (
@@ -173,6 +173,7 @@ workflow CIRCRNA {
 
     MIRNA_PREDICTION(
         CIRCRNA_DISCOVERY.out.fasta,
+        CIRCRNA_DISCOVERY.out.circrna_bed12,
         ch_mature
     )
 
