@@ -33,7 +33,7 @@ workflow MIRNA_PREDICTION{
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
 
-    test = TARGETSCAN.out.txt.join(MIRANDA.out.txt, circrna_bed12).view()
+    test = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12).view()
 
     emit:
     foo = "foo"
