@@ -164,7 +164,7 @@ workflow CIRCRNA {
         hisat2_index,
         segemehl_index,
         star_index,
-        params.bsj_reads
+        params.bsj_reads,
         params.tool_filter
     )
 
