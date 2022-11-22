@@ -32,10 +32,10 @@ include { MAPSPLICE_ALIGN                  } from '../../modules/local/mapsplice
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
-include { FASTA        } from '../../modules/local/fasta/main'
-include { MERGE_TOOLS } from '../../modules/local/count_matrix/merge_tools/main'
-include { COUNTS_COMBINED } from '../../modules/local/count_matrix/combined/main'
-include { COUNTS_SINGLE } from '../../modules/local/count_matrix/single/main'
+include { FASTA                            } from '../../modules/local/fasta/main'
+include { MERGE_TOOLS                      } from '../../modules/local/count_matrix/merge_tools/main'
+include { COUNTS_COMBINED                  } from '../../modules/local/count_matrix/combined/main'
+include { COUNTS_SINGLE                    } from '../../modules/local/count_matrix/single/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -71,7 +71,7 @@ workflow CIRCRNA_DISCOVERY {
 
     STAR_1ST_PASS( reads, star_index, gtf, true, '', '' )
     //TODO: ensure adding meta here does not comprimise collect().
-    sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ meta, tab ] }.collect()
+    sjdb = STAR_1ST_PASS.out.tab.collect()
 
     SJDB( sjdb, bsj_reads )
 
@@ -190,7 +190,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
-    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()
+    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
     if( tools_selected.size() > 1){
 
