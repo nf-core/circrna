@@ -11,7 +11,7 @@ process MIRNA_TARGETS {
     tuple val(meta), path(targetscan), path(miranda), path(bed12)
 
     output:
-    tuple val(prefrix), path("${prefix}.txt"), emit: results
+    tuple val(meta), path("${prefix}.txt"), emit: results
     path "versions.yml"                   , emit: versions
 
     when:
