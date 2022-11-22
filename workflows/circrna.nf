@@ -54,10 +54,11 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // MODULES:
 
 // SUBWORKFLOWS:
-include { INPUT_CHECK       } from '../subworkflows/local/input_check'
-include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
-include { CIRCRNA_DISCOVERY } from '../subworkflows/local/circrna_discovery'
-include { MIRNA_PREDICTION  } from '../subworkflows/local/mirna_prediction'
+include { INPUT_CHECK             } from '../subworkflows/local/input_check'
+include { PREPARE_GENOME          } from '../subworkflows/local/prepare_genome'
+include { CIRCRNA_DISCOVERY       } from '../subworkflows/local/circrna_discovery'
+include { MIRNA_PREDICTION        } from '../subworkflows/local/mirna_prediction'
+include { DIFFERENTIAL_EXPRESSION } from '../subworkflows/local/differential_expression'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
