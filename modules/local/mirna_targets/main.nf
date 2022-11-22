@@ -1,5 +1,5 @@
 process MIRNA_TARGETS {
-    tag "${meta.id}:${meta.tool}"
+    tag "$meta.id"
     label 'process_low'
 
     conda (params.enable_conda ? "bioconda::bedtools=2.30.0" : null)
