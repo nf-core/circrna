@@ -186,7 +186,7 @@ workflow CIRCRNA_DISCOVERY {
     // COUNT MATRIX WORKFLOW:
     //
 
-    ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
+/*     ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
     if( tools_selected.size() > 1){
@@ -199,16 +199,9 @@ workflow CIRCRNA_DISCOVERY {
 
         COUNTS_SINGLE( ch_matrix.collect() )
 
-    }
-
-    // collect versions
-    // TODO: make sure to finish this. pay close attention to mulled containers.
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)
-
+    } */
 
     emit:
-
+    fasta = FASTA.out.analysis_fasta
     versions = ch_versions
 }

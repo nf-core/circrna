@@ -57,6 +57,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 include { INPUT_CHECK       } from '../subworkflows/local/input_check'
 include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
 include { CIRCRNA_DISCOVERY } from '../subworkflows/local/circrna_discovery'
+include { MIRNA_PREDICTION  } from '../subworkflows/local/mirna_prediction'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -169,6 +170,11 @@ workflow CIRCRNA {
     )
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
+
+    MIRNA_PREDICTION(
+        CIRCRNA_DISCOVERY.out.fasta,
+        ch_mature
+    )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
