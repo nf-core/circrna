@@ -2,7 +2,7 @@ include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/m
 include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites/main'
 include { STRINGTIE                 } from '../../modules/nf-core/stringtie/stringtie/main'
 
-workflow DIFFERENTIAL_EXPRESSION{
+workflow DIFFERENTIAL_EXPRESSION {
 
     take:
     reads
