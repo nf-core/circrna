@@ -2,11 +2,11 @@ process SJDB {
     label 'process_single'
 
     input:
-    tuple val(meta), path(sjdb)
+    path(sjdb)
     val(bsj_reads)
 
     output:
-    tuple val(meta), path("dataset.SJ.out.tab") emit: sjtab
+    path("dataset.SJ.out.tab") emit: sjtab
 
     when:
     task.ext.when == null || task.ext.when
