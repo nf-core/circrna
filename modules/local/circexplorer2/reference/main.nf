@@ -1,4 +1,5 @@
 process CIRCEXPLORER2_REFERENCE {
+    tag "$gtf"
     label 'process_single'
 
     conda (params.enable_conda ? "bioconda::ucsc-gtftogenepred=377 bioconda::ucsc-genepredtobed=377 bioconda::bedtools=2.27.0" : null)
