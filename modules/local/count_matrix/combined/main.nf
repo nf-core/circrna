@@ -1,5 +1,4 @@
 process COUNTS_COMBINED {
-    tag "$meta.id"
     label 'process_low'
 
     conda (params.enable_conda ? "r-base=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5" : null)
@@ -8,7 +7,7 @@ process COUNTS_COMBINED {
         'quay.io/biocontainers/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:3456f1432b1c9dad42815275abe2d6cb6f26fd94-0' }"
 
     input:
-    tuple val(meta), path(bed)
+    path(bed)
 
     output:
     path("circRNA_matrix.txt"), emit: dea_matrix
@@ -19,7 +18,6 @@ process COUNTS_COMBINED {
 
     script:
     def args = task.ext.args ?: ''
-    prefix = task.ext.prefix ?: "${meta.id}"
     """
     python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
     ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
