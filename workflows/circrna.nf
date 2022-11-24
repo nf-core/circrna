@@ -194,7 +194,8 @@ workflow CIRCRNA {
         reads_for_diff_exp,
         ch_gtf,
         ch_fasta,
-        hisat2_index
+        hisat2_index,
+        PREPARE_GENOME.out.splice_sites
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
