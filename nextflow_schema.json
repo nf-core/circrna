@@ -78,6 +78,13 @@
                     "minimum": 0,
                     "maximum": 6
                 },
+                "duplicates_fun": {
+                    "type": "string",
+                    "fa_icon": "fas fa-copy",
+                    "description": "Aggregate function to apply to duplicate circRNAs when more than one quantification tool has been selected. Options: max, mean",
+                    "default": "mean",
+                    "enum": ["mean", "max"]
+                },
                 "save_reference": {
                     "type": "boolean",
                     "description": "Save generated reference genome files such as indices, chromosome FASTA files.",
