@@ -9,7 +9,7 @@ process MERGE_TOOLS {
 
     input:
     tuple val(meta), path(bed)
-    tool_filter
+    val(tool_filter)
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: merged
