@@ -2,10 +2,10 @@ process COUNTS_COMBINED {
     tag "$meta.id"
     label 'process_low'
 
-    conda (params.enable_conda ? "r-prefix=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5" : null)
+    conda (params.enable_conda ? "r-base=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:822dee34c7f17db5504d79b88ddea942e815cb18-0' :
-        'quay.io/biocontainers/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:822dee34c7f17db5504d79b88ddea942e815cb18-0' }"
+        'https://depot.galaxyproject.org/singularity/mulled-v2-04b2ef814c9c6ab8c196c3e372521b88160dc260:e0cb4046baee3fd35fdbf883ba8af34e3e8af2e8-0' :
+        'quay.io/biocontainers/mulled-v2-04b2ef814c9c6ab8c196c3e372521b88160dc260:e0cb4046baee3fd35fdbf883ba8af34e3e8af2e8-0' }"
 
     input:
     tuple val(meta), path(bed)
