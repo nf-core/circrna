@@ -197,6 +197,7 @@ workflow CIRCRNA_DISCOVERY {
 
     }else{
 
+        ch_matrix.collect().view()
         ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple().view()
         COUNTS_SINGLE( ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple() )
 
