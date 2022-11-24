@@ -19,7 +19,7 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     HISAT2_EXTRACTSPLICESITES( gtf )
     HISAT2_ALIGN( reads, hisat2_index, HISAT2_EXTRACTSPLICESITES.out.txt )
-    STRINGTIE( HISAT2_ALIGN.out.bam, gtf )
+    STRINGTIE_STRINGTIE( HISAT2_ALIGN.out.bam, gtf )
 
     ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
