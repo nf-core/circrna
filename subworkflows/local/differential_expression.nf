@@ -26,6 +26,5 @@ workflow DIFFERENTIAL_EXPRESSION {
     ch_versions = ch_versions.mix(STRINGTIE.out.versions)
 
     emit:
-    foo = "foo"
     versions = ch_versions
 }
