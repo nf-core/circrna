@@ -40,5 +40,5 @@ workflow MIRNA_PREDICTION{
     ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
 
     emit:
-    foo = "foo"
+    versions = ch_versions
 }
