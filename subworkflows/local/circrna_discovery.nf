@@ -193,7 +193,7 @@ workflow CIRCRNA_DISCOVERY {
 
         MERGE_TOOLS( ch_matrix.map{ meta, bed -> var = [:]; var.id = meta.id; return [ var, bed ] }.groupTuple(), tool_filter )
 
-        COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
+        COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
 
     }else{
 
