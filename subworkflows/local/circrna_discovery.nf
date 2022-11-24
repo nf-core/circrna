@@ -196,8 +196,8 @@ workflow CIRCRNA_DISCOVERY {
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
 
     }else{
-        ch_matrix.map{ meta, bed -> return [ meta.tool, bed ] }.groupTuple().view()
-        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> return [ meta.tool, bed ] }.groupTuple() )
+        ch_matrix.map{ meta, bed -> return [ [ meta.tool ], bed ] }.groupTuple().view()
+        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> return [ [ meta.tool ], bed ] }.groupTuple() )
 
     }
 
