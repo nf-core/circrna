@@ -79,12 +79,13 @@ workflow PREPARE_GENOME {
     ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
 
     emit:
-    bowtie      = BOWTIE_BUILD.out.index
-    bowtie2     = BOWTIE2_BUILD.out.index
-    bwa         = BWA_INDEX.out.index
-    chromosomes = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
-    hisat2      = HISAT2_BUILD.out.index
-    star        = STAR_GENOMEGENERATE.out.index
-    segemehl    = SEGEMEHL_INDEX.out.index
-    versions    = ch_versions
+    bowtie       = BOWTIE_BUILD.out.index
+    bowtie2      = BOWTIE2_BUILD.out.index
+    bwa          = BWA_INDEX.out.index
+    chromosomes  = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
+    hisat2       = HISAT2_BUILD.out.index
+    star         = STAR_GENOMEGENERATE.out.index
+    segemehl     = SEGEMEHL_INDEX.out.index
+    splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
+    versions     = ch_versions
 }
