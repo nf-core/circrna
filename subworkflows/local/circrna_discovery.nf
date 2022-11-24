@@ -52,6 +52,7 @@ workflow CIRCRNA_DISCOVERY {
     star_index
     bsj_reads
     tool_filter
+    duplicates_fun
 
     main:
     ch_versions = Channel.empty()
@@ -191,7 +192,7 @@ workflow CIRCRNA_DISCOVERY {
 
     if( tools_selected.size() > 1){
 
-        MERGE_TOOLS( ch_matrix.map{ meta, bed -> var = [:]; var.id = meta.id; return [ var, bed ] }.groupTuple(), tool_filter )
+        MERGE_TOOLS( ch_matrix.map{ meta, bed -> var = [:]; var.id = meta.id; return [ var, bed ] }.groupTuple(), tool_filter, duplicates_fun )
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
 

@@ -166,7 +166,8 @@ workflow CIRCRNA {
         segemehl_index,
         star_index,
         params.bsj_reads,
-        params.tool_filter
+        params.tool_filter,
+        params.duplicates_fun
     )
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
