@@ -9,7 +9,7 @@ process MERGE_TOOLS {
 
     input:
     tuple val(meta), path(bed)
-    val(tool_filter),
+    val(tool_filter)
     val(duplicates_fun)
 
     output:
