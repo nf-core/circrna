@@ -196,7 +196,7 @@ workflow CIRCRNA_DISCOVERY {
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
 
     }else{
-        ch_matrix.groupTuple(by:[0,1].view())
+        ch_matrix.groupTuple(by:[0,1]).view()
         COUNTS_SINGLE( ch_matrix.groupTuple(by:[0,1]).collect() )
 
     }
