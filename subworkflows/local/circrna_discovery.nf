@@ -197,7 +197,7 @@ workflow CIRCRNA_DISCOVERY {
 
     }else{
 
-        COUNTS_SINGLE( ch_matrix.groupTuple() )
+        COUNTS_SINGLE( ch_matrix.collect().groupTuple() )
 
     }
 
