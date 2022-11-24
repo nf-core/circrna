@@ -1,5 +1,5 @@
 process COUNTS_SINGLE {
-    tag "${meta.id}:${meta.tool}"
+    tag "${meta.tool}"
     label 'process_low'
 
     conda (params.enable_conda ? "r-base=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5" : null)
@@ -20,7 +20,6 @@ process COUNTS_SINGLE {
     script:
     def args = task.ext.args ?: ''
     def tool_name = "${meta.tool}"
-    prefix = task.ext.prefix ?: "${meta.id}"
     """
     # Strip tool name from BED files (no consolidation prior to this step for 1 tool)
     for b in *.bed; do

@@ -191,13 +191,13 @@ workflow CIRCRNA_DISCOVERY {
 
     if( tools_selected.size() > 1){
 
-        MERGE_TOOLS( ch_matrix.groupTuple(), tool_filter )
+        MERGE_TOOLS( ch_matrix.groupTuple(by:[0,0]), tool_filter )
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
 
     }else{
-
-        COUNTS_SINGLE( ch_matrix.collect().groupTuple() )
+        ch_matrix.groupTuple(by:[0,1].view())
+        COUNTS_SINGLE( ch_matrix.groupTuple(by:[0,1]).collect() )
 
     }
 
