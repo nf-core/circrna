@@ -30,7 +30,7 @@ params.species = params.genome  ? params.genomes[ params.genome ].species_id ?: 
 ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
 ch_fasta       = params.fasta ? file(params.fasta) : 'null'
 ch_gtf         = params.gtf ? file(params.gtf) : 'null'
-ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : 'null'
+ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : Channel.empty()
 ch_species     = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 
