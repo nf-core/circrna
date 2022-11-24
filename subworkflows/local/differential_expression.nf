@@ -23,7 +23,7 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
-    ch_versions = ch_versions.mix(STRINGTIE.out.versions)
+    ch_versions = ch_versions.mix(STRINGTIE_STRINGTIE.out.versions)
 
     emit:
     versions = ch_versions
