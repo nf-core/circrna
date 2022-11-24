@@ -28,7 +28,9 @@ process COUNTS_COMBINED {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        mapsplice: "foo"
+        r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
+        argparser: \$(Rscript -e "library(arparser); cat(as.character(packageVersion('argparser')))")
+        dplyr: \$(Rscript -e "library(dplyr); cat(as.character(packageVersion('dplyr')))")
     END_VERSIONS
     """
 }
