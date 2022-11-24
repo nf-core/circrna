@@ -4,8 +4,8 @@ process COUNTS_COMBINED {
 
     conda (params.enable_conda ? "r-base=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:822dee34c7f17db5504d79b88ddea942e815cb18-0' :
-        'quay.io/biocontainers/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:822dee34c7f17db5504d79b88ddea942e815cb18-0' }"
+        'https://depot.galaxyproject.org/singularity/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:3456f1432b1c9dad42815275abe2d6cb6f26fd94-0' :
+        'quay.io/biocontainers/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:3456f1432b1c9dad42815275abe2d6cb6f26fd94-0' }"
 
     input:
     tuple val(meta), path(bed)
