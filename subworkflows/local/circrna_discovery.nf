@@ -191,13 +191,13 @@ workflow CIRCRNA_DISCOVERY {
 
     if( tools_selected.size() > 1){
 
-        MERGE_TOOLS( ch_matrix.groupTuple(by:[0,0]), tool_filter )
+        MERGE_TOOLS( ch_matrix.map{ meta, bed -> var = [:]; var.id = meta.id; return [ meta, bed ] }.groupTuple(), tool_filter )
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.collect() )
 
     }else{
 
-        ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.collect().groupTuple().view()
+        // TODO: concerned that this does not wait for all files?
         COUNTS_SINGLE( ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple() )
 
     }
