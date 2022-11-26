@@ -1,5 +1,5 @@
 process STRINGTIE_PREPDE {
-    label 'process_low
+    label 'process_low'
 
     conda (params.enable_conda ? "bioconda::stringtie=2.2.1" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
