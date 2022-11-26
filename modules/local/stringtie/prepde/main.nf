@@ -21,7 +21,7 @@ process STRINGTIE_PREPDE {
     """
     for file in \$(ls *.gtf); do sample_id=\${file%".transcripts.gtf"}; touch samples.txt; printf "\$sample_id\t\$file\n" >> samples.txt ; done
 
-    prepDe.py -i samples.txt
+    prepDE.py -i samples.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
