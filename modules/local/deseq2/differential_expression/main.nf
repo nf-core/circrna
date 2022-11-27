@@ -13,9 +13,10 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
     val(species)
 
     output:
-    path "transcript_count_matrix.csv" , emit: transcript_matrix
-    path "gene_count_matrix.csv"       , emit: gene_matrix
-    path "versions.yml"                , emit: versions
+    path "circRNA" , emit: circular_results
+    path "RNA-Seq"       , emit: linear_results
+    path "boxplots"             , emit: boxplots
+    path "DESeq2_QC"    , emit: qc
 
     when:
     task.ext.when == null || task.ext.when
