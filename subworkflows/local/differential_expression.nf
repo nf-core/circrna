@@ -2,7 +2,7 @@ include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/m
 include { SAMTOOLS_SORT             } from '../../modules/nf-core/samtools/sort/main'
 include { STRINGTIE_STRINGTIE       } from '../../modules/nf-core/stringtie/stringtie/main'
 include { STRINGTIE_PREPDE          } from '../../modules/local/stringtie/prepde/main'
-include { DIFFERENTIAL_EXPRESSION   } from '../../modules/local/deseq2/differential_expression/main'
+include { DESEQ2_DIFFERENTIAL_EXPRESSION   } from '../../modules/local/deseq2/differential_expression/main'
 
 workflow DIFFERENTIAL_EXPRESSION {
 
