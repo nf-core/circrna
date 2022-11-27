@@ -197,8 +197,8 @@ workflow CIRCRNA {
         hisat2_index,
         PREPARE_GENOME.out.splice_sites,
         ch_phenotype,
-        CIRCRNA_DISCOVERY.out.dea_matrix.mix(CIRCRNA_DISCOVERY.out.dea_matrix),
-        CIRCRNA_DISCOVERY.out.clr_matrix.mix(CIRCRNA_DISCOVERY.out.clr_matrix),
+        CIRCRNA_DISCOVERY.out.dea_matrix,
+        CIRCRNA_DISCOVERY.out.clr_matrix,
         ch_species
     )
 
