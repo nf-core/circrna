@@ -195,7 +195,11 @@ workflow CIRCRNA {
         ch_gtf,
         ch_fasta,
         hisat2_index,
-        PREPARE_GENOME.out.splice_sites
+        PREPARE_GENOME.out.splice_sites,
+        ch_phenotype,
+        CIRCRNA_DISCOVERY.COUNTS_COMBINED.out.dea_matrix.mix(CIRCRNA_DISCOVERY.COUNTS_SINGLE.out.dea_matrix),
+        CIRCRNA_DISCOVERY.COUNTS_COMBINED.out.clr_matrix.mix(CIRCRNA_DISCOVERY.COUNTS_SINGLE.out.clr_matrix),
+        ch_species
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)

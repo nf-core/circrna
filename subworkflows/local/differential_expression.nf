@@ -2,6 +2,7 @@ include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/m
 include { SAMTOOLS_SORT             } from '../../modules/nf-core/samtools/sort/main'
 include { STRINGTIE_STRINGTIE       } from '../../modules/nf-core/stringtie/stringtie/main'
 include { STRINGTIE_PREPDE          } from '../../modules/local/stringtie/prepde/main'
+include { DIFFERENTIAL_EXPRESSION   } from '../../modules/local/deseq2/differential_expression/main'
 
 workflow DIFFERENTIAL_EXPRESSION {
 
@@ -11,6 +12,10 @@ workflow DIFFERENTIAL_EXPRESSION {
     fasta
     hisat2_index
     splice_sites
+    phenotype
+    dea_matrix
+    clr_matrix
+    species
 
     main:
     ch_versions = Channel.empty()
@@ -24,8 +29,11 @@ workflow DIFFERENTIAL_EXPRESSION {
     STRINGTIE_STRINGTIE( SAMTOOLS_SORT.out.bam, gtf )
     STRINGTIE_PREPDE( STRINGTIE_STRINGTIE.out.transcript_gtf.map{ meta, gtf -> return [ gtf ] }.collect() )
 
-    // create prepde.py module. use -o output, transcripts.gtf.
-    // now you have everything you need for DESeq2 and CircTest
+    //
+    // Circular, Linear Differential Expression
+    //
+
+    DESEQ2_DIFFERENTIAL_EXPRESSION( STRINGTIE_PREPDE.out.gene_matrix, phenotype, dea_matrix, species )
 
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)

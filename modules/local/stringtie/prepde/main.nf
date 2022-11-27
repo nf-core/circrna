@@ -10,8 +10,8 @@ process STRINGTIE_PREPDE {
     path gtf
 
     output:
-    path "transcript_count_matrix.csv" , emit: transcript_gtf
-    path "gene_count_matrix.csv"       , emit: abundance
+    path "transcript_count_matrix.csv" , emit: transcript_matrix
+    path "gene_count_matrix.csv"       , emit: gene_matrix
     path "versions.yml"                , emit: versions
 
     when:
