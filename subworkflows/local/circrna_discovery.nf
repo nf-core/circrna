@@ -196,6 +196,8 @@ workflow CIRCRNA_DISCOVERY {
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
 
+        // stage clr dea within this scope
+
     }else{
 
         // TODO: concerned that this does not wait for all files?
