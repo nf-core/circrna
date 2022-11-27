@@ -196,12 +196,16 @@ workflow CIRCRNA_DISCOVERY {
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
 
-        // stage clr dea within this scope
+        dea_matrix = COUNTS_COMBINED.out.dea_matrix
+        clr_matrix = COUNTS_COMBINED.out.clr_matrix
 
     }else{
 
         // TODO: concerned that this does not wait for all files?
         COUNTS_SINGLE( ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple() )
+
+        dea_matrix = COUNTS_SINGLE.out.dea_matrix
+        clr_matrix = COUNTS_SINGLE.out.clr_matrix
 
     }
 
@@ -209,6 +213,6 @@ workflow CIRCRNA_DISCOVERY {
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
-    dea_matrix = COUNTS_COMBINED.out.dea_matrix.mix(COUNTS_SINGLE.out.dea_matrix)
-    clr_matrix = COUNTS_COMBINED.out.clr_matrix.mix(COUNTS_SINGLE.out.clr_matrix)
+    dea_matrix
+    clr_matrix
 }
