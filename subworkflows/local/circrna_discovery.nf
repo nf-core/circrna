@@ -207,5 +207,6 @@ workflow CIRCRNA_DISCOVERY {
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
-    // output dea and clr
+    dea_matrix = COUNTS_COMBINED.out.dea_matrix.mix(COUNTS_SINGLE.out.dea_matrix)
+    clr_matrix = COUNTS_COMBINED.out.clr_matrix.mix(COUNTS_SINGLE.out.clr_matrix)
 }
