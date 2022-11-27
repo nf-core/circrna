@@ -207,4 +207,5 @@ workflow CIRCRNA_DISCOVERY {
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
+    // output dea and clr
 }
