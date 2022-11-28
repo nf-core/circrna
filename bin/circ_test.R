@@ -75,30 +75,30 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
         plotdat <- summarySE( data.frame(Ratio=as.numeric(Circ[plotrow,-circle_description])/(as.numeric(Linear[plotrow,-circle_description])+as.numeric(Circ[plotrow,-circle_description])),
                                                                         groupindicator1,
                                                                         groupindicator2),
-                                                 measurevar='Ratio',groupvars=c('groupindicator1','groupindicator2') )
+                                                measurevar='Ratio',groupvars=c('groupindicator1','groupindicator2') )
     }else{
         plotdat <- summarySE( data.frame(Ratio=as.numeric(Circ[plotrow,-circle_description])/(as.numeric(Linear[plotrow,-circle_description])+as.numeric(Circ[plotrow,-circle_description])),
-                                                                         groupindicator1),
-                                                                         measurevar='Ratio',groupvars=c('groupindicator1') )
+                                                                        groupindicator1),
+                                                                        measurevar='Ratio',groupvars=c('groupindicator1') )
     }
 # construct plot
     Q <- ggplot(plotdat, aes(x=groupindicator1, y=Ratio)) +
-             geom_boxplot() + theme_classic() +
-             theme(axis.text.x = element_blank())+
-             theme(axis.text.y = element_text(size=size+4))+
-             theme(axis.ticks = element_line(colour = 'black', size = 1)) +
-             theme(axis.ticks.x = element_blank())+
-             theme(legend.title=element_blank()) +
-             theme(text=element_text(size=size+4))+
-             theme(legend.text=element_text(size=size)) +
-             theme(plot.title = element_text(size=size)) +
-             theme(axis.text.y = element_text(margin=margin(5,5,10,5,"pt")))+
-             #labs(list(title=paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep=""),x=x,y=y)) +
-             ggtitle(paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
-             ylab("circRNA/(circRNA + Linear RNA)") +
-             xlab("Sample") +
-             geom_errorbar(aes(ymin=Ratio, ymax=Ratio+se), width=.2 , size=2) +
-             geom_bar(stat="identity",aes(fill=groupindicator1), color = "black", size=2)
+            geom_boxplot() + theme_classic() +
+            theme(axis.text.x = element_blank())+
+            theme(axis.text.y = element_text(size=size+4))+
+            theme(axis.ticks = element_line(colour = 'black', size = 1)) +
+            theme(axis.ticks.x = element_blank())+
+            theme(legend.title=element_blank()) +
+            theme(text=element_text(size=size+4))+
+            theme(legend.text=element_text(size=size)) +
+            theme(plot.title = element_text(size=size)) +
+            theme(axis.text.y = element_text(margin=margin(5,5,10,5,"pt")))+
+            #labs(list(title=paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep=""),x=x,y=y)) +
+            ggtitle(paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
+            ylab("circRNA/(circRNA + Linear RNA)") +
+            xlab("Sample") +
+            geom_errorbar(aes(ymin=Ratio, ymax=Ratio+se), width=.2 , size=2) +
+            geom_bar(stat="identity",aes(fill=groupindicator1), color = "black", size=2)
 
     if (colour_mode == "bw"){
             Q <- Q + scale_fill_grey(start = 0.0, end = 1)
@@ -106,18 +106,18 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
             Q <- Q + scale_fill_discrete(name=lab_legend)
     }
 
-             Q <- Q +
-             theme(legend.position="bottom") +
-             theme(axis.ticks.length = unit(0.5, "cm")) +
-             theme(panel.background = element_blank(),
+            Q <- Q +
+            theme(legend.position="bottom") +
+            theme(axis.ticks.length = unit(0.5, "cm")) +
+            theme(panel.background = element_blank(),
                 panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
                 axis.line = element_line(colour = "black"),
                 panel.border = element_rect(colour = "black", fill=NA, size=3)) +
                 guides(fill=guide_legend(
-                                 keywidth=0.3,
-                                 keyheight=0.3,
-                                 default.unit="inch")
+                                keywidth=0.3,
+                                keyheight=0.3,
+                                default.unit="inch")
             ) + scale_y_continuous(expand=c(0,0), limits= c(0, y_axis_range))
 
     if(twolevel){
@@ -422,7 +422,7 @@ if( n_covars == 2 ){
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=groupindicator1, groupindicator2 = group_indicator2,
-    		    circle_description = c(1:4) )
+        circle_description = c(1:4) )
     }
     dev.off()
 
@@ -440,7 +440,7 @@ if( n_covars == 2 ){
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-    		lab_legend = colnames(pheno)[1],    circle_description = c(1:4) )
+        lab_legend = colnames(pheno)[1],    circle_description = c(1:4) )
     }
     dev.off()
 
