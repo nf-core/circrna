@@ -43,17 +43,17 @@ workflow DIFFERENTIAL_EXPRESSION {
     // CircRNA - Host Gene Ratio tests
     //
 
-    PARENT_GENE( clr_matrix, gtf )
+/*     PARENT_GENE( clr_matrix, gtf )
     PREPARE_CLR_TEST( STRINGTIE_PREPDE.out.gene_matrix, clr_matrix, PARENT_GENE.out.circ_host_map, gtf )
-    CIRCTEST( PREPARE_CLR_TEST.out.circular, PREPARE_CLR_TEST.out.linear, phenotype )
+    CIRCTEST( PREPARE_CLR_TEST.out.circular, PREPARE_CLR_TEST.out.linear, phenotype ) */
 
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
     ch_versions = ch_versions.mix(STRINGTIE_STRINGTIE.out.versions)
     ch_versions = ch_versions.mix(DESEQ2_DIFFERENTIAL_EXPRESSION.out.versions)
-    ch_versions = ch_versions.mix(PARENT_GENE.out.versions)
+/*     ch_versions = ch_versions.mix(PARENT_GENE.out.versions)
     ch_versions = ch_versions.mix(PREPARE_CLR_TEST.out.versions)
-    ch_versions = ch_versions.mix(CIRCTEST.out.versions)
+    ch_versions = ch_versions.mix(CIRCTEST.out.versions) */
 
     emit:
     versions = ch_versions
