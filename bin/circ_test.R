@@ -240,10 +240,10 @@ Circ.filter <- function(circ=circ,linear=linear,Nreplicates=3,filter.sample=4,fi
     }
 
     if (length(del_row) > 0){
-    	new_dat=circ[-del_row,]
-    	return(new_dat)
+        new_dat=circ[-del_row,]
+        return(new_dat)
     } else {
-	return(circ)
+        return(circ)
     }
 }
 
@@ -429,7 +429,7 @@ if( n_covars == 2 ){
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1, groupindicator2 = group_indicator2,
-	circle_description = c(1:4) )
+    circle_description = c(1:4) )
     }
     dev.off()
 
@@ -447,7 +447,7 @@ if( n_covars == 2 ){
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-	circle_description = c(1:4) )
+    circle_description = c(1:4) )
     }
     dev.off()
 }
