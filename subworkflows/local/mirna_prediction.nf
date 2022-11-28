@@ -1,7 +1,7 @@
 include { TARGETSCAN_DATABASE } from '../../modules/local/targetscan/database/main'
 include { TARGETSCAN          } from '../../modules/local/targetscan/predict/main'
 include { MIRANDA             } from '../../modules/nf-core/miranda/main'
-include { MIRNA_TARGETS       } from '../../modules/local/mirna_targets/'
+include { MIRNA_TARGETS       } from '../../modules/local/mirna_targets/main'
 
 workflow MIRNA_PREDICTION{
 

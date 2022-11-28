@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 
 circ_mat = read.table("count_matrix.txt", header=T, sep="\t", check.names = FALSE, stringsAsFactors = F, row.names = "ID")
 gene_mat = read.table("gene_count_matrix.csv", sep=",", header=T, row.names="gene_id", stringsAsFactors = F)
