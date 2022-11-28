@@ -15,21 +15,21 @@ new_circ = c()
 new_gene = c()
 
 for(i in 1:nrow(map)){
-  row <- map[i,]
-  circ <- row$circrna
-  gene <- row$gene
+    row <- map[i,]
+    circ <- row$circrna
+    gene <- row$gene
 
-  # multiple host genes?
-  multiple_genes <- unlist(strsplit(gene, ","))
-  #print(multiple_genes)
-  if(length(multiple_genes) > 1){
-    for(gene in multiple_genes){
-      new_circ <- c(new_circ, circ)
-      new_gene <- c(new_gene, gene)
+    # multiple host genes?
+    multiple_genes <- unlist(strsplit(gene, ","))
+    #print(multiple_genes)
+    if(length(multiple_genes) > 1){
+        for(gene in multiple_genes){
+            new_circ <- c(new_circ, circ)
+            new_gene <- c(new_gene, gene)
+        }
     }
-  }
-  new_circ <- c(new_circ, circ)
-  new_gene <- c(new_gene, gene)
+    new_circ <- c(new_circ, circ)
+    new_gene <- c(new_gene, gene)
 }
 
 new_map <- data.frame(new_circ, new_gene)
@@ -42,16 +42,16 @@ Chr <- c()
 Start <- c()
 End <- c()
 for(i in 1:nrow(new_circ_mat)){
-  row <- new_circ_mat[i,]
-  print(rownames(row))
-  chr_ <- unlist(strsplit(rownames(row), ':'))[1]
-  coords <- unlist(strsplit(rownames(row), ':'))[2]
-  start_ <- unlist(strsplit(coords, '-'))[1]
-  end_ <- unlist(strsplit(coords, '-'))[2]
+    row <- new_circ_mat[i,]
+    print(rownames(row))
+    chr_ <- unlist(strsplit(rownames(row), ':'))[1]
+    coords <- unlist(strsplit(rownames(row), ':'))[2]
+    start_ <- unlist(strsplit(coords, '-'))[1]
+    end_ <- unlist(strsplit(coords, '-'))[2]
 
-  Chr <- c(Chr, chr_)
-  Start <- c(Start, start_)
-  End <- c(End, end_)
+    Chr <- c(Chr, chr_)
+    Start <- c(Start, start_)
+    End <- c(End, end_)
 
 }
 
