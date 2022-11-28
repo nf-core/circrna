@@ -37,6 +37,7 @@
 - **miRanda** Enright, A.J., John, B., Gaul, U. et al. (2003). MicroRNA targets in Drosophila. Genome Biol 5, R1. Available at: [https://doi.org/10.1186/gb-2003-5-1-r1](https://doi.org/10.1186/gb-2003-5-1-r1). Download: [http://cbio.mskcc.org/miRNA2003/miranda.html](http://cbio.mskcc.org/miRNA2003/miranda.html).
 
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
+
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
 
 - **R**: R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. Download: [https://www.R-project.org/](https://www.R-project.org/).
