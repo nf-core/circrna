@@ -33,7 +33,6 @@ ch_gtf         = params.gtf ? file(params.gtf) : 'null'
 ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : Channel.empty()
 ch_species     = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
@@ -190,6 +189,9 @@ workflow CIRCRNA {
     // 4. Differential expression tests
     //
 
+    // place bin file in channel. AWS cannot read paths like a cluster
+    ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
+
     DIFFERENTIAL_EXPRESSION(
         reads_for_diff_exp,
         ch_gtf,
@@ -199,7 +201,8 @@ workflow CIRCRNA {
         ch_phenotype,
         CIRCRNA_DISCOVERY.out.dea_matrix,
         CIRCRNA_DISCOVERY.out.clr_matrix,
-        ch_species
+        ch_species,
+        ch_ensembl_database_map
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)

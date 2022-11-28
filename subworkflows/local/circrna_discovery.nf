@@ -1,5 +1,5 @@
 
-include { ANNOTATION                       } from '../../modules/local/annotation/main'
+include { ANNOTATION                       } from '../../modules/local/annotation/full_annotation/main'
 include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN } from '../../modules/nf-core/bowtie2/align/main'
 include { SAMTOOLS_VIEW                    } from '../../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX                   } from '../../modules/nf-core/samtools/index/main'

@@ -12,22 +12,36 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-
 **nf-core/circrna** is a bioinformatics best-practice analysis pipeline for circRNA quantification, differential expression analysis and miRNA target prediction of RNA-Seq data.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
-
-<!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
 
 On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources.The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/circrna/results).
 
 ## Pipeline summary
 
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
-
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+1. Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+2. Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
+3. circRNA quantification
+    1. [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+    2. [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
+        1. [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+        2. [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+        3. [`DCC`](https://github.com/dieterich-lab/DCC)
+    3. [`find circ`](https://github.com/marvin-jens/find_circ)
+    4. [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+    5. [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+4. circRNA annotation
+5. Export mature spliced length as FASTA file
+6. Annotate parent gene, underlying transcripts.
+7. circRNA count matrix
+8. miRNA target prediction
+    1. [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
+    2. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+    3. Filter results, miRNAs must be called by both tools
+9. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+10. Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
+11. MultiQC report [`MultiQC`](http://multiqc.info/)
 
 ## Quick Start
 
@@ -50,10 +64,8 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 4. Start running your own analysis!
 
-   <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
-
    ```bash
-   nextflow run nf-core/circrna --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute>
+   nextflow run nf-core/circrna --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --tool 'ciriquant' --module 'circrna_discovery,mirna_prediction,differential_expression' --bsj_reads 2
    ```
 
 ## Documentation
@@ -66,8 +78,6 @@ nf-core/circrna was originally written by Barry Digby.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
-
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
@@ -78,8 +88,6 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 <!-- If you use  nf-core/circrna for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

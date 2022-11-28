@@ -7,28 +7,48 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
         'quay.io/biocontainers/mulled-v2-04b2ef814c9c6ab8c196c3e372521b88160dc260:e0cb4046baee3fd35fdbf883ba8af34e3e8af2e8-0' }"
 
     input:
-    file(gene_matrix)
-    file(phenotype)
-    file(circrna_matrix)
+    path(gene_matrix)
+    path(phenotype)
+    path(circrna_matrix)
     val(species)
+    path(biomart_keys)
 
     output:
-    path "circRNA" , emit: circular_results
-    path "RNA-Seq"       , emit: linear_results
-    path "boxplots"             , emit: boxplots
-    path "DESeq2_QC"    , emit: qc
+    path "circRNA"     , emit: circular_results
+    path "RNA-Seq"     , emit: linear_results
+    path "DESeq2_QC"   , emit: deseq2_qc
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
-    ## prepDE && circRNA counts headers are sorted where uppercase preceedes lowercase i.e Z before a
+    ## prepDE && circRNA counts headers are sorted such that uppercase preceedes lowercase i.e Z before a
     ## reformat the phenotype file to match the order of the samples.
     head -n 1 $phenotype > header
     tail -n +2 $phenotype | LC_COLLATE=C sort > sorted_pheno
     cat header sorted_pheno > tmp && rm phenotype.csv && mv tmp phenotype.csv
 
-    Rscript DEA.R $gene_matrix $phenotype $circrna_matrix $species ensembl_database_map.txt
+    DEA.R $gene_matrix $phenotype $circrna_matrix $species ensembl_database_map.txt
+    mv boxplots/ circRNA/
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
+        argparser: \$(Rscript -e "library(argparser); cat(as.character(packageVersion('argparser')))")
+        biomart: \$(Rscript -e "library(biomaRt); cat(as.character(packageVersion('biomaRt')))")
+        deseq2: \$(Rscript -e "library(DESeq2); cat(as.character(packageVersion('DESeq2')))")
+        dplyr: \$(Rscript -e "library(dplyr); cat(as.character(packageVersion('dplyr')))")
+        enhancedvolcano: \$(Rscript -e "library(EnhancedVolcano); cat(as.character(packageVersion('EnhancedVolcano')))")
+        gplots: \$(Rscript -e "library(gplots); cat(as.character(packageVersion('gplots')))")
+        ggplot2: \$(Rscript -e "library(ggplot2); cat(as.character(packageVersion('ggplot2')))")
+        ggpubr: \$(Rscript -e "library(ggpubr); cat(as.character(packageVersion('ggpubr')))")
+        ihw: \$(Rscript -e "library(IHW); cat(as.character(packageVersion('IHW')))")
+        pvclust: \$(Rscript -e "library(pvclust); cat(as.character(packageVersion('pvclust')))")
+        pcatools: \$(Rscript -e "library(PCAtools); cat(as.character(packageVersion('PCAtools')))")
+        pheatmap: \$(Rscript -e "library(pheatmap); cat(as.character(packageVersion('pheatmap')))")
+        rcolorbrewer: \$(Rscript -e "library(RColorBrewer); cat(as.character(packageVersion('RColorBrewer')))")
+    END_VERSIONS
     """
 }

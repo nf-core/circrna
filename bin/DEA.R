@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 
 # Automated differential expression analysis script for nf-core/circrna
 # Relies on Stirngtie prepde.py outputs
