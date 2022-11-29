@@ -410,6 +410,7 @@ Linear_filtered <- linear[rownames(Circ_filtered),]
 # groups must be numerically encoded
 group = as.numeric(covariate_1)
 test <- Circ.test(Circ_filtered, Linear_filtered, group=group, circle_description = c(1:4))
+write.table(test$summary_table, "summary_table.txt", row.names=F)
 
 
 # Apply pheno to output once more..
@@ -451,7 +452,6 @@ if( n_covars == 2 ){
     }
     dev.off()
 }
-
 
 # include variables, makes life easier in case user wishes to report bugs to workflow.
 save.image("circ_test.RData")
