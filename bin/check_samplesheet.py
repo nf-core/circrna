@@ -57,7 +57,7 @@ def check_samplesheet(file_in, file_out):
     with open(file_in, "r", encoding="utf-8-sig") as fin:
 
         ## Check header
-        MIN_COLS = 3
+        MIN_COLS = 2 ## edit by BDigby as not using strandedness yet.
         # HEADER = ["sample", "fastq_1", "fastq_2", "strandedness"]
         HEADER = ["sample", "fastq_1", "fastq_2"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
