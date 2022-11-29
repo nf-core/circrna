@@ -39,6 +39,12 @@ def create_fastq_channel(LinkedHashMap row) {
     }
     if (meta.single_end) {
         fastq_meta = [ meta, [ file(row.fastq_1) ] ]
+
+        // Conduct check here, cannot figure out how to outside of this scope i.e accessing meta.single end for an if else from channel.
+        if(params.tool.split(',').contains('ciriquant') || params.tool.split(',').contains('dcc')){
+            exit 1, "ERROR: Unfortunately DCC and CIRIquant do not support single-end reads. Please select other tools."
+        }
+
     } else {
         if (!file(row.fastq_2).exists()) {
             exit 1, "ERROR: Please check input samplesheet -> Read 2 FastQ file does not exist!\n${row.fastq_2}"
