@@ -41,7 +41,7 @@ def create_fastq_channel(LinkedHashMap row) {
         fastq_meta = [ meta, [ file(row.fastq_1) ] ]
 
         // Conduct check here, cannot figure out how to outside of this scope i.e accessing meta.single end for an if else from channel.
-        if(params.tool.split(',').contains('ciriquant') || params.tool.split(',').contains('dcc')){
+        if(params.tool.split(',').contains('ciriquant')){
             exit 1, "ERROR: Unfortunately CIRIquant does not support single-end reads. Please select one of the other 6 quantification tools."
         }
 
