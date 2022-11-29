@@ -143,10 +143,13 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, true, '', '' )
 
-    dcc_stage = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
-    dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
-    DCC( dcc, fasta, gtf )
-    DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+    // must enforce same logic as modules.config file, using STAR_2ND_PASS that feeds two other tools.
+    if(params.tool.split(',').contains('dcc') && params.module.split(',').contains('circrna_discovery')){
+        dcc_stage = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
+        dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
+        DCC( dcc, fasta, gtf )
+        DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+    }
 
     ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(DCC.out.versions)
