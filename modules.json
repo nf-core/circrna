@@ -7,7 +7,7 @@
                 "nf-core": {
                     "bowtie/align": {
                         "branch": "master",
-                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
+                        "git_sha": "653588be2a4aadab487b530643dbc9baf7a485c4"
                     },
                     "bowtie/build": {
                         "branch": "master",
@@ -15,7 +15,7 @@
                     },
                     "bowtie2/align": {
                         "branch": "master",
-                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
+                        "git_sha": "653588be2a4aadab487b530643dbc9baf7a485c4"
                     },
                     "bowtie2/build": {
                         "branch": "master",
@@ -47,7 +47,7 @@
                     },
                     "hisat2/align": {
                         "branch": "master",
-                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
+                        "git_sha": "653588be2a4aadab487b530643dbc9baf7a485c4"
                     },
                     "hisat2/build": {
                         "branch": "master",
