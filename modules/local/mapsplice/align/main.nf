@@ -29,14 +29,14 @@ process MAPSPLICE_ALIGN {
         def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
         def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
         def read_command = "-1 ${read1}"
-        def unzip_reads = "$handleGzip_R1"
+        def unzip_reads = $handleGzip_R1
     }else{
         def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
         def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
         def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
         def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
         def read_command = "-1 ${read1} -2 ${read2}"
-        def unzip_reads = "$handleGzip_R1 $handleGzip_R2"
+        def unzip_reads = $handleGzip_R1 $handleGzip_R2
     }
     """
     $unzip_reads
