@@ -28,32 +28,48 @@ process MAPSPLICE_ALIGN {
     if(meta.single_end){
         def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
         def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
-        def read_command = "-1 ${read1}"
-        def unzip_reads = $handleGzip_R1
+        """
+        $handleGzip_R1
+
+        mapsplice.py \\
+            -c $chromosomes \\
+            -x $gtf_prefix \\
+            -1 ${read1} \\
+            -p ${task.cpus} \\
+            --bam \\
+            --gene-gtf $gtf \\
+            -o $prefix \\
+            $args
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            mapsplice: $VERSION
+        END_VERSIONS
+        """
     }else{
         def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
         def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
         def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
         def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
-        def read_command = "-1 ${read1} -2 ${read2}"
-        def unzip_reads = $handleGzip_R1 $handleGzip_R2
+        """
+        $handleGzip_R1
+        $handleGzip_R2
+
+        mapsplice.py \\
+            -c $chromosomes \\
+            -x $gtf_prefix \\
+            -1 ${read1} \\
+            -2 ${read2} \\
+            -p ${task.cpus} \\
+            --bam \\
+            --gene-gtf $gtf \\
+            -o $prefix \\
+            $args
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            mapsplice: $VERSION
+        END_VERSIONS
+        """
     }
-    """
-    $unzip_reads
-
-    mapsplice.py \\
-        -c $chromosomes \\
-        -x $gtf_prefix \\
-        $read_command \\
-        -p ${task.cpus} \\
-        --bam \\
-        --gene-gtf $gtf \\
-        -o $prefix \\
-        $args
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        mapsplice: $VERSION
-    END_VERSIONS
-    """
 }
