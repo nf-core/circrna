@@ -19,6 +19,9 @@ include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
 include { SJDB as STAR_SJDB                } from '../../modules/local/star/sjdb/main'
+include { STAR_ALIGN as DCC_1ST_PASS       } from '../../modules/nf-core/star/align/main'
+include { STAR_ALIGN as DCC_2ND_PASS       } from '../../modules/nf-core/star/align/main'
+include { SJDB as DCC_SJDB                 } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB           } from '../../modules/local/star/sjdb/main'
@@ -133,6 +136,10 @@ workflow CIRCRNA_DISCOVERY {
     // DCC WORKFLOW
     //
 
+    DCC_1ST_PASS( reads, star_index, gtf, true, '', '' )
+    DCC_SJDB( DCC_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
+    DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, true, '', '' )
+
     mate1 = reads.map{ meta, reads -> return [meta, reads[0] ] }
     DCC_MATE1_1ST_PASS( mate1, star_index, gtf, true, '', '' )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
@@ -143,16 +150,14 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, true, '', '' )
 
-    // must enforce same logic as modules.config file, using STAR_2ND_PASS that feeds two other tools.
-    if(params.tool.split(',').contains('dcc') && params.module.split(',').contains('circrna_discovery')){
-        dcc_stage = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
-        dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
-        DCC( dcc, fasta, gtf )
-        DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+    dcc_stage = DCC_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
+    dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
+    DCC( dcc, fasta, gtf )
+    DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
 
-        ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
-        ch_versions = ch_versions.mix(DCC.out.versions)
-    }
+    ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(DCC.out.versions)
+
     //
     // MAPSPLICE WORKFLOW:
     //
