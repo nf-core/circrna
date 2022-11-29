@@ -18,7 +18,7 @@ include { SEGEMEHL_ALIGN                   } from '../../modules/nf-core/segemeh
 include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/filter/main'
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
-include { SJDB as SJDB                     } from '../../modules/local/star/sjdb/main'
+include { SJDB                             } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB           } from '../../modules/local/star/sjdb/main'
