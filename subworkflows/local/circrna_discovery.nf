@@ -133,7 +133,7 @@ workflow CIRCRNA_DISCOVERY {
     // DCC WORKFLOW
     //
 
-    mate1 = reads.map{ meta, reads -> if(meta.single_end) { return [ meta, reads ] } else { return [meta, reads[0] ] } }
+    mate1 = reads.map{ meta, reads -> return [meta, reads[0] ] }
     DCC_MATE1_1ST_PASS( mate1, star_index, gtf, true, '', '' )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
     DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, true, '', '' )
@@ -143,7 +143,8 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, true, '', '' )
 
-    dcc = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction ).join( DCC_MATE2_2ND_PASS.out.junction )
+    dcc_stage = STAR_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
+    dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
     DCC( dcc, fasta, gtf )
     DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
 
