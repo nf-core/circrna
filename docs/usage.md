@@ -3,12 +3,6 @@
 It is recommended that first time users run `nf-core/circrna` with the minimal test dataset either locally or on a HPC, referring to the [output documentation](https://nf-co.re/circrna/dev/output) before running a full analysis.
 
 ```console
-nextflow run nf-core/circrna -profile test
-```
-
-Run the test dataset on a HPC:
-
-```console
 nextflow run nf-core/circrna -profile test,<docker/singularity/podman/institute>
 ```
 
@@ -141,7 +135,7 @@ A valid example of a `phenotype.csv` file (matching the TCGA example input CSV f
 
 ### circRNA discovery
 
-The core module of `nf-core/circrna`, the user can utilise the most popular circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` , `MapSplice` & `Segemehl` however, the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
+The core module of `nf-core/circrna`, a user can utilise up to seven circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` , `MapSplice` & `Segemehl` however, the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
 
 By default, `nf-core/circrna` runs the circRNA discovery analysis module.
 
@@ -169,7 +163,7 @@ nextflow run nf-core/circrna \
     --input 'samples.csv' \
     --input_type 'fastq' \
     --module 'circrna_discovery' \
-    --tool 'ciriquant, dcc, find_circ'
+    --tool 'ciriquant,dcc,find_circ'
 ```
 
 > When providing multiple tools, separate each entry with a comma.
@@ -219,6 +213,10 @@ nextflow run nf-core/circrna \
 ```
 
 > This filtering method is reflected in the circRNA count matrix. Per tool circRNA annotations are subject to back-splice read filtering only.
+
+##### Handling duplicate circRNAs
+
+In the event a circRNA has been called by more than one quantification tool, the user can specify which aggregate function to apply to the duplicated circRNA. The accepted values are 'mean' and 'max', which are passed to the workflow using the `--duplicates_fun` parameter.
 
 ### miRNA prediction
 
