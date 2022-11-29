@@ -34,7 +34,7 @@ workflow MIRNA_PREDICTION{
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
 
-    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12).view()
+    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
     MIRNA_TARGETS( consolidate_targets )
 
     ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
