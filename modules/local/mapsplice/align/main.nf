@@ -25,19 +25,26 @@ process MAPSPLICE_ALIGN {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = 'v2.2.1'
     def gtf_prefix = gtf.toString() - ~/.gtf/
-    def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
-    def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
-    def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
-    def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
+    if(meta.single_end){
+        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
+        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
+        def read_command = "-1 ${read1}"
+        def unzip_reads = "$handleGzip_R1"
+    }else{
+        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
+        def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
+        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
+        def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
+        def read_command = "-1 ${read1} -2 ${read2}"
+        def unzip_reads = "$handleGzip_R1 $handleGzip_R2"
+    }
     """
-    $handleGzip_R1
-    $handleGzip_R2
+    $unzip_reads
 
     mapsplice.py \\
         -c $chromosomes \\
         -x $gtf_prefix \\
-        -1 ${read1} \\
-        -2 ${read2} \\
+        $read_command \\
         -p ${task.cpus} \\
         --bam \\
         --gene-gtf $gtf \\
