@@ -149,11 +149,10 @@ workflow CIRCRNA_DISCOVERY {
         dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }.view()
         DCC( dcc, fasta, gtf )
         DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+
+        ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
+        ch_versions = ch_versions.mix(DCC.out.versions)
     }
-
-    ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
-    ch_versions = ch_versions.mix(DCC.out.versions)
-
     //
     // MAPSPLICE WORKFLOW:
     //
