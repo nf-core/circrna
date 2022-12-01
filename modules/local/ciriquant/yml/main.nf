@@ -26,10 +26,10 @@ process CIRIQUANT_YML {
     bwa_path = bwa.toRealPath()
     hisat2_path = hisat2.toRealPath()
     """
-    BWA=`whereis bwa | cut -f2 -d':'`
-    HISAT2=`whereis hisat2 | cut -f2 -d':'`
-    STRINGTIE=`whereis stringtie | cut -f2 -d':'`
-    SAMTOOLS=`whereis samtools | cut -f2 -d':' | awk '{print \$1}'`
+    BWA=`which bwa`
+    HISAT2=`which hisat2`
+    STRINGTIE=`which stringtie`
+    SAMTOOLS=`which samtools`
 
     touch travis.yml
     printf "name: ciriquant\ntools:\n  bwa:\$BWA\n  hisat2:\$HISAT2\n  stringtie:\$STRINGTIE\n  samtools: \$SAMTOOLS\n\nreference:\n  fasta: ${fasta_path}\n  gtf: ${gtf_path}\n  bwa_index: ${bwa_path}/${bwa_prefix}\n  hisat_index: ${hisat2_path}/${hisat2_prefix}" >> travis.yml
