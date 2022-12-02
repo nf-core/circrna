@@ -103,6 +103,8 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
 
     inputdata$gene <- ens2symbol(inputdata$gene, inputdata)
 
+    save.image(file='inputdata.RData')
+
     return(inputdata)
 }
 
@@ -280,6 +282,9 @@ DESeq2 <- function(inputdata, data_type){
                 contrast <- paste(var, "vs", reference, sep="_")
                 DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir, inputdata)
             }
+
+            save.image(file='RNA-Seq.RData')
+
         }
     }else if(data_type == "circRNA"){
         outdir <- "circRNA/"
@@ -313,6 +318,8 @@ DESeq2 <- function(inputdata, data_type){
                 contrast <- paste(var, "vs", reference, sep="_")
                 DEG <- getDESeqDEAbyContrast(dds, contrast, reference, var, outdir)
             }
+
+            save.image(file='circRNA.RData')
         }
     }else{
         giveError("Data type not provided correctly, check end of script")
