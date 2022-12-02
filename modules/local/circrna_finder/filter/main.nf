@@ -26,7 +26,7 @@ process CIRCRNA_FINDER_FILTER {
     def VERSION = 'v1.2'
     """
     mkdir -p star_dir && mv *.tab *.junction *.sam star_dir
-    postProcessStarAlignment.pl --starDir star_dir/ --outDir ./
+    perl postProcessStarAlignment.pl --starDir star_dir/ --outDir ./
 
     awk '{if(\$5 >= ${bsj_reads}) print \$0}' ${prefix}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${prefix}_circrna_finder.bed
 
