@@ -2,10 +2,10 @@ process FIND_CIRC {
     tag "$meta.id"
     label "process_high"
 
-        conda (params.enable_conda ? "bioconda::find_circ=1.2" : null)
+    conda (params.enable_conda ? "find_circ=1.2 bowtie2" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/find_circ:1.2--hdfd78af_0' :
-        'quay.io/biocontainers/find_circ:1.2--hdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' :
+        'quay.io/biocontainers/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' }"
 
     input:
     tuple val(meta), path(anchors)
