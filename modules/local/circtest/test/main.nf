@@ -3,7 +3,7 @@ process CIRCTEST {
 
     conda (params.enable_conda ? "r-base r-aod r-ggplot2 r-plyr" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
+        'https://depot.galaxyproject.org/singularity/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
         'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
 
     input:
