@@ -2,10 +2,11 @@ process CIRCRNA_FINDER_FILTER {
     tag "$meta.id"
     label 'process_low'
 
-    conda (params.enable_conda ? "bioconda::circrna_finder=1.2" : null)
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/circrna_finder:1.2--pl5321hdfd78af_0' :
-        'quay.io/biocontainers/circrna_finder:1.2--pl5321hdfd78af_0' }"
+    //conda (params.enable_conda ? "bioconda::circrna_finder=1.2" : null)
+    //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    //    'https://depot.galaxyproject.org/singularity/circrna_finder:1.2--pl5321hdfd78af_0' :
+    //    'quay.io/biocontainers/circrna_finder:1.2--pl5321hdfd78af_0' }"
+    container 'barryd237/circrna_finder'
 
     input:
     tuple val(meta), path(sam), path(junction), path(tab)
