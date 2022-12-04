@@ -19,9 +19,6 @@ include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/
 include { STAR_ALIGN as STAR_1ST_PASS      } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS      } from '../../modules/nf-core/star/align/main'
 include { SJDB as STAR_SJDB                } from '../../modules/local/star/sjdb/main'
-include { STAR_ALIGN as CIRCRNA_FINDER_1ST_PASS      } from '../../modules/nf-core/star/align/main'
-include { STAR_ALIGN as CIRCRNA_FINDER_2ND_PASS      } from '../../modules/nf-core/star/align/main'
-include { SJDB as CIRCRNA_FINDER_SJDB                } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_1ST_PASS       } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_2ND_PASS       } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_SJDB                 } from '../../modules/local/star/sjdb/main'
@@ -102,10 +99,7 @@ workflow CIRCRNA_DISCOVERY {
     // CIRCRNA_FINDER WORKFLOW:
     //
 
-    CIRCRNA_FINDER_1ST_PASS( reads, star_index, gtf, true, '', '' )
-    CIRCRNA_FINDER_SJDB( CIRCRNA_FINDER_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    CIRCRNA_FINDER_2ND_PASS( reads, star_index, CIRCRNA_FINDER_SJDB.out.sjtab, true, '', '' )
-    circrna_finder_stage = CIRCRNA_FINDER_2ND_PASS.out.sam.join( CIRCRNA_FINDER_2ND_PASS.out.junction).join(CIRCRNA_FINDER_2ND_PASS.out.tab)
+    circrna_finder_stage = STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab)
     circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> meta.tool = "circrna_finder"; return [ meta, sam, junction, tab ] }
     CIRCRNA_FINDER_FILTER( circrna_finder_filter, fasta, bsj_reads )
 
