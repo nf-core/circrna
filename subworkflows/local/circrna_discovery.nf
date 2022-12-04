@@ -104,8 +104,8 @@ workflow CIRCRNA_DISCOVERY {
 
     CIRCRNA_FINDER_1ST_PASS( reads, star_index, gtf, true, '', '' )
     CIRCRNA_FINDER_SJDB( CIRCRNA_FINDER_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    CIRCRNA_FINDER_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, true, '', '' )
-    circrna_finder_stage = STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab)
+    CIRCRNA_FINDER_2ND_PASS( reads, star_index, CIRCRNA_FINDER_SJDB.out.sjtab, true, '', '' )
+    circrna_finder_stage = CIRCRNA_FINDER_2ND_PASS.out.sam.join( CIRCRNA_FINDER_2ND_PASS.out.junction).join(CIRCRNA_FINDER_2ND_PASS.out.tab)
     circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> meta.tool = "circrna_finder"; return [ meta, sam, junction, tab ] }
     CIRCRNA_FINDER_FILTER( circrna_finder_filter, fasta, bsj_reads )
 
