@@ -20,6 +20,7 @@ workflow DIFFERENTIAL_EXPRESSION {
     clr_matrix
     species
     ensembl_map
+    exon_boundary
 
     main:
     ch_versions = Channel.empty()
@@ -43,7 +44,7 @@ workflow DIFFERENTIAL_EXPRESSION {
     // CircRNA - Host Gene Ratio tests
     //
 
-    PARENT_GENE( clr_matrix, gtf )
+    PARENT_GENE( clr_matrix, gtf, exon_boundary )
     PREPARE_CLR_TEST( STRINGTIE_PREPDE.out.gene_matrix, clr_matrix, PARENT_GENE.out.circ_host_map, gtf )
     CIRCTEST( PREPARE_CLR_TEST.out.circular, PREPARE_CLR_TEST.out.linear, phenotype )
 

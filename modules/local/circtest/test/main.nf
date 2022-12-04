@@ -25,6 +25,9 @@ process CIRCTEST {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
+        aod: \$(Rscript -e "library(aod); cat(as.character(packageVersion('aod')))")
+        ggplot2: \$(Rscript -e "library(ggplot2); cat(as.character(packageVersion('ggplot2')))")
+        plyr: \$(Rscript -e "library(plyr); cat(as.character(packageVersion('plyr')))")
     END_VERSIONS
     """
 }

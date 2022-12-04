@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 ##
 ## Expected Input:
@@ -12,6 +12,8 @@ echo "[nf-core/circrna]: Institution: National University of Ireland, Galway    
 echo "===================================================================================="
 
 mkdir -p bed12
+
+EB=$1
 
 while IFS='' read -r line; do
 
@@ -77,10 +79,10 @@ while IFS='' read -r line; do
 
             difference=$(($circ_len - $tx_len))
 
-            if [[ $difference -gt 200 ]];
+            if [[ $difference -gt $EB ]];
             then
 
-                echo "[nf-core/circrna]: Transcript exon boundaries more than 200nt off $name"
+                echo "[nf-core/circrna]: Transcript exon boundaries more than ${EB}bp off $name"
                 echo "[nf-core/circrna]: Treating as EIciRNA"
 
                 type="EIciRNA"
@@ -93,7 +95,7 @@ while IFS='' read -r line; do
                 rm ${name}.bed12.bed_tmp
             else
 
-                echo "[nf-core/circrna]: Transcript exon boundaries within 200nt of ${name}"
+                echo "[nf-core/circrna]: Transcript exon boundaries within ${EB}bp ${name}"
                 echo "[nf-core/circrna]: Treating ${name} as circRNA."
                 type="circRNA"
                 mv ${name}.bed12.bed_tmp ${name}.bed12.bed

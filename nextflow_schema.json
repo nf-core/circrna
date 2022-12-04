@@ -85,6 +85,12 @@
                     "default": "mean",
                     "enum": ["mean", "max"]
                 },
+                "exon_boundary": {
+                    "type": "integer",
+                    "description": "Specify the distance at which the annotation script decides if a candidate is a circRNA or EI-circRNA.",
+                    "help_text": "During annotation, if one of the start or end position of a circular candidate imperfectly overlaps an exon boundary, the script will consider positions within 'exon_boundary' (default 200bp) to be an exonic circRNA. If they fall outside of this range, the candidate is assumed to be an exonic-intronic circRNA, and the entire underlying sequence is taken for miRNA analysis, as opposed to just the exonic sequences for canonical exonic circRNAs. ",
+                    "default": 200
+                },
                 "save_reference": {
                     "type": "boolean",
                     "description": "Save generated reference genome files such as indices, chromosome FASTA files.",

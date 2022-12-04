@@ -56,6 +56,7 @@ workflow CIRCRNA_DISCOVERY {
     bsj_reads
     tool_filter
     duplicates_fun
+    exon_boundary
 
     main:
     ch_versions = Channel.empty()
@@ -179,7 +180,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results, DCC_FILTER.out.results, MAPSPLICE_FILTER.out.results )
-    ANNOTATION( circrna_filtered, gtf )
+    ANNOTATION( circrna_filtered, gtf, exon_boundary )
 
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 

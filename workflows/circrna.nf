@@ -167,7 +167,8 @@ workflow CIRCRNA {
         star_index,
         params.bsj_reads,
         params.tool_filter,
-        params.duplicates_fun
+        params.duplicates_fun,
+        params.exon_boundary
     )
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
@@ -201,7 +202,8 @@ workflow CIRCRNA {
         CIRCRNA_DISCOVERY.out.dea_matrix,
         CIRCRNA_DISCOVERY.out.clr_matrix,
         ch_species,
-        ch_ensembl_database_map
+        ch_ensembl_database_map,
+        params.exon_boundary
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)

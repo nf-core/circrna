@@ -10,6 +10,7 @@ process ANNOTATION {
     input:
     tuple val(meta), path(bed)
     path gtf
+    val exon_boundary
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
@@ -27,7 +28,7 @@ process ANNOTATION {
     grep -vf ${workflow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
     mv $bed circs.bed
 
-    bash ${workflow.projectDir}/bin/annotate_outputs.sh &> ${prefix}.log
+    annotate_outputs.sh $exon_boundary &> ${prefix}.log
     mv master_bed12.bed ${prefix}.bed.tmp
 
     awk -v FS="\t" '{print \$11}' ${prefix}.bed.tmp > mature_len.tmp
