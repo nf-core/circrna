@@ -189,7 +189,6 @@ workflow CIRCRNA {
     // 4. Differential expression tests
     //
 
-    // place bin file in channel. AWS cannot read paths like a cluster
     ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
 
     DIFFERENTIAL_EXPRESSION(
