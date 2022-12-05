@@ -4,8 +4,8 @@ process CIRCRNA_FINDER_FILTER {
 
     conda (params.enable_conda ? "bioconda::circrna_finder=1.2" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/circrna_finder-1.2-pl5321hdfd78af_1' :
-        'quay.io/biocontainers/circrna_finder-1.2-pl5321hdfd78af_1' }"
+        'https://depot.galaxyproject.org/singularity/circrna_finder%3A1.2--pl5321hdfd78af_1' :
+        'quay.io/biocontainers/circrna_finder-1.2--pl5321hdfd78af_1' }"
 
     input:
     tuple val(meta), path(sam), path(junction), path(tab)
@@ -26,7 +26,7 @@ process CIRCRNA_FINDER_FILTER {
     def VERSION = 'v1.2'
     """
     mkdir -p star_dir && mv *.tab *.junction *.sam star_dir
-    perl postProcessStarAlignment.pl --starDir star_dir/ --outDir ./
+    postProcessStarAlignment.pl --starDir star_dir/ --outDir ./
 
     awk '{if(\$5 >= ${bsj_reads}) print \$0}' ${prefix}.filteredJunctions.bed | awk  -v OFS="\t" -F"\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${prefix}_circrna_finder.bed
 
