@@ -270,8 +270,11 @@ The pipeline also dynamically loads configurations from [https://github.com/nf-c
 Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
+If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer enviroment.
 
+- `test`
+  - A profile with a complete configuration for automated testing
+  - Includes links to test data so needs no other parameters
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
   - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
