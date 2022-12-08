@@ -2,7 +2,10 @@ process FIND_CIRC_FILTER {
     tag "$meta.id"
     label "process_low"
 
-    container 'barryd237/find_circ'
+    conda (params.enable_conda ? "find_circ=1.2" : null)
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/find_circ%3A1.2--hdfd78af_0' :
+        'quay.io/biocontainers/find_circ:1.2--hdfd78af_0' }"
 
     input:
     tuple val(meta), path(bed)
@@ -18,7 +21,7 @@ process FIND_CIRC_FILTER {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '1.0.0'
+    def VERSION = '1.2'
     """
     grep circ ${prefix}.sites.bed | grep -v chrM | sum.py -2,3 | scorethresh.py -16 1 | scorethresh.py -15 2 | scorethresh.py -14 2 | scorethresh.py 7 ${bsj_reads} | scorethresh.py 8,9 35 | scorethresh.py -17 100000 >> ${prefix}.txt
 

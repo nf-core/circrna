@@ -24,7 +24,7 @@ process FIND_CIRC {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '1.0.0'
+    def VERSION = '1.2'
     """
     INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/.rev.1.bt2//"`
     [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/.rev.1.bt2l//"`
@@ -39,7 +39,7 @@ process FIND_CIRC {
         -q \\
         -x \$INDEX \\
         -U $anchors | \\
-        find_circ.py  -G $chromosomes -p ${prefix} -s ${prefix}.sites.log > ${prefix}.sites.bed 2> ${prefix}.sites.reads
+        find_circ.py  --genome=$chromosomes --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
