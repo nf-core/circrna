@@ -23,7 +23,12 @@ process FIND_CIRC_FILTER {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '1.2'
     """
-    grep circ ${prefix}.sites.bed | grep -v chrM | sum.py -2,3 | scorethresh.py -16 1 | scorethresh.py -15 2 | scorethresh.py -14 2 | scorethresh.py 7 ${bsj_reads} | scorethresh.py 8,9 35 | scorethresh.py -17 100000 >> ${prefix}.txt
+    grep CIRCULAR $bed | \
+        grep -v chrM | \
+        awk '\$5>=${bsj_reads}' | \
+        grep UNAMBIGUOUS_BP | grep ANCHOR_UNIQUE | \
+        maxlength.py 100000 \
+        > ${prefix}.txt
 
     tail -n +2 ${prefix}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${prefix}_find_circ.bed
 
