@@ -244,71 +244,55 @@
                 }
             }
         },
-        "read_trimming_and_adapter_removal": {
-            "title": "Read trimming & adapter removal",
+        "read_trimming_options": {
+            "title": "Read trimming options",
             "type": "object",
             "fa_icon": "fas fa-cut",
-            "description": "Parameters for BBDUK",
-            "help_text": "BBDUK read filtering is deployed when `--trim_fastq true`. The user can choose to implement one or a combination of the following 3 operations performed by BBDUK:\n\n1. Adapter removal. Must specify values for `--adapters`, `--k`, `--ktrim` & optionally `--hdist` \n2. Quality trimming. Must specify values for `--trimq` & `--qtrim` \n3. Read length filtering. Must provide value for `--minlen`",
+            "description": "Options to adjust read trimming criteria.",
             "properties": {
+                "clip_r1": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 5' end of read 1 (or single-end reads).",
+                    "fa_icon": "fas fa-cut"
+                },
+                "clip_r2": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 5' end of read 2 (paired-end reads only).",
+                    "fa_icon": "fas fa-cut"
+                },
+                "three_prime_clip_r1": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 3' end of read 1 AFTER adapter/quality trimming has been performed.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "three_prime_clip_r2": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 3' end of read 2 AFTER adapter/quality trimming has been performed.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "trim_nextseq": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to apply the --nextseq=X option, to trim based on quality after removing poly-G tails.",
+                    "help_text": "This enables the option Cutadapt `--nextseq-trim=3'CUTOFF` option via Trim Galore, which will set a quality cutoff (that is normally given with -q instead), but qualities of G bases are ignored. This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without any signal are called as high-quality G bases.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "min_trimmed_reads": {
+                    "type": "integer",
+                    "default": 10000,
+                    "fa_icon": "fas fa-hand-paper",
+                    "description": "Minimum number of trimmed reads below which samples are removed from further processing. Some downstream steps in the pipeline will fail if this threshold is too low."
+                },
                 "skip_trimming": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-fast-forward",
-                    "description": "Perform read filtering + trimming?",
-                    "help_text": "If set to true, trimgalore! is executed. If false, the process is skipped and raw reads will be supplied to circRNA quantification tools."
+                    "description": "Skip the adapter trimming step.",
+                    "help_text": "Use this if your input FastQ files have already been trimmed outside of the workflow or if you're very confident that there is no adapter contamination in your data.",
+                    "fa_icon": "fas fa-fast-forward"
                 },
-                "adapters": {
-                    "type": "string",
-                    "fa_icon": "fas fa-file-alt",
-                    "description": "Reference adapter file supplied to BBDUK",
-                    "deafult": "adapters.fa",
-                    "mimetype": "text/plain",
-                    "help_text": "BBDUK provides Illumina Truseq and Nextera adapters sequences in FASTA format suitable for most adapter removal situations. The adapters.fa file is located at \"${projectDir}/bin/adapters.fa\" should the user wish to modify the file. \n\nMake sure to specify the absolute path to the 'adapters.fa' file if modified.",
-                    "default": "${projectDir}/bin/adapters.fa",
-                    "pattern": "\\.(fa|fasta)$"
-                },
-                "k": {
-                    "type": "integer",
-                    "fa_icon": "fab fa-kickstarter",
-                    "description": "Specifies K-mer size to use for adapter removal",
-                    "default": 12,
-                    "help_text": "'k' specifies the kmer size to use (must be at most the length of the adapters). For example, `--k 32` removes all reads that have a 32 kmer match with the adapter sequences provided."
-                },
-                "ktrim": {
-                    "type": "string",
-                    "fa_icon": "fas fa-exchange-alt",
-                    "description": "Which end of reads to perform kmer trimming",
-                    "default": "r",
-                    "help_text": "Specify which end of the reads to perform kmer trimming on. Options are 'r', 'l', and 'f' (right, left, don't trim).",
-                    "enum": ["r", "l", "f"]
-                },
-                "hdist": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-ruler-horizontal",
-                    "description": "Maximum Hamming distance for reference kmers",
-                    "default": 1,
-                    "help_text": "Specify the number of mismatches allowed when aligning kmers to reference adapters. This paramter is optional for adapter trimming.\n\n> Warning: setting `--hdist` to values higher than 1 will result in high memory usage."
-                },
-                "trimq": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-award",
-                    "description": "Trimming performed on regions in reads with an average Phred score below specified value",
-                    "default": 20,
-                    "help_text": "> NB: This action is performed after adapter removal if specified."
-                },
-                "qtrim": {
-                    "type": "string",
-                    "fa_icon": "fas fa-exchange-alt",
-                    "description": "Which end of reads to perform quality trimming",
-                    "default": "r",
-                    "help_text": "Used in conjunction with `--trimq`, performs quality trimming on the specified end of reads. Options are 'r', 'l' and 'rl' (right, left, both).",
-                    "enum": ["r", "l", "rl"]
-                },
-                "minlen": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-ruler-horizontal",
-                    "description": "Remove reads below length *n*",
-                    "default": 30
+                "save_trimmed": {
+                    "type": "boolean",
+                    "description": "Save the trimmed FastQ files in the results directory.",
+                    "help_text": "By default, trimmed FastQ files will not be saved to the results directory. Specify this flag (or set to true in your config file) to copy these files to the results directory when complete.",
+                    "fa_icon": "fas fa-save"
                 }
             }
         },
@@ -535,7 +519,7 @@
             "$ref": "#/definitions/reference_genome_options"
         },
         {
-            "$ref": "#/definitions/read_trimming_and_adapter_removal"
+            "$ref": "#/definitions/read_trimming_options"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
