@@ -11,7 +11,6 @@ process FIND_CIRC {
     tuple val(meta), path(anchors)
     tuple val(meta2), path(index)
     path fasta
-    path chromosomes
 
     output:
     tuple val(meta), path("${prefix}.sites.bed"), emit: bed
@@ -39,7 +38,7 @@ process FIND_CIRC {
         -q \\
         -x \$INDEX \\
         -U $anchors | \\
-        find_circ.py  --genome=./chromosomes --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
+        find_circ.py  --genome=$fasta --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
