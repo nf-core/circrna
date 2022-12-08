@@ -113,7 +113,7 @@ workflow CIRCRNA_DISCOVERY {
     SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.bam )
     SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), fasta, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
-    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta, chromosomes )
+    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta )
     find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> meta.tool = "find_circ"; return [ meta, bed ] }
     FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
 
