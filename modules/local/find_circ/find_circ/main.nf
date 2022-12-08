@@ -11,7 +11,7 @@ process FIND_CIRC {
     tuple val(meta), path(anchors)
     tuple val(meta2), path(index)
     path fasta
-    path chromosomes
+    val chromosomes
 
     output:
     tuple val(meta), path("${prefix}.sites.bed"), emit: bed
@@ -30,9 +30,6 @@ process FIND_CIRC {
     [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/.rev.1.bt2l//"`
     [ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
 
-    # solve WARNING:root:Could not access 'chromosomes'. Switching to dummy mode (only Ns)
-    mkdir -p genome && mv $chromosomes/*.fa genome
-
     bowtie2 \\
         --threads $task.cpus \\
         --reorder \\
@@ -42,7 +39,7 @@ process FIND_CIRC {
         -q \\
         -x \$INDEX \\
         -U $anchors | \\
-        find_circ.py  --genome=genome --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
+        find_circ.py  --genome=$(readlink -f $chromosomes) --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
