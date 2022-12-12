@@ -208,7 +208,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique{ it.text }.collectFile(name: 'collated_versions.yml')
+        ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 
     // MODULE: MultiQC
