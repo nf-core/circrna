@@ -17,7 +17,6 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
     path "circRNA"     , emit: circular_results
     path "RNA-Seq"     , emit: linear_results
     path "DESeq2_QC"   , emit: deseq2_qc
-    path "*.RData"     , emit: rsession
     path "versions.yml", emit: versions
 
     when:
@@ -33,6 +32,7 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
 
     DEA.R $gene_matrix $phenotype $circrna_matrix $species ensembl_database_map.txt
     mv boxplots/ circRNA/
+    mv *.RData DESeq2_QC/
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
