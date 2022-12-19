@@ -2,7 +2,7 @@ process FASTQC {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::fastqc=0.12.1"
+    conda "bioconda::fastqc=0.11.9"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0' :
         'biocontainers/fastqc:0.12.1--hdfd78af_0' }"
@@ -29,11 +29,7 @@ process FASTQC {
     printf "%s %s\\n" $rename_to | while read old_name new_name; do
         [ -f "\${new_name}" ] || ln -s \$old_name \$new_name
     done
-
-    fastqc \\
-        $args \\
-        --threads $task.cpus \\
-        $renamed_files
+    fastqc $args --threads $task.cpus $renamed_files
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -1,7 +1,7 @@
 process MULTIQC {
     label 'process_single'
 
-    conda "bioconda::multiqc=1.17"
+    conda "bioconda::multiqc=1.13"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/multiqc:1.17--pyhdfd78af_0' :
         'biocontainers/multiqc:1.17--pyhdfd78af_0' }"
