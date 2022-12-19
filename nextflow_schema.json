@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/circrna/master/nextflow_schema.json",
     "title": "nf-core/circrna pipeline parameters",
-    "description": "circRNA quantification, differential expression analysis and miRNA target prediction of RNA-Seq data",
+    "description": "Quantification, miRNA target prediction and differential expression analysis of circular RNAs",
     "type": "object",
     "definitions": {
         "input_output_options": {
@@ -263,12 +263,6 @@
                     "description": "Show all params when using `--help`",
                     "hidden": true,
                     "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
-                },
-                "enable_conda": {
-                    "type": "boolean",
-                    "description": "Run this workflow with Conda. You can also use '-profile conda' instead of providing this parameter.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-bacon"
                 }
             }
         }
