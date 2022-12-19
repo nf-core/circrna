@@ -1,7 +1,7 @@
 process STRINGTIE_PREPDE {
     label 'process_low'
 
-    conda (params.enable_conda ? "bioconda::stringtie=2.2.1" : null)
+    conda "bioconda::stringtie=2.2.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/stringtie:2.2.1--hecb563c_2' :
         'quay.io/biocontainers/stringtie:2.2.1--hecb563c_2' }"

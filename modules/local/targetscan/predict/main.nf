@@ -2,7 +2,7 @@ process TARGETSCAN {
     tag "$meta.id"
     label 'process_medium'
 
-    conda (params.enable_conda ? "bioconda::targetscan=7.0" : null)
+    conda "bioconda::targetscan=7.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/targetscan:7.0--pl5321hdfd78af_0' :
         'quay.io/biocontainers/targetscan:7.0--pl5321hdfd78af_0' }"

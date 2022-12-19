@@ -1,7 +1,7 @@
 process CIRIQUANT_YML {
     label 'process_single'
 
-    conda (params.enable_conda ? "bioconda::ciriquant=1.1.2" : null)
+    conda "bioconda::ciriquant=1.1.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ciriquant:1.1.2--pyhdfd78af_2' :
         'quay.io/biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"

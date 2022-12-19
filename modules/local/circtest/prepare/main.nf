@@ -1,7 +1,7 @@
 process PREPARE_CLR_TEST {
     label 'process_medium'
 
-    conda (params.enable_conda ? "r-base r-aod r-ggplot2 r-plyr" : null)
+    conda "r-base r-aod r-ggplot2 r-plyr"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
         'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"

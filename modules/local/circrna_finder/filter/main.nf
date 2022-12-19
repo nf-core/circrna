@@ -2,7 +2,7 @@ process CIRCRNA_FINDER_FILTER {
     tag "$meta.id"
     label 'process_low'
 
-    conda (params.enable_conda ? "bioconda::circrna_finder=1.2" : null)
+    conda "bioconda::circrna_finder=1.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/circrna_finder%3A1.2--pl5321hdfd78af_1' :
         'quay.io/biocontainers/circrna_finder:1.2--pl5321hdfd78af_1' }"
