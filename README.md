@@ -76,7 +76,9 @@ The nf-core/circrna pipeline comes with documentation about the pipeline [usage]
 
 nf-core/circrna was originally written by Barry Digby.
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+## Acknowledgements
+
+![SFI](./docs/images/Genomics-Data-Science-original.png)
 
 ## Contributions and Support
 
@@ -86,8 +88,13 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 <!-- If you use  nf-core/circrna for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+> **nf-core/circrna: a portable workflow for the quantification, miRNA target prediction and differential expression analysis of circular RNAs.**
+>
+> Barry Digby, Stephen P. Finn, & Pilib Ó Broin
+>
+> [BMC Bioinformatics 24, 27 (2023)](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-022-05125-8)
+> doi: [10.1186/s12859-022-05125-8](https://doi.org/10.1186/s12859-022-05125-8)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
