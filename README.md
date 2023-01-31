@@ -76,6 +76,14 @@ The nf-core/circrna pipeline comes with documentation about the pipeline [usage]
 
 nf-core/circrna was originally written by Barry Digby.
 
+We thank the following people for their extensive assistance in the development of this pipeline:
+
+- @apeltzer
+- @ewels
+- @maxulysse
+- @KevinMenden
+- @bj-w
+
 ## Acknowledgements
 
 ![SFI](./docs/images/Genomics-Data-Science-original.png)
