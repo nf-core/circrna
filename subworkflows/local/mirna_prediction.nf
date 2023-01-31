@@ -20,6 +20,7 @@ workflow MIRNA_PREDICTION{
     TARGETSCAN_DATABASE( mature )
     TARGETSCAN( circrna_fasta, TARGETSCAN_DATABASE.out.mature_txt )
 
+    ch_versions = ch_versions.mix(TARGETSCAN_DATABASE.out.versions)
     ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
 
     //
