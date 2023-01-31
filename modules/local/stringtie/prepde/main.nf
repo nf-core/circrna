@@ -25,7 +25,7 @@ process STRINGTIE_PREPDE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: \$(python --version | sed -e 's/Python //g')
+        stringtie: \$(stringtie --version 2>&1)
     END_VERSIONS
     """
 }

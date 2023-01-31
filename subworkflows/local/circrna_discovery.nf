@@ -198,6 +198,7 @@ workflow CIRCRNA_DISCOVERY {
                                                             CIRIQUANT_FILTER.out.results,
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
+                                                            
     ANNOTATION( circrna_filtered, gtf, ch_biotypes, exon_boundary )
 
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
