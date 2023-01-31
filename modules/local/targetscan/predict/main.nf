@@ -31,6 +31,7 @@ process TARGETSCAN {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
+        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
         targetscan: $VERSION
     END_VERSIONS
     """

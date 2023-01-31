@@ -49,8 +49,6 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// MODULES:
-
 // SUBWORKFLOWS:
 include { INPUT_CHECK       } from '../subworkflows/local/input_check'
 include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
@@ -100,9 +98,7 @@ workflow CIRCRNA {
         meta, fastq ->
             meta.id = meta.id.split('_')[0..-2].join('_')
             [ meta, fastq ] }
-    .dump(tag: 'map')
     .groupTuple(by: [0])
-    .dump(tag: 'group')
     .branch {
         meta, fastq ->
             single  : fastq.size() == 1

@@ -31,43 +31,25 @@ workflow PREPARE_GENOME {
     stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/genome/chromosomes")
     }
 
-    // some index procs use tuple, some dont -_-
     ch_fasta.map{ it ->
              meta = [:]
              meta.id = it.simpleName
              return [ meta, [it] ]
     }.set{ fasta_tuple }
 
-    BOWTIE_BUILD(
-        fasta
-    )
+    BOWTIE_BUILD(fasta)
 
-     BOWTIE2_BUILD(
-        fasta_tuple
-    )
+    BOWTIE2_BUILD(fasta_tuple)
 
-    BWA_INDEX (
-        fasta_tuple
-    )
+    BWA_INDEX (fasta_tuple)
 
-    HISAT2_EXTRACTSPLICESITES(
-        gtf
-    )
+    HISAT2_EXTRACTSPLICESITES(gtf)
 
-    HISAT2_BUILD(
-        fasta,
-        gtf,
-        HISAT2_EXTRACTSPLICESITES.out.txt
-    )
+    HISAT2_BUILD(fasta, gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
 
-    STAR_GENOMEGENERATE(
-        fasta,
-        gtf
-    )
+    STAR_GENOMEGENERATE(fasta, gtf)
 
-    SEGEMEHL_INDEX(
-        fasta
-    )
+    SEGEMEHL_INDEX(fasta)
 
     // Collect versions
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)

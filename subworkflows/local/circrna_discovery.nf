@@ -69,6 +69,7 @@ workflow CIRCRNA_DISCOVERY {
     SEGEMEHL_FILTER( segemehl_filter, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL_ALIGN.out.versions)
+    ch_versions = ch_versions.mix(SEGEMEHL_FILTER.out.versions)
 
     //
     // STAR WORFKLOW:
@@ -80,6 +81,7 @@ workflow CIRCRNA_DISCOVERY {
     STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, true, '', '' )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
 
     //
     // CIRCEXPLORER2 WORKFLOW:
@@ -94,6 +96,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_FILTER.out.versions)
 
     //
     // CIRCRNA_FINDER WORKFLOW:
@@ -121,6 +124,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW.out.versions)
     ch_versions = ch_versions.mix(FIND_CIRC_ANCHORS.out.versions)
+    ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
     ch_versions = ch_versions.mix(FIND_CIRC_FILTER.out.versions)
 
     //
@@ -132,6 +136,7 @@ workflow CIRCRNA_DISCOVERY {
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> meta.tool = "ciriquant"; return [ meta, gtf ] }, bsj_reads )
 
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
+    ch_versions = ch_versions.mix(CIRIQUANT_FILTER.out.versions)
 
     //
     // DCC WORKFLOW
@@ -157,7 +162,13 @@ workflow CIRCRNA_DISCOVERY {
     DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
 
     ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(DCC_MATE1_SJDB.out.versions)
+    ch_versions = ch_versions.mix(DCC_MATE1_2ND_PASS.out.versions)
+    ch_versions = ch_versions.mix(DCC_MATE2_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(DCC_MATE2_SJDB.out.versions)
+    ch_versions = ch_versions.mix(DCC_MATE2_2ND_PASS.out.versions)
     ch_versions = ch_versions.mix(DCC.out.versions)
+    ch_versions = ch_versions.mix(DCC_FILTER.out.versions)
 
     //
     // MAPSPLICE WORKFLOW:
@@ -179,7 +190,12 @@ workflow CIRCRNA_DISCOVERY {
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results, CIRCRNA_FINDER_FILTER.out.results, FIND_CIRC_FILTER.out.results, CIRIQUANT_FILTER.out.results, DCC_FILTER.out.results, MAPSPLICE_FILTER.out.results )
+    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results,
+                                                            CIRCRNA_FINDER_FILTER.out.results,
+                                                            FIND_CIRC_FILTER.out.results,
+                                                            CIRIQUANT_FILTER.out.results,
+                                                            DCC_FILTER.out.results,
+                                                            MAPSPLICE_FILTER.out.results)
     ANNOTATION( circrna_filtered, gtf, exon_boundary )
 
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
@@ -196,7 +212,13 @@ workflow CIRCRNA_DISCOVERY {
     // COUNT MATRIX WORKFLOW:
     //
 
-    ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix, CIRCRNA_FINDER_FILTER.out.matrix, FIND_CIRC_FILTER.out.matrix, CIRIQUANT_FILTER.out.matrix, DCC_FILTER.out.matrix, MAPSPLICE_FILTER.out.matrix )
+    ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix,
+                                                    CIRCRNA_FINDER_FILTER.out.matrix,
+                                                    FIND_CIRC_FILTER.out.matrix,
+                                                    CIRIQUANT_FILTER.out.matrix,
+                                                    DCC_FILTER.out.matrix,
+                                                    MAPSPLICE_FILTER.out.matrix)
+
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
     if( tools_selected.size() > 1){
@@ -207,14 +229,16 @@ workflow CIRCRNA_DISCOVERY {
 
         dea_matrix = COUNTS_COMBINED.out.dea_matrix
         clr_matrix = COUNTS_COMBINED.out.clr_matrix
+        ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
+        ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
     }else{
 
-        // TODO: concerned that this does not wait for all files?
         COUNTS_SINGLE( ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple() )
 
         dea_matrix = COUNTS_SINGLE.out.dea_matrix
         clr_matrix = COUNTS_SINGLE.out.clr_matrix
+        ch_versions = ch_versions.mix(COUNTS_SINGLE.out.versions)
 
     }
 

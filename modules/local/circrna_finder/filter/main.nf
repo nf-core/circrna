@@ -34,6 +34,8 @@ process CIRCRNA_FINDER_FILTER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
+        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
+        cat: \$(cat --version | head -n 1 | sed -e 's/cat (GNU coreutils) //')
         circRNA_finder: $VERSION
     END_VERSIONS
     """

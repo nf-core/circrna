@@ -88,7 +88,7 @@
                 "save_intermediates": {
                     "type": "boolean",
                     "description": "Save intermediate alignment/circRNA files.",
-                    "default": true,
+                    "default": false,
                     "fa_icon": "fas fa-save"
                 },
                 "exon_boundary": {
@@ -443,11 +443,10 @@
                 },
                 "email": {
                     "type": "string",
-                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
-                    "fa_icon": "fas fa-journal-whills",
-                    "mimetype": "text/csv",
-                    "help_text": "The response variable containing the phenotype of primary interest in the experiment must have the column name condition. An example phenotype file is given below:\n\n| Sample_ID | condition | replicates |\n|---------|-----------|------------|\n| control_rep1  | control   | 1          |\n| control_rep2  | control   | 2          |\n| control_rep3  | control   | 3          |\n| lung_rep1  | lung      | 1          |\n| lung_rep2  | lung      | 2          |\n| lung_rep3  | lung      | 3          |\n| melanoma_rep1  | melanoma  | 1          |\n| melanoma_rep2  | melanoma  | 2          |\n| melanoma_rep3  | melanoma  | 3          |\n\nThis will produce the DESeq2 design formula '~ replicates + condition' i.e all columns not named condition will be controlled for in the linear mixed model.",
-                    "pattern": "\\.csv$"
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
                 "email_on_fail": {
                     "type": "string",

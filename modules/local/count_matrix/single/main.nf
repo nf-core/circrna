@@ -2,7 +2,7 @@ process COUNTS_SINGLE {
     tag "${meta.tool}"
     label 'process_low'
 
-    conda "r-base=3.6.3 python=2.7.15 r-argparser=0.6 r-dplyr=1.0.5"
+    conda "conda-forge::r-base=3.6.3 conda-forge::python=2.7.15 conda-forge::r-argparser=0.6 conda-forge::r-dplyr=1.0.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:3456f1432b1c9dad42815275abe2d6cb6f26fd94-0' :
         'quay.io/biocontainers/mulled-v2-5fbffedf7f529cf3c5093b976deb4290f5e1267a:3456f1432b1c9dad42815275abe2d6cb6f26fd94-0' }"
@@ -13,6 +13,7 @@ process COUNTS_SINGLE {
     output:
     path("circRNA_matrix.txt"), emit: dea_matrix
     path("count_matrix.txt")  , emit: clr_matrix
+    path "versions.yml"       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -37,9 +38,11 @@ process COUNTS_SINGLE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
+        awk: \$(awk --version | head -n 1 | cut -d' ' -f3 | sed 's/,//g')
         r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
         argparser: \$(Rscript -e "library(arparser); cat(as.character(packageVersion('argparser')))")
         dplyr: \$(Rscript -e "library(dplyr); cat(as.character(packageVersion('dplyr')))")
+        python: \$(python --version | sed -e 's/Python //g')
     END_VERSIONS
     """
 }

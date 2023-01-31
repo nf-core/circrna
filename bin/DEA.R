@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
 
-# Automated differential expression analysis script for nf-core/circrna
-# Relies on Stirngtie prepde.py outputs
-# Would be fun to adapt to STAR + Kallisto for own use in future.
+## Author: Barry Digby
+## License: MIT
 
 get_args <- function(){
 
@@ -121,20 +120,6 @@ checkinputdata <- function(phenotype){
         giveError("Not enough samples per condition to perform DE analysis!")
     }
 
-    # Rename sex to gender..
-    if("sex" %in% names(pheno)){
-        print("Renaming sex to gender in phenotype file")
-        rename <- gsub("sex", "gender", names(pheno))
-        names(pheno) <- rename
-    }
-
-    # Check gender is only male, female, unknown
-    if ("gender" %in% names(pheno)) {
-        if (! all(unique(pheno$gender) %in% c("m", "f", "u"))) {
-            giveError("SAMPLEINFO ERROR:\nOnly the values m [male], f [female] and u [unknown] are supported in field <gender>.\n")
-        }
-    }
-
     ## check if all columns are factors. If numeric, convert to factor.
     factor_cols <- sapply(pheno, is.factor)
     if(all(factor_cols) == TRUE){
@@ -174,8 +159,6 @@ ens2symbol <- function(mat, inputdata){
 
     ## designed to work on input gene_count_matrix.csv file
     ## everything else downstream no longer needs to be converted
-
-    ## figure out if working with ENS, or ENS IDs
 
     mat <- as.data.frame(mat)
     map <- inputdata$map
@@ -366,12 +349,6 @@ getDESeqDEAbyContrast <- function(dds, contrast, reference, var, outdir, inputda
     write.table(down_regulated, file.path(dir, paste("DESeq2", contrast, "down_regulated_differential_expression.txt", sep="_")), sep="\t", row.names=F, quote=F)
 
     res_df <- as.data.frame(res)
-
-    #if(outdir == "RNA-Seq/"){
-    #    ann_res <- ens2symbol(res_df, inputdata)
-    #}else{
-    #    ann_res <- res_df
-    #}
 
     volcano_plot(res_df, contrast, outdir)
 
@@ -623,29 +600,17 @@ make_boxplots <- function(de, cts, contrast){
 
 options(error=function()traceback(2))
 suppressPackageStartupMessages(library("argparser"))
-#suppressPackageStartupMessages(library("BiocParallel"))
 suppressPackageStartupMessages(library("biomaRt"))
 suppressPackageStartupMessages(library("DESeq2"))
 suppressPackageStartupMessages(library("dplyr"))
-#suppressPackageStartupMessages(library("edgeR"))
 suppressPackageStartupMessages(library("EnhancedVolcano"))
-#suppressPackageStartupMessages(library("EnsDb.Hsapiens.v86"))
-#suppressPackageStartupMessages(library("genefilter")) #for rowVars
 suppressPackageStartupMessages(library("ggplot2"))
 suppressPackageStartupMessages(library("ggpubr"))
-#suppressPackageStartupMessages(library("ggrepel"))
-#suppressPackageStartupMessages(library("ggfortify"))
 suppressPackageStartupMessages(library("gplots"))
 suppressPackageStartupMessages(library("IHW"))
-#suppressPackageStartupMessages(library("limma"))
-#suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("PCAtools"))
 suppressPackageStartupMessages(library("pheatmap"))
 suppressPackageStartupMessages(library("RColorBrewer"))
-#suppressPackageStartupMessages(library("readr"))
-#suppressPackageStartupMessages(library("Rsubread"))
-#suppressPackageStartupMessages(library("tximport"))
-#suppressPackageStartupMessages(library("VennDiagram"))
 
 arg <- get_args()
 

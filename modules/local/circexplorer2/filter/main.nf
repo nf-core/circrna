@@ -2,6 +2,11 @@ process CIRCEXPLORER2_FILTER {
     tag "$meta.id"
     label 'process_single'
 
+    conda "bioconda::gawk=5.1.0"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/gawk%3A5.1.0' :
+        'quay.io/biocontainers/gawk:5.1.0' }"
+
     input:
     tuple val(meta), path(txt)
     val(bsj_reads)
@@ -9,6 +14,7 @@ process CIRCEXPLORER2_FILTER {
     output:
     tuple val(meta), path("${prefix}_${meta.tool}_circs.bed"), emit: results
     tuple val(meta), path("${prefix}_${meta.tool}.bed")      , emit: matrix
+    path "versions.yml"                                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -20,5 +26,10 @@ process CIRCEXPLORER2_FILTER {
     awk '{if(\$13 >= ${bsj_reads}) print \$0}' ${prefix}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${prefix}_${meta.tool}.bed
 
     awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_${meta.tool}.bed > ${prefix}_${meta.tool}_circs.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
+    END_VERSIONS
     """
 }

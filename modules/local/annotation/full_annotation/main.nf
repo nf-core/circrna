@@ -25,7 +25,7 @@ process ANNOTATION {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '377'
     """
-    grep -vf ${workflow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf unwanted_biotypes.txt $gtf > filt.gtf
     mv $bed circs.bed
 
     annotate_outputs.sh $exon_boundary &> ${prefix}.log
@@ -38,6 +38,7 @@ process ANNOTATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
+        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
         bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
         ucsc: $VERSION
     END_VERSIONS

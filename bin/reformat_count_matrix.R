@@ -1,4 +1,8 @@
 #!/usr/bin/env Rscript
+
+## Author: Barry Digby
+## License: MIT
+
 library(dplyr)
 mat <- read.table("circRNA_matrix.txt", sep="\t", header=T, stringsAsFactors=F)
 mat$ID <- with(mat, paste0(Chr, sep=":", Start, sep="-", Stop, sep=":", Strand))

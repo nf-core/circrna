@@ -26,8 +26,8 @@ process MAPSPLICE_ALIGN {
     def VERSION = 'v2.2.1'
     def gtf_prefix = gtf.toString() - ~/.gtf/
     if(meta.single_end){
-        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
-        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
+        def handleGzip_R1 = reads[0].getExtension() == 'gz' ? "gzip -d -f ${reads[0]}" : ''
+        def read1 = reads[0].getExtension() == 'gz' ? reads[0].toString() - ~/.gz/ : reads[0]
         """
         $handleGzip_R1
 
@@ -47,10 +47,10 @@ process MAPSPLICE_ALIGN {
         END_VERSIONS
         """
     }else{
-        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
-        def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
-        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
-        def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
+        def handleGzip_R1 = reads[0].getExtension() == 'gz' ? "gzip -d -f ${reads[0]}" : ''
+        def handleGzip_R2 = reads[1].getExtension() == 'gz' ? "gzip -d -f ${reads[1]}" : ''
+        def read1 = reads[0].getExtension() == 'gz' ? reads[0].toString() - ~/.gz/ : reads[0]
+        def read2 = reads[1].getExtension() == 'gz' ? reads[1].toString() - ~/.gz/ : reads[1]
         """
         $handleGzip_R1
         $handleGzip_R2

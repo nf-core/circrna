@@ -13,6 +13,6 @@ process TARGETSCAN_DATABASE {
 
     script:
     """
-    bash ${workflow.projectDir}/bin/targetscan_format.sh $mature
+    targetscan_format.sh $mature
     """
 }

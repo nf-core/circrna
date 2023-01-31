@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+## Shell script to generate backsplice sequence from circRNA sequence.
+## Author: Barry Digby
+## License: MIT
+
 ## .fa = backsplice .fasta = canonical to publish
 
 file_prefix=$(basename $1 .fa)

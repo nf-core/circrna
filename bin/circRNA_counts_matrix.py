@@ -1,6 +1,14 @@
 import sys, glob
 from collections import defaultdict
 
+"""
+Script to parse circRNA quantification bed files, creating a count matrix suitable for statistical analyses
+requires python 2.7
+Author: Declan Bennett @declan93
+License: MIT
+"""
+
+
 par = sys.argv
 hld = defaultdict(list)
 samps = defaultdict(list)
@@ -31,7 +39,6 @@ for k, v in samps.items():
     disj = Diff(tmp, [a_tuple[0] for a_tuple in v])
     for val in disj:
         v.append((val, "0"))
-    # print(" ".join(k.split("_")),v)
     li = []
     for h in tmp:
         for x in v:

@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-##
-## Expected Input:
-## Chr Start Stop name count strand
-## name= chr":"start"-"stop":"strand
-
 echo "===================================================================================="
 echo "[nf-core/circrna]: circRNA annotation script                                        "
 echo "[nf-core/circrna]: Author: Barry Digby                                              "
 echo "[nf-core/circrna]: Institution: National University of Ireland, Galway              "
+echo "[nf-core/circrna]:                                                                  "
+echo "[nf-core/circrna]: MIT license                                                      "
 echo "===================================================================================="
 
 mkdir -p bed12

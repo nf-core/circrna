@@ -20,28 +20,28 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 ## Pipeline summary
 
-1. Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
-3. circRNA quantification
-   1. [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
-   2. [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
-      1. [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
-      2. [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-      3. [`DCC`](https://github.com/dieterich-lab/DCC)
-   3. [`find circ`](https://github.com/marvin-jens/find_circ)
-   4. [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
-   5. [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
-4. circRNA annotation
-5. Export mature spliced length as FASTA file
-6. Annotate parent gene, underlying transcripts.
-7. circRNA count matrix
-8. miRNA target prediction
-   1. [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
-   2. [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
-   3. Filter results, miRNAs must be called by both tools
-9. Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
-10. Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
-11. MultiQC report [`MultiQC`](http://multiqc.info/)
+- Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+- Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
+- circRNA quantification
+- [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+- [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
+  - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+  - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+  - [`DCC`](https://github.com/dieterich-lab/DCC)
+- [`find circ`](https://github.com/marvin-jens/find_circ)
+- [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+- [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+- circRNA annotation
+- Export mature spliced length as FASTA file
+- Annotate parent gene, underlying transcripts.
+- circRNA count matrix
+- miRNA target prediction
+  - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
+  - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+  - Filter results, miRNAs must be called by both tools
+- Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+- Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
+- MultiQC report [`MultiQC`](http://multiqc.info/)
 
 ## Quick Start
 

@@ -38,6 +38,7 @@ process FASTA {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
+        cut: \$(cut --version | head -n 1 | cut -d' ' -f4)
     END_VERSIONS
     """
 }

@@ -58,7 +58,6 @@ def check_samplesheet(file_in, file_out):
 
         ## Check header
         MIN_COLS = 2  ## edit by BDigby as not using strandedness yet.
-        # HEADER = ["sample", "fastq_1", "fastq_2", "strandedness"]
         HEADER = ["sample", "fastq_1", "fastq_2"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
         if header[: len(HEADER)] != HEADER:
@@ -87,7 +86,6 @@ def check_samplesheet(file_in, file_out):
                     )
 
                 ## Check sample name entries
-                # sample, fastq_1, fastq_2, strandedness = lspl[: len(HEADER)]
                 sample, fastq_1, fastq_2 = lspl[: len(HEADER)]
                 if sample.find(" ") != -1:
                     print(f"WARNING: Spaces have been replaced by underscores for sample: {sample}")
@@ -107,29 +105,11 @@ def check_samplesheet(file_in, file_out):
                                 line,
                             )
 
-                ## Check strandedness
-                # strandednesses = ["unstranded", "forward", "reverse"]
-                # if strandedness:
-                #    if strandedness not in strandednesses:
-                #        print_error(
-                #            f"Strandedness must be one of '{', '.join(strandednesses)}'!",
-                #            "Line",
-                #            line,
-                #        )
-                # else:
-                #    print_error(
-                #        f"Strandedness has not been specified! Must be one of {', '.join(strandednesses)}.",
-                #        "Line",
-                #        line,
-                #    )
-
                 ## Auto-detect paired-end/single-end
                 sample_info = []  ## [single_end, fastq_1, fastq_2, strandedness]
                 if sample and fastq_1 and fastq_2:  ## Paired-end short reads
-                    # sample_info = ["0", fastq_1, fastq_2, strandedness]
                     sample_info = ["0", fastq_1, fastq_2]
                 elif sample and fastq_1 and not fastq_2:  ## Single-end short reads
-                    # sample_info = ["1", fastq_1, fastq_2, strandedness]
                     sample_info = ["1", fastq_1, fastq_2]
                 else:
                     print_error("Invalid combination of columns provided!", "Line", line)
@@ -148,7 +128,6 @@ def check_samplesheet(file_in, file_out):
         out_dir = os.path.dirname(file_out)
         make_dir(out_dir)
         with open(file_out, "w") as fout:
-            # fout.write(",".join(["sample", "single_end", "fastq_1", "fastq_2", "strandedness"]) + "\n")
             fout.write(",".join(["sample", "single_end", "fastq_1", "fastq_2"]) + "\n")
             for sample in sorted(sample_mapping_dict.keys()):
 
@@ -159,14 +138,6 @@ def check_samplesheet(file_in, file_out):
                         "Sample",
                         sample,
                     )
-
-                ## Check that multiple runs of the same sample are of the same strandedness
-                # if not all(x[-1] == sample_mapping_dict[sample][0][-1] for x in sample_mapping_dict[sample]):
-                #    print_error(
-                #        f"Multiple runs of a sample must have the same strandedness!",
-                #        "Sample",
-                #        sample,
-                #    )
 
                 for idx, val in enumerate(sample_mapping_dict[sample]):
                     fout.write(",".join([f"{sample}_T{idx+1}"] + val) + "\n")

@@ -51,6 +51,7 @@ workflow DIFFERENTIAL_EXPRESSION {
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
     ch_versions = ch_versions.mix(STRINGTIE_STRINGTIE.out.versions)
+    ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
     ch_versions = ch_versions.mix(DESEQ2_DIFFERENTIAL_EXPRESSION.out.versions)
     ch_versions = ch_versions.mix(PARENT_GENE.out.versions)
     ch_versions = ch_versions.mix(PREPARE_CLR_TEST.out.versions)
