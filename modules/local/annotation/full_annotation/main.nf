@@ -10,7 +10,9 @@ process ANNOTATION {
     input:
     tuple val(meta), path(bed)
     path gtf
+    path biotypes
     val exon_boundary
+
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
@@ -25,7 +27,7 @@ process ANNOTATION {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '377'
     """
-    grep -vf unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf $biotypes $gtf > filt.gtf
     mv $bed circs.bed
 
     annotate_outputs.sh $exon_boundary &> ${prefix}.log

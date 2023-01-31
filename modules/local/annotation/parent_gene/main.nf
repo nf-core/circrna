@@ -9,6 +9,7 @@ process PARENT_GENE {
     input:
     path circrna_matrix
     path gtf
+    path biotypes
     val exon_boundary
 
     output:
@@ -22,7 +23,7 @@ process PARENT_GENE {
     def VERSION = '377'
     """
     # remove redundant biotypes from GTF.
-    grep -vf ${workflow.projectDir}/bin/unwanted_biotypes.txt $gtf > filt.gtf
+    grep -vf $biotypes $gtf > filt.gtf
 
     # generate circrna BED file.
     tail -n +2 $circrna_matrix | awk '{print \$1}' > IDs.txt

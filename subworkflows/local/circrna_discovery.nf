@@ -190,13 +190,15 @@ workflow CIRCRNA_DISCOVERY {
     // ANNOTATION WORKFLOW:
     //
 
+    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
+
     circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results,
                                                             CIRCRNA_FINDER_FILTER.out.results,
                                                             FIND_CIRC_FILTER.out.results,
                                                             CIRIQUANT_FILTER.out.results,
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
-    ANNOTATION( circrna_filtered, gtf, exon_boundary )
+    ANNOTATION( circrna_filtered, gtf, ch_biotypes, exon_boundary )
 
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 
