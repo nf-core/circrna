@@ -46,7 +46,7 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
-    PARENT_GENE( clr_matrix, gtf, ch_biotypes, exon_boundary )
+    PARENT_GENE( clr_matrix, gtf, ch_biotypes.collect(), exon_boundary )
     PREPARE_CLR_TEST( STRINGTIE_PREPDE.out.gene_matrix, clr_matrix, PARENT_GENE.out.circ_host_map, gtf )
     CIRCTEST( PREPARE_CLR_TEST.out.circular, PREPARE_CLR_TEST.out.linear, phenotype )
 
