@@ -9,10 +9,6 @@ include { FIND_CIRC_FILTER                 } from '../../modules/local/find_circ
 include { CIRIQUANT_YML                    } from '../../modules/local/ciriquant/yml/main'
 include { CIRIQUANT                        } from '../../modules/local/ciriquant/ciriquant/main'
 include { CIRIQUANT_FILTER                 } from '../../modules/local/ciriquant/filter/main'
-include { CIRCEXPLORER2_REFERENCE          } from '../../modules/local/circexplorer2/reference/main'
-include { CIRCEXPLORER2_PARSE              } from '../../modules/nf-core/circexplorer2/parse/main'
-include { CIRCEXPLORER2_ANNOTATE           } from '../../modules/nf-core/circexplorer2/annotate/main'
-include { CIRCEXPLORER2_FILTER             } from '../../modules/local/circexplorer2/filter/main'
 include { CIRCRNA_FINDER_FILTER            } from '../../modules/local/circrna_finder/filter/main'
 include { SEGEMEHL_ALIGN                   } from '../../modules/nf-core/segemehl/align/main'
 include { SEGEMEHL_FILTER                  } from '../../modules/local/segemehl/filter/main'
@@ -35,6 +31,10 @@ include { FASTA                            } from '../../modules/local/fasta/mai
 include { MERGE_TOOLS                      } from '../../modules/local/count_matrix/merge_tools/main'
 include { COUNTS_COMBINED                  } from '../../modules/local/count_matrix/combined/main'
 include { COUNTS_SINGLE                    } from '../../modules/local/count_matrix/single/main'
+include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REF } from '../../modules/local/circexplorer2/reference/main'
+include { CIRCEXPLORER2_PARSE as CIRCEXPLORER2_PAR } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE as CIRCEXPLORER2_ANN } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER as CIRCEXPLORER2_FLT } from '../../modules/local/circexplorer2/filter/main'
 include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference/main'
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
@@ -92,16 +92,16 @@ workflow CIRCRNA_DISCOVERY {
     // CIRCEXPLORER2 WORKFLOW:
     //
 
-    CIRCEXPLORER2_REFERENCE( gtf )
-    CIRCEXPLORER2_PARSE( STAR_2ND_PASS.out.junction )
-    CIRCEXPLORER2_ANNOTATE( CIRCEXPLORER2_PARSE.out.junction, fasta, CIRCEXPLORER2_REFERENCE.out.txt )
-    circexplorer2_filter = CIRCEXPLORER2_ANNOTATE.out.txt.map{ meta, txt -> meta.tool = "circexplorer2"; return [ meta, txt ] }
-    CIRCEXPLORER2_FILTER( circexplorer2_filter, bsj_reads )
+    CIRCEXPLORER2_REF( gtf )
+    CIRCEXPLORER2_PAR( STAR_2ND_PASS.out.junction )
+    CIRCEXPLORER2_ANN( CIRCEXPLORER2_PAR.out.junction, fasta, CIRCEXPLORER2_REF.out.txt )
+    circexplorer2_filter = CIRCEXPLORER2_ANN.out.txt.map{ meta, txt -> meta.tool = "circexplorer2"; return [ meta, txt ] }
+    CIRCEXPLORER2_FLT( circexplorer2_filter, bsj_reads )
 
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_PARSE.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_ANNOTATE.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_FILTER.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_REF.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_PAR.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_ANN.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_FLT.out.versions)
 
     //
     // CIRCRNA_FINDER WORKFLOW:
@@ -199,7 +199,7 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
-    circrna_filtered = CIRCEXPLORER2_FILTER.out.results.mix(SEGEMEHL_FILTER.out.results,
+    circrna_filtered = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL_FILTER.out.results,
                                                             CIRCRNA_FINDER_FILTER.out.results,
                                                             FIND_CIRC_FILTER.out.results,
                                                             CIRIQUANT_FILTER.out.results,
@@ -222,7 +222,7 @@ workflow CIRCRNA_DISCOVERY {
     // COUNT MATRIX WORKFLOW:
     //
 
-    ch_matrix = CIRCEXPLORER2_FILTER.out.matrix.mix(SEGEMEHL_FILTER.out.matrix,
+    ch_matrix = CIRCEXPLORER2_FLT.out.matrix.mix(SEGEMEHL_FILTER.out.matrix,
                                                     CIRCRNA_FINDER_FILTER.out.matrix,
                                                     FIND_CIRC_FILTER.out.matrix,
                                                     CIRIQUANT_FILTER.out.matrix,
