@@ -128,7 +128,7 @@ workflow CIRCRNA {
     // Stage the indices via newly created indices, iGenomes or empty list if tool not selected.
     bowtie_index   = params.fasta ? params.bowtie ? Channel.fromPath(params.bowtie).collect() : PREPARE_GENOME.out.bowtie : []
     bowtie2_index  = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2).collect() : PREPARE_GENOME.out.bowtie2 : []
-    bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa).collect() : PREPARE_GENOME.out.bwa : []
+    bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa).collect().map{ it -> [[id:it[0].baseName], it] }, sort : PREPARE_GENOME.out.bwa : []
     chromosomes    = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
     hisat2_index   = ( params.tool.contains('ciriquant') || params.module.contains('differential_expression') ) ? PREPARE_GENOME.out.hisat2 : []
     star_index     = params.fasta ? params.star ? Channel.fromPath(params.star).collect() : PREPARE_GENOME.out.star : []

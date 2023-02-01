@@ -32,9 +32,9 @@ workflow PREPARE_GENOME {
     }
 
     ch_fasta.map{ it ->
-             meta = [:]
-             meta.id = it.simpleName
-             return [ meta, [it] ]
+            meta = [:]
+            meta.id = it.simpleName
+            return [ meta, [it] ]
     }.set{ fasta_tuple }
 
     BOWTIE_BUILD(fasta)
