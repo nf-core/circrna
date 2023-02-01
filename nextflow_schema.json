@@ -188,7 +188,7 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "Must be provided if --genome null",
+                    "help_text": "If you use AWS iGenomes, this has already been set for you appropriately.\n\nThis parameter is *mandatory* if `--genome` is not specified.",
                     "fa_icon": "fas fa-book"
                 },
                 "gtf": {
@@ -204,38 +204,38 @@
                     "mimetype": "text/plain",
                     "help_text": "Typically this will be the `mature.fa` file from miRBase. Can be given either as a plain text `.fa` file or a compressed `.gz` file.",
                     "fa_icon": "fas fa-wheelchair",
-                    "default": "null"
+                    "default": null
                 },
                 "species": {
                     "type": "string",
                     "fa_icon": "fas fa-dog",
                     "description": "String identifying species.",
                     "help_text": "Check the igenomes.config file for species configured to work with nf-core/circrna",
-                    "default": "null"
+                    "default": null
                 },
                 "bowtie": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
-                    "description": "Path to Bowtie index files.",
-                    "default": "null"
+                    "description": "Path to Bowtie index files, surrounded by quotes. No glob pattern required.",
+                    "default": null
                 },
                 "bowtie2": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
-                    "description": "Path to Bowtie2 index files.",
-                    "default": "null"
+                    "description": "Path to Bowtie2 index files, surrounded by quotes. No glob pattern required.",
+                    "default": null
                 },
                 "bwa": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
-                    "description": "Path to BWA index directory.",
-                    "default": "null"
+                    "description": "Path to BWA index directory, surrounded by quotes. No glob pattern required.",
+                    "default": null
                 },
                 "hisat2": {
                     "type": "string",
-                    "description": "The title to use in the MultiQC report.",
+                    "description": "Path to Hisat2 index directory, surrounded by quotes. No glob pattern required.",
                     "default": null,
-                    "fa_icon": "fab fa-redhat"
+                    "fa_icon": "fab fa-bold"
                 },
                 "hisat2_build_memory": {
                     "type": "string",
@@ -249,12 +249,12 @@
                     "type": "string",
                     "default": "None",
                     "fa_icon": "fab fa-stripe-s",
-                    "description": "Path to Segemehl Index file"
+                    "description": "Path to Segemehl Index **file**."
                 },
                 "star": {
                     "type": "string",
                     "fa_icon": "far fa-star",
-                    "description": "Path to STAR index directory."
+                    "description": "Path to STAR index directory, surrounded by quotes. No glob pattern required."
                 },
                 "igenomes_base": {
                     "type": "string",
