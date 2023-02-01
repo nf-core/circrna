@@ -64,7 +64,7 @@ workflow CIRCRNA_DISCOVERY {
     //
     // SEGEMEHL WORKFLOW:
     //
-    SEGEMEHL_ALIGN( reads, fasta, segemehl_index )
+    SEGEMEHL_ALIGN( reads, fasta, segemehl_index.collect() )
     segemehl_filter = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  meta.tool = "segemehl"; return [ meta, results ] }
     SEGEMEHL_FILTER( segemehl_filter, bsj_reads )
 
