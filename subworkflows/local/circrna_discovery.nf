@@ -80,10 +80,10 @@ workflow CIRCRNA_DISCOVERY {
     seq_center     = params.seq_center ?: ''
     seq_platform   = ''
 
-    STAR_1ST_PASS( reads, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center)
+    STAR_1ST_PASS( reads, star_index.collect(), gtf, star_ignore_sjdbgtf, seq_platform, seq_center)
     sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect()
     STAR_SJDB( sjdb, bsj_reads )
-    STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    STAR_2ND_PASS( reads, star_index.collect(), STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
@@ -149,19 +149,19 @@ workflow CIRCRNA_DISCOVERY {
     // DCC WORKFLOW
     //
 
-    DCC_1ST_PASS( reads, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_1ST_PASS( reads, star_index.collect(), gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_SJDB( DCC_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_2ND_PASS( reads, star_index.collect(), DCC_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     mate1 = reads.map{ meta, reads -> return [meta, reads[0] ] }
-    DCC_MATE1_1ST_PASS( mate1, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE1_1ST_PASS( mate1, star_index.collect(), gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE1_2ND_PASS( mate1, star_index.collect(), DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     mate2 = reads.map{ meta, reads -> return [ meta, reads[1] ] }
-    DCC_MATE2_1ST_PASS( mate2, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE2_1ST_PASS( mate2, star_index.collect(), gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE2_2ND_PASS( mate2, star_index.collect(), DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = DCC_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
     dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }
