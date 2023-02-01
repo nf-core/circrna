@@ -2,10 +2,10 @@ include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/m
 include { SAMTOOLS_SORT             } from '../../modules/nf-core/samtools/sort/main'
 include { STRINGTIE_STRINGTIE       } from '../../modules/nf-core/stringtie/stringtie/main'
 include { STRINGTIE_PREPDE          } from '../../modules/local/stringtie/prepde/main'
-include { DESEQ2_DIFFERENTIAL_EXPRESSION   } from '../../modules/local/deseq2/differential_expression/main'
 include { PARENT_GENE               } from '../../modules/local/annotation/parent_gene/main'
 include { PREPARE_CLR_TEST          } from '../../modules/local/circtest/prepare/main'
 include { CIRCTEST                  } from '../../modules/local/circtest/test/main'
+include { DESEQ2_DIFFERENTIAL_EXPRESSION   } from '../../modules/local/deseq2/differential_expression/main'
 
 workflow DIFFERENTIAL_EXPRESSION {
 

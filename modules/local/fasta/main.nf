@@ -22,7 +22,6 @@ process FASTA {
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '377'
     """
     ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
     cut -d\$'\t' -f1-12 ${prefix}.bed > bed12.tmp

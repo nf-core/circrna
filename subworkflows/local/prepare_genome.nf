@@ -20,15 +20,15 @@ workflow PREPARE_GENOME {
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
-        file("${params.outdir}/genome/chromosomes").mkdirs()
+        file("${params.outdir}/reference/chromosomes").mkdirs()
         ch_fasta.splitFasta( record: [id:true] )
                 .map{ record -> record.id.toString() }
                 .set{ ID }
 
         ch_fasta.splitFasta( file: true )
-                .merge( ID ).map{ file, id -> file.copyTo("${params.outdir}/genome/chromosomes/${id}.fa") }
+                .merge( ID ).map{ file, id -> file.copyTo("${params.outdir}/reference/chromosomes/${id}.fa") }
 
-    stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/genome/chromosomes")
+    stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/reference/chromosomes")
     }
 
     ch_fasta.map{ it ->

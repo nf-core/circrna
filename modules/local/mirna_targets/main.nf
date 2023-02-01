@@ -12,7 +12,7 @@ process MIRNA_TARGETS {
 
     output:
     tuple val(meta), path("${prefix}.mirna_targets.txt"), emit: results
-    path "versions.yml"                   , emit: versions
+    path "versions.yml"                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

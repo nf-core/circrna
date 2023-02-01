@@ -22,6 +22,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 - Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
+- MultiQC report [`MultiQC`](http://multiqc.info/)
 - circRNA quantification
 - [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
 - [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
@@ -41,7 +42,6 @@ On release, automated continuous integration tests run the pipeline on a full-si
   - Filter results, miRNAs must be called by both tools
 - Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
 - Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
-- MultiQC report [`MultiQC`](http://multiqc.info/)
 
 ## Quick Start
 

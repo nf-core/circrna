@@ -27,7 +27,7 @@ process MERGE_TOOLS {
     ls *.bed > samples.csv
 
     ## Add catch for empty bed file and delete
-    bash ${workflow.projectDir}/bin/check_empty.sh
+    check_empty.sh
 
     ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
     ## remove duplicate IDs, keep highest count.

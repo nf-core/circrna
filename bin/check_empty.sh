@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 ## When consolidating tool outputs for a sample, check if any are empty.
 ## This will prevent R from throwing errors

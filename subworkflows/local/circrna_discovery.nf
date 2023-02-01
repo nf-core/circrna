@@ -30,15 +30,15 @@ include { STAR_ALIGN as DCC_MATE2_2ND_PASS } from '../../modules/nf-core/star/al
 include { SJDB as DCC_MATE2_SJDB           } from '../../modules/local/star/sjdb/main'
 include { DCC                              } from '../../modules/local/dcc/dcc/main'
 include { DCC_FILTER                       } from '../../modules/local/dcc/filter/main'
-include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference/main'
 include { MAPSPLICE_ALIGN                  } from '../../modules/local/mapsplice/align/main'
-include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
-include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
-include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
 include { FASTA                            } from '../../modules/local/fasta/main'
 include { MERGE_TOOLS                      } from '../../modules/local/count_matrix/merge_tools/main'
 include { COUNTS_COMBINED                  } from '../../modules/local/count_matrix/combined/main'
 include { COUNTS_SINGLE                    } from '../../modules/local/count_matrix/single/main'
+include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference/main'
+include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
+include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
+include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -75,10 +75,15 @@ workflow CIRCRNA_DISCOVERY {
     // STAR WORFKLOW:
     //
 
-    STAR_1ST_PASS( reads, star_index, gtf, true, '', '' )
+    // Define variables here, star_ignore_sjdbgtf not supposed to be toggled by user.
+    star_ignore_sjdbgtf = true
+    seq_center     = params.seq_center ?: ''
+    seq_platform   = ''
+
+    STAR_1ST_PASS( reads, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center)
     sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect()
     STAR_SJDB( sjdb, bsj_reads )
-    STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, true, '', '' )
+    STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
@@ -142,19 +147,19 @@ workflow CIRCRNA_DISCOVERY {
     // DCC WORKFLOW
     //
 
-    DCC_1ST_PASS( reads, star_index, gtf, true, '', '' )
+    DCC_1ST_PASS( reads, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_SJDB( DCC_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, true, '', '' )
+    DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     mate1 = reads.map{ meta, reads -> return [meta, reads[0] ] }
-    DCC_MATE1_1ST_PASS( mate1, star_index, gtf, true, '', '' )
+    DCC_MATE1_1ST_PASS( mate1, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, true, '', '' )
+    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     mate2 = reads.map{ meta, reads -> return [ meta, reads[1] ] }
-    DCC_MATE2_1ST_PASS( mate2, star_index, gtf, true, '', '' )
+    DCC_MATE2_1ST_PASS( mate2, star_index, gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return [ tab ] }.collect(), bsj_reads )
-    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, true, '', '' )
+    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = DCC_2ND_PASS.out.junction.join( DCC_MATE1_2ND_PASS.out.junction, remainder: true ).join( DCC_MATE2_2ND_PASS.out.junction, remainder: true )
     dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }
