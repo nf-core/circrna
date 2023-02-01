@@ -132,7 +132,7 @@ workflow CIRCRNA {
     chromosomes    = params.fasta && ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
     hisat2_index   = params.fasta ? params.hisat2 && ( params.tool.contains('ciriquant') || params.module.contains('differential_expression') ) ? Channel.fromPath(params.hisat2).collect() : PREPARE_GENOME.out.hisat2 : []
     star_index     = params.fasta ? params.star ? Channel.fromPath(params.star): PREPARE_GENOME.out.star : []
-    segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(file(params.segemehl)) : PREPARE_GENOME.out.segemehl : []
+    segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
     ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
