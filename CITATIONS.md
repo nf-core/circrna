@@ -138,7 +138,7 @@
 
 ## Test data References
 
-  > Cao D. An autoregulation loop in fust-1 for circular RNA regulation in Caenorhabditis elegans. Genetics. 2021 Nov 5;219(3):iyab145. doi: 10.1093/genetics/iyab145. PMID: 34740247; PMCID: PMC8570788.
+> Cao D. An autoregulation loop in fust-1 for circular RNA regulation in Caenorhabditis elegans. Genetics. 2021 Nov 5;219(3):iyab145. doi: 10.1093/genetics/iyab145. PMID: 34740247; PMCID: PMC8570788.
 
 ## Software packaging/containerisation tools
 
