@@ -9,6 +9,34 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 // Validate input parameters
 WorkflowCircrna.initialise(params, log)
 
+// Check modules paramater
+def checkParameterExistence(it, list) {
+    if (!list.contains(it)) {
+        log.warn "Unknown parameter: ${it}"
+        return false
+    }
+    return true
+}
+
+def checkParameterList(list, realList) {
+    return list.every{ checkParameterExistence(it, realList) }
+}
+
+def defineModuleList() {
+    return [
+    'circrna_discovery',
+    'mirna_prediction',
+    'differential_expression'
+    ]
+}
+
+moduleList = defineModuleList()
+module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
+if(!checkParameterList(module, moduleList)) {
+    log.error "error: Unknown module selected, please choose one of the following:\n\n  circrna_discovery\n\n  mirna_prediction\n\n  differential_expression\n\nPlease refer to the help documentation for a description of each module."
+    System.exit(1)
+}
+
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.multiqc_config ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
