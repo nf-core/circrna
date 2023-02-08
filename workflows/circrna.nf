@@ -108,6 +108,7 @@ def multiqc_report = []
 
 workflow CIRCRNA {
 
+    ch_reports  = Channel.empty()
     ch_versions = Channel.empty()
 
     //
@@ -170,6 +171,8 @@ workflow CIRCRNA {
         params.skip_trimming
     )
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
+    ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
+    ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
     reads_for_circrna = FASTQC_TRIMGALORE.out.reads
     reads_for_diff_exp = FASTQC_TRIMGALORE.out.reads
 
@@ -229,6 +232,7 @@ workflow CIRCRNA {
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
+    ch_reports  = ch_reports.mix(DIFFERENTIAL_EXPRESSION.out.reports)
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
@@ -246,6 +250,7 @@ workflow CIRCRNA {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.fastqc_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_reports.collect().ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),
