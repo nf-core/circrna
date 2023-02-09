@@ -15,6 +15,7 @@ process CIRCRNA_FINDER_FILTER {
     output:
     tuple val(meta), path("${prefix}_circrna_finder_circs.bed"), emit: results
     tuple val(meta), path("${prefix}_circrna_finder.bed")      , emit: matrix
+    tuple val(meta), path("*filteredJunctions*")               , emit: intermediates
     path  "versions.yml"                                       , emit: versions
 
     when:
