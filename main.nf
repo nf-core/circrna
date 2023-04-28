@@ -4,7 +4,6 @@
     nf-core/circrna
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Github : https://github.com/nf-core/circrna
-
     Website: https://nf-co.re/circrna
     Slack  : https://nfcore.slack.com/channels/circrna
 ----------------------------------------------------------------------------------------
