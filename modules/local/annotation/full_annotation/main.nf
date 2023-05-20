@@ -40,8 +40,8 @@ process ANNOTATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
         bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
+        busybox: \$(busybox | head -1)
         ucsc: $VERSION
     END_VERSIONS
     """
