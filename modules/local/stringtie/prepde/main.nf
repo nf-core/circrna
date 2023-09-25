@@ -19,7 +19,7 @@ process STRINGTIE_PREPDE {
 
     script:
     """
-    for file in \$(ls *.gtf); do sample_id=\${file%".transcripts.gtf"}; touch samples.txt; printf "\$sample_id\t\$file\n" >> samples.txt ; done
+    for file in \$(ls *.gtf); do sample_id=\${file%".transcripts.gtf"}; touch samples.txt; printf "\$sample_id\t\$file\\n" >> samples.txt ; done
 
     prepDE.py -i samples.txt
 
