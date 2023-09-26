@@ -19,7 +19,6 @@ process CIRIQUANT_YML {
     task.ext.when == null || task.ext.when
 
     script:
-    bwa_prefix = fasta.toString() == 'genome.fa' ? fasta.toString() : fasta.toString() - ~/.(fa|fasta)$/
     hisat2_prefix = fasta.toString() - ~/.(fa|fasta)$/
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
@@ -31,7 +30,11 @@ process CIRIQUANT_YML {
     STRINGTIE=`which stringtie`
     SAMTOOLS=`which samtools`
 
+    # Get first file in bwa index directory
+    BWA_FILE=`ls ${bwa_path}/*.bwt`
+    BWA_FILE=`basename \$BWA_FILE .bwt`
+
     touch travis.yml
-    printf "name: ciriquant\ntools:\n  bwa: \$BWA\n  hisat2: \$HISAT2\n  stringtie: \$STRINGTIE\n  samtools: \$SAMTOOLS\n\nreference:\n  fasta: ${fasta_path}\n  gtf: ${gtf_path}\n  bwa_index: ${bwa_path}/${bwa_prefix}\n  hisat_index: ${hisat2_path}/${hisat2_prefix}" >> travis.yml
+    printf "name: ciriquant\ntools:\n  bwa: \$BWA\n  hisat2: \$HISAT2\n  stringtie: \$STRINGTIE\n  samtools: \$SAMTOOLS\n\nreference:\n  fasta: ${fasta_path}\n  gtf: ${gtf_path}\n  bwa_index: ${bwa_path}/\$BWA_FILE\n  hisat_index: ${hisat2_path}/${hisat2_prefix}" >> travis.yml
     """
 }
