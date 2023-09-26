@@ -50,16 +50,6 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
-// Genome params
-params.fasta   = params.genome  ? params.genomes[ params.genome ].fasta ?: false : false
-params.gtf     = params.genome  ? params.genomes[ params.genome ].gtf ?: false : false
-params.bwa     = params.genome && params.tool.contains('ciriquant') ? params.genomes[ params.genome ].bwa ?: false : false
-params.star    = params.genome && ( params.tool.contains('circexplorer2') || params.tool.contains('dcc') || params.tool.contains('circrna_finder') ) ? params.genomes[ params.genome ].star ?: false : false
-params.bowtie  = params.genome && params.tool.contains('mapsplice') ? params.genomes[ params.genome ].bowtie ?: false : false
-params.bowtie2 = params.genome && params.tool.contains('find_circ') ? params.genomes[ params.genome ].bowtie2 ?: false : false
-params.mature  = params.genome && params.module.contains('mirna_prediction') ? params.genomes[ params.genome ].mature ?: false : false
-params.species = params.genome  ? params.genomes[ params.genome ].species_id ?: false : false
-
 ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
 ch_fasta       = params.fasta ? file(params.fasta) : 'null'
 ch_gtf         = params.gtf ? file(params.gtf) : 'null'
