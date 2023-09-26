@@ -43,7 +43,7 @@
   > Jun Cheng, Franziska Metge, Christoph Dieterich, (2016). Specific identification and quantification of circular RNAs from sequencing data, Bioinformatics, 32(7), 1094–1096.
 
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-  
+
   > Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data [Online]. Available online https://www.bioinformatics.babraham.ac.uk/projects/fastqc/.
 
 - [find circ](https://doi.org/10.1038/nature11928)

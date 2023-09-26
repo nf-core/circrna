@@ -72,6 +72,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
 ## Documentation
 
 The nf-core/circrna pipeline comes with documentation about the pipeline [usage](https://nf-co.re/circrna/usage), [parameters](https://nf-co.re/circrna/parameters) and [output](https://nf-co.re/circrna/output).
+
 ```bash
 nextflow run nf-core/circrna \
    -profile <docker/singularity/.../institute> \
