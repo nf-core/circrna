@@ -17,6 +17,7 @@ workflow PREPARE_GENOME {
     ch_versions = Channel.empty()
 
     ch_fasta = Channel.fromPath(fasta)
+    ch_gtf   = Channel.fromPath(gtf)
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
@@ -37,17 +38,23 @@ workflow PREPARE_GENOME {
             return [ meta, [it] ]
     }.set{ fasta_tuple }
 
+    ch_gtf.map{ it ->
+            meta = [:]
+            meta.id = it.simpleName
+            return [ meta, [it] ]
+    }.set{ gtf_tuple }
+
     BOWTIE_BUILD(fasta)
 
     BOWTIE2_BUILD(fasta_tuple)
 
     BWA_INDEX (fasta_tuple)
 
-    HISAT2_EXTRACTSPLICESITES(gtf)
+    HISAT2_EXTRACTSPLICESITES(gtf_tuple)
 
-    HISAT2_BUILD(fasta, gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
+    HISAT2_BUILD(fasta_tuple, gtf_tuple, HISAT2_EXTRACTSPLICESITES.out.txt)
 
-    STAR_GENOMEGENERATE(fasta, gtf)
+    STAR_GENOMEGENERATE(fasta_tuple, gtf_tuple)
 
     SEGEMEHL_INDEX(fasta)
 
@@ -65,9 +72,9 @@ workflow PREPARE_GENOME {
     bowtie2      = BOWTIE2_BUILD.out.index
     bwa          = BWA_INDEX.out.index
     chromosomes  = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
-    hisat2       = HISAT2_BUILD.out.index
-    star         = STAR_GENOMEGENERATE.out.index
+    hisat2       = HISAT2_BUILD.out.index.collect()
+    star         = STAR_GENOMEGENERATE.out.index.collect()
     segemehl     = SEGEMEHL_INDEX.out.index
-    splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
+    splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt.collect()
     versions     = ch_versions
 }

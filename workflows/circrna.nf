@@ -154,8 +154,8 @@ workflow CIRCRNA {
     bowtie2_index  = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2).map{ it -> [[id:'bowtie2'], it] } : PREPARE_GENOME.out.bowtie2 : []
     bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa).map{ it -> [[id:'bwa'], it] } : PREPARE_GENOME.out.bwa : []
     chromosomes    = params.fasta && ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
-    hisat2_index   = params.fasta ? params.hisat2 && ( params.tool.contains('ciriquant') || params.module.contains('differential_expression') ) ? Channel.fromPath(params.hisat2).collect() : PREPARE_GENOME.out.hisat2 : []
-    star_index     = params.fasta ? params.star ? Channel.fromPath(params.star): PREPARE_GENOME.out.star : []
+    hisat2_index   = params.fasta ? params.hisat2 && ( params.tool.contains('ciriquant') || params.module.contains('differential_expression') ) ? Channel.fromPath(params.hisat2).map{ [[id:"hisat2"], it]} : PREPARE_GENOME.out.hisat2 : []
+    star_index     = params.fasta ? params.star ? Channel.fromPath(params.star).map{[[id:'star'], it]}: PREPARE_GENOME.out.star : []
     segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
     ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
 
@@ -168,15 +168,13 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
     ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
     ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
-    reads_for_circrna = FASTQC_TRIMGALORE.out.reads
-    reads_for_diff_exp = FASTQC_TRIMGALORE.out.reads
 
     //
     // 2. circRNA Discovery
     //
 
     CIRCRNA_DISCOVERY(
-        reads_for_circrna,
+        FASTQC_TRIMGALORE.out.reads,
         ch_fasta,
         ch_gtf,
         bowtie_index,
@@ -213,7 +211,7 @@ workflow CIRCRNA {
     ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
 
     DIFFERENTIAL_EXPRESSION(
-        reads_for_diff_exp,
+        FASTQC_TRIMGALORE.out.reads,
         ch_gtf,
         ch_fasta,
         hisat2_index,

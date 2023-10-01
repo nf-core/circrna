@@ -1,4 +1,5 @@
 process SJDB {
+    tag "$meta.id"
     label 'process_single'
 
     conda "conda-forge::sed=4.7"
@@ -7,11 +8,11 @@ process SJDB {
         'nf-core/ubuntu:20.04' }"
 
     input:
-    path(sjdb)
+    tuple val(meta), path(sjdb)
     val(bsj_reads)
 
     output:
-    path("dataset.SJ.out.tab"), emit: sjtab
+    tuple val(meta), path("dataset.SJ.out.tab"), emit: sjtab
     path "versions.yml"       , emit: versions
 
     when:
