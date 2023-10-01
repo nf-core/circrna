@@ -54,7 +54,6 @@ ch_phenotype   = params.phenotype && params.module.contains('differential_expres
 ch_fasta       = params.fasta ? file(params.fasta) : 'null'
 ch_gtf         = params.gtf ? file(params.gtf) : 'null'
 ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : Channel.empty()
-ch_species     = params.genome ? Channel.value(params.species) : Channel.value(params.species)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,7 +221,7 @@ workflow CIRCRNA {
         ch_phenotype,
         CIRCRNA_DISCOVERY.out.dea_matrix,
         CIRCRNA_DISCOVERY.out.clr_matrix,
-        ch_species,
+        params.species,
         ch_ensembl_database_map,
         params.exon_boundary
     )
