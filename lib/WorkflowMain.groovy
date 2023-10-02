@@ -48,6 +48,10 @@ class WorkflowMain {
         if (!params.input) {
             Nextflow.error("Please provide an input samplesheet to the pipeline e.g. '--input samplesheet.csv'")
         }
+
+        if (!params.species) {
+            Nextflow.error("Please provide a species to the pipeline e.g. '--species hsa'")
+        }
     }
     //
     // Get attribute from genome config file e.g. fasta

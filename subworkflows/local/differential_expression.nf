@@ -26,13 +26,27 @@ workflow DIFFERENTIAL_EXPRESSION {
     main:
     ch_versions = Channel.empty()
     qc_reports = Channel.empty()
+    ch_fasta = Channel.fromPath(fasta)
+    ch_gtf   = Channel.fromPath(gtf)
+
+    ch_fasta.map{ it ->
+        meta = [:]
+        meta.id = it.simpleName
+        return [ meta, [it] ]
+    }.set{ fasta_tuple }
+
+    ch_gtf.map{ it ->
+        meta = [:]
+        meta.id = it.simpleName
+        return [ meta, [it] ]
+    }.set{ gtf_tuple }
 
     //
     // LINEAR RNA ALIGNEMT WORKFLOW:
     //
 
     HISAT2_ALIGN( reads, hisat2_index, splice_sites )
-    BAM_SORT_STATS_SAMTOOLS( HISAT2_ALIGN.out.bam, fasta )
+    BAM_SORT_STATS_SAMTOOLS( HISAT2_ALIGN.out.bam, fasta_tuple )
     STRINGTIE_STRINGTIE( BAM_SORT_STATS_SAMTOOLS.out.bam, gtf )
     STRINGTIE_PREPDE( STRINGTIE_STRINGTIE.out.transcript_gtf.map{ meta, gtf -> return [ gtf ] }.collect() )
 
