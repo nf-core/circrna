@@ -80,7 +80,7 @@ workflow CIRCRNA_DISCOVERY {
     // SEGEMEHL WORKFLOW:
     //
     SEGEMEHL_ALIGN( reads, fasta, segemehl_index )
-    segemehl_filter = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  meta.tool = "segemehl"; return [ meta, results ] }
+    segemehl_filter = SEGEMEHL_ALIGN.out.results.map{ meta, results ->  [ meta + [tool: "segemehl"], results ] }
     SEGEMEHL_FILTER( segemehl_filter, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL_ALIGN.out.versions)
@@ -110,7 +110,7 @@ workflow CIRCRNA_DISCOVERY {
     CIRCEXPLORER2_REF( gtf )
     CIRCEXPLORER2_PAR( STAR_2ND_PASS.out.junction )
     CIRCEXPLORER2_ANN( CIRCEXPLORER2_PAR.out.junction, fasta, CIRCEXPLORER2_REF.out.txt )
-    circexplorer2_filter = CIRCEXPLORER2_ANN.out.txt.map{ meta, txt -> meta.tool = "circexplorer2"; return [ meta, txt ] }
+    circexplorer2_filter = CIRCEXPLORER2_ANN.out.txt.map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt ] }
     CIRCEXPLORER2_FLT( circexplorer2_filter, bsj_reads )
 
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REF.out.versions)
@@ -123,7 +123,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     circrna_finder_stage = STAR_2ND_PASS.out.sam.join( STAR_2ND_PASS.out.junction).join(STAR_2ND_PASS.out.tab)
-    circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> meta.tool = "circrna_finder"; return [ meta, sam, junction, tab ] }
+    circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> [ meta + [tool: "circrna_finder"], sam, junction, tab ] }
     CIRCRNA_FINDER_FILTER( circrna_finder_filter, fasta, bsj_reads )
 
     ch_versions = ch_versions.mix(CIRCRNA_FINDER_FILTER.out.versions)
@@ -137,7 +137,7 @@ workflow CIRCRNA_DISCOVERY {
     SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), fasta_tuple, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
     FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta )
-    find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> meta.tool = "find_circ"; return [ meta, bed ] }
+    find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
     FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
 
     ch_versions = ch_versions.mix(FIND_CIRC_ALIGN.out.versions)
@@ -155,7 +155,7 @@ workflow CIRCRNA_DISCOVERY {
     // do not want to upset the collect declr for all indices just for this.
     CIRIQUANT_YML( gtf, fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
     CIRIQUANT( reads, CIRIQUANT_YML.out.yml.collect() )
-    CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> meta.tool = "ciriquant"; return [ meta, gtf ] }, bsj_reads )
+    CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT_FILTER.out.versions)
@@ -191,7 +191,7 @@ workflow CIRCRNA_DISCOVERY {
 
     dcc = dcc_stage.map{ it ->  [ it[0], it[1], it[2] ?: [], it[3] ?: [] ] }
     DCC( dcc, fasta, gtf )
-    DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
+    DCC_FILTER( DCC.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, bsj_reads )
 
     ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(DCC_MATE1_SJDB.out.versions)
@@ -210,7 +210,7 @@ workflow CIRCRNA_DISCOVERY {
     MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, gtf )
     MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
     MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
-    mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> meta.tool = "mapsplice"; return [ meta, txt ] }
+    mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> [ meta + [tool: "mapsplice"], txt ] }
     MAPSPLICE_FILTER( mapsplice_filter, bsj_reads )
 
     ch_versions = ch_versions.mix(MAPSPLICE_REFERENCE.out.versions)
@@ -258,7 +258,7 @@ workflow CIRCRNA_DISCOVERY {
 
     if( tools_selected.size() > 1){
 
-        MERGE_TOOLS( ch_matrix.map{ meta, bed -> var = [:]; var.id = meta.id; return [ var, bed ] }.groupTuple(), tool_filter, duplicates_fun )
+        MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(), tool_filter, duplicates_fun )
 
         COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
 
@@ -269,7 +269,7 @@ workflow CIRCRNA_DISCOVERY {
 
     }else{
 
-        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> var = [:]; var.tool = meta.tool; return [ var, bed ] }.groupTuple() )
+        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> [ [tool: meta.tool], bed ] }.groupTuple() )
 
         dea_matrix = COUNTS_SINGLE.out.dea_matrix
         clr_matrix = COUNTS_SINGLE.out.clr_matrix
