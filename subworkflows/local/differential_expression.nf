@@ -29,16 +29,10 @@ workflow DIFFERENTIAL_EXPRESSION {
     ch_fasta = Channel.fromPath(fasta)
     ch_gtf   = Channel.fromPath(gtf)
 
-    ch_fasta.map{ it ->
-        meta = [:]
-        meta.id = it.simpleName
-        return [ meta, [it] ]
+    ch_fasta.map{ it -> [ [id: it.simpleName], [it] ]
     }.set{ fasta_tuple }
 
-    ch_gtf.map{ it ->
-        meta = [:]
-        meta.id = it.simpleName
-        return [ meta, [it] ]
+    ch_gtf.map{ it -> [ [id: it.simpleName], [it] ]
     }.set{ gtf_tuple }
 
     //

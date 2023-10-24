@@ -8,8 +8,8 @@ process FASTA {
         'quay.io/biocontainers/bedtools:2.30.0--h7d7f7ad_2' }"
 
     input:
-    tuple val(meta), path(bed)
-    path fasta
+    tuple val(meta), path(bed, name: "bed.input")
+    path fasta, name: "fasta.input"
 
     output:
     tuple val(meta), path("${prefix}.fa"), emit: analysis_fasta
@@ -24,15 +24,14 @@ process FASTA {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
-    cut -d\$'\t' -f1-12 ${prefix}.bed > bed12.tmp
+    cut -d\$'\t' -f1-12 bed.input > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
 
     ## clean fasta header
     grep -A 1 '>' circ_seq.tmp | cut -d: -f1,2,3 > ${prefix}.fa && rm circ_seq.tmp
 
     ## add backsplice sequence for miRanda Targetscan, publish canonical FASTA to results.
-    rm $fasta
-    bash ${workflow.projectDir}/bin/backsplice_gen.sh ${prefix}.fa
+    backsplice_gen.sh ${prefix}.fa
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

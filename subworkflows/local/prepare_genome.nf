@@ -18,33 +18,27 @@ workflow PREPARE_GENOME {
 
     ch_fasta = Channel.fromPath(fasta)
     ch_gtf   = Channel.fromPath(gtf)
+    fasta_tuple = Channel.value([[id: "fasta"], fasta])
+    gtf_tuple = Channel.value([[id: "gtf"], gtf])
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
-        file("${params.outdir}/references/chromosomes").mkdirs()
-        ch_fasta.splitFasta( record: [id:true] )
+        directory = file("${params.outdir}/references/chromosomes")
+
+        if ( !directory.exists() ) {
+            directory.mkdirs()
+            ch_fasta.splitFasta( record: [id:true] )
                 .map{ record -> record.id.toString() }
                 .set{ ID }
 
-        ch_fasta.splitFasta( file: true )
-                .merge( ID ).map{ file, id -> file.copyTo("${params.outdir}/references/chromosomes/${id}.fa") }
+            ch_fasta.splitFasta( file: true )
+                .merge( ID ).map{ file, id -> file.copyTo(directory + "/${id}.fa") }
+        }
 
-    stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/references/chromosomes")
+        stage_chromosomes = Channel.value(directory)
     }
 
-    ch_fasta.map{ it ->
-            meta = [:]
-            meta.id = it.simpleName
-            return [ meta, [it] ]
-    }.set{ fasta_tuple }
-
-    ch_gtf.map{ it ->
-            meta = [:]
-            meta.id = it.simpleName
-            return [ meta, [it] ]
-    }.set{ gtf_tuple }
-
-    BOWTIE_BUILD(fasta)
+    BOWTIE_BUILD(ch_fasta)
 
     BOWTIE2_BUILD(fasta_tuple)
 
