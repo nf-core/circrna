@@ -60,20 +60,10 @@ workflow CIRCRNA_DISCOVERY {
 
     main:
     ch_versions = Channel.empty()
-    ch_fasta = Channel.fromPath(fasta)
-    ch_gtf   = Channel.fromPath(gtf)
-
-    ch_fasta.map{ it ->
-        meta = [:]
-        meta.id = it.simpleName
-        return [ meta, [it] ]
-    }.set{ fasta_tuple }
-
-    gtf_tuple = ch_gtf.map{ it ->
-        meta = [:]
-        meta.id = it.simpleName
-        return [ meta, [it] ]
-    }.collect()
+    ch_fasta = Channel.value(fasta)
+    ch_gtf   = Channel.value(gtf)
+    fasta_tuple = Channel.value([[id: "fasta"], fasta])
+    gtf_tuple = Channel.value([[id: "gtf"], gtf])
 
 
     //
@@ -207,7 +197,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     MAPSPLICE_REFERENCE( gtf )
-    MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, gtf )
+    MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, ch_gtf )
     MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
     MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
     mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> [ meta + [tool: "mapsplice"], txt ] }

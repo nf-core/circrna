@@ -31,7 +31,7 @@ process MERGE_TOOLS {
 
     ## Use intersection of "n" (params.tool_filter) circRNAs called by tools
     ## remove duplicate IDs, keep highest count.
-    Rscript ${workflow.projectDir}/bin/consolidate_algorithms_intersection.R samples.csv $tool_filter $duplicates_fun
+    consolidate_algorithms_intersection.R samples.csv $tool_filter $duplicates_fun
     mv combined_counts.bed ${prefix}.bed
 
     cat <<-END_VERSIONS > versions.yml
