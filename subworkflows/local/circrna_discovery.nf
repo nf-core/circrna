@@ -154,10 +154,6 @@ workflow CIRCRNA_DISCOVERY {
     // DCC WORKFLOW
     //
 
-    DCC_1ST_PASS( reads, star_index, gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
-    DCC_SJDB( DCC_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "dcc_sjdb"], it]}, bsj_reads )
-    DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
-
     mate1 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
     DCC_MATE1_1ST_PASS( mate1, star_index, gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
@@ -168,7 +164,7 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
-    dcc_stage = DCC_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
+    dcc_stage = STAR_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
         .join( 
             DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
