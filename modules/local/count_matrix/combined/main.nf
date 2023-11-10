@@ -31,9 +31,7 @@ process COUNTS_COMBINED {
     "${task.process}":
         awk: \$(awk --version | head -n 1 | cut -d' ' -f3 | sed 's/,//g')
         r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
-        argparser: \$(Rscript -e "library(arparser); cat(as.character(packageVersion('argparser')))")
         dplyr: \$(Rscript -e "library(dplyr); cat(as.character(packageVersion('dplyr')))")
-        python: \$(python --version | sed -e 's/Python //g')
     END_VERSIONS
     """
 }

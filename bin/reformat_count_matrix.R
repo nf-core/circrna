@@ -4,7 +4,7 @@
 ## License: MIT
 
 library(dplyr)
-mat <- read.table("circRNA_matrix.txt", sep="\t", header=T, stringsAsFactors=F)
+mat <- read.table("circRNA_matrix.txt", sep="\t", header=T, stringsAsFactors=F, check.names=F)
 mat$ID <- with(mat, paste0(Chr, sep=":", Start, sep="-", Stop, sep=":", Strand))
 mat <- mat[,-c(1:4)]
 mat1 <- mat %>% select(ID, everything())
