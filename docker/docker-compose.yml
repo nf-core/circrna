@@ -3,3 +3,8 @@ services:
     build: 
       context: annotation
     image: bigdatainbiomedicine/circ-annotation
+
+  psirc:
+    build: 
+      context: psirc
+    image: bigdatainbiomedicine/psirc
