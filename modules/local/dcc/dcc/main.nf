@@ -31,7 +31,7 @@ process DCC {
         DCC @samplesheet -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${task.cpus}
 
         awk '{print \$6}' CircCoordinates >> strand
-        paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${prefix}.txt
+        paste CircRNACount strand | tail -n +2 | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${prefix}.txt
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
@@ -49,7 +49,7 @@ process DCC {
         DCC @samplesheet -mt1 @mate1file -mt2 @mate2file -D -an $gtf -Pi -ss -F -M -Nr 1 1 -fg -A $fasta -N -T ${task.cpus}
 
         awk '{print \$6}' CircCoordinates >> strand
-        paste CircRNACount strand | tail -n +2 | awk -v OFS="\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${prefix}.txt
+        paste CircRNACount strand | tail -n +2 | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${prefix}.txt
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
