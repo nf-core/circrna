@@ -24,9 +24,9 @@ process CIRCEXPLORER2_FILTER {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '1.3.4'
     """
-    awk '{if(\$13 >= ${bsj_reads}) print \$0}' ${prefix}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${prefix}_${meta.tool}.bed
+    awk '{if(\$13 >= ${bsj_reads}) print \$0}' ${prefix}.txt | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$6,\$13}' > ${prefix}_${meta.tool}.bed
 
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_${meta.tool}.bed > ${prefix}_${meta.tool}_circs.bed
+    awk -v OFS="\\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_${meta.tool}.bed > ${prefix}_${meta.tool}_circs.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

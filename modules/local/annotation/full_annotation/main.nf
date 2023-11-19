@@ -33,7 +33,7 @@ process ANNOTATION {
     annotate_outputs.sh $exon_boundary &> ${prefix}.log
     mv master_bed12.bed ${prefix}.bed.tmp
 
-    awk -v FS="\t" '{print \$11}' ${prefix}.bed.tmp > mature_len.tmp
+    awk -v FS="\\t" '{print \$11}' ${prefix}.bed.tmp > mature_len.tmp
     awk -v FS="," '{for(i=t=0;i<NF;) t+=\$++i; \$0=t}1' mature_len.tmp > mature_length
 
     paste ${prefix}.bed.tmp mature_length > ${prefix}.bed

@@ -24,11 +24,11 @@ process SEGEMEHL_FILTER {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '1.3.4'
     """
-    grep ';C;' ${prefix}.sngl.bed | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${prefix}_collapsed.bed
+    grep ';C;' ${prefix}.sngl.bed | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$6}' | sort | uniq -c | awk -v OFS="\\t" '{print \$2,\$3,\$4,\$5,\$1}' > ${prefix}_collapsed.bed
 
-    awk -v OFS="\t" -v BSJ=${bsj_reads} '{if(\$5>=BSJ) print \$0}' ${prefix}_collapsed.bed > ${prefix}_segemehl.bed
+    awk -v OFS="\\t" -v BSJ=${bsj_reads} '{if(\$5>=BSJ) print \$0}' ${prefix}_collapsed.bed > ${prefix}_segemehl.bed
 
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_segemehl.bed > ${prefix}_segemehl_circs.bed
+    awk -v OFS="\\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_segemehl.bed > ${prefix}_segemehl_circs.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

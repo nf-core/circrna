@@ -24,7 +24,7 @@ process FASTA {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
-    cut -d\$'\t' -f1-12 bed.input > bed12.tmp
+    cut -d\$'\\t' -f1-12 bed.input > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
 
     ## clean fasta header

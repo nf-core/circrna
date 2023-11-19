@@ -27,7 +27,7 @@ process CIRCEXPLORER2_REFERENCE {
         $gtf \
         ${prefix}.genepred
 
-    awk -v OFS="\t" '{print \$12, \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10}' ${prefix}.genepred > ${prefix}.txt
+    awk -v OFS="\\t" '{print \$12, \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10}' ${prefix}.genepred > ${prefix}.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
