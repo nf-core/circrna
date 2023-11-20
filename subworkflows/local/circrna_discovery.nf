@@ -44,6 +44,7 @@ include { GAWK as REMOVE_HEADER            } from '../../modules/nf-core/gawk/ma
 include { CAT_CAT as CAT_ANNOTATION        } from '../../modules/nf-core/cat/cat/main'
 include { BEDTOOLS_SORT as SORT_ANNOTATION } from '../../modules/nf-core/bedtools/sort/main'
 include { PSIRC_INDEX                      } from '../../modules/local/psirc/index/main'
+include { PSIRC_QUANT                      } from '../../modules/local/psirc/quant/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -284,6 +285,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(FASTA.out.versions)
 
     PSIRC_INDEX( FASTA.out.analysis_fasta )
+    PSIRC_QUANT( reads, PSIRC_INDEX.out.collect() )
 
     emit:
     circrna_bed12 = SORT_ANNOTATION.out.sorted
