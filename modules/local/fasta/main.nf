@@ -1,5 +1,5 @@
 process FASTA {
-    tag "${meta.id}:${meta.tool}"
+    tag "${meta.id}"
     label 'process_single'
 
     conda "bioconda::bedtools=2.30.0"
@@ -24,7 +24,7 @@ process FASTA {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     ## FASTA sequences (bedtools does not like the extra annotation info - split will not work properly)
-    cut -d\$'\\t' -f1-12 bed.input > bed12.tmp
+    cut -d\$'\\t' -f1-5 bed.input > bed12.tmp
     bedtools getfasta -fi $fasta -bed bed12.tmp -s -split -name > circ_seq.tmp
 
     ## clean fasta header
@@ -36,7 +36,6 @@ process FASTA {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
-        cut: \$(cut --version | head -n 1 | cut -d' ' -f4)
     END_VERSIONS
     """
 }

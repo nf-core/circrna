@@ -1,5 +1,5 @@
 process ANNOTATION {
-    tag "${meta.id}:${meta.tool}"
+    tag "${meta.id}"
     label 'process_high'
 
     conda "bioconda::ucsc-gtftogenepred=377 bioconda::ucsc-genepredtobed=377 bioconda::bedtools=2.27.0 conda-forge::parallel=20230922"
@@ -25,7 +25,8 @@ process ANNOTATION {
     def VERSION = '377'
     """
     grep -vf $biotypes $gtf > filt.gtf
-    mv $bed circs.bed
+
+    tail -n +2 $bed > circs.bed
 
     mkdir -p bed12
 

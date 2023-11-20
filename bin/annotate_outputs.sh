@@ -2,16 +2,18 @@
 
 EB=$1
 
-name=$(echo $2 | awk '{print $4}')
-count=$(echo $2 | awk '{print $5}')
-touch ${name}.bed
-echo "$2" >> ${name}.bed_tmp
-sed 's/[\t]*$//' ${name}.bed_tmp > ${name}.bed && rm ${name}.bed_tmp
-
-bedtools intersect -a filt.gtf -b ${name}.bed -s -f 1.00 > ${name}.gtf
-
+chr=$(echo $2 | awk '{print $1}')
 start=$(echo $2 | awk '{print $2}')
 stop=$(echo $2 | awk '{print $3}')
+strand=$(echo $2 | awk '{print $4}')
+
+name="$chr:$start-$stop:$strand"
+count=0
+touch ${name}.bed
+echo -e "$chr\t$start\t$stop\t$strand" >> ${name}.bed_tmp
+sed 's/[\t]*$//' ${name}.bed_tmp > ${name}.bed && rm ${name}.bed_tmp
+
+bedtools intersect -a filt.gtf -b ${name}.bed -f 1.00 > ${name}.gtf
 
 echo "[nf-core/circrna]: Starting analysis for: $name"
 

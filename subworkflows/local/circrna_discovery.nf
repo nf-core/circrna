@@ -165,11 +165,11 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = STAR_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
-        .join( 
+        .join(
             DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
         )
-        .join( 
+        .join(
             DCC_MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
         )
@@ -205,31 +205,6 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(MAPSPLICE_ANNOTATE.out.versions)
 
     //
-    // ANNOTATION WORKFLOW:
-    //
-
-    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
-
-    circrna_filtered = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL_FILTER.out.results,
-                                                            CIRCRNA_FINDER_FILTER.out.results,
-                                                            FIND_CIRC_FILTER.out.results,
-                                                            CIRIQUANT_FILTER.out.results,
-                                                            DCC_FILTER.out.results,
-                                                            MAPSPLICE_FILTER.out.results)
-
-    ANNOTATION( circrna_filtered, gtf, ch_biotypes.collect(), exon_boundary )
-
-    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-
-    //
-    // FASTA WORKFLOW:
-    //
-
-    FASTA( ANNOTATION.out.bed, fasta )
-
-    ch_versions = ch_versions.mix(FASTA.out.versions)
-
-    //
     // COUNT MATRIX WORKFLOW:
     //
 
@@ -262,6 +237,31 @@ workflow CIRCRNA_DISCOVERY {
         ch_versions = ch_versions.mix(COUNTS_SINGLE.out.versions)
 
     }
+
+    //
+    // ANNOTATION WORKFLOW:
+    //
+
+    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
+
+    circrna_filtered = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL_FILTER.out.results,
+                                                            CIRCRNA_FINDER_FILTER.out.results,
+                                                            FIND_CIRC_FILTER.out.results,
+                                                            CIRIQUANT_FILTER.out.results,
+                                                            DCC_FILTER.out.results,
+                                                            MAPSPLICE_FILTER.out.results)
+
+    ANNOTATION( dea_matrix.map{ [[id: "combined"], it] }, gtf, ch_biotypes.collect(), exon_boundary )
+
+    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+
+    //
+    // FASTA WORKFLOW:
+    //
+
+    FASTA( ANNOTATION.out.bed, fasta )
+
+    ch_versions = ch_versions.mix(FASTA.out.versions)
 
     emit:
     circrna_bed12 = ANNOTATION.out.bed
