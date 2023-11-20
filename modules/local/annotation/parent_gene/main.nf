@@ -33,8 +33,10 @@ process PARENT_GENE {
         start=\$(echo \$line | cut -d- -f1 | cut -d: -f2)
         stop=\$(echo \$line | cut -d- -f2 | cut -d: -f1)
         sign=\$(echo \$line | cut -d: -f3)
-        echo -e "\$chr\\t\$start\\t\$stop\\t\$name\\t0\\t\$sign" >> circs.bed
+        echo -e "\$chr\\t\$start\\t\$stop\\t\$sign" >> circs.bed
     done < IDs.txt
+
+    mkdir -p bed12
 
     # Re-use annotation script to identify the host gene.
     parallel -j $task.cpus -a circs.bed annotate_outputs.sh $exon_boundary {}
