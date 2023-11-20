@@ -9,12 +9,15 @@ process PSIRC_QUANT {
     tuple val(meta2), path(index)
 
     output:
-    tuple val(meta), path("output/abundance.tsv"), emit: abundance_tsv
-    tuple val(meta), path("output/abundance.h5"), emit: abundance_h5
+    tuple val(meta), path("output/${meta.id}.tsv"), emit: abundance_tsv
+    tuple val(meta), path("output/${meta.id}.h5"), emit: abundance_h5
 
     script:
     def single_end = meta.single_end ? "--single" : ""
     """
     psirc-quant quant -t $task.cpus -i $index -o output $single_end $reads
+
+    mv output/abundance.tsv output/${meta.id}.tsv
+    mv output/abundance.h5 output/${meta.id}.h5
     """
 }

@@ -45,6 +45,7 @@ include { CAT_CAT as CAT_ANNOTATION        } from '../../modules/nf-core/cat/cat
 include { BEDTOOLS_SORT as SORT_ANNOTATION } from '../../modules/nf-core/bedtools/sort/main'
 include { PSIRC_INDEX                      } from '../../modules/local/psirc/index/main'
 include { PSIRC_QUANT                      } from '../../modules/local/psirc/quant/main'
+include { PSIRC_COMBINE                    } from '../../modules/local/psirc/combine/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -286,6 +287,7 @@ workflow CIRCRNA_DISCOVERY {
 
     PSIRC_INDEX( FASTA.out.analysis_fasta )
     PSIRC_QUANT( reads, PSIRC_INDEX.out.collect() )
+    PSIRC_COMBINE( PSIRC_QUANT.out.abundance_tsv.map{ meta, data -> data }.collect() )
 
     emit:
     circrna_bed12 = SORT_ANNOTATION.out.sorted
