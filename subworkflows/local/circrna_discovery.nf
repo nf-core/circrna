@@ -259,8 +259,8 @@ workflow CIRCRNA_DISCOVERY {
 
     SPLIT_ANNOTATION( REMOVE_HEADER.out.output, "tsv", "tsv" )
 
-    ANNOTATION( SPLIT_ANNOTATION.out.split_csv
-                    .map{ meta, file -> [[id: file.simpleName.split("-")[1]], file] },
+    ANNOTATION( SPLIT_ANNOTATION.out.split_csv.map{meta, files -> files }.flatten()
+                    .map{ file -> [[id: file.simpleName.split("-")[1]], file] },
                     gtf, ch_biotypes.collect(),
                     exon_boundary
                 )
