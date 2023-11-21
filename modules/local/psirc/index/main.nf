@@ -1,6 +1,6 @@
 process PSIRC_INDEX {
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_single'
 
     container "registry.hub.docker.com/bigdatainbiomedicine/psirc"
 
