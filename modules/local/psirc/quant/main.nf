@@ -13,7 +13,7 @@ process PSIRC_QUANT {
     tuple val(meta), path("output/${meta.id}.h5"), emit: abundance_h5
 
     script:
-    def single_end = meta.single_end ? "--single" : ""
+    def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
     """
     psirc-quant quant -t $task.cpus -i $index -o output $single_end $reads
 
