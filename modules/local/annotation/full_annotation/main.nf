@@ -26,11 +26,9 @@ process ANNOTATION {
     """
     grep -vf $biotypes $gtf > filt.gtf
 
-    tail -n +2 $bed > circs.bed
-
     mkdir -p bed12
 
-    parallel -j $task.cpus -a circs.bed annotate_outputs.sh $exon_boundary {}
+    parallel -j $task.cpus -a $bed annotate_outputs.sh $exon_boundary {}
     cat bed12/*.bed12.bed > master_bed12.bed.tmp
     awk 'BEGIN{FS=OFS="\\t"} {gsub(/,\$/,"",\$11);gsub(/,\$/,"",\$12)} 1' master_bed12.bed.tmp > master_bed12.bed && rm master_bed12.bed.tmp
 

@@ -39,6 +39,10 @@ include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/l
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
+include { CSVTK_SPLIT as SPLIT_ANNOTATION  } from '../../modules/nf-core/csvtk/split/main'
+include { GAWK as REMOVE_HEADER            } from '../../modules/nf-core/gawk/main'
+include { CAT_CAT as CAT_ANNOTATION        } from '../../modules/nf-core/cat/cat/main'
+include { BEDTOOLS_SORT as SORT_ANNOTATION } from '../../modules/nf-core/bedtools/sort/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -251,20 +255,35 @@ workflow CIRCRNA_DISCOVERY {
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
 
-    ANNOTATION( dea_matrix.map{ [[id: "combined"], it] }, gtf, ch_biotypes.collect(), exon_boundary )
+    REMOVE_HEADER( dea_matrix.map{ [[id: "combined"], it] }, [] )
 
+    SPLIT_ANNOTATION( REMOVE_HEADER.out.output, "tsv", "tsv" )
+
+    ANNOTATION( SPLIT_ANNOTATION.out.split_csv
+                    .map{ meta, file -> [[id: file.simpleName.split("-")[1]], file] },
+                    gtf, ch_biotypes.collect(),
+                    exon_boundary
+                )
+
+    CAT_ANNOTATION( ANNOTATION.out.bed.map{ it[1] }.collect().map{ [[id: "combined"], it] } )
+    SORT_ANNOTATION( CAT_ANNOTATION.out.file_out, [] )
+
+    ch_versions = ch_versions.mix(REMOVE_HEADER.out.versions)
+    ch_versions = ch_versions.mix(SPLIT_ANNOTATION.out.versions)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(CAT_ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(SORT_ANNOTATION.out.versions)
 
     //
     // FASTA WORKFLOW:
     //
 
-    FASTA( ANNOTATION.out.bed, fasta )
+    FASTA( SORT_ANNOTATION.out.sorted, fasta )
 
     ch_versions = ch_versions.mix(FASTA.out.versions)
 
     emit:
-    circrna_bed12 = ANNOTATION.out.bed
+    circrna_bed12 = SORT_ANNOTATION.out.sorted
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
     dea_matrix
