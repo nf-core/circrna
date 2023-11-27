@@ -75,7 +75,6 @@ workflow CIRCRNA_DISCOVERY {
         return [ meta, [it] ]
     }.collect()
 
-    
 
     //
     // SEGEMEHL WORKFLOW:
@@ -169,27 +168,28 @@ workflow CIRCRNA_DISCOVERY {
     DCC_SJDB( DCC_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "dcc_sjdb"], it]}, bsj_reads )
     DCC_2ND_PASS( reads, star_index, DCC_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
-    mate1 = reads.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
+    mate1 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
     DCC_MATE1_1ST_PASS( mate1, star_index, gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
     DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
-    mate2 = reads.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[1] ] }
+    mate2 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[1] ] }
     DCC_MATE2_1ST_PASS( mate2, star_index, gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = DCC_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
         .join( 
-            DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] }
+            DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
+            remainder: true
         )
         .join( 
-            DCC_MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] }
+            DCC_MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
+            remainder: true
         )
         .map{ id, meta, junction, mate1, mate2 -> return [ meta, junction, mate1, mate2 ]}
-        .groupTuple()
-    
-    dcc = dcc_stage.map{ it -> def meta = it[0]; if( meta.single_end ){ return [ it[0], it[1], [], [] ] } else { return it } }
+
+    dcc = dcc_stage.map{ it ->  [ it[0], it[1], it[2] ?: [], it[3] ?: [] ] }
     DCC( dcc, fasta, gtf )
     DCC_FILTER( DCC.out.txt.map{ meta, txt -> meta.tool = "dcc"; return [ meta, txt ] }, bsj_reads )
 
