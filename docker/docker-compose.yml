@@ -1,5 +1,5 @@
 services:
   annotation:
-    build: 
+    build:
       context: annotation
     image: bigdatainbiomedicine/circ-annotation
