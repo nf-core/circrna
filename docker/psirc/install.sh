@@ -17,3 +17,5 @@ mkdir release && cd release
 cmake ..
 make psirc-quant
 make install
+
+ln -s /tmp/psirc/create_custom_transcriptome_fa.pl /usr/local/bin/psirc-transcriptome
