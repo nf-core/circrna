@@ -46,6 +46,7 @@ include { BEDTOOLS_SORT as SORT_ANNOTATION } from '../../modules/nf-core/bedtool
 include { PSIRC_INDEX                      } from '../../modules/local/psirc/index/main'
 include { PSIRC_QUANT                      } from '../../modules/local/psirc/quant/main'
 include { PSIRC_COMBINE                    } from '../../modules/local/psirc/combine/main'
+include { PSIRC_TRANSCRIPTOME              } from '../../modules/local/psirc/transcriptome/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -281,6 +282,7 @@ workflow CIRCRNA_DISCOVERY {
     // FASTA WORKFLOW:
     //
 
+    PSIRC_TRANSCRIPTOME( fasta_tuple, gtf_tuple )
     FASTA( SORT_ANNOTATION.out.sorted, fasta )
 
     ch_versions = ch_versions.mix(FASTA.out.versions)
