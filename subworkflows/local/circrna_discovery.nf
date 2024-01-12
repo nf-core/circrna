@@ -47,6 +47,8 @@ include { PSIRC_INDEX                      } from '../../modules/local/psirc/ind
 include { PSIRC_QUANT                      } from '../../modules/local/psirc/quant/main'
 include { PSIRC_COMBINE                    } from '../../modules/local/psirc/combine/main'
 include { PSIRC_TRANSCRIPTOME              } from '../../modules/local/psirc/transcriptome/main'
+include { GAWK as FASTA_TYPING             } from '../../modules/nf-core/gawk/main'
+include { CAT_CAT as CONCAT_FASTA          } from '../../modules/nf-core/cat/cat/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -285,9 +287,22 @@ workflow CIRCRNA_DISCOVERY {
     PSIRC_TRANSCRIPTOME( fasta_tuple, gtf_tuple )
     FASTA( SORT_ANNOTATION.out.sorted, fasta )
 
+    ch_fastas = FASTA.out.analysis_fasta
+        .map{ meta, fasta -> return [ [id: "circular"], fasta ] }
+        .mix(
+            PSIRC_TRANSCRIPTOME.out
+                .map{ meta, fasta -> return [ [id: "linear"], fasta ] }
+        )
+
+    FASTA_TYPING( ch_fastas, [])
+
+    CONCAT_FASTA( FASTA_TYPING.out.output.map { meta, fasta -> fasta}.collect()
+                    .map{ [[id: "fasta"], it] }
+    )
+
     ch_versions = ch_versions.mix(FASTA.out.versions)
 
-    PSIRC_INDEX( FASTA.out.analysis_fasta )
+    PSIRC_INDEX( CONCAT_FASTA.out.file_out )
     PSIRC_QUANT( reads, PSIRC_INDEX.out.collect() )
     PSIRC_COMBINE( PSIRC_QUANT.out.abundance_tsv.map{ meta, data -> data }.collect() )
 
