@@ -14,10 +14,13 @@
             "properties": {
                 "input": {
                     "type": "string",
-                    "fa_icon": "fas fa-file-csv",
+                    "format": "file-path",
+                    "exists": true,
                     "mimetype": "text/csv",
-                    "description": "A 'samplehseet' CSV file containing the absolute paths to FASTQ files.",
-                    "help_text": "An example of a valid CSV sample sheet is provided below, depicting paired-end control samples and single-end treatment samples. The headers `sample`, `fastq_1` and `fastq_2` must be included in the input CSV file.\n\n| sample    \t| fastq_1                  \t| fastq_2                  \t|\n|-----------\t|--------------------------\t|--------------------------\t|\n| control_1 \t| /data/ctrl_1_R1.fastq.gz \t| /data/ctrl_1_R2.fastq.gz \t|\n| control_2 \t| /data/ctrl_2_R1.fastq.gz \t| /data/ctrl_2_R2.fastq.gz \t|\n| control_3 \t| /data/ctrl_3_R1.fastq.gz \t| /data/ctrl_3_R2.fastq.gz \t|\n| treated_1 \t| /data/trt_1_R1.fastq.gz  \t|                          \t|\n| treated_2 \t| /data/trt_2_R1.fastq.gz  \t|                          \t|\n| treated_3 \t| /data/trt_3_R1.fastq.gz  \t|                          \t|"
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/circrna/usage#samplesheet-input).",
+                    "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
                     "type": "string",
