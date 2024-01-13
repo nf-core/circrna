@@ -1,5 +1,4 @@
 
-include { ANNOTATION                       } from '../../modules/local/annotation/full_annotation/main'
 include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN } from '../../modules/nf-core/bowtie2/align/main'
 include { SAMTOOLS_VIEW                    } from '../../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX                   } from '../../modules/nf-core/samtools/index/main'
@@ -39,10 +38,11 @@ include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/l
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE } from '../../modules/nf-core/circexplorer2/annotate/main'
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER } from '../../modules/local/circexplorer2/filter/main'
-include { CSVTK_SPLIT as SPLIT_ANNOTATION  } from '../../modules/nf-core/csvtk/split/main'
 include { GAWK as REMOVE_HEADER            } from '../../modules/nf-core/gawk/main'
-include { CAT_CAT as CAT_ANNOTATION        } from '../../modules/nf-core/cat/cat/main'
-include { BEDTOOLS_SORT as SORT_ANNOTATION } from '../../modules/nf-core/bedtools/sort/main'
+include { GAWK as KEEP_FOUR_COLUMNS        } from '../../modules/nf-core/gawk/main'
+include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION } from '../../modules/nf-core/bedtools/intersect/main'
+include { BEDTOOLS_INTERSECT as INV_INTERSECT_ANNOTATION } from '../../modules/nf-core/bedtools/intersect/main'
+include { ANNOTATION                       } from '../../modules/local/annotation/annotation/main'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -257,33 +257,31 @@ workflow CIRCRNA_DISCOVERY {
 
     REMOVE_HEADER( dea_matrix.map{ [[id: "combined"], it] }, [] )
 
-    SPLIT_ANNOTATION( REMOVE_HEADER.out.output, "tsv", "tsv" )
+    KEEP_FOUR_COLUMNS( REMOVE_HEADER.out.output, [] )
 
-    ANNOTATION( SPLIT_ANNOTATION.out.split_csv.map{meta, files -> files }.flatten()
-                    .map{ file -> [[id: file.simpleName.split("-")[1]], file] },
-                    gtf, ch_biotypes.collect(),
-                    exon_boundary
-                )
+    ch_intersection = KEEP_FOUR_COLUMNS.out.output.combine( ch_gtf )
 
-    CAT_ANNOTATION( ANNOTATION.out.bed.map{ it[1] }.collect().map{ [[id: "combined"], it] } )
-    SORT_ANNOTATION( CAT_ANNOTATION.out.file_out, [] )
+    INTERSECT_ANNOTATION( ch_intersection, [[], []])
+    INV_INTERSECT_ANNOTATION( ch_intersection, [[], []])
+
+
+    ANNOTATION( INTERSECT_ANNOTATION.out.intersect, INV_INTERSECT_ANNOTATION.out.intersect )
 
     ch_versions = ch_versions.mix(REMOVE_HEADER.out.versions)
-    ch_versions = ch_versions.mix(SPLIT_ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(CAT_ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(SORT_ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(KEEP_FOUR_COLUMNS.out.versions)
+    ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(INV_INTERSECT_ANNOTATION.out.versions)
 
     //
     // FASTA WORKFLOW:
     //
 
-    FASTA( SORT_ANNOTATION.out.sorted, fasta )
+    FASTA( ANNOTATION.out.bed, fasta )
 
     ch_versions = ch_versions.mix(FASTA.out.versions)
 
     emit:
-    circrna_bed12 = SORT_ANNOTATION.out.sorted
+    circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
     dea_matrix
