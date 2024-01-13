@@ -73,7 +73,7 @@ for my $transcript_name (keys %transcripts_data) {
 		$Txsequence .= substr($chr_fa{$transcripts_data{$transcript_name}{chr}},$ExStart_pos,$exon_lengths[$i]);
 	}
 	
-	print $OUT ">" . $transcripts_data{$transcript_name}{chr} . ":$transcript_start-$transcript_end" . ":" . $transcripts_data{$transcript_name}{strand} .
+	print $OUT ">" . $transcripts_data{$transcript_name}{chr} . ":$transcript_start-$transcript_end" . ":" . $transcripts_data{$transcript_name}{strand} . ":" . $transcript_name .
 	"\n" . $Txsequence . "\n";
 }
 
