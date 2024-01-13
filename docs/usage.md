@@ -323,12 +323,13 @@ To use a different container from the default container or conda environment spe
 A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines provide some freedom to users to insert additional parameters that the pipeline does not include by default.
 
 Command error:
-    .command.sh: line 9:  30 Killed    STAR --genomeDir star --readFilesIn WT_REP1_trimmed.fq.gz --runThreadN 2 --outFileNamePrefix WT_REP1. <TRUNCATED>
+.command.sh: line 9: 30 Killed STAR --genomeDir star --readFilesIn WT_REP1_trimmed.fq.gz --runThreadN 2 --outFileNamePrefix WT_REP1. <TRUNCATED>
 Work dir:
-    /home/pipelinetest/work/9d/172ca5881234073e8d76f2a19c88fb
+/home/pipelinetest/work/9d/172ca5881234073e8d76f2a19c88fb
 
 Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-```
+
+````
 
 To change the resource requests, please see the [max resources](https://nf-co.re/docs/usage/configuration#max-resources) and [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources) section of the nf-core website.
 
@@ -352,7 +353,7 @@ process {
         memory = 100.GB
     }
 }
-```
+````
 
 > **NB:** We specify the full process name i.e. `NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:STAR_ALIGN` in the config file because this takes priority over the short name (`STAR_ALIGN`) and allows existing configuration using the full process name to be correctly overridden.
 >

@@ -65,9 +65,9 @@ Each row represents a fastq file (single-end) or a pair of fastq files (paired e
 
 -->
 
-   ```bash
-   nextflow run nf-core/circrna --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --tool 'ciriquant' --module 'circrna_discovery,mirna_prediction,differential_expression' --bsj_reads 2
-   ```
+```bash
+nextflow run nf-core/circrna --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --tool 'ciriquant' --module 'circrna_discovery,mirna_prediction,differential_expression' --bsj_reads 2
+```
 
 ```bash
 nextflow run nf-core/circrna \
