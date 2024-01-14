@@ -31,7 +31,7 @@ process ANNOTATION {
         13: 'overlap'
     }
 
-    attributes = ['gene_id']
+    attributes = ['gene_id', 'transcript_id']
 
     df = pd.read_csv('$intersection', sep='\\t', header=None, usecols=columns.keys())
     df = df.rename(columns=columns)
@@ -52,6 +52,7 @@ process ANNOTATION {
     df = df.drop(['overlap', 'length'], axis=1)
     # Kee only unique gene_ids
     df['gene_id'] = df['gene_id'].apply(lambda row: ','.join(row))
+    df['transcript_id'] = df['transcript_id'].apply(lambda row: ','.join(row))
 
     # If 'perfect': circRNA, else EIciRNA
     df['type'] = df['perfect'].apply(lambda perfect: 'circRNA' if perfect else 'EIciRNA')

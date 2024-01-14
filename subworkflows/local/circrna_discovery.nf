@@ -276,7 +276,7 @@ workflow CIRCRNA_DISCOVERY {
     // FASTA WORKFLOW:
     //
 
-    FASTA( ANNOTATION.out.bed, fasta )
+    FASTA( KEEP_FOUR_COLUMNS.out.output, fasta )
 
     ch_versions = ch_versions.mix(FASTA.out.versions)
 
