@@ -163,7 +163,8 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-save",
                     "description": "Where possible, save unaligned reads from either STAR, HISAT2 or Salmon to the results directory.",
-                    "help_text": "This may either be in the form of FastQ or BAM files depending on the options available for that particular tool."
+                    "help_text": "This may either be in the form of FastQ or BAM files depending on the options available for that particular tool.",
+                    "default": false
                 }
             }
         },
@@ -279,44 +280,52 @@
                     "type": "boolean",
                     "description": "Skip the adapter trimming step.",
                     "help_text": "Use this if your input FastQ files have already been trimmed outside of the workflow or if you're very confident that there is no adapter contamination in your data.",
-                    "fa_icon": "fas fa-fast-forward"
+                    "fa_icon": "fas fa-fast-forward",
+                    "default": false
                 },
                 "save_trimmed": {
                     "type": "boolean",
                     "description": "Save the trimmed FastQ files in the results directory.",
                     "help_text": "By default, trimmed FastQ files will not be saved to the results directory. Specify this flag (or set to true in your config file) to copy these files to the results directory when complete.",
-                    "fa_icon": "fas fa-save"
+                    "fa_icon": "fas fa-save",
+                    "default": false
                 },
                 "skip_fastqc": {
                     "type": "boolean",
                     "description": "Skip FastQC quality control of the sequencing reads.",
-                    "fa_icon": "fas fa-terminal"
+                    "fa_icon": "fas fa-terminal",
+                    "default": false
                 },
                 "clip_r1": {
                     "type": "integer",
                     "description": "Instructs Trim Galore to remove bp from the 5' end of read 1 (or single-end reads).",
-                    "fa_icon": "fas fa-cut"
+                    "fa_icon": "fas fa-cut",
+                    "default": null
                 },
                 "clip_r2": {
                     "type": "integer",
                     "description": "Instructs Trim Galore to remove bp from the 5' end of read 2 (paired-end reads only).",
-                    "fa_icon": "fas fa-cut"
+                    "fa_icon": "fas fa-cut",
+                    "default": null
                 },
                 "three_prime_clip_r1": {
                     "type": "integer",
                     "description": "Instructs Trim Galore to remove bp from the 3' end of read 1 AFTER adapter/quality trimming has been performed.",
-                    "fa_icon": "fas fa-cut"
+                    "fa_icon": "fas fa-cut",
+                    "default": null
                 },
                 "three_prime_clip_r2": {
                     "type": "integer",
                     "description": "Instructs Trim Galore to remove bp from the 3' end of read 2 AFTER adapter/quality trimming has been performed.",
-                    "fa_icon": "fas fa-cut"
+                    "fa_icon": "fas fa-cut",
+                    "default": null
                 },
                 "trim_nextseq": {
                     "type": "integer",
                     "description": "Instructs Trim Galore to apply the --nextseq=X option, to trim based on quality after removing poly-G tails.",
                     "help_text": "This enables the option Cutadapt `--nextseq-trim=3'CUTOFF` option via Trim Galore, which will set a quality cutoff (that is normally given with -q instead), but qualities of G bases are ignored. This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without any signal are called as high-quality G bases.",
-                    "fa_icon": "fas fa-cut"
+                    "fa_icon": "fas fa-cut",
+                    "default": null
                 },
                 "min_trimmed_reads": {
                     "type": "integer",
