@@ -163,7 +163,8 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-save",
                     "description": "Where possible, save unaligned reads from either STAR, HISAT2 or Salmon to the results directory.",
-                    "help_text": "This may either be in the form of FastQ or BAM files depending on the options available for that particular tool."
+                    "help_text": "This may either be in the form of FastQ or BAM files depending on the options available for that particular tool.",
+                    "default": false
                 }
             }
         },
@@ -279,18 +280,21 @@
                     "type": "boolean",
                     "description": "Skip the adapter trimming step.",
                     "help_text": "Use this if your input FastQ files have already been trimmed outside of the workflow or if you're very confident that there is no adapter contamination in your data.",
-                    "fa_icon": "fas fa-fast-forward"
+                    "fa_icon": "fas fa-fast-forward",
+                    "default": false
                 },
                 "save_trimmed": {
                     "type": "boolean",
                     "description": "Save the trimmed FastQ files in the results directory.",
                     "help_text": "By default, trimmed FastQ files will not be saved to the results directory. Specify this flag (or set to true in your config file) to copy these files to the results directory when complete.",
-                    "fa_icon": "fas fa-save"
+                    "fa_icon": "fas fa-save",
+                    "default": false
                 },
                 "skip_fastqc": {
                     "type": "boolean",
                     "description": "Skip FastQC quality control of the sequencing reads.",
-                    "fa_icon": "fas fa-terminal"
+                    "fa_icon": "fas fa-terminal",
+                    "default": false
                 },
                 "clip_r1": {
                     "type": "integer",
