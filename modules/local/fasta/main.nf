@@ -9,7 +9,7 @@ process FASTA {
 
     input:
     tuple val(meta), path(bed)
-    path fasta
+    path(fasta, stageAs: 'fasta.input') // TODO: Remove input renaming, currently necessary to prevent problems with the backsplice_gen.sh script
 
     output:
     tuple val(meta), path("${prefix}.fa"), emit: analysis_fasta
