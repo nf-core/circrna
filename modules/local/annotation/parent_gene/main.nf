@@ -35,14 +35,14 @@ process PARENT_GENE {
         start=\$(echo \$line | cut -d- -f1 | cut -d: -f2)
         stop=\$(echo \$line | cut -d- -f2 | cut -d: -f1)
         sign=\$(echo \$line | cut -d: -f3)
-        echo -e "\$chr\t\$start\t\$stop\t\$name\t0\t\$sign" >> \${name}.bed
+        echo -e "\$chr\\t\$start\\t\$stop\\t\$name\\t0\\t\$sign" >> \${name}.bed
     done < IDs.txt
 
     cat *.bed > merged.txt && rm IDs.txt && rm *.bed && mv merged.txt circs.bed
 
     # Re-use annotation script to identify the host gene.
     annotate_outputs.sh $exon_boundary &> annotation.log
-    awk -v OFS="\t" '{print \$4, \$14}' master_bed12.bed > circrna_host-gene.txt
+    awk -v OFS="\\t" '{print \$4, \$14}' master_bed12.bed > circrna_host-gene.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

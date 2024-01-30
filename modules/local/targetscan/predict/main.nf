@@ -25,7 +25,7 @@ process TARGETSCAN {
     ##format for targetscan
     cat $fasta | grep ">" | sed 's/>//g' > id
     cat $fasta | grep -v ">" > seq
-    paste id seq | awk -v OFS="\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
+    paste id seq | awk -v OFS="\\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
     # run targetscan
     targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.txt
 

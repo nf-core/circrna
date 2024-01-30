@@ -20,20 +20,18 @@ process COUNTS_COMBINED {
     script:
     def args = task.ext.args ?: ''
     """
-    python ${workflow.projectDir}/bin/circRNA_counts_matrix.py > matrix.txt
+    circRNA_counts_matrix.py > matrix.txt
     ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
     n_samps=\$(ls *.bed | wc -l)
     canon=\$(awk -v a="\$n_samps" 'BEGIN {print a + 4}')
-    awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
-    Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
+    awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\\t" '\$1=\$1' > circRNA_matrix.txt
+    reformat_count_matrix.R
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         awk: \$(awk --version | head -n 1 | cut -d' ' -f3 | sed 's/,//g')
         r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
-        argparser: \$(Rscript -e "library(arparser); cat(as.character(packageVersion('argparser')))")
         dplyr: \$(Rscript -e "library(dplyr); cat(as.character(packageVersion('dplyr')))")
-        python: \$(python --version | sed -e 's/Python //g')
     END_VERSIONS
     """
 }

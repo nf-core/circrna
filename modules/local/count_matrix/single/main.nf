@@ -33,7 +33,7 @@ process COUNTS_SINGLE {
     ## handle non-canon chromosomes here (https://stackoverflow.com/questions/71479919/joining-columns-based-on-number-of-fields)
     n_samps=\$(ls *.bed | wc -l)
     canon=\$(awk -v a="\$n_samps" 'BEGIN {print a + 4}')
-    awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\t" '\$1=\$1' > circRNA_matrix.txt
+    awk -v n="\$canon" '{ for (i = 2; i <= NF - n + 1; ++i) { \$1 = \$1"-"\$i; \$i=""; } } 1' matrix.txt | awk -v OFS="\\t" '\$1=\$1' > circRNA_matrix.txt
     Rscript ${workflow.projectDir}/bin/reformat_count_matrix.R
 
     cat <<-END_VERSIONS > versions.yml

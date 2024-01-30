@@ -24,8 +24,8 @@ process DCC_FILTER {
     def VERSION = '1.3.4'
     """
     awk '{if(\$5 >= ${bsj_reads}) print \$0}' ${prefix}.txt > ${prefix}_dcc.filtered
-    awk -v OFS="\t" '{\$2-=1;print}' ${prefix}_dcc.filtered > ${prefix}_dcc.bed
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_dcc.bed > ${prefix}_dcc_circs.bed
+    awk -v OFS="\\t" '{\$2-=1;print}' ${prefix}_dcc.filtered > ${prefix}_dcc.bed
+    awk -v OFS="\\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_dcc.bed > ${prefix}_dcc_circs.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
