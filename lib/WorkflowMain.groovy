@@ -24,7 +24,7 @@ class WorkflowMain {
     //
     // Validate parameters and print summary to screen
     //
-    public static void initialise(workflow, params, log) {
+    public static void initialise(workflow, params, log, args) {
 
         // Print workflow version and exit on --version
         if (params.version) {
