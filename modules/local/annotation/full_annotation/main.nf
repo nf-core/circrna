@@ -39,8 +39,17 @@ process ANNOTATION {
 
     df = pd.read_csv("${intersection}", sep="\\t", header=None, usecols=columns.keys())
     df = df.rename(columns=columns)
+
+    # Extract circRNAs without match
+    mask = df['tx_start'] == -1
+    df_nomatch = df[mask]
+    df = df[~mask]
+    df_nomatch['type'] = 'intergenic-circRNA'
+    df_nomatch['gene_id'] = 'NaN'
+    df_nomatch['transcript_id'] = 'NaN'
+
     # Convert attributes to a dictionary
-    df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'\\"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
+    df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
     # Keep only the attributes we want
     df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in attributes})
     # Convert attributes to columns
@@ -73,10 +82,16 @@ process ANNOTATION {
     # Drop perfect
     df = df.drop(['perfect'], axis=1)
 
-    df = df.sort_index()
     df = df.reset_index()
+    df_nomatch = df_nomatch.reset_index()
     bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_id', 'transcript_id']
     df = df[bed_order]
+    df_nomatch = df_nomatch[bed_order]
+
+    df = pd.concat([df, df_nomatch], axis=0)
+
+    # Sort by chr, start, end
+    df = df.sort_values(['chr', 'start', 'end'])
 
     df.to_csv('${meta.id}.annotation.bed', sep='\\t', index=False, header=False)
     """
