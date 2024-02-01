@@ -135,18 +135,18 @@ When running the differential expression analysis module via the `--module diffe
 
 ```R
 colnames(phenotype)
- [1] 'Sample_ID' 'condition'
+  [1] 'Sample_ID' 'condition'
 
 print(dds$design)
- [1] ' ~ condition'
+  [1] ' ~ condition'
 ```
 
 ```R
 colnames(phenotype)
- [1] 'Sample_ID' 'condition' 'replicates' 'location'
+  [1] 'Sample_ID' 'condition' 'replicates' 'location'
 
 print(dds$design)
- [1] ' ~ location + replicates + condition'
+  [1] ' ~ location + replicates + condition'
 ```
 
 It is recommended to construct your input CSV file in conjunction with your phenotype file as the first column denoting sample names **must match** the first column of the `phenotype.csv` file.
