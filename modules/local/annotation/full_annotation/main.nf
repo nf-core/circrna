@@ -10,10 +10,10 @@ process ANNOTATION {
     input:
     tuple val(meta), path(intersection)
     val(exon_boundary)
-    
+
     output:
     tuple val(meta), path("${meta.id}.annotation.bed"), emit: bed
-    
+
     script:
     """
     #!/usr/bin/env python
