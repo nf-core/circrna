@@ -27,7 +27,7 @@
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open",
-                    "default": "./results"
+                    "default": null
                 },
                 "phenotype": {
                     "type": "string",
@@ -252,7 +252,7 @@
                 },
                 "segemehl": {
                     "type": "string",
-                    "default": "None",
+                    "default": null,
                     "fa_icon": "fab fa-stripe-s",
                     "description": "Path to Segemehl Index **file**."
                 },
@@ -388,7 +388,7 @@
                 "max_cpus": {
                     "type": "integer",
                     "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
+                    "default": 50,
                     "fa_icon": "fas fa-microchip",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
@@ -396,7 +396,7 @@
                 "max_memory": {
                     "type": "string",
                     "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
+                    "default": "300.GB",
                     "fa_icon": "fas fa-memory",
                     "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
                     "hidden": true,

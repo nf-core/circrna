@@ -97,7 +97,7 @@
                     },
                     "miranda": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "c9488585ce7bd35ccd2a30faa2371454c8112fb9",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {

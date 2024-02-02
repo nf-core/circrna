@@ -165,11 +165,11 @@ workflow CIRCRNA_DISCOVERY {
     DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = STAR_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
-        .join( 
+        .join(
             DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
         )
-        .join( 
+        .join(
             DCC_MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
         )

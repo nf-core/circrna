@@ -1,4 +1,11 @@
-# ![nf-core/circrna](docs/images/nf-core-circrna_logo_light.png#gh-light-mode-only) ![nf-core/circrna](docs/images/nf-core-circrna_logo_dark.png#gh-dark-mode-only)
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/nf-core-circrna_logo_dark.png">
+    <img alt="nf-core/circrna" src="docs/images/nf-core-circrna_logo_light.png">
+  </picture>
+</h1>
+[![GitHub Actions CI Status](https://github.com/nf-core/circrna/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/circrna/actions?query=workflow%3A%22nf-core+CI%22)
+[![GitHub Actions Linting Status](https://github.com/nf-core/circrna/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/circrna/actions?query=workflow%3A%22nf-core+linting%22)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/circrna/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
 [![GitHub Actions CI Status](https://github.com/nf-core/circrna/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/circrna/actions?query=workflow%3A%22nf-core+CI%22)
 [![GitHub Actions Linting Status](https://github.com/nf-core/circrna/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/circrna/actions?query=workflow%3A%22nf-core+linting%22)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/circrna/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
@@ -44,6 +51,9 @@ On release, automated continuous integration tests run the pipeline on a full-si
 - Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
 - Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
 
+<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
+     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
+
 ## Usage
 
 > [!NOTE]
@@ -65,8 +75,17 @@ Each row represents a fastq file (single-end) or a pair of fastq files (paired e
 
 -->
 
+Now, you can run the pipeline using:
+
 ```bash
-nextflow run nf-core/circrna --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --tool 'ciriquant' --module 'circrna_discovery,mirna_prediction,differential_expression' --bsj_reads 2
+nextflow run nf-core/circrna \
+    --input samplesheet.csv \
+    --outdir <OUTDIR> \
+    --genome GRCh37 \
+    -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> \
+    --tool 'ciriquant' \
+    --module 'circrna_discovery,mirna_prediction,differential_expression' \
+    --bsj_reads 2
 ```
 
 ```bash
@@ -131,7 +150,8 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- If you use  nf-core/circrna for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
+<!-- If you use nf-core/circrna for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 > **nf-core/circrna: a portable workflow for the quantification, miRNA target prediction and differential expression analysis of circular RNAs.**
 >

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 """
-  Borrowed from nf-core/rnaseq, the original from template 2.6 kept breaking at:
-  "[CRITICAL] The given sample sheet does not appear to contain a header."
-  Even though the input samplesheet looked to be perfectly fine using vim :set list.
+    Borrowed from nf-core/rnaseq, the original from template 2.6 kept breaking at:
+    "[CRITICAL] The given sample sheet does not appear to contain a header."
+    Even though the input samplesheet looked to be perfectly fine using vim :set list.
 
-  Strandedness commented out should you wish to include this in future releases.
+    Strandedness commented out should you wish to include this in future releases.
 """
 
 
