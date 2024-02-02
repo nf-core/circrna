@@ -133,7 +133,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 `nf-core/circrna` outputs quality control plots of normalised _log2_ expression data from `DESeq2` to assess heterogeneity in the experiment samples. These plots can be useful to assess sample-sample similarity and to identify potential batch effects within the experiment. Plots are generated for both circRNAs and RNA-Seq data when the differential expression analysis module has been selected by the user (see `--module` [documentation](https://nf-co.re/circrna/dev/parameters#pipeline-options)).
 
 :::note
-The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
+The FastQC plots displayed in the MultiQC report show _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
 :::
 
 ### MultiQC
