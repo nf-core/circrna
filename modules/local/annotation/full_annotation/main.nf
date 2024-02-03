@@ -19,7 +19,7 @@ process ANNOTATION {
     #!/usr/bin/env python
 
     import pandas as pd
-    import os
+    import numpy as np
 
     columns = {
         0: 'chr',
@@ -42,16 +42,16 @@ process ANNOTATION {
 
     # Extract circRNAs without match
     mask = df['tx_start'] == -1
-    df_nomatch = df[mask]
+    df_intergenic = df[mask]
     df = df[~mask]
-    df_nomatch['type'] = 'intergenic-circRNA'
-    df_nomatch['gene_id'] = 'NaN'
-    df_nomatch['transcript_id'] = 'NaN'
+    df_intergenic['type'] = 'intergenic-circRNA'
+    df_intergenic['gene_id'] = 'NaN'
+    df_intergenic['transcript_id'] = 'NaN'
 
     # Convert attributes to a dictionary
     df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
     # Keep only the attributes we want
-    df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in attributes})
+    df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in attributes if key in row})
     # Convert attributes to columns
     df = pd.concat([df.drop(['attributes'], axis=1), df['attributes'].apply(pd.Series)], axis=1)
 
@@ -74,21 +74,31 @@ process ANNOTATION {
             matching_values = [value for value, perfectness in zip(row[col], row['perfect']) if perfectness]
         else:
             matching_values = row[col]
-        return ",".join(set(matching_values))
+        valid_values = set([value for value in matching_values if type(value) == str])
+        return ",".join(valid_values) if valid_values else "NaN"
 
-    df['type'] = df['perfect'].apply(lambda x: 'circRNA' if any(x) else 'EI-circRNA')
+    def determine_type(row):
+        if row["no_transcript"]:
+            return "ciRNA"
+        if any(row['perfect']):
+            return "circRNA"
+        else:
+            return 'EI-circRNA'
+
+    df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
+    df['type'] = df.apply(lambda row: determine_type(row), axis=1)
     df['gene_id'] = df.apply(lambda row: filter_perfect(row, 'gene_id'), axis=1)
     df['transcript_id'] = df.apply(lambda row: filter_perfect(row, 'transcript_id'), axis=1)
     # Drop perfect
     df = df.drop(['perfect'], axis=1)
 
     df = df.reset_index()
-    df_nomatch = df_nomatch.reset_index()
+    df_intergenic = df_intergenic.reset_index()
     bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_id', 'transcript_id']
     df = df[bed_order]
-    df_nomatch = df_nomatch[bed_order]
+    df_intergenic = df_intergenic[bed_order]
 
-    df = pd.concat([df, df_nomatch], axis=0)
+    df = pd.concat([df, df_intergenic], axis=0)
 
     # Sort by chr, start, end
     df = df.sort_values(['chr', 'start', 'end'])
