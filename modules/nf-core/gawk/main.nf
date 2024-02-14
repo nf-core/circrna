@@ -12,7 +12,7 @@ process GAWK {
     path(program_file)
 
     output:
-    tuple val(meta), path("${prefix}.${suffix}"), emit: output
+    path("${prefix}.${suffix}"), emit: output
     path "versions.yml"                         , emit: versions
 
     when:
