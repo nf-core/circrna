@@ -21,8 +21,9 @@ process SJDB {
     script:
     def VERSION = '1.3.4'
     """
-    cat *.tab | awk -v BSJ=${bsj_reads} '(\$7 >= BSJ && \$6==0)' | cut -f1-6 | sort | uniq > dataset.SJ.out.tab
-
+    mkdir tmp
+    cat *.tab | awk -v BSJ=${bsj_reads} '(\$7 >= BSJ && \$6==0)' | cut -f1-6 | sort -T ./tmp/ | uniq > dataset.SJ.out.tab
+    rm -rf tmp
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mawk: $VERSION
