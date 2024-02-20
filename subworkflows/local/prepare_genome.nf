@@ -17,7 +17,6 @@ workflow PREPARE_GENOME {
     main:
     ch_versions = Channel.empty()
 
-    ch_fasta = Channel.fromPath(fasta)
     ch_gtf   = Channel.fromPath(gtf)
     fasta_tuple = Channel.value([[id: "fasta"], fasta])
     gtf_tuple = Channel.value([[id: "gtf"], gtf])
@@ -26,8 +25,14 @@ workflow PREPARE_GENOME {
     // this removes all additional fields in the headers of the input fasta file
     if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
 
-        CLEAN_FASTA(fasta_tuple, [])
-        ch_fasta = CLEAN_FASTA.out.output
+        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + "_clean" ], fasta]), [])
+
+        ch_fasta = CLEAN_FASTA.out.output.map{ it.last() }
+    }
+
+    else {
+
+        ch_fasta = Channel.fromPath(fasta)
 
     }
 
