@@ -17,15 +17,11 @@ workflow PREPARE_GENOME {
     main:
     ch_versions = Channel.empty()
 
-    ch_gtf   = Channel.fromPath(gtf)
-    fasta_tuple = Channel.value([[id: "fasta"], fasta])
-    gtf_tuple = Channel.value([[id: "gtf"], gtf])
-
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
     if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
 
-        CLEAN_FASTA(Channel.value([[id: fasta_tuple.map{ it.last() }.getBaseName() + "_clean" ], fasta]), [])
+        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + "_clean" ], fasta]), [])
 
         ch_fasta = CLEAN_FASTA.out.output.map{ it.last() }
     }
@@ -35,6 +31,11 @@ workflow PREPARE_GENOME {
         ch_fasta = Channel.fromPath(fasta)
 
     }
+
+
+    ch_gtf   = Channel.fromPath(gtf)
+    fasta_tuple = Channel.value([[id: "fasta"], fasta])
+    gtf_tuple = Channel.value([[id: "gtf"], gtf])
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
