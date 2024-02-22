@@ -21,7 +21,7 @@ workflow PREPARE_GENOME {
     // this removes all additional fields in the headers of the input fasta file
     if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
 
-        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + "_clean" ], fasta]), [])
+        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + ".clean_headers" ], fasta]), [])
 
         ch_fasta = CLEAN_FASTA.out.output.map{ it.last() }
     }
