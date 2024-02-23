@@ -77,7 +77,7 @@
                     },
                     "gawk": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "dc3527855e7358c6d8400828754c0caa5f11698f",
                         "installed_by": ["modules"]
                     },
                     "hisat2/align": {
