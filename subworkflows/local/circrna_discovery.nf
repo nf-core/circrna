@@ -222,6 +222,7 @@ workflow CIRCRNA_DISCOVERY {
     ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 
     //
     // FASTA WORKFLOW:
