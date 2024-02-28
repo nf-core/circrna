@@ -29,6 +29,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
+include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
 include { DIFFERENTIAL_EXPRESSION          } from '../../subworkflows/local/differential_expression'
 
@@ -151,6 +152,13 @@ workflow CIRCRNA {
     )
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
+
+    QUANTIFICATION(
+        ch_gtf,
+        ch_fasta,
+        CIRCRNA_DISCOVERY.out.dea_matrix,
+        FASTQC_TRIMGALORE.out.reads
+    )
 
     //
     // 3. miRNA prediction
