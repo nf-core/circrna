@@ -48,17 +48,17 @@ params.species = getGenomeAttribute('species_id')
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_CIRCRNA {
-
-    take:
-    samplesheet // channel: samplesheet read in from --input
-
     main:
 
+    ch_versions = Channel.empty()
+
     //
-    // WORKFLOW: Run pipeline
+    // WORKFLOW: Run nf-core/circrna workflow
     //
+    ch_samplesheet = Channel.value(file(params.input, checkIfExists: true))
     CIRCRNA (
-        samplesheet
+        ch_samplesheet,
+        ch_versions
     )
 
     emit:
@@ -91,9 +91,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_CIRCRNA (
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
+    NFCORE_CIRCRNA ()
 
     //
     // SUBWORKFLOW: Run completion tasks

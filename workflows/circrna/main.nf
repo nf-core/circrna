@@ -27,7 +27,10 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 */
 
 // SUBWORKFLOWS:
+include { paramsSummaryMap                 } from 'plugin/nf-validation'
 include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { validateInputSamplesheet         } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
+
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
@@ -59,18 +62,37 @@ workflow CIRCRNA {
 
     main:
 
+    ch_multiqc_files = Channel.empty()
+
     //
     // 1. Pre-processing
     //
 
     // SUBWORKFLOW:
-    ch_samplesheet
+    Channel
+        .fromSamplesheet("input")
+        .map {
+            meta, fastq_1, fastq_2 ->
+                if (!fastq_2) {
+                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
+                } else {
+                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                }
+        }
+        .groupTuple()
+        .map {
+            validateInputSamplesheet(it)
+        }
+               .map {
+            meta, fastqs ->
+                return [ meta, fastqs.flatten() ]
+        }
         .branch {
-            meta, fastq ->
-                single  : fastq.size() == 1
-                    return [ meta, fastq.flatten() ]
-                multiple: fastq.size() > 1
-                    return [ meta, fastq.flatten() ]
+            meta, fastqs ->
+                single  : fastqs.size() == 1
+                    return [ meta, fastqs ]
+                multiple: fastqs.size() > 1
+                    return [ meta, fastqs ]
         }
         .set { ch_fastq }
 
@@ -108,8 +130,8 @@ workflow CIRCRNA {
         params.skip_trimming
     )
     ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
-    ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
-    ch_reports  = ch_reports.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
 
     //
     // 2. circRNA Discovery
@@ -167,7 +189,7 @@ workflow CIRCRNA {
     )
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
-    ch_reports  = ch_reports.mix(DIFFERENTIAL_EXPRESSION.out.reports)
+    ch_multiqc_files  = ch_multiqc_files.mix(DIFFERENTIAL_EXPRESSION.out.reports)
 
     //
     // Collate and save software versions
@@ -177,18 +199,12 @@ workflow CIRCRNA {
         .set { ch_collated_versions }
 
     // MODULE: MultiQC
-    workflow_summary    = WorkflowCircrna.paramsSummaryMultiqc(workflow, summary_params)
-    ch_workflow_summary = Channel.value(workflow_summary)
-
-    methods_description    = WorkflowCircrna.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    ch_methods_description = Channel.value(methods_description)
-
-    ch_multiqc_files = Channel.empty()
+    ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo   ? Channel.fromPath(params.multiqc_logo)   : Channel.empty()
+    summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary      = Channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.fastqc_zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_reports.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 
     MULTIQC (
         ch_multiqc_files.collect(),
