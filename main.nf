@@ -29,10 +29,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+params.fasta   = getGenomeAttribute('fasta')
+params.gtf     = getGenomeAttribute('gtf')
+params.bwa     = getGenomeAttribute('bwa')
+params.star    = getGenomeAttribute('star')
+params.bowtie  = getGenomeAttribute('bowtie')
+params.bowtie2 = getGenomeAttribute('bowtie2')
+params.mature  = getGenomeAttribute('mature')
+params.species = getGenomeAttribute('species_id')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,17 +48,17 @@ params.fasta = getGenomeAttribute('fasta')
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_CIRCRNA {
-
-    take:
-    samplesheet // channel: samplesheet read in from --input
-
     main:
 
+    ch_versions = Channel.empty()
+
     //
-    // WORKFLOW: Run pipeline
+    // WORKFLOW: Run nf-core/circrna workflow
     //
+    ch_samplesheet = Channel.value(file(params.input, checkIfExists: true))
     CIRCRNA (
-        samplesheet
+        ch_samplesheet,
+        ch_versions
     )
 
     emit:
@@ -87,9 +91,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_CIRCRNA (
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
+    NFCORE_CIRCRNA ()
 
     //
     // SUBWORKFLOW: Run completion tasks

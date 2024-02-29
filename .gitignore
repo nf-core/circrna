@@ -6,3 +6,6 @@ results/
 testing/
 testing*
 *.pyc
+test_outdir/
+nf-*
+!modules/*

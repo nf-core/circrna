@@ -1,0 +1,78 @@
+{
+    "test_cat_fastq_single_end": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "test",
+                        "single_end": true
+                    },
+                    "test.merged.fastq.gz:md5,3ad9406595fafec8172368f9cd0b6a22"
+                ]
+            ]
+        ],
+        "timestamp": "2024-01-12T14:02:54.278243"
+    },
+    "test_cat_fastq_single_end_same_name": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "test",
+                        "single_end": true
+                    },
+                    "test.merged.fastq.gz:md5,3ad9406595fafec8172368f9cd0b6a22"
+                ]
+            ]
+        ],
+        "timestamp": "2024-01-12T14:03:01.765432"
+    },
+    "test_cat_fastq_single_end_single_file": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "test",
+                        "single_end": true
+                    },
+                    "test.merged.fastq.gz:md5,4161df271f9bfcd25d5845a1e220dbec"
+                ]
+            ]
+        ],
+        "timestamp": "2024-01-12T14:03:08.858654"
+    },
+    "test_cat_fastq_paired_end_same_name": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "test",
+                        "single_end": false
+                    },
+                    [
+                        "test_1.merged.fastq.gz:md5,3ad9406595fafec8172368f9cd0b6a22",
+                        "test_2.merged.fastq.gz:md5,a52cab0b840c7178b0ea83df1fdbe8d5"
+                    ]
+                ]
+            ]
+        ],
+        "timestamp": "2024-01-12T14:03:05.494631"
+    },
+    "test_cat_fastq_paired_end": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "test",
+                        "single_end": false
+                    },
+                    [
+                        "test_1.merged.fastq.gz:md5,3ad9406595fafec8172368f9cd0b6a22",
+                        "test_2.merged.fastq.gz:md5,a52cab0b840c7178b0ea83df1fdbe8d5"
+                    ]
+                ]
+            ]
+        ],
+        "timestamp": "2024-01-12T14:02:58.35062"
+    }
+}
