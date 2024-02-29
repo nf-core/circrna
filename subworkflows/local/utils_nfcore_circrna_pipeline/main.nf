@@ -190,7 +190,20 @@ def genomeExistsError() {
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         error(error_string)
     }
-}//
+}
+
+def moduleExistsError() {
+    if (params.module && !checkParameterList(params.module, defineModuleList())) {
+        def error_string = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+            "  Module '${params.modules.join(", ")}' not found in the pipeline.\n" +
+            "  Currently, the available modules are:\n" +
+            "  ${defineModuleList().join(", ")}\n" +
+            "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        error(error_string)
+    }
+}
+
+//
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
@@ -244,4 +257,24 @@ def methodsDescriptionText(mqc_methods_yaml) {
     def description_html = engine.createTemplate(methods_text).make(meta)
 
     return description_html.toString()
+}
+
+def defineModuleList() {
+    return [
+    'circrna_discovery',
+    'mirna_prediction',
+    'differential_expression'
+    ]
+}
+
+def checkParameterExistence(it, list) {
+    if (!list.contains(it)) {
+        log.warn "Unknown parameter: ${it}"
+        return false
+    }
+    return true
+}
+
+def checkParameterList(list, realList) {
+    return list.every{ checkParameterExistence(it, realList) }
 }

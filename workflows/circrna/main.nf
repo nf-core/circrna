@@ -4,52 +4,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
-
-def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
-def summary_params = paramsSummaryMap(workflow)
-
-// Print parameter summary log to screen
-log.info logo + paramsSummaryLog(workflow) + citation
-
-WorkflowCircrna.initialise(params, log)
-
-// Check modules paramater
-def checkParameterExistence(it, list) {
-    if (!list.contains(it)) {
-        log.warn "Unknown parameter: ${it}"
-        return false
-    }
-    return true
-}
-
-def checkParameterList(list, realList) {
-    return list.every{ checkParameterExistence(it, realList) }
-}
-
-def defineModuleList() {
-    return [
-    'circrna_discovery',
-    'mirna_prediction',
-    'differential_expression'
-    ]
-}
-
-moduleList = defineModuleList()
-module = params.module ? params.module.split(',').collect{it.trim().toLowerCase()} : []
-if(!checkParameterList(module, moduleList)) {
-    log.error "error: Unknown module selected, please choose one of the following:\n\n  circrna_discovery\n\n  mirna_prediction\n\n  differential_expression\n\nPlease refer to the help documentation for a description of each module."
-    System.exit(1)
-}
-
-// Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config ]
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-
 ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
 ch_fasta       = params.fasta ? file(params.fasta) : 'null'
 ch_gtf         = params.gtf ? file(params.gtf) : 'null'
@@ -73,11 +27,12 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 */
 
 // SUBWORKFLOWS:
-include { INPUT_CHECK       } from '../subworkflows/local/input_check'
-include { PREPARE_GENOME    } from '../subworkflows/local/prepare_genome'
-include { CIRCRNA_DISCOVERY } from '../subworkflows/local/circrna_discovery'
-include { MIRNA_PREDICTION  } from '../subworkflows/local/mirna_prediction'
-include { DIFFERENTIAL_EXPRESSION } from '../subworkflows/local/differential_expression'
+include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
+include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
+include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
+include { DIFFERENTIAL_EXPRESSION          } from '../../subworkflows/local/differential_expression'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,12 +41,11 @@ include { DIFFERENTIAL_EXPRESSION } from '../subworkflows/local/differential_exp
 */
 
 // MODULES:
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+include { MULTIQC                     } from '../../modules/nf-core/multiqc/main'
+include { CAT_FASTQ                   } from '../../modules/nf-core/cat/fastq/main'
 
 // SUBWORKFLOWS:
-include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
+include { FASTQC_TRIMGALORE } from '../../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -99,38 +53,26 @@ include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 */
 
 workflow CIRCRNA {
+    take:
+    ch_samplesheet
+    ch_versions
 
-    ch_reports  = Channel.empty()
-    ch_versions = Channel.empty()
+    main:
 
     //
     // 1. Pre-processing
     //
 
     // SUBWORKFLOW:
-    // Validate input samplesheet & phenotype file
-    INPUT_CHECK (
-        ch_input,
-        ch_phenotype
-    )
-    .reads
-    .map {
-        meta, fastq ->
-            meta.id = meta.id.split('_')[0..-2].join('_')
-            [ meta, fastq ] }
-    .groupTuple(by: [0])
-    .branch {
-        meta, fastq ->
-            single  : fastq.size() == 1
-                return [ meta, fastq.flatten() ]
-            multiple: fastq.size() > 1
-                return [ meta, fastq.flatten() ]
-    }
-    .set { ch_fastq }
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
+    ch_samplesheet
+        .branch {
+            meta, fastq ->
+                single  : fastq.size() == 1
+                    return [ meta, fastq.flatten() ]
+                multiple: fastq.size() > 1
+                    return [ meta, fastq.flatten() ]
+        }
+        .set { ch_fastq }
 
     // MODULE:
     // Concatenate FastQ files from same sample if required

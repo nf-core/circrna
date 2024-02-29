@@ -29,14 +29,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta   = WorkflowMain.getGenomeAttribute(params, 'fasta')
-params.gtf     = WorkflowMain.getGenomeAttribute(params, 'gtf')
-params.bwa     = WorkflowMain.getGenomeAttribute(params, 'bwa')
-params.star    = WorkflowMain.getGenomeAttribute(params, 'star')
-params.bowtie  = WorkflowMain.getGenomeAttribute(params, 'bowtie')
-params.bowtie2 = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
-params.mature  = WorkflowMain.getGenomeAttribute(params, 'mature')
-params.species = WorkflowMain.getGenomeAttribute(params, 'species_id')
+params.fasta   = getGenomeAttribute('fasta')
+params.gtf     = getGenomeAttribute('gtf')
+params.bwa     = getGenomeAttribute('bwa')
+params.star    = getGenomeAttribute('star')
+params.bowtie  = getGenomeAttribute('bowtie')
+params.bowtie2 = getGenomeAttribute('bowtie2')
+params.mature  = getGenomeAttribute('mature')
+params.species = getGenomeAttribute('species_id')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
