@@ -83,7 +83,7 @@ workflow CIRCRNA {
         .map {
             validateInputSamplesheet(it)
         }
-               .map {
+        .map {
             meta, fastqs ->
                 return [ meta, fastqs.flatten() ]
         }
