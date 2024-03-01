@@ -28,7 +28,7 @@ attributes = ['gene_id', 'transcript_id']
 
 exon_boundary = args.exon_boundary
 
-df = pd.read_csv(args.input, sep="\\t", header=None, usecols=columns.keys())
+df = pd.read_csv(args.input, sep="\t", header=None, usecols=columns.keys())
 df = df.rename(columns=columns)
 
 # Extract circRNAs without match
@@ -94,4 +94,4 @@ df = pd.concat([df, df_intergenic], axis=0)
 # Sort by chr, start, end
 df = df.sort_values(['chr', 'start', 'end'])
 
-df.to_csv(args.output, sep='\\t', index=False, header=False)
+df.to_csv(args.output, sep='\t', index=False, header=False)
