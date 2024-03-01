@@ -17,7 +17,7 @@ process ANNOTATION {
 
     script:
     """
-    ./annotation.py --input ${intersection} --exon_boundary ${exon_boundary} --output ${meta.id}.annotation.bed
+    annotation.py --input ${intersection} --exon_boundary ${exon_boundary} --output ${meta.id}.annotation.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
