@@ -6,6 +6,7 @@ include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extract
 include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build/main'
 include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate/main'
 include { SEGEMEHL_INDEX      } from '../../modules/nf-core/segemehl/index/main'
+include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk/main'
 
 workflow PREPARE_GENOME {
 
@@ -16,7 +17,22 @@ workflow PREPARE_GENOME {
     main:
     ch_versions = Channel.empty()
 
-    ch_fasta = Channel.fromPath(fasta)
+    // MapSplice cannot deal with extra field in the fasta headers
+    // this removes all additional fields in the headers of the input fasta file
+    if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
+
+        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + ".clean_headers" ], fasta]), [])
+
+        ch_fasta = CLEAN_FASTA.out.output.map{ it.last() }
+    }
+
+    else {
+
+        ch_fasta = Channel.fromPath(fasta)
+
+    }
+
+
     ch_gtf   = Channel.fromPath(gtf)
     fasta_tuple = Channel.value([[id: "fasta"], fasta])
     gtf_tuple = Channel.value([[id: "gtf"], gtf])
