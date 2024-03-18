@@ -1,4 +1,4 @@
-
+include { SEQKIT_SPLIT        } from '../../modules/local/seqkit/split/main'
 include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build/main'
 include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build/main'
 include { BWA_INDEX           } from '../../modules/nf-core/bwa/index/main'
@@ -24,22 +24,7 @@ workflow PREPARE_GENOME {
         ch_fasta = CLEAN_FASTA.out.output
     }
 
-    // MapSplice & find_circ requires reference genome to be split per chromosome:
-    if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
-        directory = file("${params.outdir}/references/chromosomes")
-
-        if ( !directory.exists() ) {
-            directory.mkdirs()
-            ch_fasta.map{meta, fasta -> fasta}.splitFasta( record: [id:true] )
-                .map{ record -> record.id.toString() }
-                .set{ ID }
-
-            ch_fasta.map{meta, fasta -> fasta}.splitFasta( file: true )
-                .merge( ID ).map{ file, id -> file.copyTo(directory + "/${id}.fa") }
-        }
-
-        stage_chromosomes = Channel.value(directory)
-    }
+    SEQKIT_SPLIT(ch_fasta)
 
     BOWTIE_BUILD(ch_fasta.map{ meta, fasta -> fasta })
 
@@ -68,7 +53,7 @@ workflow PREPARE_GENOME {
     bowtie       = BOWTIE_BUILD.out.index
     bowtie2      = BOWTIE2_BUILD.out.index
     bwa          = BWA_INDEX.out.index
-    chromosomes  = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
+    chromosomes  = SEQKIT_SPLIT.out.split
     hisat2       = HISAT2_BUILD.out.index.collect()
     star         = STAR_GENOMEGENERATE.out.index.collect()
     segemehl     = SEGEMEHL_INDEX.out.index
