@@ -12,8 +12,8 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     take:
     reads
-    gtf
-    fasta
+    ch_gtf
+    ch_fasta
     hisat2_index
     splice_sites
     phenotype
@@ -25,22 +25,17 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     main:
     ch_versions = Channel.empty()
-    qc_reports = Channel.empty()
-    ch_fasta = Channel.fromPath(fasta)
-    ch_gtf   = Channel.fromPath(gtf)
+    qc_reports  = Channel.empty()
 
-    ch_fasta.map{ it -> [ [id: it.simpleName], [it] ]
-    }.set{ fasta_tuple }
-
-    ch_gtf.map{ it -> [ [id: it.simpleName], [it] ]
-    }.set{ gtf_tuple }
+    fasta       = ch_fasta.map{ meta, fasta -> fasta }
+    gtf         = ch_gtf.map{ meta, gtf -> gtf }
 
     //
     // LINEAR RNA ALIGNEMT WORKFLOW:
     //
 
     HISAT2_ALIGN( reads, hisat2_index, splice_sites )
-    BAM_SORT_STATS_SAMTOOLS( HISAT2_ALIGN.out.bam, fasta_tuple )
+    BAM_SORT_STATS_SAMTOOLS( HISAT2_ALIGN.out.bam, ch_fasta )
     STRINGTIE_STRINGTIE( BAM_SORT_STATS_SAMTOOLS.out.bam, gtf )
     STRINGTIE_PREPDE( STRINGTIE_STRINGTIE.out.transcript_gtf.map{ meta, gtf -> return [ gtf ] }.collect() )
 

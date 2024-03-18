@@ -4,11 +4,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
-ch_fasta       = params.fasta ? file(params.fasta) : 'null'
-ch_gtf         = params.gtf ? file(params.gtf) : 'null'
-ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : Channel.empty()
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
@@ -58,6 +53,10 @@ include { FASTQC_TRIMGALORE } from '../../subworkflows/nf-core/fastqc_trimgalore
 workflow CIRCRNA {
     take:
     ch_samplesheet
+    ch_phenotype
+    ch_fasta
+    ch_gtf
+    ch_mature
     ch_versions
 
     main:
@@ -69,8 +68,7 @@ workflow CIRCRNA {
     //
 
     // SUBWORKFLOW:
-    Channel
-        .fromSamplesheet("input")
+    ch_samplesheet
         .map {
             meta, fastq_1, fastq_2 ->
                 if (!fastq_2) {
@@ -98,13 +96,11 @@ workflow CIRCRNA {
 
     // MODULE:
     // Concatenate FastQ files from same sample if required
-    CAT_FASTQ (
-        ch_fastq.multiple
-    )
-    .reads
-    .mix(ch_fastq.single)
-    .set { ch_cat_fastq }
-    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first().ifEmpty(null))
+    CAT_FASTQ (ch_fastq.multiple)
+        .reads
+        .mix(ch_fastq.single)
+        .set { ch_cat_fastq }
+    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
 
     // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.

@@ -11,8 +11,8 @@ include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk/main'
 workflow PREPARE_GENOME {
 
     take:
-    fasta
-    gtf
+    ch_fasta
+    ch_gtf
 
     main:
     ch_versions = Channel.empty()
@@ -20,22 +20,9 @@ workflow PREPARE_GENOME {
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
     if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
-
-        CLEAN_FASTA(Channel.value([[id: "${fasta.baseName}" + ".clean_headers" ], fasta]), [])
-
-        ch_fasta = CLEAN_FASTA.out.output.map{ it.last() }
+        CLEAN_FASTA(ch_fasta, [])
+        ch_fasta = CLEAN_FASTA.out.output
     }
-
-    else {
-
-        ch_fasta = Channel.fromPath(fasta)
-
-    }
-
-
-    ch_gtf   = Channel.fromPath(gtf)
-    fasta_tuple = Channel.value([[id: "fasta"], fasta])
-    gtf_tuple = Channel.value([[id: "gtf"], gtf])
 
     // MapSplice & find_circ requires reference genome to be split per chromosome:
     if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
@@ -43,30 +30,30 @@ workflow PREPARE_GENOME {
 
         if ( !directory.exists() ) {
             directory.mkdirs()
-            ch_fasta.splitFasta( record: [id:true] )
+            ch_fasta.map{meta, fasta -> fasta}.splitFasta( record: [id:true] )
                 .map{ record -> record.id.toString() }
                 .set{ ID }
 
-            ch_fasta.splitFasta( file: true )
+            ch_fasta.map{meta, fasta -> fasta}.splitFasta( file: true )
                 .merge( ID ).map{ file, id -> file.copyTo(directory + "/${id}.fa") }
         }
 
         stage_chromosomes = Channel.value(directory)
     }
 
-    BOWTIE_BUILD(ch_fasta)
+    BOWTIE_BUILD(ch_fasta.map{ meta, fasta -> fasta })
 
-    BOWTIE2_BUILD(fasta_tuple)
+    BOWTIE2_BUILD(ch_fasta)
 
-    BWA_INDEX (fasta_tuple)
+    BWA_INDEX (ch_fasta)
 
-    HISAT2_EXTRACTSPLICESITES(gtf_tuple)
+    HISAT2_EXTRACTSPLICESITES(ch_gtf)
 
-    HISAT2_BUILD(fasta_tuple, gtf_tuple, HISAT2_EXTRACTSPLICESITES.out.txt)
+    HISAT2_BUILD(ch_fasta, ch_gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
 
-    STAR_GENOMEGENERATE(fasta_tuple, gtf_tuple)
+    STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
 
-    SEGEMEHL_INDEX(fasta)
+    SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
 
     // Collect versions
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)

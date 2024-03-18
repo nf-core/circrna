@@ -55,9 +55,18 @@ workflow NFCORE_CIRCRNA {
     //
     // WORKFLOW: Run nf-core/circrna workflow
     //
-    ch_samplesheet = Channel.value(file(params.input, checkIfExists: true))
+    ch_samplesheet = Channel.fromSamplesheet("input")
+    ch_phenotype   = Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists:true)])
+    ch_fasta       = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists:true)])
+    ch_gtf         = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists:true)])
+    ch_mature      = Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)])
+
     CIRCRNA (
         ch_samplesheet,
+        ch_phenotype,
+        ch_fasta,
+        ch_gtf,
+        ch_mature,
         ch_versions
     )
 
