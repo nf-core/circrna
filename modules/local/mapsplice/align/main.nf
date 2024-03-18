@@ -10,7 +10,7 @@ process MAPSPLICE_ALIGN {
     input:
     tuple val(meta), path(reads)
     path bowtie_index
-    path chromosomes
+    tuple val(meta2), path(chromosomes, stageAs: 'chromosomes/*')
     path gtf
 
     output:
@@ -32,7 +32,7 @@ process MAPSPLICE_ALIGN {
         $handleGzip_R1
 
         mapsplice.py \\
-            -c $chromosomes \\
+            -c chromosomes \\
             -x $gtf_prefix \\
             -1 ${read1} \\
             -p ${task.cpus} \\
@@ -46,7 +46,7 @@ process MAPSPLICE_ALIGN {
             mapsplice: $VERSION
         END_VERSIONS
         """
-    }else{
+    } else {
         def handleGzip_R1 = reads[0].getExtension() == 'gz' ? "gzip -d -f ${reads[0]}" : ''
         def handleGzip_R2 = reads[1].getExtension() == 'gz' ? "gzip -d -f ${reads[1]}" : ''
         def read1 = reads[0].getExtension() == 'gz' ? reads[0].toString() - ~/.gz/ : reads[0]
@@ -56,7 +56,7 @@ process MAPSPLICE_ALIGN {
         $handleGzip_R2
 
         mapsplice.py \\
-            -c $chromosomes \\
+            -c chromosomes \\
             -x $gtf_prefix \\
             -1 ${read1} \\
             -2 ${read2} \\
