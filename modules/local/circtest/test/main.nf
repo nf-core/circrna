@@ -9,7 +9,7 @@ process CIRCTEST {
     input:
     path(circ_csv)
     path(linear_csv)
-    path(phenotype)
+    tuple val(meta), path(phenotype)
 
     output:
     path "*"           , emit: results
