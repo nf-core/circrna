@@ -8,7 +8,7 @@ workflow MIRNA_PREDICTION{
     take:
     circrna_fasta
     circrna_bed12
-    mature
+    ch_mature
 
     main:
     ch_versions = Channel.empty()
@@ -17,7 +17,7 @@ workflow MIRNA_PREDICTION{
     // TARGETSCAN WORKFLOW:
     //
 
-    TARGETSCAN_DATABASE( mature )
+    TARGETSCAN_DATABASE( ch_mature )
     TARGETSCAN( circrna_fasta, TARGETSCAN_DATABASE.out.mature_txt )
 
     ch_versions = ch_versions.mix(TARGETSCAN_DATABASE.out.versions)
@@ -27,7 +27,7 @@ workflow MIRNA_PREDICTION{
     // MIRANDA WORKFLOW:
     //
 
-    MIRANDA( circrna_fasta, mature )
+    MIRANDA( circrna_fasta, ch_mature.map{meta, mature -> mature} )
 
     ch_versions = ch_versions.mix(MIRANDA.out.versions)
 
