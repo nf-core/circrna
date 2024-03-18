@@ -141,7 +141,7 @@ workflow CIRCRNA_DISCOVERY {
 
     // only need path to bwa, only need path to hisat2.
     // do not want to upset the collect declr for all indices just for this.
-    CIRIQUANT_YML( gtf, fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
+    CIRIQUANT_YML( ch_gtf, ch_fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
     CIRIQUANT( reads, CIRIQUANT_YML.out.yml.collect() )
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 

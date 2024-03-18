@@ -7,8 +7,8 @@ process CIRIQUANT_YML {
         'quay.io/biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
 
     input:
-    path gtf
-    path fasta
+    tuple val(meta), path(gtf)
+    tuple val(meta2), path(fasta)
     path bwa
     path hisat2
 
@@ -19,7 +19,7 @@ process CIRIQUANT_YML {
     task.ext.when == null || task.ext.when
 
     script:
-    hisat2_prefix = fasta.toString() - ~/.(fa|fasta)$/
+    hisat2_prefix = meta2.id
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
