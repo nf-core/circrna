@@ -1,5 +1,7 @@
 
 include { ANNOTATION                                     } from '../../modules/local/annotation/full_annotation/main'
+include { GNU_SORT as COMBINE_ANNOTATIONS                } from '../../modules/nf-core/gnu/sort/main'
+include { GAWK as REMOVE_SCORE                           } from '../../modules/nf-core/gawk/main'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect/main'
 include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN               } from '../../modules/nf-core/bowtie2/align/main'
 include { SAMTOOLS_VIEW                                  } from '../../modules/nf-core/samtools/view/main'
@@ -215,6 +217,8 @@ workflow CIRCRNA_DISCOVERY {
 
     INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
     ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
+    COMBINE_ANNOTATIONS(ANNOTATION.out.bed.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
+    REMOVE_SCORE( COMBINE_ANNOTATIONS.out.sorted, [])
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
