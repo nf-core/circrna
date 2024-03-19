@@ -245,7 +245,7 @@ workflow CIRCRNA_DISCOVERY {
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
-    MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(), 
+    MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
 
     COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )

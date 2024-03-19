@@ -17,7 +17,7 @@ df = pd.concat(dfs)
 
 df['tool_count'] = 1
 
-df = df.groupby(['chr', 'start', 'end', 'strand']).agg({'count': args.duplicates_fun, 
+df = df.groupby(['chr', 'start', 'end', 'strand']).agg({'count': args.duplicates_fun,
                                                         'tool_count': 'sum'}).reset_index()
 df = df[df['tool_count'] >= args.tool_filter]
 
