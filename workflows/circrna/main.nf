@@ -157,7 +157,8 @@ workflow CIRCRNA {
         ch_gtf,
         ch_fasta,
         CIRCRNA_DISCOVERY.out.counts_bed,
-        FASTQC_TRIMGALORE.out.reads
+        FASTQC_TRIMGALORE.out.reads,
+        CIRCRNA_DISCOVERY.out.annotation
     )
 
     //
