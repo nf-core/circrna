@@ -1,42 +1,38 @@
-process EXTRACT_TRANSCRIPTOME {
+process TRANSCRIPTOME {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_low'
 
-    conda "bioconda::pandas=1.5.2"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pandas:1.5.2' :
-        'quay.io/biocontainers/pandas:1.5.2' }"
+        'https://depot.galaxyproject.org/singularity/gffread:0.12.1--h8b12597_0' :
+        'biocontainers/gffread:0.12.1--h8b12597_0' }"
 
     input:
-    tuple val(meta), path(gtf)
+    tuple val(meta), path(gff)
+    tuple val(meta2), path(genome)
 
     output:
-    tuple val(meta), path("${meta.id}.transcriptome.bed"), emit: bed
+    tuple val(meta), path("$outfile"), emit: transcriptome
+    path "versions.yml"              , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
+    def args        = task.ext.args   ?: ''
+    def prefix      = task.ext.prefix ?: "${meta.id}"
+    def extension   = task.ext.extension ?: "fasta"
+    outfile         = "${prefix}.${extension}"
     """
-    #!/usr/bin/env python
+    gffread \\
+        -g $genome \\
+        -w $outfile \\
+        $args \\
+        $gff
 
-    import pandas as pd
-
-    columns = ["seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attributes"]
-
-    df = pd.read_csv("${gtf}", sep="\\t", comment="#", names=columns, header=None)
-
-    # Keep only transcript features
-    df = df[df['feature'] == 'transcript']
-
-    # Convert attributes to a dictionary
-    df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
-    
-    # Extract gene_id and transcript_id
-    df['gene_id'] = df['attributes'].apply(lambda row: row['gene_id'])
-    df['transcript_id'] = df['attributes'].apply(lambda row: row['transcript_id'])
-    df['name'] = df['gene_id'] + ":" + df['transcript_id']
-
-    # Format as bed
-    df = df[['seqname', 'start', 'end', 'name', 'score', 'strand']]
-
-    df.to_csv("${meta.id}.transcriptome.bed", sep="\\t", index=False, header=False)
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        gffread: \$(gffread --version 2>&1)
+    END_VERSIONS
     """
 }
