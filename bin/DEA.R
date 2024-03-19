@@ -69,9 +69,9 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
     circ <- read.table(circRNA, sep ="\t", header = T, stringsAsFactors=FALSE)
 
     # Merge circRNA genomic loci to ID
-    circ$circ <- with(circ, paste0(Chr, sep=":", Start, sep="-", Stop, sep=":", Strand))
+    circ$circ <- with(circ, paste0(chr, sep=":", start, sep="-", end, sep=":", strand))
     rownames(circ) <- circ$circ
-    circ <- subset(circ, select=-c(Chr, Start, Stop, Strand, circ))
+    circ <- subset(circ, select=-c(chr, start, end, strand, circ))
 
     # R converts '-' to '.' in colnames here and results in failures.
     # If you need to make this 'smarter' check that colnames contains '.',

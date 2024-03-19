@@ -30,7 +30,7 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
     tail -n +2 $phenotype | LC_COLLATE=C sort > sorted_pheno
     cat header sorted_pheno > tmp && rm phenotype.csv && mv tmp phenotype.csv
 
-    DEA.R -g $gene_matrix -p $phenotype -c $circrna_matrix -s $species -m ensembl_database_map.txt
+    DEA.R $gene_matrix $phenotype $circrna_matrix $species ensembl_database_map.txt
     mv boxplots/ circRNA/
     mv *.RData DESeq2_QC/
 
