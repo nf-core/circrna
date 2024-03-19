@@ -17,7 +17,7 @@
                     },
                     "bedtools/sort": {
                         "branch": "master",
-                        "git_sha": "575e1bc54b083fb15e7dd8b5fcc40bea60e8ce83",
+                        "git_sha": "571a5feac4c9ce0a8df0bc15b94230e7f3e8db47",
                         "installed_by": ["modules"]
                     },
                     "bowtie/align": {
@@ -32,7 +32,7 @@
                     },
                     "bowtie2/align": {
                         "branch": "master",
-                        "git_sha": "3c77ca9aac783e76c3614a06db3bfe4fef619bde",
+                        "git_sha": "0fe30831abbc2ed115e46e92330edf38f56edc3d",
                         "installed_by": ["modules"]
                     },
                     "bowtie2/build": {
