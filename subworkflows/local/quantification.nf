@@ -8,7 +8,8 @@ include { PSIRC_INDEX                                 } from '../../modules/loca
 include { PSIRC_QUANT                                 } from '../../modules/local/psirc/quant/main'
 include { CUSTOM_TX2GENE                              } from '../../modules/nf-core/custom/tx2gene/main'
 include { TXIMETA_TXIMPORT                            } from '../../modules/nf-core/tximeta/tximport/main'
-include { COMBINE_QUANTIFICATION                      } from '../../modules/local/quantification/combine_quantification/main'
+include { COMBINE_QUANTIFICATION as COMBINE_COUNTS    } from '../../modules/local/quantification/combine_quantification/main'
+include { COMBINE_QUANTIFICATION as COMBINE_TPM       } from '../../modules/local/quantification/combine_quantification/main'
 
 workflow QUANTIFICATION {
     take:
@@ -56,8 +57,14 @@ workflow QUANTIFICATION {
         ch_counts = TXIMETA_TXIMPORT.out.counts_gene
         ch_tpm = TXIMETA_TXIMPORT.out.tpm_gene
 
-        COMBINE_QUANTIFICATION(
+        COMBINE_COUNTS(
             ch_counts.map{meta, counts -> counts}.collect().map{[[id: "counts"], it]},
+            CUSTOM_TX2GENE.out.tx2gene,
+            circ_annotation
+        )
+
+        COMBINE_TPM(
+            ch_tpm.map{meta, tpm -> tpm}.collect().map{[[id: "tpm"], it]},
             CUSTOM_TX2GENE.out.tx2gene,
             circ_annotation
         )

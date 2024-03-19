@@ -14,6 +14,7 @@ process COMBINE_QUANTIFICATION {
     output:
     path("${meta.id}.linear.tsv")   , emit: linear
     path("${meta.id}.circular.tsv") , emit: circular
+    path("${meta.id}.combined.tsv") , emit: combined
     path "versions.yml"             , emit: versions
 
     script:
