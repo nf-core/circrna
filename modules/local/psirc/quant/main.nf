@@ -10,10 +10,16 @@ process PSIRC_QUANT {
 
     output:
     tuple val(meta), path("${meta.id}"), emit: directory
+    path "versions.yml"                , emit: versions
 
     script:
     def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
     """
     psirc-quant quant -t $task.cpus -i $index -o $meta.id $single_end $reads
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc-quant: $VERSION
+    END_VERSIONS
     """
 }
