@@ -27,4 +27,5 @@ df = df.fillna(0).astype(int)
 df.to_csv(args.out_bed, sep='\t')
 
 df.index = df.index.map(lambda x: f'{x[0]}:{x[1]}-{x[2]}:{x[3]}')
+df.index.name = 'ID'
 df.to_csv(args.out_tsv, sep='\t')
