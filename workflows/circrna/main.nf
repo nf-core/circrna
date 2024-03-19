@@ -156,7 +156,7 @@ workflow CIRCRNA {
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
-        CIRCRNA_DISCOVERY.out.dea_matrix,
+        CIRCRNA_DISCOVERY.out.counts_bed,
         FASTQC_TRIMGALORE.out.reads
     )
 
@@ -185,8 +185,8 @@ workflow CIRCRNA {
         hisat2_index,
         PREPARE_GENOME.out.splice_sites,
         ch_phenotype,
-        CIRCRNA_DISCOVERY.out.dea_matrix,
-        CIRCRNA_DISCOVERY.out.clr_matrix,
+        CIRCRNA_DISCOVERY.out.counts_bed,
+        CIRCRNA_DISCOVERY.out.counts_tsv,
         ch_species,
         ch_ensembl_database_map,
         params.exon_boundary
