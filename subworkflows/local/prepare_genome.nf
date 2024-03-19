@@ -42,12 +42,12 @@ workflow PREPARE_GENOME {
 
     // Collect versions
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions,
-                                  BOWTIE2_BUILD.out.versions,
-                                  BWA_INDEX.out.versions,
-                                  HISAT2_EXTRACTSPLICESITES.out.versions,
-                                  HISAT2_BUILD.out.versions,
-                                  SEGEMEHL_INDEX.out.versions,
-                                  STAR_GENOMEGENERATE.out.versions)
+                                    BOWTIE2_BUILD.out.versions,
+                                    BWA_INDEX.out.versions,
+                                    HISAT2_EXTRACTSPLICESITES.out.versions,
+                                    HISAT2_BUILD.out.versions,
+                                    SEGEMEHL_INDEX.out.versions,
+                                    STAR_GENOMEGENERATE.out.versions)
 
     emit:
     bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
