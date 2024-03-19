@@ -11,8 +11,8 @@ process COUNTS_SINGLE {
     tuple val(meta), path(bed)
 
     output:
-    path("circRNA_matrix.txt"), emit: dea_matrix
-    path("count_matrix.txt")  , emit: clr_matrix
+    path("circRNA_matrix.txt"), emit: counts_bed
+    path("count_matrix.txt")  , emit: counts_tsv
     path "versions.yml"       , emit: versions
 
     when:

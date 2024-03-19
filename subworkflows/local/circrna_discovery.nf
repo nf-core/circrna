@@ -244,31 +244,20 @@ workflow CIRCRNA_DISCOVERY {
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
-    if( tools_selected.size() > 1){
+    MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(), 
+                tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
 
-        MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(), tool_filter, duplicates_fun )
+    COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
-        COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
-
-        dea_matrix = COUNTS_COMBINED.out.dea_matrix
-        clr_matrix = COUNTS_COMBINED.out.clr_matrix
-        ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
-        ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
-
-    }else{
-
-        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> [ [tool: meta.tool], bed ] }.groupTuple() )
-
-        dea_matrix = COUNTS_SINGLE.out.dea_matrix
-        clr_matrix = COUNTS_SINGLE.out.clr_matrix
-        ch_versions = ch_versions.mix(COUNTS_SINGLE.out.versions)
-
-    }
+    counts_bed = COUNTS_COMBINED.out.counts_bed
+    counts_tsv = COUNTS_COMBINED.out.counts_tsv
+    ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
+    ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
     emit:
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     versions = ch_versions
-    dea_matrix
-    clr_matrix
+    counts_bed
+    counts_tsv
 }

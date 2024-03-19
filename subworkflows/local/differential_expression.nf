@@ -17,8 +17,8 @@ workflow DIFFERENTIAL_EXPRESSION {
     hisat2_index
     splice_sites
     phenotype
-    dea_matrix
-    clr_matrix
+    counts_bed
+    counts_tsv
     species
     ensembl_map
     exon_boundary
@@ -49,7 +49,7 @@ workflow DIFFERENTIAL_EXPRESSION {
     // Circular, Linear Differential Expression
     //
 
-    DESEQ2_DIFFERENTIAL_EXPRESSION( STRINGTIE_PREPDE.out.gene_matrix, phenotype, dea_matrix, species, ensembl_map )
+    DESEQ2_DIFFERENTIAL_EXPRESSION( STRINGTIE_PREPDE.out.gene_matrix, phenotype, counts_bed, species, ensembl_map )
 
     //
     // CircRNA - Host Gene Ratio tests
@@ -57,8 +57,8 @@ workflow DIFFERENTIAL_EXPRESSION {
 
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
-    PARENT_GENE( clr_matrix, gtf, ch_biotypes.collect(), exon_boundary )
-    PREPARE_CLR_TEST( STRINGTIE_PREPDE.out.gene_matrix, clr_matrix, PARENT_GENE.out.circ_host_map, gtf )
+    PARENT_GENE( counts_tsv, gtf, ch_biotypes.collect(), exon_boundary )
+    PREPARE_CLR_TEST( STRINGTIE_PREPDE.out.gene_matrix, counts_tsv, PARENT_GENE.out.circ_host_map, gtf )
     CIRCTEST( PREPARE_CLR_TEST.out.circular, PREPARE_CLR_TEST.out.linear, phenotype )
 
     ch_versions = ch_versions.mix(HISAT2_ALIGN.out.versions)
