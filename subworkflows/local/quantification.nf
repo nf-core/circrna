@@ -44,4 +44,10 @@ workflow QUANTIFICATION {
             "gene_id",
             "gene_name"
         )
+
+        TXIMETA_TXIMPORT(
+            PSIRC_QUANT.out.directory,
+            CUSTOM_TX2GENE.out.tx2gene,
+            "kallisto"
+        )
 }
