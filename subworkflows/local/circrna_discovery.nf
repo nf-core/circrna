@@ -32,7 +32,6 @@ include { MAPSPLICE_ALIGN                                } from '../../modules/l
 include { FASTA                                          } from '../../modules/local/fasta/main'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools/main'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined/main'
-include { COUNTS_SINGLE                                  } from '../../modules/local/count_matrix/single/main'
 include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REF   } from '../../modules/local/circexplorer2/reference/main'
 include { CIRCEXPLORER2_PARSE as CIRCEXPLORER2_PAR       } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as CIRCEXPLORER2_ANN    } from '../../modules/nf-core/circexplorer2/annotate/main'

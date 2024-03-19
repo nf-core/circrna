@@ -28,7 +28,7 @@ get_args <- function(){
             arg="circRNA",
             short="c",
             help="circRNA counts matrix",
-            default="circRNA_matrix.txt")
+            default="merged_counts.bed")
 
     argp <- add_argument(
             parser=argp,
@@ -57,7 +57,7 @@ giveError <- function(message){
     quit()
 }
 
-usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <circRNA_matrix.txt> <species id> <ensembl_map>")}
+usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <merged_counts.bed> <species id> <ensembl_map>")}
 
 
 stage_data <- function(gene_counts, phenotype, circRNA, species, map){
