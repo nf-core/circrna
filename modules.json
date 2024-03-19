@@ -85,6 +85,11 @@
                         "git_sha": "dc3527855e7358c6d8400828754c0caa5f11698f",
                         "installed_by": ["modules"]
                     },
+                    "gnu/sort": {
+                        "branch": "master",
+                        "git_sha": "ca199cfe5aa4f1ea3c41302158f0af2cfaa58957",
+                        "installed_by": ["modules"]
+                    },
                     "hisat2/align": {
                         "branch": "master",
                         "git_sha": "400037f54de4b0c42712ec5a499d9fd9e66250d1",
