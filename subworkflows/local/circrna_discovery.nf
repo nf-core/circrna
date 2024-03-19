@@ -120,11 +120,11 @@ workflow CIRCRNA_DISCOVERY {
     // FIND_CIRC WORKFLOW:
     //
 
-    FIND_CIRC_ALIGN( reads, bowtie2_index.collect(), false, true )
+    FIND_CIRC_ALIGN( reads, bowtie2_index, false, true )
     SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.aligned )
     SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
-    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta )
+    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index, fasta )
     find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
     FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
 
@@ -191,7 +191,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     MAPSPLICE_REFERENCE( gtf )
-    MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, gtf )
+    MAPSPLICE_ALIGN( reads, bowtie_index, chromosomes, gtf )
     MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
     MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
     mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> [ meta + [tool: "mapsplice"], txt ] }

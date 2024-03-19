@@ -19,7 +19,7 @@ workflow PREPARE_GENOME {
 
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
-    if( params.tool.contains('mapsplice') && params.module.contains('circrna_discovery') ) {
+    if( params.module.contains('circrna_discovery') && params.tool.contains('mapsplice') ) {
         CLEAN_FASTA(ch_fasta, [])
         ch_fasta = CLEAN_FASTA.out.output
     }
@@ -41,22 +41,23 @@ workflow PREPARE_GENOME {
     SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
 
     // Collect versions
-    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
-    ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
-    ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
-    ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
-    ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
-    ch_versions = ch_versions.mix(SEGEMEHL_INDEX.out.versions)
-    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
+    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions,
+                                  BOWTIE2_BUILD.out.versions,
+                                  BWA_INDEX.out.versions,
+                                  HISAT2_EXTRACTSPLICESITES.out.versions,
+                                  HISAT2_BUILD.out.versions,
+                                  SEGEMEHL_INDEX.out.versions,
+                                  STAR_GENOMEGENERATE.out.versions)
 
     emit:
-    bowtie       = BOWTIE_BUILD.out.index
-    bowtie2      = BOWTIE2_BUILD.out.index
-    bwa          = BWA_INDEX.out.index
+    bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
+    segemehl     = params.segemehl ?: SEGEMEHL_INDEX.out.index
+    bowtie2      = params.bowtie2  ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()
+    bwa          = params.bwa      ? Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])         : BWA_INDEX.out.index.collect()
+    hisat2       = params.hisat2   ? Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])   : HISAT2_BUILD.out.index.collect()
+    star         = params.star     ? Channel.value([[id: "star"], file(params.star, checkIfExists: true)])       : STAR_GENOMEGENERATE.out.index.collect()
     chromosomes  = SEQKIT_SPLIT.out.split
-    hisat2       = HISAT2_BUILD.out.index.collect()
-    star         = STAR_GENOMEGENERATE.out.index.collect()
-    segemehl     = SEGEMEHL_INDEX.out.index
     splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt.collect()
+
     versions     = ch_versions
 }
