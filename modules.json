@@ -75,6 +75,11 @@
                         "git_sha": "de45447d060b8c8b98575bc637a4a575fd0638e1",
                         "installed_by": ["modules"]
                     },
+                    "custom/tx2gene": {
+                        "branch": "master",
+                        "git_sha": "ec155021a9104441bf6a9bae3b55d1b5b0bfdb3a",
+                        "installed_by": ["modules"]
+                    },
                     "fastqc": {
                         "branch": "master",
                         "git_sha": "f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c",
@@ -173,6 +178,11 @@
                     "trimgalore": {
                         "branch": "master",
                         "git_sha": "a98418419ae6c9df3cf6cf108d1e1aba71037d5a",
+                        "installed_by": ["modules"]
+                    },
+                    "tximeta/tximport": {
+                        "branch": "master",
+                        "git_sha": "c275c3baac6df8f0c7c500760a0cf014ce7b525d",
                         "installed_by": ["modules"]
                     }
                 }
