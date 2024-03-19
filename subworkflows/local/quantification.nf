@@ -49,7 +49,7 @@ workflow QUANTIFICATION {
     )
 
     PSIRC_INDEX(MARK_CIRCULAR.out.output)
-    PSIRC_QUANT(reads, PSIRC_INDEX.out.collect())
+    PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect())
 
     CUSTOM_TX2GENE(
         ch_gtf,
