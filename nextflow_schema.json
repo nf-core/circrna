@@ -212,7 +212,7 @@
                     "fa_icon": "fas fa-wheelchair",
                     "default": null
                 },
-                "species": {
+                "species_id": {
                     "type": "string",
                     "fa_icon": "fas fa-dog",
                     "description": "String identifying species.",

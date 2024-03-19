@@ -57,6 +57,7 @@ workflow CIRCRNA {
     ch_fasta
     ch_gtf
     ch_mature
+    ch_species
     ch_versions
 
     main:
@@ -179,7 +180,7 @@ workflow CIRCRNA {
         ch_phenotype,
         CIRCRNA_DISCOVERY.out.dea_matrix,
         CIRCRNA_DISCOVERY.out.clr_matrix,
-        params.species,
+        ch_species,
         ch_ensembl_database_map,
         params.exon_boundary
     )

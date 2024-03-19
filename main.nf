@@ -29,14 +29,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta   = getGenomeAttribute('fasta')
-params.gtf     = getGenomeAttribute('gtf')
-params.bwa     = getGenomeAttribute('bwa')
-params.star    = getGenomeAttribute('star')
-params.bowtie  = getGenomeAttribute('bowtie')
-params.bowtie2 = getGenomeAttribute('bowtie2')
-params.mature  = getGenomeAttribute('mature')
-params.species = getGenomeAttribute('species_id')
+params.fasta      = getGenomeAttribute('fasta')
+params.gtf        = getGenomeAttribute('gtf')
+params.bwa        = getGenomeAttribute('bwa')
+params.star       = getGenomeAttribute('star')
+params.bowtie     = getGenomeAttribute('bowtie')
+params.bowtie2    = getGenomeAttribute('bowtie2')
+params.mature     = getGenomeAttribute('mature')
+params.species_id = getGenomeAttribute('species_id')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,6 +60,7 @@ workflow NFCORE_CIRCRNA {
     ch_fasta       = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists:true)])
     ch_gtf         = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists:true)])
     ch_mature      = Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)])
+    ch_species     = Channel.value(params.species_id)
 
     CIRCRNA (
         ch_samplesheet,
@@ -67,6 +68,7 @@ workflow NFCORE_CIRCRNA {
         ch_fasta,
         ch_gtf,
         ch_mature,
+        ch_species,
         ch_versions
     )
 
