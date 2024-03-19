@@ -14,6 +14,7 @@ process PSIRC_QUANT {
 
     script:
     def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
+    def VERSION = '1.0'
     """
     psirc-quant quant -t $task.cpus -i $index -o $meta.id $single_end $reads
 
