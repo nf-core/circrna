@@ -10,8 +10,13 @@ process PSIRC_COMBINE {
     path(files)
 
     output:
-    path("counts.tsv"), emit: est_counts
-    path("tpm.tsv"), emit: tpm
+    path("linear_counts.tsv"),   emit: linear_counts
+    path("circular_counts.tsv"), emit: circular_counts
+    path("counts.tsv"),          emit: counts
+
+    path("linear_tpm.tsv"),      emit: linear_tpm
+    path("circular_tpm.tsv"),    emit: circular_tpm
+    path("tpm.tsv"),             emit: tpm
 
 
     script:
@@ -33,7 +38,13 @@ process PSIRC_COMBINE {
         counts_df[sample_name] = df["est_counts"]
         tpm_df[sample_name] = df["tpm"]
 
-    counts_df.to_csv("counts.tsv", sep="\\t")
-    tpm_df.to_csv("tpm.tsv", sep="\\t")
+    for name, df in [("counts", counts_df), ("tpm", tpm_df)]:
+        is_linear = df.index.str.startswith("ENS")
+        linear_df = df[is_linear]
+        circular_df = df[~is_linear]
+
+        linear_df.to_csv(f"linear_{name}.tsv", sep="\\t")
+        circular_df.to_csv(f"circular_{name}.tsv", sep="\\t")
+        df.to_csv(f"{name}.tsv", sep="\\t")
     """
 }
