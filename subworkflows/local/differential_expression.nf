@@ -1,5 +1,4 @@
 include { HISAT2_ALIGN              } from '../../modules/nf-core/hisat2/align/main'
-include { SAMTOOLS_SORT             } from '../../modules/nf-core/samtools/sort/main'
 include { STRINGTIE_STRINGTIE       } from '../../modules/nf-core/stringtie/stringtie/main'
 include { STRINGTIE_PREPDE          } from '../../modules/local/stringtie/prepde/main'
 include { PARENT_GENE               } from '../../modules/local/annotation/parent_gene/main'
