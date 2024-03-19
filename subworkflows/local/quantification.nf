@@ -70,11 +70,11 @@ workflow QUANTIFICATION {
         )
 
     emit:
-    counts_linear = COMBINE_COUNTS.out.linear
+    counts_linear   = COMBINE_COUNTS.out.linear
     counts_circular = COMBINE_COUNTS.out.circular
     counts_combined = COMBINE_COUNTS.out.combined
 
-    tpm_linear = COMBINE_TPM.out.linear
-    tpm_circular = COMBINE_TPM.out.circular
-    tpm_combined = COMBINE_TPM.out.combined
+    tpm_linear      = COMBINE_TPM.out.linear
+    tpm_circular    = COMBINE_TPM.out.circular
+    tpm_combined    = COMBINE_TPM.out.combined
 }
