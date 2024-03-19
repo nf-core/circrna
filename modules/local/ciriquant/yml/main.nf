@@ -13,7 +13,8 @@ process CIRIQUANT_YML {
     path hisat2
 
     output:
-    path "travis.yml" , emit: yml
+    path "travis.yml",   emit: yml
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -36,5 +37,14 @@ process CIRIQUANT_YML {
 
     touch travis.yml
     printf "name: ciriquant\ntools:\n  bwa: \$BWA\n  hisat2: \$HISAT2\n  stringtie: \$STRINGTIE\n  samtools: \$SAMTOOLS\n\nreference:\n  fasta: ${fasta_path}\n  gtf: ${gtf_path}\n  bwa_index: ${bwa_path}/\$BWA_FILE\n  hisat_index: ${hisat2_path}/${hisat2_prefix}" >> travis.yml
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
+        ciriquant : \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
+        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        stringtie: \$(stringtie --version 2>&1)
+        hisat2: $VERSION
+    END_VERSIONS
     """
 }
