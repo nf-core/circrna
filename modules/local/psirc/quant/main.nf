@@ -1,6 +1,6 @@
 process PSIRC_QUANT {
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_high'
 
     container "registry.hub.docker.com/bigdatainbiomedicine/psirc"
 
