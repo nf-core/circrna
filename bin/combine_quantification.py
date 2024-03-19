@@ -14,8 +14,8 @@ parser.add_argument('--out_combined', type=str, help='Path to output combined qu
 
 args = parser.parse_args()
 
-df_annotation = pd.read_csv(args.circ_annotation, 
-                            sep='\t', header=None, 
+df_annotation = pd.read_csv(args.circ_annotation,
+                            sep='\t', header=None,
                             names=['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene', 'transcript'],
                             index_col=['name'])
 
