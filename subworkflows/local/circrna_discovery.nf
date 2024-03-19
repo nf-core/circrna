@@ -118,9 +118,9 @@ workflow CIRCRNA_DISCOVERY {
     // FIND_CIRC WORKFLOW:
     //
 
-    FIND_CIRC_ALIGN( reads, bowtie2_index, false, true )
-    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.aligned )
-    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
+    FIND_CIRC_ALIGN( reads, bowtie2_index, ch_fasta, false, true )
+    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.bam )
+    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
     FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index, fasta )
     find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
