@@ -9,8 +9,6 @@ process PSIRC_QUANT {
     tuple val(meta2), path(index)
 
     output:
-    tuple val(meta), path("${meta.id}/abundance.tsv"), emit: abundance_tsv
-    tuple val(meta), path("${meta.id}/abundance.h5"), emit: abundance_h5
     tuple val(meta), path("${meta.id}"), emit: directory
 
     script:
