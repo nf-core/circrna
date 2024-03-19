@@ -17,9 +17,6 @@ include { SEGEMEHL_FILTER                                } from '../../modules/l
 include { STAR_ALIGN as STAR_1ST_PASS                    } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS                    } from '../../modules/nf-core/star/align/main'
 include { SJDB as STAR_SJDB                              } from '../../modules/local/star/sjdb/main'
-include { STAR_ALIGN as DCC_1ST_PASS                     } from '../../modules/nf-core/star/align/main'
-include { STAR_ALIGN as DCC_2ND_PASS                     } from '../../modules/nf-core/star/align/main'
-include { SJDB as DCC_SJDB                               } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS               } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB                         } from '../../modules/local/star/sjdb/main'
@@ -89,6 +86,7 @@ workflow CIRCRNA_DISCOVERY {
     STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(STAR_SJDB.out.versions)
     ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
 
     //
@@ -144,6 +142,7 @@ workflow CIRCRNA_DISCOVERY {
     CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 
+    ch_versions = ch_versions.mix(CIRIQUANT_YML.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT_FILTER.out.versions)
 
@@ -200,6 +199,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(MAPSPLICE_ALIGN.out.versions)
     ch_versions = ch_versions.mix(MAPSPLICE_PARSE.out.versions)
     ch_versions = ch_versions.mix(MAPSPLICE_ANNOTATE.out.versions)
+    ch_versions = ch_versions.mix(MAPSPLICE_FILTER.out.versions)
 
     //
     // ANNOTATION WORKFLOW:
@@ -221,6 +221,8 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATIONS.out.versions)
+    ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
 
     //
     // FASTA WORKFLOW:
@@ -257,7 +259,8 @@ workflow CIRCRNA_DISCOVERY {
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
     annotation = REMOVE_SCORE_STRAND.out.output
-    versions = ch_versions
     counts_bed
     counts_tsv
+
+    versions = ch_versions
 }

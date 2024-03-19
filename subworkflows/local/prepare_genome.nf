@@ -22,6 +22,8 @@ workflow PREPARE_GENOME {
     if( params.module.contains('circrna_discovery') && params.tool.contains('mapsplice') ) {
         CLEAN_FASTA(ch_fasta, [])
         ch_fasta = CLEAN_FASTA.out.output
+
+        ch_versions = ch_versions.mix(CLEAN_FASTA.out.versions)
     }
 
     SEQKIT_SPLIT(ch_fasta)
@@ -41,7 +43,8 @@ workflow PREPARE_GENOME {
     SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
 
     // Collect versions
-    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions,
+    ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions,
+                                    BOWTIE_BUILD.out.versions,
                                     BOWTIE2_BUILD.out.versions,
                                     BWA_INDEX.out.versions,
                                     HISAT2_EXTRACTSPLICESITES.out.versions,

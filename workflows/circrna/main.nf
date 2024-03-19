@@ -153,6 +153,10 @@ workflow CIRCRNA {
 
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
+    //
+    // 3. Quantification
+    //
+
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
@@ -161,8 +165,10 @@ workflow CIRCRNA {
         CIRCRNA_DISCOVERY.out.annotation
     )
 
+    ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
+
     //
-    // 3. miRNA prediction
+    // 4. miRNA prediction
     //
 
     MIRNA_PREDICTION(
@@ -174,7 +180,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
 
     //
-    // 4. Differential expression tests
+    // 5. Differential expression tests
     //
 
     ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
