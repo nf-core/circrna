@@ -24,7 +24,7 @@ columns = {
     14: 'attributes'
 }
 
-attributes = ['gene_id', 'transcript_id']
+attributes = ['gene_name', 'transcript_id']
 
 exon_boundary = args.exon_boundary
 
@@ -36,7 +36,7 @@ mask = df['tx_start'] == -1
 df_intergenic = df[mask]
 df = df[~mask]
 df_intergenic['type'] = 'intergenic-circRNA'
-df_intergenic['gene_id'] = 'NaN'
+df_intergenic['gene_name'] = 'NaN'
 df_intergenic['transcript_id'] = 'NaN'
 
 # Convert attributes to a dictionary
@@ -55,7 +55,7 @@ df = df.drop(['any_outside', 'tx_start', 'tx_end'], axis=1)
 df = df.groupby(['chr', 'start', 'end', 'strand']).aggregate({
     'name': lambda x: x.iloc[0],
     'score': lambda x: x.iloc[0],
-    'gene_id': lambda x: list(x),
+    'gene_name': lambda x: list(x),
     'transcript_id': lambda x: list(x),
     'perfect': lambda x: list(x)
 })
@@ -78,14 +78,14 @@ def determine_type(row):
 
 df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
 df['type'] = df.apply(lambda row: determine_type(row), axis=1)
-df['gene_id'] = df.apply(lambda row: filter_perfect(row, 'gene_id'), axis=1)
+df['gene_name'] = df.apply(lambda row: filter_perfect(row, 'gene_name'), axis=1)
 df['transcript_id'] = df.apply(lambda row: filter_perfect(row, 'transcript_id'), axis=1)
 # Drop perfect
 df = df.drop(['perfect'], axis=1)
 
 df = df.reset_index()
 df_intergenic = df_intergenic.reset_index()
-bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_id', 'transcript_id']
+bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_name', 'transcript_id']
 df = df[bed_order]
 df_intergenic = df_intergenic[bed_order]
 
