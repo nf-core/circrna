@@ -1,4 +1,4 @@
-
+include { SEQKIT_SPLIT        } from '../../modules/local/seqkit/split/main'
 include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build/main'
 include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build/main'
 include { BWA_INDEX           } from '../../modules/nf-core/bwa/index/main'
@@ -6,86 +6,58 @@ include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extract
 include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build/main'
 include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate/main'
 include { SEGEMEHL_INDEX      } from '../../modules/nf-core/segemehl/index/main'
+include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk/main'
 
 workflow PREPARE_GENOME {
 
     take:
-    fasta
-    gtf
+    ch_fasta
+    ch_gtf
 
     main:
     ch_versions = Channel.empty()
 
-    ch_fasta = Channel.fromPath(fasta)
-
-    // MapSplice & find_circ requires reference genome to be split per chromosome:
-    if( ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) && params.module.contains('circrna_discovery') ){
-        file("${params.outdir}/genome/chromosomes").mkdirs()
-        ch_fasta.splitFasta( record: [id:true] )
-                .map{ record -> record.id.toString() }
-                .set{ ID }
-
-        ch_fasta.splitFasta( file: true )
-                .merge( ID ).map{ file, id -> file.copyTo("${params.outdir}/genome/chromosomes/${id}.fa") }
-
-    stage_chromosomes = Channel.value("${workflow.launchDir}/${params.outdir}/genome/chromosomes")
+    // MapSplice cannot deal with extra field in the fasta headers
+    // this removes all additional fields in the headers of the input fasta file
+    if( params.module.contains('circrna_discovery') && params.tool.contains('mapsplice') ) {
+        CLEAN_FASTA(ch_fasta, [])
+        ch_fasta = CLEAN_FASTA.out.output
     }
 
-    // some index procs use tuple, some dont -_-
-    ch_fasta.map{ it ->
-             meta = [:]
-             meta.id = it.simpleName
-             return [ meta, [it] ]
-    }.set{ fasta_tuple }
+    SEQKIT_SPLIT(ch_fasta)
 
-    BOWTIE_BUILD(
-        fasta
-    )
+    BOWTIE_BUILD(ch_fasta.map{ meta, fasta -> fasta })
 
-     BOWTIE2_BUILD(
-        fasta_tuple
-    )
+    BOWTIE2_BUILD(ch_fasta)
 
-    BWA_INDEX (
-        fasta_tuple
-    )
+    BWA_INDEX (ch_fasta)
 
-    HISAT2_EXTRACTSPLICESITES(
-        gtf
-    )
+    HISAT2_EXTRACTSPLICESITES(ch_gtf)
 
-    HISAT2_BUILD(
-        fasta,
-        gtf,
-        HISAT2_EXTRACTSPLICESITES.out.txt
-    )
+    HISAT2_BUILD(ch_fasta, ch_gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
 
-    STAR_GENOMEGENERATE(
-        fasta,
-        gtf
-    )
+    STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
 
-    SEGEMEHL_INDEX(
-        fasta
-    )
+    SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
 
     // Collect versions
-    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
-    ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
-    ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
-    ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
-    ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
-    ch_versions = ch_versions.mix(SEGEMEHL_INDEX.out.versions)
-    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
+    ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions,
+                                    BOWTIE2_BUILD.out.versions,
+                                    BWA_INDEX.out.versions,
+                                    HISAT2_EXTRACTSPLICESITES.out.versions,
+                                    HISAT2_BUILD.out.versions,
+                                    SEGEMEHL_INDEX.out.versions,
+                                    STAR_GENOMEGENERATE.out.versions)
 
     emit:
-    bowtie       = BOWTIE_BUILD.out.index
-    bowtie2      = BOWTIE2_BUILD.out.index
-    bwa          = BWA_INDEX.out.index
-    chromosomes  = ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? stage_chromosomes : 'null'
-    hisat2       = HISAT2_BUILD.out.index
-    star         = STAR_GENOMEGENERATE.out.index
-    segemehl     = SEGEMEHL_INDEX.out.index
-    splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
+    bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
+    segemehl     = params.segemehl ?: SEGEMEHL_INDEX.out.index
+    bowtie2      = params.bowtie2  ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()
+    bwa          = params.bwa      ? Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])         : BWA_INDEX.out.index.collect()
+    hisat2       = params.hisat2   ? Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])   : HISAT2_BUILD.out.index.collect()
+    star         = params.star     ? Channel.value([[id: "star"], file(params.star, checkIfExists: true)])       : STAR_GENOMEGENERATE.out.index.collect()
+    chromosomes  = SEQKIT_SPLIT.out.split
+    splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt.collect()
+
     versions     = ch_versions
 }

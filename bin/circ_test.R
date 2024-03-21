@@ -4,7 +4,11 @@ require(aod)
 require(plyr)
 require(ggplot2)
 
-# The CircTest devs never had containers in mind for their code. It is not published on any R channels, nor are there any stable releases on their github page. I have decided to take their source functions and roll with it instead.
+## CircTest functions
+## Package: CircTest (https://github.com/dieterich-lab/CircTest)
+## Version: 0.1.1
+## Author(s): Jun Cheng, Tobias Jakobi
+## License: GPL
 
 ## SUMMMARY
 
@@ -140,7 +144,6 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
             theme(legend.text=element_text(size=size)) +
             theme(plot.title = element_text(size=size)) +
             theme(axis.text.y = element_text(margin=margin(5,5,10,5,"pt")))+
-            #labs(list(title=paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep=""),x=x,y=y)) +
             ggtitle(paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
             ylab("circRNA/(circRNA + Linear RNA)") +
             xlab("Sample") +
@@ -179,7 +182,6 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
 Circ.lineplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=18,ncol=2,groupindicator1=NULL,groupindicator2=NULL,x='Conditions',y='Counts', circle_description = c(1:3), gene_column = None){
 
     require(ggplot2)
-    #require(Rmisc)
 
     if( !is.null(groupindicator1) & length(groupindicator1) != ncol(Circ)-length(circle_description) ){
         stop("If provided, the length of groupindicator1 should be equal to the number of samples.")
@@ -376,21 +378,16 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
                 # test models
                 a <- anova(fitNull,fitAlt)
                 p.value <- a@anova.table[,11][2]
-                # print(predict(fitAlt,testdat, se.fit=T))
                 p.val <- c( p.val, p.value )
-                # dir <- 1 # fitAlt@param[2][["group2"]]
-                # direction <- c(direction, dir)
         }
         message(paste(counter, "candidates processed in total"))
 
         Circ$direction <- direction
-        #names(Circ$direction ) <- c("direction")
         p.adj <- p.adjust(p.val,n=sum(!is.na(p.val)),'BH')
         # select significant ones
         sig_dat <- Circ[p.adj<=alpha    & !is.na(p.adj),]
         sig_ratios <- tmp_df[p.adj<=alpha    & !is.na(p.adj),]
         sig_p <- p.adj[p.adj<=alpha    & !is.na(p.adj)]
-        # direction <- direction[p.adj<=alpha    & !is.na(p.adj)]
 
         # sort by p-val
         sig_dat <- sig_dat[order(sig_p),]
@@ -404,9 +401,6 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
                 rownames(summary_table) <- rownames(sig_dat)
                 names(summary_table) <- c(names(sig_dat)[circle_description],"sig_p",names(sig_ratios)[circle_description])
         } else {
-                # summary_table <- cbind(CircCoordinates[rownames(sig_dat),],sig_p,sig_dat$direction)
-                # colnames(summary_table) <- c(colnames(CircCoordinates),"sig_p","direction")
-
                 summary_table <- cbind(CircCoordinates[rownames(sig_dat),],sig_p,sig_ratios)
                 colnames(summary_table) <- c(colnames(CircCoordinates),"sig_p",colnames(sig_ratios))
         }
@@ -420,7 +414,6 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
                             p.adj=p.adj,
                             sig_p=sig_p,
                             ratios=sig_ratios
-                            # direction=direction
                         )
                 )
 }

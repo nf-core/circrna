@@ -2,7 +2,7 @@ process FIND_CIRC_FILTER {
     tag "$meta.id"
     label "process_low"
 
-    conda (params.enable_conda ? "find_circ=1.2" : null)
+    conda "bioconda::find_circ=1.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/find_circ%3A1.2--hdfd78af_0' :
         'quay.io/biocontainers/find_circ:1.2--hdfd78af_0' }"
@@ -30,9 +30,9 @@ process FIND_CIRC_FILTER {
         maxlength.py 100000 \
         > ${prefix}.txt
 
-    tail -n +2 ${prefix}.txt | awk -v OFS="\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${prefix}_find_circ.bed
+    tail -n +2 ${prefix}.txt | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$6,\$5}' > ${prefix}_find_circ.bed
 
-    awk -v OFS="\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_find_circ.bed > ${prefix}_find_circ_circs.bed
+    awk -v OFS="\\t" '{print \$1, \$2, \$3, \$1":"\$2"-"\$3":"\$4, \$5, \$4}' ${prefix}_find_circ.bed > ${prefix}_find_circ_circs.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

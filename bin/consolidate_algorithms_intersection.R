@@ -1,4 +1,10 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
+
+## Script to consolidate circRNAs across multiple tools. Allow user
+## to apply 'max' or 'mean' aggregate function to those called by multiple
+## tools.
+## Author: Barry Digby
+## License: MIT
 
 get_args <- function(){
 
