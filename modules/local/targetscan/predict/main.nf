@@ -9,7 +9,7 @@ process TARGETSCAN {
 
     input:
     tuple val(meta), path(fasta)
-    path(mature_txt)
+    tuple val(meta2), path(mature_txt)
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: txt

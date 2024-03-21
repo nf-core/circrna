@@ -45,8 +45,8 @@ workflow CIRCRNA_DISCOVERY {
 
     take:
     reads
-    fasta
-    gtf
+    ch_fasta
+    ch_gtf
     bowtie_index
     bowtie2_index
     bwa_index
@@ -61,11 +61,8 @@ workflow CIRCRNA_DISCOVERY {
 
     main:
     ch_versions = Channel.empty()
-    ch_fasta = Channel.value(fasta)
-    ch_gtf   = Channel.value(gtf)
-    fasta_tuple = Channel.value([[id: "fasta"], fasta])
-    gtf_tuple = Channel.value([[id: "gtf"], gtf])
-
+    fasta       = ch_fasta.map{meta, fasta -> fasta}
+    gtf         = ch_gtf.map{meta, gtf -> gtf}
 
     //
     // SEGEMEHL WORKFLOW:
@@ -86,10 +83,10 @@ workflow CIRCRNA_DISCOVERY {
     seq_center     = params.seq_center ?: ''
     seq_platform   = ''
 
-    STAR_1ST_PASS( reads, star_index.first(), gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center)
+    STAR_1ST_PASS( reads, star_index, ch_gtf, star_ignore_sjdbgtf, seq_platform, seq_center)
     sjdb = STAR_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "star_sjdb"], it]}
     STAR_SJDB( sjdb, bsj_reads )
-    STAR_2ND_PASS( reads, star_index.first(), STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
@@ -123,11 +120,11 @@ workflow CIRCRNA_DISCOVERY {
     // FIND_CIRC WORKFLOW:
     //
 
-    FIND_CIRC_ALIGN( reads, bowtie2_index.collect(), false, true )
+    FIND_CIRC_ALIGN( reads, bowtie2_index, false, true )
     SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.aligned )
-    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), fasta_tuple, [] )
+    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
-    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index.collect(), fasta )
+    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index, fasta )
     find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
     FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
 
@@ -144,7 +141,7 @@ workflow CIRCRNA_DISCOVERY {
 
     // only need path to bwa, only need path to hisat2.
     // do not want to upset the collect declr for all indices just for this.
-    CIRIQUANT_YML( gtf, fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
+    CIRIQUANT_YML( ch_gtf, ch_fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
     CIRIQUANT( reads, CIRIQUANT_YML.out.yml.collect() )
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 
@@ -156,14 +153,14 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     mate1 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
-    DCC_MATE1_1ST_PASS( mate1, star_index.first(), gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE1_1ST_PASS( mate1, star_index, ch_gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
-    DCC_MATE1_2ND_PASS( mate1, star_index.first(), DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     mate2 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[1] ] }
-    DCC_MATE2_1ST_PASS( mate2, star_index.first(), gtf_tuple, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE2_1ST_PASS( mate2, star_index, ch_gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
     DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
-    DCC_MATE2_2ND_PASS( mate2, star_index.first(), DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
+    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     dcc_stage = STAR_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
         .join(
@@ -194,7 +191,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     MAPSPLICE_REFERENCE( gtf )
-    MAPSPLICE_ALIGN( reads, bowtie_index.collect(), chromosomes, ch_gtf )
+    MAPSPLICE_ALIGN( reads, bowtie_index, chromosomes, gtf )
     MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
     MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
     mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> [ meta + [tool: "mapsplice"], txt ] }
@@ -218,7 +215,7 @@ workflow CIRCRNA_DISCOVERY {
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
 
-    INTERSECT_ANNOTATION( circrna_filtered.combine(ch_gtf), [[], []])
+    INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
     ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)

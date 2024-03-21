@@ -4,11 +4,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ch_phenotype   = params.phenotype && params.module.contains('differential_expression') ? file(params.phenotype, checkIfExists:true) : Channel.empty()
-ch_fasta       = params.fasta ? file(params.fasta) : 'null'
-ch_gtf         = params.gtf ? file(params.gtf) : 'null'
-ch_mature      = params.mature && params.module.contains('mirna_prediction') ? file(params.mature) : Channel.empty()
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
@@ -58,6 +53,11 @@ include { FASTQC_TRIMGALORE } from '../../subworkflows/nf-core/fastqc_trimgalore
 workflow CIRCRNA {
     take:
     ch_samplesheet
+    ch_phenotype
+    ch_fasta
+    ch_gtf
+    ch_mature
+    ch_species
     ch_versions
 
     main:
@@ -69,8 +69,7 @@ workflow CIRCRNA {
     //
 
     // SUBWORKFLOW:
-    Channel
-        .fromSamplesheet("input")
+    ch_samplesheet
         .map {
             meta, fastq_1, fastq_2 ->
                 if (!fastq_2) {
@@ -98,13 +97,11 @@ workflow CIRCRNA {
 
     // MODULE:
     // Concatenate FastQ files from same sample if required
-    CAT_FASTQ (
-        ch_fastq.multiple
-    )
-    .reads
-    .mix(ch_fastq.single)
-    .set { ch_cat_fastq }
-    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first().ifEmpty(null))
+    CAT_FASTQ (ch_fastq.multiple)
+        .reads
+        .mix(ch_fastq.single)
+        .set { ch_cat_fastq }
+    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
 
     // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.
@@ -113,14 +110,13 @@ workflow CIRCRNA {
         ch_gtf
     )
 
-    // Stage the indices via newly created indices, iGenomes or empty list if tool not selected.
-    bowtie_index   = params.fasta ? params.bowtie ? Channel.fromPath(params.bowtie) : PREPARE_GENOME.out.bowtie : []
-    bowtie2_index  = params.fasta ? params.bowtie2 ? Channel.fromPath(params.bowtie2).map{ it -> [[id:'bowtie2'], it] } : PREPARE_GENOME.out.bowtie2 : []
-    bwa_index      = params.fasta ? params.bwa ? Channel.fromPath(params.bwa).map{ it -> [[id:'bwa'], it] } : PREPARE_GENOME.out.bwa : []
-    chromosomes    = params.fasta && ( params.tool.contains('mapsplice') || params.tool.contains('find_circ') ) ? PREPARE_GENOME.out.chromosomes : []
-    hisat2_index   = params.fasta ? params.hisat2 && ( params.tool.contains('ciriquant') || params.module.contains('differential_expression') ) ? Channel.fromPath(params.hisat2).map{ [[id:"hisat2"], it]} : PREPARE_GENOME.out.hisat2 : []
-    star_index     = params.fasta ? params.star ? Channel.fromPath(params.star).map{[[id:'star'], it]}: PREPARE_GENOME.out.star : []
-    segemehl_index = params.fasta ? params.segemehl ? Channel.fromPath(params.segemehl) : PREPARE_GENOME.out.segemehl : []
+    bowtie_index   = PREPARE_GENOME.out.bowtie
+    bowtie2_index  = PREPARE_GENOME.out.bowtie2
+    bwa_index      = PREPARE_GENOME.out.bwa
+    chromosomes    = PREPARE_GENOME.out.chromosomes
+    hisat2_index   = PREPARE_GENOME.out.hisat2
+    star_index     = PREPARE_GENOME.out.star
+    segemehl_index = PREPARE_GENOME.out.segemehl
     ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
@@ -183,7 +179,7 @@ workflow CIRCRNA {
         ch_phenotype,
         CIRCRNA_DISCOVERY.out.dea_matrix,
         CIRCRNA_DISCOVERY.out.clr_matrix,
-        params.species,
+        ch_species,
         ch_ensembl_database_map,
         params.exon_boundary
     )

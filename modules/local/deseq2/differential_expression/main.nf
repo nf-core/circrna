@@ -8,7 +8,7 @@ process DESEQ2_DIFFERENTIAL_EXPRESSION {
 
     input:
     path(gene_matrix)
-    path(phenotype)
+    tuple val(meta), path(phenotype)
     path(circrna_matrix)
     val(species)
     path(biomart_keys)

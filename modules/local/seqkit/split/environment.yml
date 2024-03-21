@@ -1,7 +1,7 @@
-name: cat_fastq
+name: seqkit_split
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - conda-forge::coreutils=8.30
+  - bioconda::seqkit=2.8.0
