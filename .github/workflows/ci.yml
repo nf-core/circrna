@@ -8,50 +8,68 @@ on:
   release:
     types: [published]
 
+env:
+  NXF_ANSI_LOG: false
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   test:
-    name: Run workflow tests
+    name: Run pipeline with test data
     # Only run on push if this is the nf-core dev branch (merged PRs)
-    if: ${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/circrna') }}
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/circrna') }}"
     runs-on: ubuntu-latest
-    env:
-      NXF_VER: ${{ matrix.nxf_ver }}
-      NXF_ANSI_LOG: false
     strategy:
       matrix:
-        # Nextflow versions: check pipeline minimum and current latest
-        nxf_ver: ['20.04.0', '']
+        NXF_VER:
+          - "23.04.0"
+          - "latest-everything"
+
     steps:
       - name: Check out pipeline code
-        uses: actions/checkout@v2
-
-      - name: Check if Dockerfile or Conda environment changed
-        uses: technote-space/get-diff-action@v4
-        with:
-          FILES: |
-            Dockerfile
-            environment.yml
-
-      - name: Build new docker image
-        if: env.MATCHED_FILES
-        run: docker build --no-cache . -t nfcore/circrna:dev
-
-      - name: Pull docker image
-        if: ${{ !env.MATCHED_FILES }}
-        run: |
-          docker pull nfcore/circrna:dev
-          docker tag nfcore/circrna:dev nfcore/circrna:dev
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Install Nextflow
-        env:
-          CAPSULE_LOG: none
-        run: |
-          wget -qO- get.nextflow.io | bash
-          sudo mv nextflow /usr/local/bin/
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Disk space cleanup
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
       - name: Run pipeline with test data
         # TODO nf-core: You can customise CI pipeline run tests as required
         # For example: adding multiple test runs with different parameters
         # Remember that you can parallelise this by using strategy.matrix
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test,docker
+          echo "digest=$(echo RNA_3.10.1_${{ github.workspace }} | md5sum | cut -c 1-25)" >> $GITHUB_OUTPUT
+
+      - name: Cache test data
+        id: cache-testdata
+        uses: actions/cache@v3
+        with:
+          path: test-datasets/
+          key: ${{ steps.hash_workspace.outputs.digest }}
+
+      - name: Check out test data
+        if: steps.cache-testdata.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: nf-core/test-datasets
+          ref: circrna
+          path: test-datasets/
+
+      - name: Replace remote paths in samplesheets
+        run: |
+          for f in ${{ github.workspace }}/test-datasets/*.csv; do
+            sed -i "s=https://raw.githubusercontent.com/nf-core/test-datasets/circrna/=${{ github.workspace }}/test-datasets/=g" $f
+            echo "========== $f ============"
+            cat $f
+            echo "========================================"
+          done;
+
+      - name: Run pipeline with test data
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results --test_data_base ${{ github.workspace }}/test-datasets
