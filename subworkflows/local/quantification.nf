@@ -9,6 +9,8 @@ include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/c
 include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_TX_TPM              } from '../../modules/nf-core/csvtk/join/main'
+include { SPLIT_TYPES as SPLIT_TYPES_COUNTS      } from '../../modules/local/quantification/split_types/main'
+include { SPLIT_TYPES as SPLIT_TYPES_TPM         } from '../../modules/local/quantification/split_types/main'
 
 workflow QUANTIFICATION {
     take:
@@ -78,16 +80,30 @@ workflow QUANTIFICATION {
         TXIMETA_TXIMPORT.out.tpm_transcript.map{meta, tpm -> tpm}.collect().map{[[id: "tx_tpm"], it]}
     )
 
+    SPLIT_TYPES_COUNTS(
+        JOIN_TX_COUNTS.out.csv
+    )
+
+    SPLIT_TYPES_TPM(
+        JOIN_TX_TPM.out.csv
+    )
+
     ch_versions = ch_versions.mix(
         JOIN_GENE_COUNTS.out.versions,
-        JOIN_GENE_TPM.out.versions
+        JOIN_GENE_TPM.out.versions,
+        JOIN_TX_COUNTS.out.versions,
+        JOIN_TX_TPM.out.versions
     )
 
     emit:
-    gene_counts = JOIN_GENE_COUNTS.out.csv
-    gene_tpm    = JOIN_GENE_TPM.out.csv
-    tx_counts   = JOIN_TX_COUNTS.out.csv
-    tx_tpm      = JOIN_TX_TPM.out.csv
+    gene_counts        = JOIN_GENE_COUNTS.out.csv
+    gene_tpm           = JOIN_GENE_TPM.out.csv
+    tx_counts          = JOIN_TX_COUNTS.out.csv
+    tx_tpm             = JOIN_TX_TPM.out.csv
+    linear_tx_counts   = SPLIT_TYPES_COUNTS.out.linear
+    linear_tx_tpm      = SPLIT_TYPES_TPM.out.linear
+    circular_tx_counts = SPLIT_TYPES_COUNTS.out.circular
+    circular_tx_tpm    = SPLIT_TYPES_TPM.out.circular
 
     versions        = ch_versions
 }
