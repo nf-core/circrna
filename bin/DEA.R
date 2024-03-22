@@ -28,7 +28,7 @@ get_args <- function(){
             arg="circRNA",
             short="c",
             help="circRNA counts matrix",
-            default="circRNA_matrix.txt")
+            default="merged_counts.bed")
 
     argp <- add_argument(
             parser=argp,
@@ -57,7 +57,7 @@ giveError <- function(message){
     quit()
 }
 
-usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <circRNA_matrix.txt> <species id> <ensembl_map>")}
+usage <- function(){giveError("USAGE: DEA.R <gene_counts.csv> <phenotype.txt> <merged_counts.bed> <species id> <ensembl_map>")}
 
 
 stage_data <- function(gene_counts, phenotype, circRNA, species, map){
@@ -69,9 +69,9 @@ stage_data <- function(gene_counts, phenotype, circRNA, species, map){
     circ <- read.table(circRNA, sep ="\t", header = T, stringsAsFactors=FALSE)
 
     # Merge circRNA genomic loci to ID
-    circ$circ <- with(circ, paste0(Chr, sep=":", Start, sep="-", Stop, sep=":", Strand))
+    circ$circ <- with(circ, paste0(chr, sep=":", start, sep="-", end, sep=":", strand))
     rownames(circ) <- circ$circ
-    circ <- subset(circ, select=-c(Chr, Start, Stop, Strand, circ))
+    circ <- subset(circ, select=-c(chr, start, end, strand, circ))
 
     # R converts '-' to '.' in colnames here and results in failures.
     # If you need to make this 'smarter' check that colnames contains '.',
