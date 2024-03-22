@@ -61,15 +61,12 @@ workflow QUANTIFICATION {
         TXIMETA_TXIMPORT.out.versions
     )
 
-    ch_gene_counts = TXIMETA_TXIMPORT.out.counts_gene
-    ch_gene_tpm = TXIMETA_TXIMPORT.out.tpm_gene
-
     JOIN_GENE_COUNTS(
-        ch_gene_counts.map{meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
+        TXIMETA_TXIMPORT.out.counts_gene.map{meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
     )
 
     JOIN_GENE_TPM(
-        ch_gene_tpm.map{meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
+        TXIMETA_TXIMPORT.out.tpm_gene.map{meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
     )
 
     JOIN_TX_COUNTS(
@@ -92,7 +89,9 @@ workflow QUANTIFICATION {
         JOIN_GENE_COUNTS.out.versions,
         JOIN_GENE_TPM.out.versions,
         JOIN_TX_COUNTS.out.versions,
-        JOIN_TX_TPM.out.versions
+        JOIN_TX_TPM.out.versions,
+        SPLIT_TYPES_COUNTS.out.versions,
+        SPLIT_TYPES_TPM.out.versions
     )
 
     emit:
