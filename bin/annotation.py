@@ -33,6 +33,9 @@ exon_boundary = args.exon_boundary
 df = pd.read_csv(args.input, sep="\t", header=None, usecols=columns.keys())
 df = df.rename(columns=columns)
 
+# Remove overlong circRNAs
+df = df[df['end'] - df['start'] <= 10_000]
+
 # Extract circRNAs without match
 mask = df['tx_start'] == -1
 df_intergenic = df[mask]
