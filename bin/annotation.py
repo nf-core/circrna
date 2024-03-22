@@ -38,9 +38,9 @@ mask = df['tx_start'] == -1
 df_intergenic = df[mask]
 df = df[~mask]
 df_intergenic['type'] = 'intergenic-circRNA'
-df_intergenic['gene_id'] = 'integenic' + df_intergenic['name']
-df_intergenic['gene_name'] = 'integenic' + df_intergenic['name']
-df_intergenic['transcript_id'] = 'integenic' + df_intergenic['name']
+df_intergenic['gene_id'] = 'intergenic_' + df_intergenic['name']
+df_intergenic['gene_name'] = 'intergenic_' + df_intergenic['name']
+df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 
 # Convert attributes to a dictionary
 df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
@@ -104,7 +104,7 @@ df.to_csv(args.output_bed, sep='\t', index=False, header=False)
 # Convert to GTF
 df['source'] = 'circRNA'
 df['frame'] = '.'
-df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_name'] + '"; transcript_id "' + df['name'] + '";'
+df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_name'] + '"; transcript_id "circ_' + df['name'] + '";'
 
 gtf_order = ['chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'frame', 'attributes']
 df = df[gtf_order]
