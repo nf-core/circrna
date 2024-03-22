@@ -7,12 +7,12 @@ process CIRCTEST {
         'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
 
     input:
-    path(circ_csv)
-    path(linear_csv)
-    tuple val(meta), path(phenotype)
+    tuple val(meta), path(genes)
+    tuple val(meta2), path(circs)
+    tuple val(meta3), path(phenotype)
 
     output:
-    path "*"           , emit: results
+    // path "*"           , emit: results
     path "versions.yml", emit: versions
 
     when:
@@ -20,7 +20,7 @@ process CIRCTEST {
 
     script:
     """
-    circ_test.R $circ_csv $linear_csv $phenotype
+    circ_test.R $circs $genes $phenotype
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

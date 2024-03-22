@@ -16,9 +16,7 @@ df_genes = pd.read_csv(args.in_genes, sep='\t', index_col=0)
 df_circs = pd.read_csv(args.in_circs, sep='\t', index_col=0)
 
 gene_ids = df_circs["gene_id"]
-df_circs = df_circs.drop(columns=["gene_id"])
 df_circs.to_csv(args.out_circs, sep='\t')
 
 df_genes = df_genes.loc[gene_ids]
-df_genes = df_genes.drop(columns=["gene_name"])
 df_genes.to_csv(args.out_genes, sep='\t')

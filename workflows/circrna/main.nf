@@ -186,7 +186,8 @@ workflow CIRCRNA {
 
     DOWNSTREAM_ANALYSIS(
         QUANTIFICATION.out.gene_counts,
-        QUANTIFICATION.out.circular_tx_counts
+        QUANTIFICATION.out.circular_tx_counts,
+        ch_phenotype
     )
 
     ch_versions = ch_versions.mix(DOWNSTREAM_ANALYSIS.out.versions)

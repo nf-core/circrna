@@ -422,8 +422,8 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
 
 args = commandArgs(trailingOnly = TRUE)
 
-circ = read.table(args[1], header=T, sep=",")
-linear = read.table(args[2], header=T, sep=",")
+circ = read.table(args[1], header=T, sep="\t")
+linear = read.table(args[2], header=T, sep="\t")
 pheno = read.table(args[3], header=T, sep=",", row.names = "Sample_ID")
 
 
@@ -443,13 +443,15 @@ if( n_covars == 2){
 
 n_reps <- as.numeric(table(covariate_1)[1])
 
-Circ_filtered <- Circ.filter(circ = circ, linear = linear, Nreplicates = n_reps, filter.sample = 1, filter.count = 1, percentage = 0.00001, circle_description = c(1:4))
-Linear_filtered <- linear[rownames(Circ_filtered),]
+description <- c(1:2)
+
+Circ_filtered <- Circ.filter(circ = circ, linear = linear, Nreplicates = n_reps, filter.sample = 1, filter.count = 1, percentage = 0.00001, circle_description = description)
+Linear_filtered <- linear[rownames(Circ_filtered), ]
 
 
 # groups must be numerically encoded
 group = as.numeric(covariate_1)
-test <- Circ.test(Circ_filtered, Linear_filtered, group=group, circle_description = c(1:4))
+test <- Circ.test(Circ_filtered, Linear_filtered, group=group, circle_description = description)
 write.table(test$summary_table, "summary_table.txt", row.names=F)
 
 
@@ -463,14 +465,14 @@ if( n_covars == 2 ){
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=groupindicator1, groupindicator2 = group_indicator2,
-        circle_description = c(1:4) )
+        circle_description = description )
     }
     dev.off()
 
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1, groupindicator2 = group_indicator2,
-    circle_description = c(1:4) )
+    circle_description = description )
     }
     dev.off()
 
@@ -481,14 +483,14 @@ if( n_covars == 2 ){
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-        lab_legend = colnames(pheno)[1],    circle_description = c(1:4) )
+        lab_legend = colnames(pheno)[1],    circle_description = description )
     }
     dev.off()
 
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
     for (i in rownames(test$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-    circle_description = c(1:4) )
+    circle_description = description )
     }
     dev.off()
 }
