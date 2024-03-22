@@ -1,32 +1,36 @@
-process PREPARE_CLR_TEST {
+process PREPARE_CIRCTEST {
+    tag "$meta.id"
     label 'process_medium'
 
-    conda "conda-forge::r-base=4.2.2 conda-forge::r-aod=1.3.2 conda-forge::r-ggplot2=3.4.0 conda-forge::r-plyr=1.8.8"
+    conda "bioconda::pandas=1.5.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
-        'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
+        'https://depot.galaxyproject.org/singularity/pandas:1.5.2' :
+        'biocontainers/pandas:1.5.2' }"
 
     input:
-    path(gene_matrix)
-    path(circrna_matrix)
-    path(circ_host_map)
-    path(gtf)
+    tuple val(meta), path(gene_matrix)
+    tuple val(meta2), path(circrna_matrix)
 
     output:
-    path "circ.csv"    , emit: circular
-    path "linear.csv"  , emit: linear
-    path "versions.yml", emit: versions
+    tuple val(meta),  path("${meta.id}.circtest.tsv"), emit: genes
+    tuple val(meta2), path("${meta2.id}.circtest.tsv"), emit: circs
+    path "versions.yml"                , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
-    prepare_circ_test.R
+    prepare_circtest.py --in_genes ${gene_matrix} \\
+                        --out_genes ${meta.id}.circtest.tsv \\
+                        --in_circs ${circrna_matrix} \\
+                        --out_circs ${meta2.id}.circtest.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
+        python: \$(python --version | sed 's/Python //g')
+        pandas: \$(python -c "import pandas; print(pandas.__version__)")
+        numpy: \$(python -c "import numpy; print(numpy.__version__)")
     END_VERSIONS
     """
 }
