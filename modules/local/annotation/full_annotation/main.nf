@@ -12,15 +12,16 @@ process ANNOTATION {
     val(exon_boundary)
 
     output:
-    tuple val(meta), path("${outfile}"), emit: bed
+    tuple val(meta), path("${out_bed}"), emit: bed
+    tuple val(meta), path("${out_gtf}"), emit: gtf
     path "versions.yml", emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}.annotation"
-    suffix = task.ext.suffix ?: "bed"
-    outfile = "${prefix}.${suffix}"
+    out_bed = "${prefix}.bed"
+    out_gtf = "${prefix}.gtf"
     """
-    annotation.py --input ${intersection} --exon_boundary ${exon_boundary} --output ${outfile}
+    annotation.py --input ${intersection} --exon_boundary ${exon_boundary} --output_bed ${out_bed} --output_gtf ${out_gtf}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
