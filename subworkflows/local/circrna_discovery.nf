@@ -1,6 +1,7 @@
 
 include { ANNOTATION                                     } from '../../modules/local/annotation/full_annotation/main'
-include { GNU_SORT as COMBINE_ANNOTATIONS                } from '../../modules/nf-core/gnu/sort/main'
+include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/nf-core/gnu/sort/main'
+include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort/main'
 include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk/main'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect/main'
 include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN               } from '../../modules/nf-core/bowtie2/align/main'
@@ -216,13 +217,15 @@ workflow CIRCRNA_DISCOVERY {
 
     INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
     ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
-    COMBINE_ANNOTATIONS(ANNOTATION.out.bed.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
-    REMOVE_SCORE_STRAND( COMBINE_ANNOTATIONS.out.sorted, [])
+    COMBINE_ANNOTATION_BEDS(ANNOTATION.out.bed.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
+    REMOVE_SCORE_STRAND( COMBINE_ANNOTATION_BEDS.out.sorted, [])
+    COMBINE_ANNOTATION_GTFS(ANNOTATION.out.gtf.map{ meta, gtf -> gtf}.collect().map{[[id: "annotation"], it]})
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(COMBINE_ANNOTATIONS.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_BEDS.out.versions)
     ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_GTFS.out.versions)
 
     //
     // FASTA WORKFLOW:
@@ -258,7 +261,8 @@ workflow CIRCRNA_DISCOVERY {
     emit:
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
-    annotation = REMOVE_SCORE_STRAND.out.output
+    annotation_bed = REMOVE_SCORE_STRAND.out.output
+    annotation_gtf = COMBINE_ANNOTATION_GTFS.out.sorted
     counts_bed
     counts_tsv
 

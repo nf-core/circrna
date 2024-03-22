@@ -8,23 +8,15 @@ process COMBINE_QUANTIFICATION {
 
     input:
     tuple val(meta), path(inputs)
-    tuple val(meta2), path(tx2gene)
-    tuple val(meta3), path(circ_annotation)
 
     output:
-    path("${meta.id}.linear.tsv")   , emit: linear
-    path("${meta.id}.circular.tsv") , emit: circular
     path("${meta.id}.combined.tsv") , emit: combined
     path "versions.yml"             , emit: versions
 
     script:
     """
     combine_quantification.py --inputs ${inputs} \\
-                                --tx2gene ${tx2gene} \\
-                                --circ_annotation ${circ_annotation} \\
-                                --out_linear ${meta.id}.linear.tsv \\
-                                --out_circular ${meta.id}.circular.tsv \\
-                                --out_combined ${meta.id}.combined.tsv
+                                --output ${meta.id}.combined.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
