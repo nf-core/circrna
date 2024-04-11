@@ -19,7 +19,7 @@ process CIRIQUANT_YML {
     task.ext.when == null || task.ext.when
 
     script:
-    hisat2_prefix = fasta.toString() - ~/.(fa|fasta)$/
+    hisat2_prefix = fasta.baseName
     fasta_path = fasta.toRealPath()
     gtf_path = gtf.toRealPath()
     bwa_path = bwa.toRealPath()
