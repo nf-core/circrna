@@ -24,9 +24,6 @@ process CIRIQUANT {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '2.1.0'
     """
-    mkdir -p ${prefix}
-    mkdir -p ${prefix}/circ
-    touch ${prefix}/circ/${prefix}.ciri
     CIRIquant \\
         -t ${task.cpus} \\
         -1 ${reads[0]} \\
