@@ -125,6 +125,11 @@
                     "description": "Minimum overhang for annotated junctions",
                     "default": 10
                 },
+                "limitSjdbInsertNsj": {
+                    "type": "integer",
+                    "description": "Maximum number of junction to be inserted to the genome on the fly at the mapping stage, including those from annotations and those detected in the 1st step of the 2-pass run",
+                    "default": 1000000
+                },
                 "chimSegmentMin": {
                     "type": "integer",
                     "description": "Minimum length of chimeric segment length. Must be set to a positive value to detect circular junctions.",
