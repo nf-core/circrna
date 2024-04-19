@@ -143,7 +143,6 @@ workflow CIRCRNA_DISCOVERY {
     CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 
-    ch_versions = ch_versions.mix(CIRIQUANT_YML.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT_FILTER.out.versions)
 
