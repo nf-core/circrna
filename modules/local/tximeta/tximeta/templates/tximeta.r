@@ -119,7 +119,9 @@ create_summarized_experiment <- function(counts, abundance, length, col_data, ro
 
 # Define pattern for file names based on quantification type
 pattern <- ifelse('$quant_type' == "kallisto",
-                ifelse(file.exists("quants/abundance.h5"), "abundance.h5", "abundance.tsv"),
+                ifelse(length(list.files('quants', pattern = "abundance.h5", recursive = T, full.names = T)) != 0,
+                    "abundance.h5",
+                    "abundance.tsv"),
                 "quant.sf")
 
 fns <- list.files('quants', pattern = pattern, recursive = T, full.names = T)
