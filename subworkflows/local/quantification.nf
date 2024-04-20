@@ -6,6 +6,7 @@ include { PSIRC_QUANT                            } from '../../modules/local/psi
 include { CUSTOM_TX2GENE                         } from '../../modules/nf-core/custom/tx2gene/main'
 include { TXIMETA_TXIMPORT                       } from '../../modules/nf-core/tximeta/tximport/main'
 include { TXIMETA_TXIMETA                        } from '../../modules/local/tximeta/tximeta/main'
+include { FISHPOND_SWISH                         } from '../../modules/local/fishpond/swish/main'
 include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join/main'
@@ -22,6 +23,7 @@ workflow QUANTIFICATION {
     circ_annotation_bed
     circ_annotation_gtf
     bootstrap_samples
+    ch_phenotype
 
     main:
     ch_versions = Channel.empty()
@@ -55,6 +57,11 @@ workflow QUANTIFICATION {
         "kallisto"
     )
 
+    FISHPOND_SWISH(
+        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
+        ch_phenotype
+    )
+
     TXIMETA_TXIMPORT(
         PSIRC_QUANT.out.directory,
         CUSTOM_TX2GENE.out.tx2gene,
@@ -66,7 +73,8 @@ workflow QUANTIFICATION {
         PSIRC_QUANT.out.versions,
         CUSTOM_TX2GENE.out.versions,
         TXIMETA_TXIMETA.out.versions,
-        TXIMETA_TXIMPORT.out.versions
+        TXIMETA_TXIMPORT.out.versions,
+        FISHPOND_SWISH.out.versions
     )
 
     JOIN_GENE_COUNTS(

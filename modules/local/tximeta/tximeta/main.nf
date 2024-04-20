@@ -1,4 +1,5 @@
 process TXIMETA_TXIMETA {
+    tag "$meta.id"
     label "process_medium"
 
     conda "${moduleDir}/environment.yml"
@@ -12,7 +13,7 @@ process TXIMETA_TXIMETA {
 
     output:
     tuple val(meta), path("*.rds"), emit: se
-    path "versions.yml"              , emit: versions
+    path "versions.yml"           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -23,7 +24,7 @@ process TXIMETA_TXIMETA {
 
     stub:
     """
-    touch ${meta.id}_se.RDS
+    touch ${meta.id}.rds
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
