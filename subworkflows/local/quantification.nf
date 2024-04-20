@@ -4,7 +4,7 @@ include { GAWK as MARK_CIRCULAR                  } from '../../modules/nf-core/g
 include { PSIRC_INDEX                            } from '../../modules/local/psirc/index/main'
 include { PSIRC_QUANT                            } from '../../modules/local/psirc/quant/main'
 include { CUSTOM_TX2GENE                         } from '../../modules/nf-core/custom/tx2gene/main'
-include { TXIMETA_TXIMPORT                       } from '../../modules/nf-core/tximeta/tximport/main'
+include { TXIMETA_TXIMETA                       } from '../../modules/local/tximeta/tximeta/main'
 include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join/main'
 include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join/main'
@@ -20,6 +20,7 @@ workflow QUANTIFICATION {
     reads
     circ_annotation_bed
     circ_annotation_gtf
+    bootstrap_samples
 
     main:
     ch_versions = Channel.empty()
@@ -38,7 +39,7 @@ workflow QUANTIFICATION {
     )
 
     PSIRC_INDEX(MARK_CIRCULAR.out.output)
-    PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect())
+    PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect(), bootstrap_samples)
 
     CUSTOM_TX2GENE(
         COMBINE_TRANSCRIPTOME_GTFS.out.sorted,
@@ -48,7 +49,7 @@ workflow QUANTIFICATION {
         "gene_name"
     )
 
-    TXIMETA_TXIMPORT(
+    TXIMETA_TXIMETA(
         PSIRC_QUANT.out.directory,
         CUSTOM_TX2GENE.out.tx2gene,
         "kallisto"
@@ -58,23 +59,23 @@ workflow QUANTIFICATION {
         PSIRC_INDEX.out.versions,
         PSIRC_QUANT.out.versions,
         CUSTOM_TX2GENE.out.versions,
-        TXIMETA_TXIMPORT.out.versions
+        TXIMETA_TXIMETA.out.versions
     )
 
     JOIN_GENE_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_gene.map{meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
+        TXIMETA_TXIMETA.out.counts_gene.map{meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
     )
 
     JOIN_GENE_TPM(
-        TXIMETA_TXIMPORT.out.tpm_gene.map{meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
+        TXIMETA_TXIMETA.out.tpm_gene.map{meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
     )
 
     JOIN_TX_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_transcript.map{meta, counts -> counts}.collect().map{[[id: "tx_counts"], it]}
+        TXIMETA_TXIMETA.out.counts_transcript.map{meta, counts -> counts}.collect().map{[[id: "tx_counts"], it]}
     )
 
     JOIN_TX_TPM(
-        TXIMETA_TXIMPORT.out.tpm_transcript.map{meta, tpm -> tpm}.collect().map{[[id: "tx_tpm"], it]}
+        TXIMETA_TXIMETA.out.tpm_transcript.map{meta, tpm -> tpm}.collect().map{[[id: "tx_tpm"], it]}
     )
 
     SPLIT_TYPES_COUNTS(

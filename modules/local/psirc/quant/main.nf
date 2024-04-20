@@ -7,6 +7,7 @@ process PSIRC_QUANT {
     input:
     tuple val(meta), path(reads)
     tuple val(meta2), path(index)
+    val(bootstrap_samples)
 
     output:
     tuple val(meta), path("${meta.id}"), emit: directory
@@ -16,7 +17,7 @@ process PSIRC_QUANT {
     def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
     def VERSION = '1.0'
     """
-    psirc-quant quant -t $task.cpus -i $index -o $meta.id $single_end $reads
+    psirc-quant quant -t $task.cpus -i $index -o $meta.id $single_end $reads -b $bootstrap_samples
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

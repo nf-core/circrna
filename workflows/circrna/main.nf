@@ -163,7 +163,8 @@ workflow CIRCRNA {
         CIRCRNA_DISCOVERY.out.counts_bed,
         FASTQC_TRIMGALORE.out.reads,
         CIRCRNA_DISCOVERY.out.annotation_bed,
-        CIRCRNA_DISCOVERY.out.annotation_gtf
+        CIRCRNA_DISCOVERY.out.annotation_gtf,
+        params.bootstrap_samples
     )
 
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
