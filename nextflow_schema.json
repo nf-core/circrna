@@ -165,7 +165,7 @@
                     "description": "Sequencing center information to be added to read group of BAM files.",
                     "fa_icon": "fas fa-synagogue"
                 },
-                "bootstrap_samples":{
+                "bootstrap_samples": {
                     "type": "integer",
                     "description": "Number of bootstrap samples to generate during quantification.",
                     "default": 30
