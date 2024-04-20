@@ -6,7 +6,7 @@
 
 # Loading required libraries
 library(SummarizedExperiment)
-library(tximport)
+library(tximeta)
 
 ################################################
 ################################################
@@ -75,9 +75,9 @@ read_transcript_info <- function(tinfo_path){
     transcript_info <- read.csv(tinfo_path, sep="\t", header = TRUE,
                                 col.names = c("tx", "gene_id", "gene_name"))
 
-    extra <- setdiff(rownames(txi[[1]]), as.character(transcript_info[["tx"]]))
+    extra <- setdiff(rownames(se), as.character(transcript_info[["tx"]]))
     transcript_info <- rbind(transcript_info, data.frame(tx=extra, gene_id=extra, gene_name=extra))
-    transcript_info <- transcript_info[match(rownames(txi[[1]]), transcript_info[["tx"]]), ]
+    transcript_info <- transcript_info[match(rownames(se), transcript_info[["tx"]]), ]
     rownames(transcript_info) <- transcript_info[["tx"]]
 
     list(transcript = transcript_info,
@@ -128,19 +128,14 @@ fns <- list.files('quants', pattern = pattern, recursive = T, full.names = T)
 names <- basename(dirname(fns))
 names(fns) <- names
 
-# Import transcript-level quantifications
-txi <- tximport(fns, type = '$quant_type', txOut = TRUE)
-
-# Read transcript and sample data
-transcript_info <- read_transcript_info('$tx2gene')
-
-# Make coldata just to appease the summarizedexperiment
 coldata <- data.frame(files = fns, names = names)
 rownames(coldata) <- coldata[["names"]]
 
-# Create initial SummarizedExperiment object
-se <- create_summarized_experiment(txi[["counts"]], txi[["abundance"]], txi[["length"]],
-    DataFrame(coldata), transcript_info\$transcript)
+# Import transcript-level quantifications
+se <- tximeta(coldata, type = '$quant_type', txOut = TRUE)
+
+# Read transcript and sample data
+transcript_info <- read_transcript_info('$tx2gene')
 
 # Setting parameters for writing tables
 params <- list(
@@ -152,9 +147,9 @@ params <- list(
 # Process gene-level data if tx2gene mapping is available
 if ("tx2gene" %in% names(transcript_info) && !is.null(transcript_info\$tx2gene)) {
     tx2gene <- transcript_info\$tx2gene
-    gi <- summarizeToGene(txi, tx2gene = tx2gene)
-    gi.ls <- summarizeToGene(txi, tx2gene = tx2gene, countsFromAbundance = "lengthScaledTPM")
-    gi.s <- summarizeToGene(txi, tx2gene = tx2gene, countsFromAbundance = "scaledTPM")
+    gi <- summarizeToGene(se, tx2gene = tx2gene)
+    gi.ls <- summarizeToGene(se, tx2gene = tx2gene, countsFromAbundance = "lengthScaledTPM")
+    gi.s <- summarizeToGene(se, tx2gene = tx2gene, countsFromAbundance = "scaledTPM")
 
     gene_info <- transcript_info\$gene[match(rownames(gi[[1]]), transcript_info\$gene[["gene_id"]]),]
     rownames(gene_info) <- gene_info[["tx"]]
