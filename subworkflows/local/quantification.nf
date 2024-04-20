@@ -120,5 +120,5 @@ workflow QUANTIFICATION {
     circular_tx_counts = SPLIT_TYPES_COUNTS.out.circular
     circular_tx_tpm    = SPLIT_TYPES_TPM.out.circular
 
-    versions        = ch_versions
+    versions           = ch_versions
 }

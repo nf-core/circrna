@@ -11,18 +11,18 @@ phenotype <- read.csv('${phenotype}', stringsAsFactors = FALSE)
 se_assays <- list()
 
 for (se in experiments) {
-  assays <- assays(se)
-  # Iterate over named list of assays
-  for (assay_name in names(assays)) {
-    assay <- assays[[assay_name]]
-    
-    # Add assay to se_assays for its name
-    if (is.null(se_assays[[assay_name]])) {
-      se_assays[[assay_name]] <- assay
-    } else {
-      se_assays[[assay_name]] <- cbind(se_assays[[assay_name]], assay)
+    assays <- assays(se)
+    # Iterate over named list of assays
+    for (assay_name in names(assays)) {
+        assay <- assays[[assay_name]]
+
+        # Add assay to se_assays for its name
+        if (is.null(se_assays[[assay_name]])) {
+            se_assays[[assay_name]] <- assay
+        } else {
+            se_assays[[assay_name]] <- cbind(se_assays[[assay_name]], assay)
+        }
     }
-  }
 }
 
 se_cbind <- do.call(SummarizedExperiment::cbind, experiments)
