@@ -7,7 +7,6 @@ include { SAMTOOLS_INDEX                                 } from '../../modules/n
 include { FIND_CIRC_ANCHORS                              } from '../../modules/local/find_circ/anchors/main'
 include { FIND_CIRC                                      } from '../../modules/local/find_circ/find_circ/main'
 include { FIND_CIRC_FILTER                               } from '../../modules/local/find_circ/filter/main'
-include { CIRIQUANT_YML                                  } from '../../modules/local/ciriquant/yml/main'
 include { CIRIQUANT                                      } from '../../modules/local/ciriquant/ciriquant/main'
 include { CIRIQUANT_FILTER                               } from '../../modules/local/ciriquant/filter/main'
 include { CIRCRNA_FINDER_FILTER                          } from '../../modules/local/circrna_finder/filter/main'
@@ -141,8 +140,7 @@ workflow CIRCRNA_DISCOVERY {
 
     // only need path to bwa, only need path to hisat2.
     // do not want to upset the collect declr for all indices just for this.
-    CIRIQUANT_YML( ch_gtf, ch_fasta, bwa_index.map{ meta, index -> return index }, hisat2_index.map{ meta, index -> return index } )
-    CIRIQUANT( reads, CIRIQUANT_YML.out.yml.collect() )
+    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
     CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
 
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
