@@ -8,11 +8,11 @@ process FISHPOND_SWISH {
         'biocontainers/bioconductor-fishpond:2.8.0--r43hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(experiments)
-    tuple val(meta2), path(phenotype)
+    tuple val(meta), path(experiment)
+    val(column)
 
     output:
-    tuple val(meta), path("${meta.id}.rds"), emit: swish
+    tuple val(meta), path("${meta.id}.swish.rds"), emit: swish
     path "versions.yml"                    , emit: versions
 
     script:

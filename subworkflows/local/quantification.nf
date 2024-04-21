@@ -1,18 +1,19 @@
-include { GNU_SORT as COMBINE_TRANSCRIPTOME_GTFS } from '../../modules/nf-core/gnu/sort/main'
-include { TRANSCRIPTOME                          } from '../../modules/local/quantification/transcriptome/main'
-include { GAWK as MARK_CIRCULAR                  } from '../../modules/nf-core/gawk/main'
-include { PSIRC_INDEX                            } from '../../modules/local/psirc/index/main'
-include { PSIRC_QUANT                            } from '../../modules/local/psirc/quant/main'
-include { CUSTOM_TX2GENE                         } from '../../modules/nf-core/custom/tx2gene/main'
-include { TXIMETA_TXIMPORT                       } from '../../modules/nf-core/tximeta/tximport/main'
-include { TXIMETA_TXIMETA                        } from '../../modules/local/tximeta/tximeta/main'
-include { FISHPOND_SWISH                         } from '../../modules/local/fishpond/swish/main'
-include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/csvtk/join/main'
-include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join/main'
-include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join/main'
-include { CSVTK_JOIN as JOIN_TX_TPM              } from '../../modules/nf-core/csvtk/join/main'
-include { SPLIT_TYPES as SPLIT_TYPES_COUNTS      } from '../../modules/local/quantification/split_types/main'
-include { SPLIT_TYPES as SPLIT_TYPES_TPM         } from '../../modules/local/quantification/split_types/main'
+include { GNU_SORT as COMBINE_TRANSCRIPTOME_GTFS } from '../../modules/nf-core/gnu/sort'
+include { TRANSCRIPTOME                          } from '../../modules/local/quantification/transcriptome'
+include { GAWK as MARK_CIRCULAR                  } from '../../modules/nf-core/gawk'
+include { PSIRC_INDEX                            } from '../../modules/local/psirc/index'
+include { PSIRC_QUANT                            } from '../../modules/local/psirc/quant'
+include { CUSTOM_TX2GENE                         } from '../../modules/nf-core/custom/tx2gene'
+include { TXIMETA_TXIMPORT                       } from '../../modules/nf-core/tximeta/tximport'
+include { TXIMETA_TXIMETA                        } from '../../modules/local/tximeta/tximeta'
+include { MERGE_EXPERIMENTS                      } from '../../modules/local/quantification/merge_experiments'
+include { FISHPOND_SWISH                         } from '../../modules/local/fishpond/swish'
+include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/csvtk/join'
+include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join'
+include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join'
+include { CSVTK_JOIN as JOIN_TX_TPM              } from '../../modules/nf-core/csvtk/join'
+include { SPLIT_TYPES as SPLIT_TYPES_COUNTS      } from '../../modules/local/quantification/split_types'
+include { SPLIT_TYPES as SPLIT_TYPES_TPM         } from '../../modules/local/quantification/split_types'
 
 workflow QUANTIFICATION {
     take:
@@ -57,7 +58,7 @@ workflow QUANTIFICATION {
         "kallisto"
     )
 
-    FISHPOND_SWISH(
+    MERGE_EXPERIMENTS(
         TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
         ch_phenotype
     )
@@ -74,7 +75,7 @@ workflow QUANTIFICATION {
         CUSTOM_TX2GENE.out.versions,
         TXIMETA_TXIMETA.out.versions,
         TXIMETA_TXIMPORT.out.versions,
-        FISHPOND_SWISH.out.versions
+        MERGE_EXPERIMENTS.out.versions
     )
 
     JOIN_GENE_COUNTS(
