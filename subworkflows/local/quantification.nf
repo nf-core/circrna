@@ -7,7 +7,6 @@ include { CUSTOM_TX2GENE                         } from '../../modules/nf-core/c
 include { TXIMETA_TXIMPORT                       } from '../../modules/nf-core/tximeta/tximport'
 include { TXIMETA_TXIMETA                        } from '../../modules/local/tximeta/tximeta'
 include { MERGE_EXPERIMENTS                      } from '../../modules/local/quantification/merge_experiments'
-include { FISHPOND_SWISH                         } from '../../modules/local/fishpond/swish'
 include { CSVTK_JOIN as JOIN_GENE_COUNTS         } from '../../modules/nf-core/csvtk/join'
 include { CSVTK_JOIN as JOIN_GENE_TPM            } from '../../modules/nf-core/csvtk/join'
 include { CSVTK_JOIN as JOIN_TX_COUNTS           } from '../../modules/nf-core/csvtk/join'
