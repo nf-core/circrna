@@ -1,12 +1,13 @@
-include { SEQKIT_SPLIT        } from '../../modules/local/seqkit/split/main'
-include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build/main'
-include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build/main'
-include { BWA_INDEX           } from '../../modules/nf-core/bwa/index/main'
-include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites/main'
-include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build/main'
-include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate/main'
-include { SEGEMEHL_INDEX      } from '../../modules/nf-core/segemehl/index/main'
-include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk/main'
+include { SEQKIT_SPLIT        } from '../../modules/local/seqkit/split'
+include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build'
+include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build'
+include { BWA_INDEX           } from '../../modules/nf-core/bwa/index'
+include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites'
+include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build'
+include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate'
+include { SEGEMEHL_INDEX      } from '../../modules/nf-core/segemehl/index'
+include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk'
+include { SAMTOOLS_FAIDX      } from '../../modules/nf-core/samtools/faidx'
 
 workflow PREPARE_GENOME {
 
@@ -42,6 +43,8 @@ workflow PREPARE_GENOME {
 
     SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
 
+    SAMTOOLS_FAIDX(ch_fasta, [[], []])
+
     // Collect versions
     ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions,
                                     BOWTIE_BUILD.out.versions,
@@ -53,6 +56,7 @@ workflow PREPARE_GENOME {
                                     STAR_GENOMEGENERATE.out.versions)
 
     emit:
+    faidx        = SAMTOOLS_FAIDX.out.fai
     bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
     segemehl     = params.segemehl ?: SEGEMEHL_INDEX.out.index
     bowtie2      = params.bowtie2  ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()

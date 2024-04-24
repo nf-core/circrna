@@ -165,7 +165,8 @@ workflow CIRCRNA {
         CIRCRNA_DISCOVERY.out.annotation_bed,
         CIRCRNA_DISCOVERY.out.annotation_gtf,
         params.bootstrap_samples,
-        ch_phenotype
+        ch_phenotype,
+        PREPARE_GENOME.out.faidx
     )
 
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)

@@ -25,6 +25,7 @@ workflow QUANTIFICATION {
     circ_annotation_gtf
     bootstrap_samples
     ch_phenotype
+    ch_faidx
 
     main:
     ch_versions = Channel.empty()
@@ -43,7 +44,7 @@ workflow QUANTIFICATION {
     )
 
     PSIRC_INDEX(MARK_CIRCULAR.out.output)
-    PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect(), bootstrap_samples)
+    PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect(), MARK_CIRCULAR.out.output, ch_faidx, bootstrap_samples)
 
     CUSTOM_TX2GENE(
         COMBINE_TRANSCRIPTOME_GTFS.out.sorted,
