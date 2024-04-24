@@ -20,7 +20,7 @@ process FISHPOND_SWISH {
 
     stub:
     """
-    touch ${meta.id}.RDS
+    touch ${meta.id}.swish.rds
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
