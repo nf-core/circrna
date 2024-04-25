@@ -29,6 +29,14 @@ workflow BENCHMARKING {
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
 
+    ch_stats = ch_jaccard.splitCsv(header: true, sep: "\t")
+        .map{ meta, values -> [meta.id, values.intersection, values.union, values.jaccard, values.n_intersections]}
+        .collectFile( newLine: true, 
+                        storeDir: params.outdir, 
+                        seed: "tool\tintersection\tunion\tjaccard\tn_intersections") { 
+                            row -> ["jaccard.tsv", row.join("\t")]
+        }
+
     ch_versions = ch_versions.mix(SORT.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)
