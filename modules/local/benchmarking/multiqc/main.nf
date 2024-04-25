@@ -10,8 +10,8 @@ process BENCHMARKING_MULTIQC {
     path(jaccard)
     
     output:
-    path("benchmarking_mqc.json"), emit: report
-    path("versions.yml")         , emit: versions
+    path("*_mqc.json")  , emit: report
+    path("versions.yml"), emit: versions
     
     script:
     template "benchmarking.py"

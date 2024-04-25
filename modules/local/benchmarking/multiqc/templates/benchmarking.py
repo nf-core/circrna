@@ -25,16 +25,20 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
 
 df = pd.read_csv("$jaccard", sep='\\t', index_col=0)
 
-data = {
-    "id": "benchmarking",
-    "section_name": "Benchmarking",
-    "description": "Benchmarking of the tools",
-    "plot_type": "bargraph",
-    "data": df.to_dict()
-}
+for metric in df.columns:
+    data = {
+        "id": f"benchmarking_{metric}",
+        "parent_id": "benchmarking",
+        "parent_name": "Benchmarking",
+        "parent_description": "Benchmarking of the tools",
+        "section_name": metric.capitalize(),
+        "description": f"{metric.capitalize()} values of the tools",
+        "plot_type": "bargraph",
+        "data": df[[metric]].T.to_dict()
+    }
 
-with open("benchmarking_mqc.json", "w") as f:
-    json.dump(data, f)
+    with open(f"benchmarking_{metric}_mqc.json", "w") as f:
+        json.dump(data, f, indent=4)
 
 versions = {
     "${task.process}" : {
