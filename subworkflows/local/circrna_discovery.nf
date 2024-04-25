@@ -155,7 +155,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     emit:
-    circrna_bed12  = ANNOTATION.out.merged_bed
+    tool_bed  = ANNOTATION.out.merged_bed
     fasta          = ADD_BACKSPLICE.out.output
     annotation_bed = ANNOTATION.out.bed
     annotation_gtf = ANNOTATION.out.gtf
