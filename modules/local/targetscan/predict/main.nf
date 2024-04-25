@@ -5,7 +5,7 @@ process TARGETSCAN {
     conda "bioconda::targetscan=7.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/targetscan:7.0--pl5321hdfd78af_0' :
-        'quay.io/biocontainers/targetscan:7.0--pl5321hdfd78af_0' }"
+        'biocontainers/targetscan:7.0--pl5321hdfd78af_0' }"
 
     input:
     tuple val(meta), path(fasta)

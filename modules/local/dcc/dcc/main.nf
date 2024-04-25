@@ -5,7 +5,7 @@ process DCC {
     conda "bioconda::circtools=1.2.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/circtools:1.2.1--pyh7cba7a3_0' :
-        'quay.io/biocontainers/circtools:1.2.1--pyh7cba7a3_0' }"
+        'biocontainers/circtools:1.2.1--pyh7cba7a3_0' }"
 
     input:
     tuple val(meta), path(pairs), path(mate1), path(mate2)

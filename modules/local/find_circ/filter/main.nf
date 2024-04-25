@@ -5,7 +5,7 @@ process FIND_CIRC_FILTER {
     conda "bioconda::find_circ=1.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/find_circ%3A1.2--hdfd78af_0' :
-        'quay.io/biocontainers/find_circ:1.2--hdfd78af_0' }"
+        'biocontainers/find_circ:1.2--hdfd78af_0' }"
 
     input:
     tuple val(meta), path(bed)
