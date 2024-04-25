@@ -188,6 +188,8 @@ workflow CIRCRNA {
             CIRCRNA_DISCOVERY_BENCHMARKING.out.tool_bed
         )
 
+        ch_multiqc_files = ch_multiqc_files.mix(BENCHMARKING.out.reports)
+
         ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY_BENCHMARKING.out.versions)
     }
 

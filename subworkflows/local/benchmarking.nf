@@ -1,6 +1,7 @@
-include { GNU_SORT as SORT } from '../../modules/nf-core/gnu/sort'
-include { BEDTOOLS_MERGE   } from '../../modules/nf-core/bedtools/merge'
-include { BEDTOOLS_JACCARD } from '../../modules/nf-core/bedtools/jaccard'
+include { GNU_SORT as SORT     } from '../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_MERGE       } from '../../modules/nf-core/bedtools/merge'
+include { BEDTOOLS_JACCARD     } from '../../modules/nf-core/bedtools/jaccard'
+include { BENCHMARKING_MULTIQC } from '../../modules/local/benchmarking/multiqc'
 
 workflow BENCHMARKING {
 
@@ -36,11 +37,15 @@ workflow BENCHMARKING {
                         seed: "tool\tintersection\tunion\tjaccard\tn_intersections") { 
                             row -> ["jaccard.tsv", row.join("\t")]
         }
+    
+    BENCHMARKING_MULTIQC(ch_stats)
 
     ch_versions = ch_versions.mix(SORT.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)
+    ch_versions = ch_versions.mix(BENCHMARKING_MULTIQC.out.versions)
 
     emit:
-    versions = ch_versions                     // channel: [ versions.yml ]
+    reports = BENCHMARKING_MULTIQC.out.report
+    versions       = ch_versions                     // channel: [ versions.yml ]
 }

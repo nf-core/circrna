@@ -5,10 +5,13 @@ report_comment: >
 report_section_order:
   "nf-core-circrna-methods-description":
     order: -1000
-  software_versions:
+  benchmarking:
     order: -1001
-  "nf-core-circrna-summary":
+  software_versions:
     order: -1002
+  "nf-core-circrna-summary":
+    order: -1003
+  
 
 export_plots: true
 
