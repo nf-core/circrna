@@ -1,5 +1,8 @@
 
 include { ANNOTATION                                     } from '../../modules/local/annotation/full_annotation/main'
+include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/nf-core/gnu/sort/main'
+include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort/main'
+include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk/main'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect/main'
 include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN               } from '../../modules/nf-core/bowtie2/align/main'
 include { SAMTOOLS_VIEW                                  } from '../../modules/nf-core/samtools/view/main'
@@ -15,9 +18,6 @@ include { SEGEMEHL_FILTER                                } from '../../modules/l
 include { STAR_ALIGN as STAR_1ST_PASS                    } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as STAR_2ND_PASS                    } from '../../modules/nf-core/star/align/main'
 include { SJDB as STAR_SJDB                              } from '../../modules/local/star/sjdb/main'
-include { STAR_ALIGN as DCC_1ST_PASS                     } from '../../modules/nf-core/star/align/main'
-include { STAR_ALIGN as DCC_2ND_PASS                     } from '../../modules/nf-core/star/align/main'
-include { SJDB as DCC_SJDB                               } from '../../modules/local/star/sjdb/main'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align/main'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS               } from '../../modules/nf-core/star/align/main'
 include { SJDB as DCC_MATE1_SJDB                         } from '../../modules/local/star/sjdb/main'
@@ -30,7 +30,6 @@ include { MAPSPLICE_ALIGN                                } from '../../modules/l
 include { FASTA                                          } from '../../modules/local/fasta/main'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools/main'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined/main'
-include { COUNTS_SINGLE                                  } from '../../modules/local/count_matrix/single/main'
 include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REF   } from '../../modules/local/circexplorer2/reference/main'
 include { CIRCEXPLORER2_PARSE as CIRCEXPLORER2_PAR       } from '../../modules/nf-core/circexplorer2/parse/main'
 include { CIRCEXPLORER2_ANNOTATE as CIRCEXPLORER2_ANN    } from '../../modules/nf-core/circexplorer2/annotate/main'
@@ -88,6 +87,7 @@ workflow CIRCRNA_DISCOVERY {
     STAR_2ND_PASS( reads, star_index, STAR_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
 
     ch_versions = ch_versions.mix(STAR_1ST_PASS.out.versions)
+    ch_versions = ch_versions.mix(STAR_SJDB.out.versions)
     ch_versions = ch_versions.mix(STAR_2ND_PASS.out.versions)
 
     //
@@ -119,9 +119,9 @@ workflow CIRCRNA_DISCOVERY {
     // FIND_CIRC WORKFLOW:
     //
 
-    FIND_CIRC_ALIGN( reads, bowtie2_index, false, true )
-    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.aligned )
-    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.aligned.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
+    FIND_CIRC_ALIGN( reads, bowtie2_index, ch_fasta, false, true )
+    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.bam )
+    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
     FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
     FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index, fasta )
     find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
@@ -199,6 +199,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(MAPSPLICE_ALIGN.out.versions)
     ch_versions = ch_versions.mix(MAPSPLICE_PARSE.out.versions)
     ch_versions = ch_versions.mix(MAPSPLICE_ANNOTATE.out.versions)
+    ch_versions = ch_versions.mix(MAPSPLICE_FILTER.out.versions)
 
     //
     // ANNOTATION WORKFLOW:
@@ -215,9 +216,15 @@ workflow CIRCRNA_DISCOVERY {
 
     INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
     ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
+    COMBINE_ANNOTATION_BEDS(ANNOTATION.out.bed.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
+    REMOVE_SCORE_STRAND( COMBINE_ANNOTATION_BEDS.out.sorted, [])
+    COMBINE_ANNOTATION_GTFS(ANNOTATION.out.gtf.map{ meta, gtf -> gtf}.collect().map{[[id: "annotation"], it]})
 
     ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_BEDS.out.versions)
+    ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_GTFS.out.versions)
 
     //
     // FASTA WORKFLOW:
@@ -240,31 +247,23 @@ workflow CIRCRNA_DISCOVERY {
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
-    if( tools_selected.size() > 1){
+    MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
+                tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
 
-        MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(), tool_filter, duplicates_fun )
+    COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
-        COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> return [ bed ] }.collect() )
-
-        dea_matrix = COUNTS_COMBINED.out.dea_matrix
-        clr_matrix = COUNTS_COMBINED.out.clr_matrix
-        ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
-        ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
-
-    }else{
-
-        COUNTS_SINGLE( ch_matrix.map{ meta, bed -> [ [tool: meta.tool], bed ] }.groupTuple() )
-
-        dea_matrix = COUNTS_SINGLE.out.dea_matrix
-        clr_matrix = COUNTS_SINGLE.out.clr_matrix
-        ch_versions = ch_versions.mix(COUNTS_SINGLE.out.versions)
-
-    }
+    counts_bed = COUNTS_COMBINED.out.counts_bed
+    counts_tsv = COUNTS_COMBINED.out.counts_tsv
+    ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
+    ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
     emit:
     circrna_bed12 = ANNOTATION.out.bed
     fasta = FASTA.out.analysis_fasta
+    annotation_bed = REMOVE_SCORE_STRAND.out.output
+    annotation_gtf = COMBINE_ANNOTATION_GTFS.out.sorted
+    counts_bed
+    counts_tsv
+
     versions = ch_versions
-    dea_matrix
-    clr_matrix
 }

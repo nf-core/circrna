@@ -29,6 +29,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
+include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
 include { DIFFERENTIAL_EXPRESSION          } from '../../subworkflows/local/differential_expression'
 
@@ -153,7 +154,25 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
     //
-    // 3. miRNA prediction
+    // 3. Quantification
+    //
+
+    QUANTIFICATION(
+        ch_gtf,
+        ch_fasta,
+        CIRCRNA_DISCOVERY.out.counts_bed,
+        FASTQC_TRIMGALORE.out.reads,
+        CIRCRNA_DISCOVERY.out.annotation_bed,
+        CIRCRNA_DISCOVERY.out.annotation_gtf,
+        params.bootstrap_samples,
+        ch_phenotype,
+        PREPARE_GENOME.out.faidx
+    )
+
+    ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
+
+    //
+    // 4. miRNA prediction
     //
 
     MIRNA_PREDICTION(
@@ -165,7 +184,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
 
     //
-    // 4. Differential expression tests
+    // 5. Differential expression tests
     //
 
     ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
@@ -177,8 +196,8 @@ workflow CIRCRNA {
         hisat2_index,
         PREPARE_GENOME.out.splice_sites,
         ch_phenotype,
-        CIRCRNA_DISCOVERY.out.dea_matrix,
-        CIRCRNA_DISCOVERY.out.clr_matrix,
+        CIRCRNA_DISCOVERY.out.counts_bed,
+        CIRCRNA_DISCOVERY.out.counts_tsv,
         ch_species,
         ch_ensembl_database_map,
         params.exon_boundary

@@ -4,7 +4,7 @@ process PREPARE_CLR_TEST {
     conda "conda-forge::r-base=4.2.2 conda-forge::r-aod=1.3.2 conda-forge::r-ggplot2=3.4.0 conda-forge::r-plyr=1.8.8"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
-        'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
+        'biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
 
     input:
     path(gene_matrix)

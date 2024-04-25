@@ -4,7 +4,7 @@ process STRINGTIE_PREPDE {
     conda "bioconda::stringtie=2.2.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/stringtie:2.2.1--hecb563c_2' :
-        'quay.io/biocontainers/stringtie:2.2.1--hecb563c_2' }"
+        'biocontainers/stringtie:2.2.1--hecb563c_2' }"
 
     input:
     path gtf

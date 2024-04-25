@@ -5,7 +5,7 @@ process CIRIQUANT {
     conda "bioconda::ciriquant=1.1.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ciriquant:1.1.2--pyhdfd78af_2' :
-        'quay.io/biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
+        'biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
 
     input:
     tuple val(meta), path(reads)
@@ -52,7 +52,7 @@ process CIRIQUANT {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
-        ciriquant : \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
+        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
         samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
         stringtie: \$(stringtie --version 2>&1)
         hisat2: $VERSION

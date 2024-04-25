@@ -5,7 +5,7 @@ process MAPSPLICE_ALIGN {
     conda "bioconda::mapsplice=2.2.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mapsplice:2.2.1--py27h07887db_0':
-        'quay.io/biocontainers/mapsplice:2.2.1--py27h07887db_0' }"
+        'biocontainers/mapsplice:2.2.1--py27h07887db_0' }"
 
     input:
     tuple val(meta), path(reads)

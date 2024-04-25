@@ -3,11 +3,13 @@
 import pandas as pd
 import numpy as np
 import argparse
+import csv
 
 parser = argparse.ArgumentParser(description='Annotate circRNAs')
 parser.add_argument('--input', type=str, help='Path to the input file')
 parser.add_argument('--exon_boundary', type=int, help='Exon boundary')
-parser.add_argument('--output', type=str, help='Path to the output file')
+parser.add_argument('--output_bed', type=str, help='Path to the output bed file')
+parser.add_argument('--output_gtf', type=str, help='Path to the output gtf')
 
 args = parser.parse_args()
 
@@ -24,7 +26,7 @@ columns = {
     14: 'attributes'
 }
 
-attributes = ['gene_id', 'transcript_id']
+attributes = ['gene_id', 'gene_name', 'transcript_id']
 
 exon_boundary = args.exon_boundary
 
@@ -36,8 +38,9 @@ mask = df['tx_start'] == -1
 df_intergenic = df[mask]
 df = df[~mask]
 df_intergenic['type'] = 'intergenic-circRNA'
-df_intergenic['gene_id'] = 'NaN'
-df_intergenic['transcript_id'] = 'NaN'
+df_intergenic['gene_id'] = 'intergenic_' + df_intergenic['name']
+df_intergenic['gene_name'] = 'intergenic_' + df_intergenic['name']
+df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 
 # Convert attributes to a dictionary
 df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
@@ -56,6 +59,7 @@ df = df.groupby(['chr', 'start', 'end', 'strand']).aggregate({
     'name': lambda x: x.iloc[0],
     'score': lambda x: x.iloc[0],
     'gene_id': lambda x: list(x),
+    'gene_name': lambda x: list(x),
     'transcript_id': lambda x: list(x),
     'perfect': lambda x: list(x)
 })
@@ -79,13 +83,14 @@ def determine_type(row):
 df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
 df['type'] = df.apply(lambda row: determine_type(row), axis=1)
 df['gene_id'] = df.apply(lambda row: filter_perfect(row, 'gene_id'), axis=1)
+df['gene_name'] = df.apply(lambda row: filter_perfect(row, 'gene_name'), axis=1)
 df['transcript_id'] = df.apply(lambda row: filter_perfect(row, 'transcript_id'), axis=1)
 # Drop perfect
 df = df.drop(['perfect'], axis=1)
 
 df = df.reset_index()
 df_intergenic = df_intergenic.reset_index()
-bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_id', 'transcript_id']
+bed_order = ['chr', 'start', 'end', 'name', 'score', 'strand', 'type', 'gene_id', 'gene_name', 'transcript_id']
 df = df[bed_order]
 df_intergenic = df_intergenic[bed_order]
 
@@ -94,4 +99,14 @@ df = pd.concat([df, df_intergenic], axis=0)
 # Sort by chr, start, end
 df = df.sort_values(['chr', 'start', 'end'])
 
-df.to_csv(args.output, sep='\t', index=False, header=False)
+df.to_csv(args.output_bed, sep='\t', index=False, header=False)
+
+# Convert to GTF
+df['source'] = 'circRNA'
+df['frame'] = '.'
+df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_name'] + '"; transcript_id "circ_' + df['name'] + '";'
+
+gtf_order = ['chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'frame', 'attributes']
+df = df[gtf_order]
+
+df.to_csv(args.output_gtf, sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
