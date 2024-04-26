@@ -51,6 +51,16 @@
                     "description": "Path to a CSV file containing BED files that should be used for annotation.",
                     "help_text": "The annotation file should be a CSV file with the following columns: `name`, `file` and `min_overlap`. The `name` column should contain a unique identifier for the annotation, the `file` column should contain the path to the BED file and the `min_overlap` column should contain the minimum overlap required for a circRNA to be considered as overlapping with the annotation. The `min_overlap` column is optional and defaults to 0.9 if not provided.",
                     "fa_icon": "fas fa-file-csv"
+                },
+                "mirna_expression": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_input.json",
+                    "mimetype": "text/tsv",
+                    "pattern": "^\\S+\\.tsv$",
+                    "description": "Path to tab-separated file providing the expression counts of miRNAs, which are created in pipeline 'smrnaseq'. \n\n\t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
+                    "fa_icon": "fas fa-file-tsv"
                 }
             }
         },
