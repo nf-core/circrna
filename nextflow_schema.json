@@ -56,10 +56,9 @@
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "schema": "assets/schema_input.json",
                     "mimetype": "text/tsv",
                     "pattern": "^\\S+\\.tsv$",
-                    "description": "Path to tab-separated file providing the expression counts of miRNAs, which are created in pipeline 'smrnaseq'. \n\n\t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
+                    "description": "Path to tab-separated file providing the expression counts of miRNAs, which are created in pipeline 'smrnaseq'. \n\nmirna \t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
                     "fa_icon": "fas fa-file-tsv"
                 }
             }

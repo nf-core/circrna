@@ -1,8 +1,8 @@
-include { GAWK as ADD_BACKSPLICE } from '../../modules/nf-core/gawk'
-include { TARGETSCAN_DATABASE    } from '../../modules/local/targetscan/database/main'
-include { TARGETSCAN             } from '../../modules/local/targetscan/predict/main'
-include { MIRANDA                } from '../../modules/nf-core/miranda/main'
-include { MIRNA_TARGETS          } from '../../modules/local/mirna_targets/main'
+include { TARGETSCAN_DATABASE  } from '../../modules/local/targetscan/database'
+include { TARGETSCAN           } from '../../modules/local/targetscan/predict'
+include { MIRANDA              } from '../../modules/nf-core/miranda'
+include { MIRNA_TARGETS        } from '../../modules/local/mirna_targets'
+include { DESEQ2_NORMALIZATION } from '../../modules/local/deseq2/normalization'
 
 workflow MIRNA_PREDICTION{
 
@@ -10,12 +10,21 @@ workflow MIRNA_PREDICTION{
     circrna_fasta
     circrna_bed12
     ch_mature
+    ch_mirna
 
     main:
     ch_versions = Channel.empty()
 
     ADD_BACKSPLICE( circrna_fasta, [] )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
+
+    //
+    // MIRNA QUANTIFICATION WORKFLOW:
+    //
+
+    ch_mirna_normalized = DESEQ2_NORMALIZATION( ch_mirna ).normalized
+
+    ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
     //
     // TARGETSCAN WORKFLOW:

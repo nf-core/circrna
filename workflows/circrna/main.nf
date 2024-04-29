@@ -61,6 +61,7 @@ workflow CIRCRNA {
     ch_mature
     ch_annotation
     ch_versions
+    ch_mirna
 
     main:
 
@@ -173,11 +174,13 @@ workflow CIRCRNA {
     //
     // 4. miRNA prediction
     //
+
     if (params.mature) {
         MIRNA_PREDICTION(
             BSJ_DETECTION.out.fasta,
             BSJ_DETECTION.out.bed,
             ch_mature
+            ch_mirna
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
     }
