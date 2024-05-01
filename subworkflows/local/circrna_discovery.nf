@@ -202,39 +202,6 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(MAPSPLICE_FILTER.out.versions)
 
     //
-    // ANNOTATION WORKFLOW:
-    //
-
-    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
-
-    circrna_filtered = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL_FILTER.out.results,
-                                                            CIRCRNA_FINDER_FILTER.out.results,
-                                                            FIND_CIRC_FILTER.out.results,
-                                                            CIRIQUANT_FILTER.out.results,
-                                                            DCC_FILTER.out.results,
-                                                            MAPSPLICE_FILTER.out.results)
-
-    INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
-    ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
-    COMBINE_ANNOTATION_BEDS(ANNOTATION.out.bed.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
-    REMOVE_SCORE_STRAND( COMBINE_ANNOTATION_BEDS.out.sorted, [])
-    COMBINE_ANNOTATION_GTFS(ANNOTATION.out.gtf.map{ meta, gtf -> gtf}.collect().map{[[id: "annotation"], it]})
-
-    ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_BEDS.out.versions)
-    ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
-    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_GTFS.out.versions)
-
-    //
-    // FASTA WORKFLOW:
-    //
-
-    FASTA( ANNOTATION.out.bed, fasta )
-
-    ch_versions = ch_versions.mix(FASTA.out.versions)
-
-    //
     // COUNT MATRIX WORKFLOW:
     //
 
@@ -249,21 +216,56 @@ workflow CIRCRNA_DISCOVERY {
 
     MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
-
     COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
-    counts_bed = COUNTS_COMBINED.out.counts_bed
-    counts_tsv = COUNTS_COMBINED.out.counts_tsv
     ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
     ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
+    //
+    // ANNOTATION WORKFLOW:
+    //
+
+    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
+
+    circrna_filtered = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL_FILTER.out.results,
+                                                            CIRCRNA_FINDER_FILTER.out.results,
+                                                            FIND_CIRC_FILTER.out.results,
+                                                            CIRIQUANT_FILTER.out.results,
+                                                            DCC_FILTER.out.results,
+                                                            MAPSPLICE_FILTER.out.results,
+                                                            MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
+
+    INTERSECT_ANNOTATION( circrna_filtered.combine(gtf), [[], []])
+    ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
+
+    ch_annotation_bed_merged = ANNOTATION.out.bed.filter{ meta, bed -> meta.tool == "merged" }
+    ch_annotation_gtf_merged = ANNOTATION.out.gtf.filter{ meta, gtf -> meta.tool == "merged" }
+
+    COMBINE_ANNOTATION_BEDS(ch_annotation_bed_merged.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
+    REMOVE_SCORE_STRAND( COMBINE_ANNOTATION_BEDS.out.sorted, [])
+    COMBINE_ANNOTATION_GTFS(ch_annotation_gtf_merged.map{ meta, gtf -> gtf}.collect().map{[[id: "annotation"], it]})
+
+    ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_BEDS.out.versions)
+    ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
+    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_GTFS.out.versions)
+
+    //
+    // FASTA WORKFLOW:
+    //
+
+    FASTA( ch_annotation_bed_merged, fasta )
+
+    ch_versions = ch_versions.mix(FASTA.out.versions)
+
     emit:
-    circrna_bed12 = ANNOTATION.out.bed
+    circrna_bed12 = ch_annotation_bed_merged
     fasta = FASTA.out.analysis_fasta
     annotation_bed = REMOVE_SCORE_STRAND.out.output
     annotation_gtf = COMBINE_ANNOTATION_GTFS.out.sorted
-    counts_bed
-    counts_tsv
+    counts_bed = COUNTS_COMBINED.out.counts_bed
+    counts_tsv = COUNTS_COMBINED.out.counts_tsv
 
     versions = ch_versions
 }

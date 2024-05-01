@@ -21,4 +21,9 @@ df = df.groupby(['chr', 'start', 'end', 'strand']).agg({'count': args.duplicates
                                                         'tool_count': 'sum'}).reset_index()
 df = df[df['tool_count'] >= args.tool_filter]
 
+df.drop('tool_count', axis=1, inplace=True)
+df["name"] = df["chr"] + ":" + df["start"].astype(str) + "-" + df["end"].astype(str) + ":" + df["strand"]
+
+df = df[['chr', 'start', 'end', 'name', 'count', 'strand']]
+
 df.to_csv(args.output, sep='\t', index=False, header=False)
