@@ -35,7 +35,7 @@ df_tools = pd.DataFrame(
     }
 )
 
-tool_files = df_tools.groupby("tool")["file"].apply(lambda x: set(x)).to_dict()
+tool_files = df_tools.groupby("tool").agg(lambda x: x.tolist())["file"].to_dict()
 tool_ids = {}
 
 for tool, files in tool_files.items():
