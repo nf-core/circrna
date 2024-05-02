@@ -9,6 +9,9 @@ process UPSET {
     input:
     tuple val(meta), val(tools), path(beds)
 
+    when:
+    task.ext.when == null || task.ext.when
+
     output:
     tuple val(meta), path("*.png"), emit: plot
     path "*.upset_mqc.json"        , emit: multiqc
