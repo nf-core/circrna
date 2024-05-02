@@ -61,6 +61,7 @@ workflow CIRCRNA_DISCOVERY {
 
     main:
     ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
     fasta       = ch_fasta.map{meta, fasta -> fasta}
     gtf         = ch_gtf.map{meta, gtf -> gtf}
 
@@ -242,6 +243,9 @@ workflow CIRCRNA_DISCOVERY {
     UPSET_ALL( circrna_tools.map{ meta, bed -> ["all", meta.tool, bed] }
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
+
+    ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
+    ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
     
     circrna_incl_merged = circrna_tools.mix(
         MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
@@ -278,5 +282,6 @@ workflow CIRCRNA_DISCOVERY {
     counts_bed = COUNTS_COMBINED.out.counts_bed
     counts_tsv = COUNTS_COMBINED.out.counts_tsv
 
+    multiqc_files = ch_multiqc_files
     versions = ch_versions
 }

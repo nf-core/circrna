@@ -11,6 +11,7 @@ process UPSET {
 
     output:
     tuple val(meta), path("*.png"), emit: plot
+    path "*.upset_mqc.json"        , emit: multiqc
     path "versions.yml"           , emit: versions
 
     script:

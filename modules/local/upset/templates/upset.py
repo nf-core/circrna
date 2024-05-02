@@ -6,7 +6,8 @@ import upsetplot
 import matplotlib
 import matplotlib.pyplot as plt
 import distutils.version
-
+import base64
+import json
 
 def format_yaml_like(data: dict, indent: int = 0) -> str:
     """Formats a dictionary to a YAML-like string.
@@ -44,7 +45,25 @@ for tool, files in tool_files.items():
 dataset = upsetplot.from_contents(tool_ids)
 
 upsetplot.plot(dataset, orientation='horizontal', show_counts=True)
-plt.savefig("${meta.id}.png")
+plot_file = "${meta.id}.upset.png"
+plt.savefig(plot_file)
+
+image_string = base64.b64encode(open(plot_file, "rb").read()).decode("utf-8")
+image_html = f'<div class="mqc-custom-content-image"><img src="data:image/png;base64,{image_string}" /></div>'
+
+multiqc = {
+    'id': "${meta.id}_upset",
+    'parent_id': "upset_plots",
+    'parent_name': 'UpSet Plots',
+    'parent_description': 'UpSet plots showing the overlap between tools for each sample',
+    'section_name': 'UpSet: ${meta.id}',
+    'description': 'UpSet plot showing the overlap between tools for sample ${meta.id}',
+    'plot_type': 'image',
+    'data': image_html
+}
+
+with open("${meta.id}.upset_mqc.json", "w") as f:
+    f.write(json.dumps(multiqc, indent=4))
 
 # Create version file
 versions = {
