@@ -43,7 +43,7 @@ for tool, files in tool_files.items():
 
 dataset = upsetplot.from_contents(tool_ids)
 
-upsetplot.plot(dataset, orientation='horizontal')
+upsetplot.plot(dataset, orientation='horizontal', show_counts=True)
 plt.savefig("${meta.id}.png")
 
 # Create version file

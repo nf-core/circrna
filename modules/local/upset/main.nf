@@ -10,7 +10,8 @@ process UPSET {
     tuple val(meta), val(tools), path(beds)
 
     output:
-    path "versions.yml", emit: versions
+    tuple val(meta), path("*.png"), emit: plot
+    path "versions.yml"           , emit: versions
 
     script:
     template "upset.py"
