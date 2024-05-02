@@ -236,7 +236,7 @@ workflow CIRCRNA_DISCOVERY {
                                                             CIRIQUANT_FILTER.out.results,
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
-    
+
     UPSET_SAMPLES( circrna_tools.map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
@@ -246,7 +246,9 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
-    
+    ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
+    ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
+
     circrna_incl_merged = circrna_tools.mix(
         MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
 
