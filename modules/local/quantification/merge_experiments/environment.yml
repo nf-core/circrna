@@ -6,4 +6,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - "bioconda::bioconductor-summarizedexperiment=1.32.0"
+  - "bioconda::bioconductor-rtracklayer==1.62.0--r43ha9d7317_0"

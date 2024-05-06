@@ -66,7 +66,8 @@ workflow QUANTIFICATION {
 
     MERGE_EXPERIMENTS(
         TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
-        ch_phenotype
+        ch_phenotype,
+        EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
     )
 
     TXIMETA_TXIMPORT(

@@ -6,6 +6,7 @@ paths <- c('${experiments.join("\', \'")}')
 experiments <- lapply(paths, readRDS)
 
 phenotype <- read.csv('${phenotype}', stringsAsFactors = FALSE)
+annotation <- rtracklayer::import('${gtf}')
 
 se_assays <- list()
 
@@ -36,6 +37,10 @@ for (col in colnames(colData(se))) {
         colData(se)[[col]] <- as.factor(colData(se)[[col]])
     }
 }
+
+# Add transcript annotation
+annotation <- annotation[match(rownames(se), annotation\$transcript_id),]
+rowData(se) <- annotation
 
 saveRDS(se, '${meta.id}.merged.rds')
 

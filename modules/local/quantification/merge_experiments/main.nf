@@ -4,12 +4,13 @@ process MERGE_EXPERIMENTS {
 
     conda "${moduleDir}/environment.yaml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bioconductor-summarizedexperiment:1.32.0--r43hdfd78af_0' :
-        'biocontainers/bioconductor-summarizedexperiment:1.32.0--r43hdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/bioconductor-rtracklayer:1.62.0--r43ha9d7317_0' :
+        'biocontainers/bioconductor-rtracklayer:1.62.0--r43ha9d7317_0' }"
 
     input:
     tuple val(meta), path(experiments)
     tuple val(meta2), path(phenotype)
+    tuple val(meta3), path(gtf)
 
     output:
     tuple val(meta), path("${meta.id}.merged.rds"), emit: merged
