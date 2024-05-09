@@ -27,19 +27,155 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "default": null
                 },
-                "email": {
+                "phenotype": {
                     "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
+                    "fa_icon": "fas fa-file-csv",
+                    "mimetype": "text/csv",
+                    "help_text": "There are two rules for providing the phenotype CSV file. 1) The phenotype 'sample' column must match the sample sheets 'sample' column. 2) The response variable containing the phenotype of primary interest in the experiment must have the column name condition.  All other columns included in the file are controlled for in the `DESeq2` design. \n\n| sample    \t| condition \t| replicate \t|\n|-----------\t|-----------\t|-----------\t|\n| control_1 \t| ctr       \t| 1         \t|\n| control_2 \t| ctr       \t| 2         \t|\n| control_3 \t| ctr       \t| 3         \t|\n| treated_1 \t| trt       \t| 1         \t|\n| treated_2 \t| trt       \t| 2         \t|\n| treated_3 \t| trt       \t| 3         \t|\n\nThe above phenotype file will identify differentially expressed circRNAs/mRNAs between control and treatment cells, whilst controlling for the effect of variation between replicates: ` ~ replicates + condition`",
+                    "pattern": "\\.csv$"
+                }
+            }
+        },
+        "pipeline_options": {
+            "title": "Pipeline Options",
+            "type": "object",
+            "fa_icon": "fas fa-circle-notch",
+            "description": "Main workflow parameters.",
+            "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
+            "required": ["tool", "module"],
+            "properties": {
+                "tool": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
+                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
+                    "default": "circexplorer2",
+                    "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
                 },
-                "multiqc_title": {
+                "module": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "fa_icon": "fas fa-sliders-h",
+                    "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
+                    "mandatory": "circrna_discovery",
+                    "pattern": "^((circrna_discovery|mirna_prediction|differential_expression)?,?)*[^,]+$",
+                    "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n",
+                    "default": "circrna_discovery"
+                },
+                "bsj_reads": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum number of reads spanning circRNA back-splice junction required for circRNA to be output by workflow.",
+                    "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 0 (default).",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "tool_filter": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-intersection",
+                    "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\nPlease note this is only reflected in the circRNA count matrix generated.",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 6
+                },
+                "duplicates_fun": {
+                    "type": "string",
+                    "fa_icon": "fas fa-copy",
+                    "description": "Aggregate function to apply to duplicate circRNAs when more than one quantification tool has been selected. Options: max, mean",
+                    "default": "mean",
+                    "enum": ["mean", "max"]
+                },
+                "save_intermediates": {
+                    "type": "boolean",
+                    "description": "Save intermediate alignment/circRNA files.",
+                    "default": false,
+                    "fa_icon": "fas fa-save"
+                },
+                "exon_boundary": {
+                    "type": "integer",
+                    "description": "Specify the distance at which the annotation script decides if a candidate is a circRNA or EI-circRNA.",
+                    "help_text": "During annotation, if one of the start or end position of a circular candidate imperfectly overlaps an exon boundary, the script will consider positions within 'exon_boundary' (default 200bp) to be an exonic circRNA. If they fall outside of this range, the candidate is assumed to be an exonic-intronic circRNA, and the entire underlying sequence is taken for miRNA analysis, as opposed to just the exonic sequences for canonical exonic circRNAs. ",
+                    "default": 200
+                }
+            }
+        },
+        "alignment_options": {
+            "title": "Alignment Options",
+            "type": "object",
+            "description": "Parameters used by aligners pertinent to circRNA detection",
+            "default": "",
+            "fa_icon": "fas fa-align-center",
+            "properties": {
+                "sjdboverhang": {
+                    "type": "integer",
+                    "description": "*only used at the genome generation step* tells STAR how many bases to concatenate from donor and acceptor sides of the junctions.",
+                    "default": 100
+                },
+                "chimJunctionOverhangMin": {
+                    "type": "integer",
+                    "description": "Minimum overhang for a chimeric junction",
+                    "default": 10
+                },
+                "alignSJDBoverhangMin": {
+                    "type": "integer",
+                    "description": "Minimum overhang for annotated junctions",
+                    "default": 10
+                },
+                "limitSjdbInsertNsj": {
+                    "type": "integer",
+                    "description": "Maximum number of junction to be inserted to the genome on the fly at the mapping stage, including those from annotations and those detected in the 1st step of the 2-pass run",
+                    "default": 1000000
+                },
+                "chimSegmentMin": {
+                    "type": "integer",
+                    "description": "Minimum length of chimeric segment length. Must be set to a positive value to detect circular junctions.",
+                    "default": 10
+                },
+                "seglen": {
+                    "type": "integer",
+                    "description": "Segment length. Default 25",
+                    "default": 25
+                },
+                "min_intron": {
+                    "type": "integer",
+                    "description": "Minimum intron length. Default 20",
+                    "default": 20
+                },
+                "max_intron": {
+                    "type": "integer",
+                    "description": "Maximum intron length. Default 1000000",
+                    "default": 1000000
+                },
+                "min_map_len": {
+                    "type": "integer",
+                    "description": "Minimum alignment length. Default 40",
+                    "default": 40
+                },
+                "min_fusion_distance": {
+                    "type": "integer",
+                    "description": "Minimum distance between two gapped segments to be considered as fusion candidate. Must set to lower values to be sensitive to circular candidates (e.g 200).",
+                    "default": 200
+                },
+                "seq_center": {
+                    "type": "string",
+                    "description": "Sequencing center information to be added to read group of BAM files.",
+                    "fa_icon": "fas fa-synagogue"
+                },
+                "bootstrap_samples": {
+                    "type": "integer",
+                    "description": "Number of bootstrap samples to generate during quantification.",
+                    "default": 30
+                },
+                "save_unaligned": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-save",
+                    "description": "Where possible, save unaligned reads from either STAR, HISAT2 or Salmon to the results directory.",
+                    "help_text": "This may either be in the form of FastQ or BAM files depending on the options available for that particular tool.",
+                    "default": false
                 }
             }
         },
@@ -49,11 +185,17 @@
             "fa_icon": "fas fa-dna",
             "description": "Reference genome related files and options required for the workflow.",
             "properties": {
+                "save_reference": {
+                    "type": "boolean",
+                    "description": "Save generated reference genome files such as indices, chromosome FASTA files.",
+                    "default": true,
+                    "fa_icon": "fas fa-save"
+                },
                 "genome": {
                     "type": "string",
                     "description": "Name of iGenomes reference.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                    "help_text": "By using a reference genome build on iGenomes, the gtf, mature, species and index files (bar HISAT2 and segemehl) will be automatically downloaded for you. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
                 },
                 "fasta": {
                     "type": "string",
@@ -62,8 +204,73 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
+                    "help_text": "If you use AWS iGenomes, this has already been set for you appropriately.\n\nThis parameter is *mandatory* if `--genome` is not specified.",
+                    "fa_icon": "fas fa-book"
+                },
+                "gtf": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-book",
+                    "mimetype": "text/plain",
+                    "description": "Path to reference GTF file.",
+                    "pattern": "\\.gtf$"
+                },
+                "mature": {
+                    "type": "string",
+                    "description": "Path to FASTA file with mature miRNAs.",
+                    "mimetype": "text/plain",
+                    "help_text": "Typically this will be the `mature.fa` file from miRBase. Can be given either as a plain text `.fa` file or a compressed `.gz` file.",
+                    "fa_icon": "fas fa-wheelchair",
+                    "default": null
+                },
+                "species_id": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dog",
+                    "description": "String identifying species.",
+                    "help_text": "Check the igenomes.config file for species configured to work with nf-core/circrna",
+                    "default": null
+                },
+                "bowtie": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to Bowtie index files, surrounded by quotes. No glob pattern required.",
+                    "default": null
+                },
+                "bowtie2": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to Bowtie2 index files, surrounded by quotes. No glob pattern required.",
+                    "default": null
+                },
+                "bwa": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bold",
+                    "description": "Path to BWA index directory, surrounded by quotes. No glob pattern required.",
+                    "default": null
+                },
+                "hisat2": {
+                    "type": "string",
+                    "description": "Path to Hisat2 index directory, surrounded by quotes. No glob pattern required.",
+                    "default": null,
+                    "fa_icon": "fab fa-bold"
+                },
+                "hisat2_build_memory": {
+                    "type": "string",
+                    "default": "200.GB",
+                    "fa_icon": "fas fa-memory",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "description": "Minimum memory required to use splice sites and exons in the HiSAT2 index build process.",
+                    "help_text": "HiSAT2 requires a huge amount of RAM to build a genome index for larger genomes, if including splice sites and exons e.g. the human genome might typically require 200GB. If you specify less than this threshold for the `HISAT2_BUILD` process then the splice sites and exons will be ignored, meaning that the process will require a lot less memory. If you are working with a small genome, set this parameter to a lower value to reduce the threshold for skipping this check. If using a larger genome, consider supplying more memory to the `HISAT2_BUILD` process."
+                },
+                "segemehl": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fab fa-stripe-s",
+                    "description": "Path to Segemehl Index **file**."
+                },
+                "star": {
+                    "type": "string",
+                    "fa_icon": "far fa-star",
+                    "description": "Path to STAR index directory, surrounded by quotes. No glob pattern required."
                 },
                 "igenomes_ignore": {
                     "type": "boolean",
@@ -71,6 +278,66 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                }
+            }
+        },
+        "read_trimming_options": {
+            "title": "Read trimming options",
+            "type": "object",
+            "fa_icon": "fas fa-cut",
+            "description": "Options to adjust read trimming criteria.",
+            "properties": {
+                "skip_trimming": {
+                    "type": "boolean",
+                    "description": "Skip the adapter trimming step.",
+                    "help_text": "Use this if your input FastQ files have already been trimmed outside of the workflow or if you're very confident that there is no adapter contamination in your data.",
+                    "fa_icon": "fas fa-fast-forward",
+                    "default": false
+                },
+                "save_trimmed": {
+                    "type": "boolean",
+                    "description": "Save the trimmed FastQ files in the results directory.",
+                    "help_text": "By default, trimmed FastQ files will not be saved to the results directory. Specify this flag (or set to true in your config file) to copy these files to the results directory when complete.",
+                    "fa_icon": "fas fa-save",
+                    "default": false
+                },
+                "skip_fastqc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC quality control of the sequencing reads.",
+                    "fa_icon": "fas fa-terminal",
+                    "default": false
+                },
+                "clip_r1": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 5' end of read 1 (or single-end reads).",
+                    "fa_icon": "fas fa-cut"
+                },
+                "clip_r2": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 5' end of read 2 (paired-end reads only).",
+                    "fa_icon": "fas fa-cut"
+                },
+                "three_prime_clip_r1": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 3' end of read 1 AFTER adapter/quality trimming has been performed.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "three_prime_clip_r2": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to remove bp from the 3' end of read 2 AFTER adapter/quality trimming has been performed.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "trim_nextseq": {
+                    "type": "integer",
+                    "description": "Instructs Trim Galore to apply the --nextseq=X option, to trim based on quality after removing poly-G tails.",
+                    "help_text": "This enables the option Cutadapt `--nextseq-trim=3'CUTOFF` option via Trim Galore, which will set a quality cutoff (that is normally given with -q instead), but qualities of G bases are ignored. This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without any signal are called as high-quality G bases.",
+                    "fa_icon": "fas fa-cut"
+                },
+                "min_trimmed_reads": {
+                    "type": "integer",
+                    "default": 10000,
+                    "fa_icon": "fas fa-hand-paper",
+                    "description": "Minimum number of trimmed reads below which samples are removed from further processing. Some downstream steps in the pipeline will fail if this threshold is too low."
                 }
             }
         },
@@ -132,7 +399,7 @@
                 "max_cpus": {
                     "type": "integer",
                     "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
+                    "default": 50,
                     "fa_icon": "fas fa-microchip",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
@@ -140,7 +407,7 @@
                 "max_memory": {
                     "type": "string",
                     "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
+                    "default": "300.GB",
                     "fa_icon": "fas fa-memory",
                     "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
                     "hidden": true,
@@ -185,6 +452,13 @@
                     "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
                     "hidden": true
                 },
+                "email": {
+                    "type": "string",
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
                 "email_on_fail": {
                     "type": "string",
                     "description": "Email address for completion summary, only when pipeline fails.",
@@ -198,6 +472,11 @@
                     "description": "Send plain-text email instead of HTML.",
                     "fa_icon": "fas fa-remove-format",
                     "hidden": true
+                },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
                 },
                 "max_multiqc_email_size": {
                     "type": "string",
@@ -278,10 +557,19 @@
     },
     "allOf": [
         {
+            "$ref": "#/definitions/alignment_options"
+        },
+        {
             "$ref": "#/definitions/input_output_options"
         },
         {
+            "$ref": "#/definitions/pipeline_options"
+        },
+        {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/read_trimming_options"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
