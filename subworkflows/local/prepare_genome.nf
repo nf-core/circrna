@@ -53,7 +53,8 @@ workflow PREPARE_GENOME {
                                     HISAT2_EXTRACTSPLICESITES.out.versions,
                                     HISAT2_BUILD.out.versions,
                                     SEGEMEHL_INDEX.out.versions,
-                                    STAR_GENOMEGENERATE.out.versions)
+                                    STAR_GENOMEGENERATE.out.versions,
+                                    SAMTOOLS_FAIDX.out.versions)
 
     emit:
     faidx        = SAMTOOLS_FAIDX.out.fai
