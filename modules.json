@@ -7,7 +7,7 @@
                 "nf-core": {
                     "bedtools/getfasta": {
                         "branch": "master",
-                        "git_sha": "3b248b84694d1939ac4bb33df84bf6233a34d668",
+                        "git_sha": "cdcdd5e3d806f0ff3983c40c69e0b07bb44ec299",
                         "installed_by": ["modules"]
                     },
                     "bedtools/intersect": {
@@ -92,7 +92,7 @@
                     },
                     "gawk": {
                         "branch": "master",
-                        "git_sha": "dc3527855e7358c6d8400828754c0caa5f11698f",
+                        "git_sha": "b42fec6f7c6e5d0716685cabb825ef6bf6e386b5",
                         "installed_by": ["modules"]
                     },
                     "gnu/sort": {
