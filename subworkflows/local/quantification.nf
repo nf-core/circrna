@@ -1,4 +1,5 @@
 include { GNU_SORT as COMBINE_TRANSCRIPTOME_GTFS } from '../../modules/nf-core/gnu/sort'
+include { GAWK as EXCLUDE_OVERLONG_TRANSCRIPTS   } from '../../modules/nf-core/gawk'
 include { TRANSCRIPTOME                          } from '../../modules/local/quantification/transcriptome'
 include { GAWK as MARK_CIRCULAR                  } from '../../modules/nf-core/gawk'
 include { PSIRC_INDEX                            } from '../../modules/local/psirc/index'
@@ -33,13 +34,18 @@ workflow QUANTIFICATION {
         ch_gtf.mix(circ_annotation_gtf).map{meta, gtf -> gtf}.collect().map{[[id: "transcriptome"], it]},
     )
 
-    TRANSCRIPTOME(COMBINE_TRANSCRIPTOME_GTFS.out.sorted, ch_fasta)
+    EXCLUDE_OVERLONG_TRANSCRIPTS(
+        COMBINE_TRANSCRIPTOME_GTFS.out.sorted, []
+    )
+
+    TRANSCRIPTOME(EXCLUDE_OVERLONG_TRANSCRIPTS.out.output, ch_fasta)
     MARK_CIRCULAR(TRANSCRIPTOME.out.transcriptome, [])
 
     ch_versions = ch_versions.mix(
         COMBINE_TRANSCRIPTOME_GTFS.out.versions,
         TRANSCRIPTOME.out.versions,
-        MARK_CIRCULAR.out.versions
+        MARK_CIRCULAR.out.versions,
+        EXCLUDE_OVERLONG_TRANSCRIPTS.out.versions
     )
 
     PSIRC_INDEX(MARK_CIRCULAR.out.output)
@@ -58,11 +64,6 @@ workflow QUANTIFICATION {
         "kallisto"
     )
 
-    MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
-        ch_phenotype
-    )
-
     TXIMETA_TXIMPORT(
         PSIRC_QUANT.out.directory,
         CUSTOM_TX2GENE.out.tx2gene,
@@ -74,8 +75,7 @@ workflow QUANTIFICATION {
         PSIRC_QUANT.out.versions,
         CUSTOM_TX2GENE.out.versions,
         TXIMETA_TXIMETA.out.versions,
-        TXIMETA_TXIMPORT.out.versions,
-        MERGE_EXPERIMENTS.out.versions
+        TXIMETA_TXIMPORT.out.versions
     )
 
     JOIN_GENE_COUNTS(
@@ -102,13 +102,22 @@ workflow QUANTIFICATION {
         JOIN_TX_TPM.out.csv
     )
 
+
+    MERGE_EXPERIMENTS(
+        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
+        ch_phenotype,
+        EXCLUDE_OVERLONG_TRANSCRIPTS.out.output,
+        JOIN_TX_TPM.out.csv
+    )
+
     ch_versions = ch_versions.mix(
         JOIN_GENE_COUNTS.out.versions,
         JOIN_GENE_TPM.out.versions,
         JOIN_TX_COUNTS.out.versions,
         JOIN_TX_TPM.out.versions,
         SPLIT_TYPES_COUNTS.out.versions,
-        SPLIT_TYPES_TPM.out.versions
+        SPLIT_TYPES_TPM.out.versions,
+        MERGE_EXPERIMENTS.out.versions
     )
 
     emit:

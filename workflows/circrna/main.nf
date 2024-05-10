@@ -151,6 +151,7 @@ workflow CIRCRNA {
         params.exon_boundary
     )
 
+    ch_multiqc_files  = ch_multiqc_files.mix(CIRCRNA_DISCOVERY.out.multiqc_files)
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
     //

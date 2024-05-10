@@ -1,5 +1,5 @@
 process ANNOTATION {
-    tag "$meta.id"
+    tag "$meta.id:$meta.tool"
     label 'process_single'
 
     conda "bioconda::pandas=1.5.2"

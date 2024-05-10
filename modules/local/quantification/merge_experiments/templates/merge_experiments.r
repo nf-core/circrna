@@ -6,6 +6,8 @@ paths <- c('${experiments.join("\', \'")}')
 experiments <- lapply(paths, readRDS)
 
 phenotype <- read.csv('${phenotype}', stringsAsFactors = FALSE)
+annotation <- rtracklayer::import('${gtf}')
+tpm <- read.table('${tpm}', header=TRUE, row.names=1)[, -1]
 
 se_assays <- list()
 
@@ -36,6 +38,13 @@ for (col in colnames(colData(se))) {
         colData(se)[[col]] <- as.factor(colData(se)[[col]])
     }
 }
+
+# Add transcript annotation
+annotation <- annotation[match(rownames(se), annotation\$transcript_id),]
+rowData(se) <- annotation
+
+# Add TPM
+assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), colData(se)\$names]
 
 saveRDS(se, '${meta.id}.merged.rds')
 
