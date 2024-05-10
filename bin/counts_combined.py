@@ -15,13 +15,15 @@ columns = ['chr', 'start', 'end', 'name', 'count', 'strand']
 dfs = {os.path.basename(bed).split('.')[0]: pd.read_csv(bed,
                    sep='\t',
                    header=None,
+                   index_col=["chr", "start", "end", "strand"],
+                   usecols=["chr", "start", "end", "strand", "count"],
                    names=columns) for bed in args.beds}
 
 dfs = [df.rename(columns={'count': sample}) for sample, df in dfs.items()]
 df = pd.concat(dfs, axis=1)
-df.to_csv(args.out_bed, sep='\t')
+df = df.fillna(0)
+df.to_csv(args.out_bed, sep='\t', header=True, index=True)
 
-df.index = df['name']
+df.index = df.index.map(lambda x: f'{x[0]}:{x[1]}-{x[2]}:{x[3]}')
 df.index.name = 'ID'
-df.drop('name', axis=1, inplace=True)
 df.to_csv(args.out_tsv, sep='\t')

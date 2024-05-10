@@ -283,7 +283,7 @@ DESeq2 <- function(inputdata, data_type){
         rm(tmp)
 
         dds <- DESeqDataSetFromMatrix(
-        countData=inputdata$circ,
+        countData=round(inputdata$circ),
         colData=inputdata$pheno,
         design = inputdata$design)
 
