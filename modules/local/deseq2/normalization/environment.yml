@@ -5,4 +5,3 @@ channels:
   - defaults
 dependencies:
   - bioconda::bioconductor-deseq2=1.34.0
-  - conda-forge::r-data.table=1.15.2

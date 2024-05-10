@@ -12,7 +12,7 @@ process DESEQ2_NORMALIZATION {
 
     output:
     tuple val(meta), path("${meta.id}.normalized_counts.tsv"), emit: normalized
-    path "versions.yml"                             , emit: versions
+    path "versions.yml"                                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
