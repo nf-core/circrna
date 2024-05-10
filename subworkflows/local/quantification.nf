@@ -64,12 +64,6 @@ workflow QUANTIFICATION {
         "kallisto"
     )
 
-    MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
-        ch_phenotype,
-        EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
-    )
-
     TXIMETA_TXIMPORT(
         PSIRC_QUANT.out.directory,
         CUSTOM_TX2GENE.out.tx2gene,
@@ -81,8 +75,7 @@ workflow QUANTIFICATION {
         PSIRC_QUANT.out.versions,
         CUSTOM_TX2GENE.out.versions,
         TXIMETA_TXIMETA.out.versions,
-        TXIMETA_TXIMPORT.out.versions,
-        MERGE_EXPERIMENTS.out.versions
+        TXIMETA_TXIMPORT.out.versions
     )
 
     JOIN_GENE_COUNTS(
@@ -109,13 +102,21 @@ workflow QUANTIFICATION {
         JOIN_TX_TPM.out.csv
     )
 
+
+    MERGE_EXPERIMENTS(
+        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
+        ch_phenotype,
+        EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
+    )
+
     ch_versions = ch_versions.mix(
         JOIN_GENE_COUNTS.out.versions,
         JOIN_GENE_TPM.out.versions,
         JOIN_TX_COUNTS.out.versions,
         JOIN_TX_TPM.out.versions,
         SPLIT_TYPES_COUNTS.out.versions,
-        SPLIT_TYPES_TPM.out.versions
+        SPLIT_TYPES_TPM.out.versions,
+        MERGE_EXPERIMENTS.out.versions
     )
 
     emit:
