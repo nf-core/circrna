@@ -8,9 +8,10 @@ process MERGE_EXPERIMENTS {
         'biocontainers/bioconductor-rtracklayer:1.62.0--r43ha9d7317_0' }"
 
     input:
-    tuple val(meta), path(experiments)
+    tuple val(meta),  path(experiments)
     tuple val(meta2), path(phenotype)
     tuple val(meta3), path(gtf)
+    tuple val(meta4), path(tpm)
 
     output:
     tuple val(meta), path("${meta.id}.merged.rds"), emit: merged
