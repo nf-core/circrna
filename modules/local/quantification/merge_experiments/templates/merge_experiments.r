@@ -44,6 +44,7 @@ annotation <- annotation[match(rownames(se), annotation\$transcript_id),]
 rowData(se) <- annotation
 
 # Add TPM
+colnames(tpm) <- gsub("^X(\\\\d+)", "\\\\1", colnames(tpm)) # Remove ^X prefixes in tpm colnames if followed by a digit
 assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), colData(se)\$names]
 
 saveRDS(se, '${meta.id}.merged.rds')
