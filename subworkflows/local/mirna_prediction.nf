@@ -8,7 +8,7 @@ include { GAWK as MIRANDA_TO_MAJORITY     } from '../../modules/nf-core/gawk'
 include { GAWK as TARGETSCAN_TO_MAJORITY  } from '../../modules/nf-core/gawk'
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../modules/nf-core/cat/cat'
 
-// include { MAJORITY_VOTE              } from '../../modules/local/majority_vote'
+// include { MAJORITY_VOTE              } from '../../modules/local/majority_vote' 
 
 workflow MIRNA_PREDICTION{
 
@@ -78,9 +78,9 @@ workflow MIRNA_PREDICTION{
 	// UNIFICATION OF PREDICTIONS
 	//
 
-    ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}
+    ch_combined = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}
 	
-	COMBINE_BINDINGSITES ( ch_predictions )
+	COMBINE_BINDINGSITES ( ch_combined )
     
 	//
 	// MAJORITY VOTE: TODO
