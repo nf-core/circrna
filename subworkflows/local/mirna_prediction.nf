@@ -8,7 +8,7 @@ include { GAWK as MIRANDA_TO_MAJORITY     } from '../../modules/nf-core/gawk'
 include { GAWK as TARGETSCAN_TO_MAJORITY  } from '../../modules/nf-core/gawk'
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../modules/nf-core/cat/cat'
 
-// include { MAJORITY_VOTE              } from '../../modules/local/majority_vote' 
+include { MAJORITY_VOTE                   } from '../../modules/local/majority_vote' 
 
 workflow MIRNA_PREDICTION{
 
@@ -21,6 +21,7 @@ workflow MIRNA_PREDICTION{
     main:
     ch_versions = Channel.empty()
     ch_predictions = Channel.empty()
+	ch_votings = Channel.empty()
 
     ADD_BACKSPLICE( circrna_fasta, [] )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
@@ -81,10 +82,14 @@ workflow MIRNA_PREDICTION{
     ch_combined = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}
 	
 	COMBINE_BINDINGSITES ( ch_combined )
-    
+    ch_votings = ch_votings.mix(COMBINE_BINDINGSITES.out.file_out)
+	ch_votings.view()
+
 	//
-	// MAJORITY VOTE: TODO
+	// MAJORITY VOTE: 
 	//
+
+	MAJORITY_VOTE( ch_votings )
 
     emit:
     versions = ch_versions

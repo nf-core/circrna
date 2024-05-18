@@ -1,25 +1,59 @@
+#!/usr/bin/env python3 
 import pandas as pd
+import platform
 
 
-if __name__ == "__main__":
-    predictions = pd.read_csv("/home/malte/projects/refactorring/majority_test/main.tsv",
-                              sep="\\t", header=0, names=['mirna', 'target', 'start', 'end', 'tool' ])
+def format_yaml_like(data: dict, indent: int = 0) -> str:
+    """Formats a dictionary to a YAML-like string.
 
-    start = False
-    end = True
-    complete = False  # TODO: Ask if this means an exact match or an "either ..., or ..."
-    majority = 2
+    Args:
+        data (dict): The dictionary to format.
+        indent (int): The current indentation level.
 
-    if start:  # group by start indices
-        predictions = predictions.groupby(['mirna', 'target', 'start'])['tool'].apply(set).reset_index()
-    elif end:  # group by end indices
-        predictions = predictions.groupby(['mirna', 'target', 'end'])['tool'].apply(set).reset_index()
-    elif complete:  # group by both indices
-        predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].apply(set).reset_index()
+    Returns:
+        str: A string formatted as YAML.
+    """
+    yaml_str = ""
+    for key, value in data.items():
+        spaces = "  " * indent
+        if isinstance(value, dict):
+            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
+        else:
+            yaml_str += f"{spaces}{key}: {value}\\n"
+    return yaml_str
 
-    # performing majority vote keeping only mirna binding sites that meet the required number of votes
-    post_vote_predictions = predictions[predictions['tool'].apply(len) >= majority].copy()
-    post_vote_predictions = post_vote_predictions.drop('tool', axis=1)
+
+predictions = pd.read_csv("$bindingsites",
+                          sep="\\t", header=0, names=['mirna', 'target', 'start', 'end', 'tool' ])
+
+# start = False  # TODO: Probably needs to be removed
+# end = False 
+complete = True  # TODO: Ask if this means an exact match or an "either ..., or ..."
+majority = ${params.mirna_vote}
+
+# if start:  # group by start indices
+#     predictions = predictions.groupby(['mirna', 'target', 'start'])['tool'].apply(set).reset_index()
+# elif end:  # group by end indices
+#     predictions = predictions.groupby(['mirna', 'target', 'end'])['tool'].apply(set).reset_index()
+# elif complete:  # group by both indices
+#     predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].apply(set).reset_index()
+
+predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].apply(set).reset_index()
+
+# performing majority vote keeping only mirna binding sites that meet the required number of votes
+post_vote_predictions = predictions[predictions['tool'].apply(len) >= majority].copy()
+post_vote_predictions = post_vote_predictions.drop('tool', axis=1)
 
 
-    predictions_out.to_csv('filtered_bindingsites.tsv', sep='\\t', index=False)
+post_vote_predictions.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
+
+# Create version file
+versions = {
+    "${task.process}" : {
+        "python": platform.python_version(),
+        "pandas": pd.__version__,
+    }
+}
+
+with open("versions.yml", "w") as f:
+    f.write(format_yaml_like(versions))
