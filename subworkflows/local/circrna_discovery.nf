@@ -27,7 +27,6 @@ include { SJDB as DCC_MATE2_SJDB                         } from '../../modules/l
 include { DCC                                            } from '../../modules/local/dcc/dcc'
 include { DCC_FILTER                                     } from '../../modules/local/dcc/filter'
 include { MAPSPLICE_ALIGN                                } from '../../modules/local/mapsplice/align'
-include { FASTA                                          } from '../../modules/local/fasta'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
 include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REF   } from '../../modules/local/circexplorer2/reference'
@@ -40,6 +39,8 @@ include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE   } from '../../modules/n
 include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER       } from '../../modules/local/circexplorer2/filter'
 include { UPSET as UPSET_SAMPLES                         } from '../../modules/local/upset'
 include { UPSET as UPSET_ALL                             } from '../../modules/local/upset'
+include { BEDTOOLS_GETFASTA                              } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as ADD_BACKSPLICE                         } from '../../modules/nf-core/gawk'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -272,13 +273,15 @@ workflow CIRCRNA_DISCOVERY {
     // FASTA WORKFLOW:
     //
 
-    FASTA( ch_annotation_bed_merged, fasta )
+    BEDTOOLS_GETFASTA( ch_annotation_bed_merged, fasta )
+    ADD_BACKSPLICE( BEDTOOLS_GETFASTA.out.fasta, [])
 
-    ch_versions = ch_versions.mix(FASTA.out.versions)
+    ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
+    ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     emit:
     circrna_bed12 = ch_annotation_bed_merged
-    fasta = FASTA.out.analysis_fasta
+    fasta = ADD_BACKSPLICE.out.output
     annotation_bed = REMOVE_SCORE_STRAND.out.output
     annotation_gtf = COMBINE_ANNOTATION_GTFS.out.sorted
     counts_bed = COUNTS_COMBINED.out.counts_bed

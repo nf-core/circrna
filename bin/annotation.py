@@ -43,7 +43,7 @@ df_intergenic['gene_name'] = 'intergenic_' + df_intergenic['name']
 df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 
 # Convert attributes to a dictionary
-df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ')] for entry in row.split(';') if entry]))
+df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ', 1)] for entry in row.split(';') if entry]))
 # Keep only the attributes we want
 df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in attributes if key in row})
 # Convert attributes to columns
