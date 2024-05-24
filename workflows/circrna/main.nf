@@ -117,7 +117,6 @@ workflow CIRCRNA {
     chromosomes    = PREPARE_GENOME.out.chromosomes
     hisat2_index   = PREPARE_GENOME.out.hisat2
     star_index     = PREPARE_GENOME.out.star
-    segemehl_index = PREPARE_GENOME.out.segemehl
     ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
@@ -143,7 +142,6 @@ workflow CIRCRNA {
         bwa_index,
         chromosomes,
         hisat2_index,
-        segemehl_index,
         star_index,
         params.bsj_reads,
         params.tool_filter,

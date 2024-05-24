@@ -5,7 +5,6 @@ include { BWA_INDEX           } from '../../modules/nf-core/bwa/index'
 include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites'
 include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build'
 include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate'
-include { SEGEMEHL_INDEX      } from '../../modules/nf-core/segemehl/index'
 include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk'
 include { SAMTOOLS_FAIDX      } from '../../modules/nf-core/samtools/faidx'
 
@@ -41,8 +40,6 @@ workflow PREPARE_GENOME {
 
     STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
 
-    SEGEMEHL_INDEX(ch_fasta.map{ meta, fasta -> fasta}) // TODO: Add support for meta
-
     SAMTOOLS_FAIDX(ch_fasta, [[], []])
 
     // Collect versions
@@ -52,14 +49,12 @@ workflow PREPARE_GENOME {
                                     BWA_INDEX.out.versions,
                                     HISAT2_EXTRACTSPLICESITES.out.versions,
                                     HISAT2_BUILD.out.versions,
-                                    SEGEMEHL_INDEX.out.versions,
                                     STAR_GENOMEGENERATE.out.versions,
                                     SAMTOOLS_FAIDX.out.versions)
 
     emit:
     faidx        = SAMTOOLS_FAIDX.out.fai
     bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
-    segemehl     = params.segemehl ?: SEGEMEHL_INDEX.out.index
     bowtie2      = params.bowtie2  ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()
     bwa          = params.bwa      ? Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])         : BWA_INDEX.out.index.collect()
     hisat2       = params.hisat2   ? Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])   : HISAT2_BUILD.out.index.collect()
