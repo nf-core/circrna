@@ -11,19 +11,14 @@ parser.add_argument('--output', type=str, help='Output file')
 
 args = parser.parse_args()
 
-columns = ['chr', 'start', 'end', 'strand', 'count']
+columns = ['chr', 'start', 'end', 'name', 'count', 'strand']
 dfs = [pd.read_csv(bed, sep='\t', header=None, names=columns) for bed in args.beds]
 df = pd.concat(dfs)
 
 df['tool_count'] = 1
-
-df = df.groupby(['chr', 'start', 'end', 'strand']).agg({'count': args.duplicates_fun,
+df = df.groupby(['chr', 'start', 'end', 'strand', 'name']).agg({'count': args.duplicates_fun,
                                                         'tool_count': 'sum'}).reset_index()
 df = df[df['tool_count'] >= args.tool_filter]
 
-df.drop('tool_count', axis=1, inplace=True)
-df["name"] = df["chr"] + ":" + df["start"].astype(str) + "-" + df["end"].astype(str) + ":" + df["strand"]
-
-df = df[['chr', 'start', 'end', 'name', 'count', 'strand']]
-
+df = df[columns]
 df.to_csv(args.output, sep='\t', index=False, header=False)

@@ -1,6 +1,6 @@
 include { SEGEMEHL_INDEX as INDEX   } from '../../../modules/nf-core/segemehl/index'
 include { SEGEMEHL_ALIGN as ALIGN   } from '../../../modules/nf-core/segemehl/align'
-include { SEGEMEHL_FILTER as FILTER } from '../../../modules/local/segemehl/filter'
+include { GAWK as UNIFY             } from '../../../modules/nf-core/gawk'
 
 
 workflow SEGEMEHL {
@@ -15,15 +15,14 @@ workflow SEGEMEHL {
 
     index = index ?: INDEX( fasta ).index
     ALIGN( reads, fasta, index )
-    FILTER( ALIGN.out.results
-        .map{ meta, results ->  [ meta + [tool: "segemehl"], results ] }, bsj_reads )
+    UNIFY( ALIGN.out.results
+        .map{ meta, results ->  [ meta + [tool: "segemehl"], results ] }, [] )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
-    ch_versions = ch_versions.mix(FILTER.out.versions)
+    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    matrix = FILTER.out.matrix
-    results = FILTER.out.results
+    bed = UNIFY.out.output
 
     versions = ch_versions
 }
