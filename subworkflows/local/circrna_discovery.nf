@@ -52,49 +52,67 @@ workflow CIRCRNA_DISCOVERY {
     //
     // DISCOVERY TOOLS:
     //
-    SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
-    ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
-    ch_matrix   = ch_matrix  .mix(SEGEMEHL.out.matrix)
-    ch_results  = ch_results .mix(SEGEMEHL.out.results)
+    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
-    CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
-    ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
-    ch_matrix   = ch_matrix  .mix(CIRCEXPLORER2.out.matrix)
-    ch_results  = ch_results .mix(CIRCEXPLORER2.out.results)
+    if (tools_selected.size() == 0) {
+        error 'No tools selected for circRNA discovery.'
+    }
 
-    CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction,
-        STAR2PASS.out.tab, bsj_reads )
-    ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
-    ch_matrix   = ch_matrix  .mix(CIRCRNA_FINDER.out.matrix)
-    ch_results  = ch_results .mix(CIRCRNA_FINDER.out.results)
+    if (tools_selected.contains('segemehl')) {
+        SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
+        ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
+        ch_matrix   = ch_matrix  .mix(SEGEMEHL.out.matrix)
+        ch_results  = ch_results .mix(SEGEMEHL.out.results)
+    }
 
-    FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
-    ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
-    ch_matrix   = ch_matrix  .mix(FIND_CIRC.out.matrix)
-    ch_results  = ch_results .mix(FIND_CIRC.out.results)
+    if (tools_selected.contains('circexplorer2')) {
+        CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
+        ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
+        ch_matrix   = ch_matrix  .mix(CIRCEXPLORER2.out.matrix)
+        ch_results  = ch_results .mix(CIRCEXPLORER2.out.results)
+    }
 
-    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
-    ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
-    ch_matrix = ch_matrix.mix(CIRIQUANT.out.matrix)
-    ch_results = ch_results.mix(CIRIQUANT.out.results)
+    if (tools_selected.contains('circrna_finder')) {
+        CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction,
+            STAR2PASS.out.tab, bsj_reads )
+        ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
+        ch_matrix   = ch_matrix  .mix(CIRCRNA_FINDER.out.matrix)
+        ch_results  = ch_results .mix(CIRCRNA_FINDER.out.results)
+    }
 
-    DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction,
-        star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
-    ch_versions = ch_versions.mix(DCC.out.versions)
-    ch_matrix = ch_matrix.mix(DCC.out.matrix)
-    ch_results = ch_results.mix(DCC.out.results)
+    if (tools_selected.contains('find_circ')) {
+        FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
+        ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
+        ch_matrix   = ch_matrix  .mix(FIND_CIRC.out.matrix)
+        ch_results  = ch_results .mix(FIND_CIRC.out.results)
+    }
 
-    MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes,
-        STAR2PASS.out.junction, bsj_reads )
-    ch_versions = ch_versions.mix(MAPSPLICE.out.versions)
-    ch_matrix = ch_matrix.mix(MAPSPLICE.out.matrix)
-    ch_results = ch_results.mix(MAPSPLICE.out.results)
+    if (tools_selected.contains('ciriquant')) {
+        CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
+        ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
+        ch_matrix   = ch_matrix  .mix(CIRIQUANT.out.matrix)
+        ch_results  = ch_results .mix(CIRIQUANT.out.results)
+    }
+
+    if (tools_selected.contains('dcc')) {
+        DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction,
+            star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
+        ch_versions = ch_versions.mix(DCC.out.versions)
+        ch_matrix = ch_matrix.mix(DCC.out.matrix)
+        ch_results = ch_results.mix(DCC.out.results)
+    }
+
+    if (tools_selected.contains('mapsplice')) {
+        MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes,
+            STAR2PASS.out.junction, bsj_reads )
+        ch_versions = ch_versions.mix(MAPSPLICE.out.versions)
+        ch_matrix = ch_matrix.mix(MAPSPLICE.out.matrix)
+        ch_results = ch_results.mix(MAPSPLICE.out.results)
+    }
 
     //
     // CREATE COUNT MATRIX
     //
-
-    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
     MERGE_TOOLS( ch_matrix.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
