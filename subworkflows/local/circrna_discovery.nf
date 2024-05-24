@@ -39,47 +39,64 @@ workflow CIRCRNA_DISCOVERY {
     exon_boundary
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions      = Channel.empty()
+    ch_matrix        = Channel.empty()
+    ch_results       = Channel.empty()
     ch_multiqc_files = Channel.empty()
-    fasta       = ch_fasta.map{meta, fasta -> fasta}
-    gtf         = ch_gtf.map{meta, gtf -> gtf}
+    fasta            = ch_fasta.map{meta, fasta -> fasta}
+    gtf              = ch_gtf.map{meta, gtf -> gtf}
 
-    // STAR CONSTANT PARAMETERS
+    // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
     seq_center = params.seq_center ?: ''
     seq_platform = ''
+    STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
+    ch_versions = ch_versions.mix(STAR2PASS.out.versions)
 
     //
     // DISCOVERY TOOLS:
     //
     SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
-    STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
-    CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
-    CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction, STAR2PASS.out.tab, bsj_reads )
-    FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
-    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
-    DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction, star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
-    MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes, STAR2PASS.out.junction, bsj_reads )
-
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
-    ch_versions = ch_versions.mix(STAR2PASS.out.versions)
+    ch_matrix   = ch_matrix  .mix(SEGEMEHL.out.matrix)
+    ch_results  = ch_results .mix(SEGEMEHL.out.results)
+
+    CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
     ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
+    ch_matrix   = ch_matrix  .mix(CIRCEXPLORER2.out.matrix)
+    ch_results  = ch_results .mix(CIRCEXPLORER2.out.results)
+
+    CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction,
+        STAR2PASS.out.tab, bsj_reads )
     ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
+    ch_matrix   = ch_matrix  .mix(CIRCRNA_FINDER.out.matrix)
+    ch_results  = ch_results .mix(CIRCRNA_FINDER.out.results)
+
+    FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
     ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
+    ch_matrix   = ch_matrix  .mix(FIND_CIRC.out.matrix)
+    ch_results  = ch_results .mix(FIND_CIRC.out.results)
+
+    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
+    ch_matrix = ch_matrix.mix(CIRIQUANT.out.matrix)
+    ch_results = ch_results.mix(CIRIQUANT.out.results)
+
+    DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction,
+        star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
     ch_versions = ch_versions.mix(DCC.out.versions)
+    ch_matrix = ch_matrix.mix(DCC.out.matrix)
+    ch_results = ch_results.mix(DCC.out.results)
+
+    MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes,
+        STAR2PASS.out.junction, bsj_reads )
     ch_versions = ch_versions.mix(MAPSPLICE.out.versions)
+    ch_matrix = ch_matrix.mix(MAPSPLICE.out.matrix)
+    ch_results = ch_results.mix(MAPSPLICE.out.results)
 
     //
     // COUNT MATRIX WORKFLOW:
     //
-
-    ch_matrix = CIRCEXPLORER2.out.matrix.mix(SEGEMEHL.out.matrix,
-                                                    CIRCRNA_FINDER.out.matrix,
-                                                    FIND_CIRC.out.matrix,
-                                                    CIRIQUANT.out.matrix,
-                                                    DCC.out.matrix,
-                                                    MAPSPLICE.out.matrix)
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
@@ -96,17 +113,10 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
-    circrna_tools = CIRCEXPLORER2.out.results.mix(SEGEMEHL.out.results,
-                                                            CIRCRNA_FINDER.out.results,
-                                                            FIND_CIRC.out.results,
-                                                            CIRIQUANT.out.results,
-                                                            DCC.out.results,
-                                                            MAPSPLICE.out.results)
-
-    UPSET_SAMPLES( circrna_tools.map{ meta, bed -> [meta.id, meta.tool, bed]}
+    UPSET_SAMPLES( ch_results.map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-    UPSET_ALL( circrna_tools.map{ meta, bed -> ["all", meta.tool, bed] }
+    UPSET_ALL( ch_results.map{ meta, bed -> ["all", meta.tool, bed] }
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
 
@@ -115,7 +125,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
     ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
 
-    circrna_incl_merged = circrna_tools.mix(
+    circrna_incl_merged = ch_results.mix(
         MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
 
     INTERSECT_ANNOTATION( circrna_incl_merged.combine(gtf), [[], []])
