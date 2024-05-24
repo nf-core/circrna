@@ -72,7 +72,7 @@ workflow CIRCRNA_DISCOVERY {
 
     if (tools_selected.contains('circrna_finder')) {
         CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction,
-            STAR2PASS.out.tab, bsj_reads )
+            STAR2PASS.out.tab )
         ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
         ch_bed      = ch_bed     .mix(CIRCRNA_FINDER.out.bed)
     }

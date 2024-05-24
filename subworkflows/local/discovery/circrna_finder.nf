@@ -1,4 +1,5 @@
-include { CIRCRNA_FINDER_FILTER as FILTER } from '../../../modules/local/circrna_finder/filter'
+include { CIRCRNA_FINDER as MAIN } from '../../../modules/local/circrna_finder'
+include { GAWK as UNIFY          } from '../../../modules/nf-core/gawk'
 
 workflow CIRCRNA_FINDER {
     take:
@@ -6,22 +7,21 @@ workflow CIRCRNA_FINDER {
     star_sam
     star_junctions
     star_tab
-    bsj_reads
     
     main:
     ch_versions = Channel.empty()
 
     ch_joined = star_sam.join(star_junctions).join(star_tab)
         .map{ meta, sam, junction, tab -> 
-            [ meta + [tool: "circrna_finder"], sam, junction, tab ] }
+            [ meta + [tool: "circrna_finder"], [sam, junction, tab] ] }
     
-    FILTER( ch_joined, fasta, bsj_reads )
+    MAIN( ch_joined )
+    UNIFY( MAIN.out.results, [] )
 
-    ch_versions = ch_versions.mix(FILTER.out.versions)
+    ch_versions = ch_versions.mix(MAIN.out.versions)
     
     emit:
-    matrix = FILTER.out.matrix
-    results = FILTER.out.results
+    bed = UNIFY.out.output
 
     versions = ch_versions
 }
