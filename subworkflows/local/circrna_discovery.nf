@@ -95,7 +95,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_results = ch_results.mix(MAPSPLICE.out.results)
 
     //
-    // COUNT MATRIX WORKFLOW:
+    // CREATE COUNT MATRIX
     //
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
@@ -108,10 +108,8 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
     //
-    // ANNOTATION WORKFLOW:
+    // UPSET PLOTS
     //
-
-    ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
     UPSET_SAMPLES( ch_results.map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
@@ -124,6 +122,10 @@ workflow CIRCRNA_DISCOVERY {
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
     ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
     ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
+
+    //
+    // ANNOTATION WORKFLOW:
+    //
 
     circrna_incl_merged = ch_results.mix(
         MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
