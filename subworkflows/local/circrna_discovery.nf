@@ -4,13 +4,8 @@ include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/n
 include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect'
-include { MAPSPLICE_ALIGN                                } from '../../modules/local/mapsplice/align'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
-include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference'
-include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE         } from '../../modules/nf-core/circexplorer2/parse'
-include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE   } from '../../modules/nf-core/circexplorer2/annotate'
-include { CIRCEXPLORER2_FILTER as MAPSPLICE_FILTER       } from '../../modules/local/circexplorer2/filter'
 include { UPSET as UPSET_SAMPLES                         } from '../../modules/local/upset'
 include { UPSET as UPSET_ALL                             } from '../../modules/local/upset'
 include { BEDTOOLS_GETFASTA                              } from '../../modules/nf-core/bedtools/getfasta'
@@ -24,6 +19,7 @@ include { CIRCRNA_FINDER } from './discovery/circrna_finder'
 include { FIND_CIRC      } from './discovery/find_circ'
 include { CIRIQUANT      } from './discovery/ciriquant'
 include { DCC            } from './discovery/dcc'
+include { MAPSPLICE      } from './discovery/mapsplice'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -56,7 +52,6 @@ workflow CIRCRNA_DISCOVERY {
     //
     // DISCOVERY TOOLS:
     //
-    tools = params.tool.split(',').collect{it.trim().toLowerCase()}
     SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
     STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
     CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
@@ -64,6 +59,7 @@ workflow CIRCRNA_DISCOVERY {
     FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
     CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
     DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction, star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
+    MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes, STAR2PASS.out.junction, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
@@ -72,24 +68,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
     ch_versions = ch_versions.mix(DCC.out.versions)
-
-
-    //
-    // MAPSPLICE WORKFLOW:
-    //
-
-    MAPSPLICE_REFERENCE( gtf )
-    MAPSPLICE_ALIGN( reads, bowtie_index, chromosomes, gtf )
-    MAPSPLICE_PARSE( MAPSPLICE_ALIGN.out.raw_fusions )
-    MAPSPLICE_ANNOTATE( MAPSPLICE_PARSE.out.junction, fasta, MAPSPLICE_REFERENCE.out.txt )
-    mapsplice_filter = MAPSPLICE_ANNOTATE.out.txt.map{ meta, txt -> [ meta + [tool: "mapsplice"], txt ] }
-    MAPSPLICE_FILTER( mapsplice_filter, bsj_reads )
-
-    ch_versions = ch_versions.mix(MAPSPLICE_REFERENCE.out.versions)
-    ch_versions = ch_versions.mix(MAPSPLICE_ALIGN.out.versions)
-    ch_versions = ch_versions.mix(MAPSPLICE_PARSE.out.versions)
-    ch_versions = ch_versions.mix(MAPSPLICE_ANNOTATE.out.versions)
-    ch_versions = ch_versions.mix(MAPSPLICE_FILTER.out.versions)
+    ch_versions = ch_versions.mix(MAPSPLICE.out.versions)
 
     //
     // COUNT MATRIX WORKFLOW:
@@ -100,7 +79,7 @@ workflow CIRCRNA_DISCOVERY {
                                                     FIND_CIRC.out.matrix,
                                                     CIRIQUANT.out.matrix,
                                                     DCC.out.matrix,
-                                                    MAPSPLICE_FILTER.out.matrix)
+                                                    MAPSPLICE.out.matrix)
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
 
@@ -122,7 +101,7 @@ workflow CIRCRNA_DISCOVERY {
                                                             FIND_CIRC.out.results,
                                                             CIRIQUANT.out.results,
                                                             DCC.out.results,
-                                                            MAPSPLICE_FILTER.out.results)
+                                                            MAPSPLICE.out.results)
 
     UPSET_SAMPLES( circrna_tools.map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
