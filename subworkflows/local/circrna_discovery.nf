@@ -4,8 +4,6 @@ include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/n
 include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect'
-include { CIRIQUANT                                      } from '../../modules/local/ciriquant/ciriquant'
-include { CIRIQUANT_FILTER                               } from '../../modules/local/ciriquant/filter'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS               } from '../../modules/nf-core/star/align'
 include { SJDB as DCC_MATE1_SJDB                         } from '../../modules/local/star/sjdb'
@@ -32,6 +30,7 @@ include { STAR2PASS      } from './discovery/star2pass'
 include { CIRCEXPLORER2  } from './discovery/circexplorer2'
 include { CIRCRNA_FINDER } from './discovery/circrna_finder'
 include { FIND_CIRC      } from './discovery/find_circ'
+include { CIRIQUANT      } from './discovery/ciriquant'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -70,24 +69,14 @@ workflow CIRCRNA_DISCOVERY {
     CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
     CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction, STAR2PASS.out.tab, bsj_reads )
     FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
+    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
     ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
     ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
-
-    //
-    // CIRIQUANT WORKFLOW:
-    //
-
-    // only need path to bwa, only need path to hisat2.
-    // do not want to upset the collect declr for all indices just for this.
-    CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
-    CIRIQUANT_FILTER( CIRIQUANT.out.gtf.map{ meta, gtf -> [ meta + [tool: "ciriquant"], gtf ] }, bsj_reads )
-
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
-    ch_versions = ch_versions.mix(CIRIQUANT_FILTER.out.versions)
 
     //
     // DCC WORKFLOW
@@ -151,7 +140,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_matrix = CIRCEXPLORER2.out.matrix.mix(SEGEMEHL.out.matrix,
                                                     CIRCRNA_FINDER.out.matrix,
                                                     FIND_CIRC.out.matrix,
-                                                    CIRIQUANT_FILTER.out.matrix,
+                                                    CIRIQUANT.out.matrix,
                                                     DCC_FILTER.out.matrix,
                                                     MAPSPLICE_FILTER.out.matrix)
 
@@ -173,7 +162,7 @@ workflow CIRCRNA_DISCOVERY {
     circrna_tools = CIRCEXPLORER2.out.results.mix(SEGEMEHL.out.results,
                                                             CIRCRNA_FINDER.out.results,
                                                             FIND_CIRC.out.results,
-                                                            CIRIQUANT_FILTER.out.results,
+                                                            CIRIQUANT.out.results,
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
 
