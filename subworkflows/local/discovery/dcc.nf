@@ -4,7 +4,7 @@ include { SJDB       as MATE1_SJDB     } from '../../../modules/local/star/sjdb'
 include { STAR_ALIGN as MATE2_1ST_PASS } from '../../../modules/nf-core/star/align'
 include { STAR_ALIGN as MATE2_2ND_PASS } from '../../../modules/nf-core/star/align'
 include { SJDB       as MATE2_SJDB     } from '../../../modules/local/star/sjdb'
-include { DCC        as MAIN           } from '../../../modules/local/dcc/dcc'
+include { DCC        as MAIN           } from '../../../modules/local/dcc'
 include { GAWK       as UNIFY          } from '../../../modules/nf-core/gawk'
 
 workflow DCC {
