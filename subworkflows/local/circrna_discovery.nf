@@ -65,7 +65,7 @@ workflow CIRCRNA_DISCOVERY {
     }
 
     if (tools_selected.contains('circexplorer2')) {
-        CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
+        CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction )
         ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
         ch_bed      = ch_bed     .mix(CIRCEXPLORER2.out.bed)
     }
