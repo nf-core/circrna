@@ -12,7 +12,6 @@ include { FIND_CIRC                                      } from '../../modules/l
 include { FIND_CIRC_FILTER                               } from '../../modules/local/find_circ/filter'
 include { CIRIQUANT                                      } from '../../modules/local/ciriquant/ciriquant'
 include { CIRIQUANT_FILTER                               } from '../../modules/local/ciriquant/filter'
-include { CIRCRNA_FINDER_FILTER                          } from '../../modules/local/circrna_finder/filter'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align'
 include { STAR_ALIGN as DCC_MATE1_2ND_PASS               } from '../../modules/nf-core/star/align'
 include { SJDB as DCC_MATE1_SJDB                         } from '../../modules/local/star/sjdb'
@@ -34,9 +33,10 @@ include { BEDTOOLS_GETFASTA                              } from '../../modules/n
 include { GAWK as ADD_BACKSPLICE                         } from '../../modules/nf-core/gawk'
 
 // SUBWORKFLOWS
-include { SEGEMEHL      } from './discovery/segemehl'
-include { STAR2PASS     } from './discovery/star2pass'
-include { CIRCEXPLORER2 } from './discovery/circexplorer2'
+include { SEGEMEHL       } from './discovery/segemehl'
+include { STAR2PASS      } from './discovery/star2pass'
+include { CIRCEXPLORER2  } from './discovery/circexplorer2'
+include { CIRCRNA_FINDER } from './discovery/circrna_finder'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -73,20 +73,13 @@ workflow CIRCRNA_DISCOVERY {
     SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
     STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
     CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
+    CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction, STAR2PASS.out.tab, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
+    ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
 
-    //
-    // CIRCRNA_FINDER WORKFLOW:
-    //
-
-    circrna_finder_stage = STAR2PASS.out.sam.join( STAR2PASS.out.junction).join(STAR2PASS.out.tab)
-    circrna_finder_filter = circrna_finder_stage.map{ meta, sam, junction, tab -> [ meta + [tool: "circrna_finder"], sam, junction, tab ] }
-    CIRCRNA_FINDER_FILTER( circrna_finder_filter, fasta, bsj_reads )
-
-    ch_versions = ch_versions.mix(CIRCRNA_FINDER_FILTER.out.versions)
 
     //
     // FIND_CIRC WORKFLOW:
@@ -179,7 +172,7 @@ workflow CIRCRNA_DISCOVERY {
     //
 
     ch_matrix = CIRCEXPLORER2.out.matrix.mix(SEGEMEHL.out.matrix,
-                                                    CIRCRNA_FINDER_FILTER.out.matrix,
+                                                    CIRCRNA_FINDER.out.matrix,
                                                     FIND_CIRC_FILTER.out.matrix,
                                                     CIRIQUANT_FILTER.out.matrix,
                                                     DCC_FILTER.out.matrix,
@@ -201,7 +194,7 @@ workflow CIRCRNA_DISCOVERY {
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
     circrna_tools = CIRCEXPLORER2.out.results.mix(SEGEMEHL.out.results,
-                                                            CIRCRNA_FINDER_FILTER.out.results,
+                                                            CIRCRNA_FINDER.out.results,
                                                             FIND_CIRC_FILTER.out.results,
                                                             CIRIQUANT_FILTER.out.results,
                                                             DCC_FILTER.out.results,
