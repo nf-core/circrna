@@ -4,12 +4,6 @@ include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/n
 include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect'
-include { BOWTIE2_ALIGN as FIND_CIRC_ALIGN               } from '../../modules/nf-core/bowtie2/align'
-include { SAMTOOLS_VIEW                                  } from '../../modules/nf-core/samtools/view'
-include { SAMTOOLS_INDEX                                 } from '../../modules/nf-core/samtools/index'
-include { FIND_CIRC_ANCHORS                              } from '../../modules/local/find_circ/anchors'
-include { FIND_CIRC                                      } from '../../modules/local/find_circ/find_circ'
-include { FIND_CIRC_FILTER                               } from '../../modules/local/find_circ/filter'
 include { CIRIQUANT                                      } from '../../modules/local/ciriquant/ciriquant'
 include { CIRIQUANT_FILTER                               } from '../../modules/local/ciriquant/filter'
 include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align'
@@ -37,6 +31,7 @@ include { SEGEMEHL       } from './discovery/segemehl'
 include { STAR2PASS      } from './discovery/star2pass'
 include { CIRCEXPLORER2  } from './discovery/circexplorer2'
 include { CIRCRNA_FINDER } from './discovery/circrna_finder'
+include { FIND_CIRC      } from './discovery/find_circ'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -74,31 +69,13 @@ workflow CIRCRNA_DISCOVERY {
     STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
     CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
     CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction, STAR2PASS.out.tab, bsj_reads )
+    FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
     ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
     ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
-
-
-    //
-    // FIND_CIRC WORKFLOW:
-    //
-
-    FIND_CIRC_ALIGN( reads, bowtie2_index, ch_fasta, false, true )
-    SAMTOOLS_INDEX( FIND_CIRC_ALIGN.out.bam )
-    SAMTOOLS_VIEW( FIND_CIRC_ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
-    FIND_CIRC_ANCHORS( SAMTOOLS_VIEW.out.bam )
-    FIND_CIRC( FIND_CIRC_ANCHORS.out.anchors, bowtie2_index, fasta )
-    find_circ_filter = FIND_CIRC.out.bed.map{ meta, bed -> [ meta + [tool: "find_circ"], bed ] }
-    FIND_CIRC_FILTER( find_circ_filter, bsj_reads )
-
-    ch_versions = ch_versions.mix(FIND_CIRC_ALIGN.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_VIEW.out.versions)
-    ch_versions = ch_versions.mix(FIND_CIRC_ANCHORS.out.versions)
     ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
-    ch_versions = ch_versions.mix(FIND_CIRC_FILTER.out.versions)
 
     //
     // CIRIQUANT WORKFLOW:
@@ -173,7 +150,7 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_matrix = CIRCEXPLORER2.out.matrix.mix(SEGEMEHL.out.matrix,
                                                     CIRCRNA_FINDER.out.matrix,
-                                                    FIND_CIRC_FILTER.out.matrix,
+                                                    FIND_CIRC.out.matrix,
                                                     CIRIQUANT_FILTER.out.matrix,
                                                     DCC_FILTER.out.matrix,
                                                     MAPSPLICE_FILTER.out.matrix)
@@ -195,7 +172,7 @@ workflow CIRCRNA_DISCOVERY {
 
     circrna_tools = CIRCEXPLORER2.out.results.mix(SEGEMEHL.out.results,
                                                             CIRCRNA_FINDER.out.results,
-                                                            FIND_CIRC_FILTER.out.results,
+                                                            FIND_CIRC.out.results,
                                                             CIRIQUANT_FILTER.out.results,
                                                             DCC_FILTER.out.results,
                                                             MAPSPLICE_FILTER.out.results)
