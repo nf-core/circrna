@@ -8,7 +8,6 @@ workflow SEGEMEHL {
     reads
     fasta
     index
-    bsj_reads
 
     main:
     ch_versions = Channel.empty()

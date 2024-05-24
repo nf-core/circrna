@@ -1,4 +1,5 @@
 // MODULES
+include { GAWK as FILTER_BSJS                            } from '../../modules/nf-core/gawk'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
 include { UPSET as UPSET_SAMPLES                         } from '../../modules/local/upset'
@@ -58,7 +59,7 @@ workflow CIRCRNA_DISCOVERY {
     }
 
     if (tools_selected.contains('segemehl')) {
-        SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
+        SEGEMEHL( reads, fasta, params.segemehl )
         ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
         ch_bed      = ch_bed     .mix(SEGEMEHL.out.bed)
     }
@@ -102,13 +103,16 @@ workflow CIRCRNA_DISCOVERY {
         ch_bed      = ch_bed     .mix(MAPSPLICE.out.bed)
     }
 
+    FILTER_BSJS( ch_bed, [] )
+    ch_versions = ch_versions.mix(FILTER_BSJS.out.versions)
+
     //
     // CREATE COUNT MATRIX
     //
 
     ch_results = Channel.empty()
 
-    MERGE_TOOLS( ch_bed.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
+    MERGE_TOOLS( FILTER_BSJS.out.output.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
     COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
