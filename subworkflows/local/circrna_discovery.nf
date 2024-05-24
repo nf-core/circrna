@@ -24,10 +24,6 @@ include { DCC_FILTER                                     } from '../../modules/l
 include { MAPSPLICE_ALIGN                                } from '../../modules/local/mapsplice/align'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
-include { CIRCEXPLORER2_REFERENCE as CIRCEXPLORER2_REF   } from '../../modules/local/circexplorer2/reference'
-include { CIRCEXPLORER2_PARSE as CIRCEXPLORER2_PAR       } from '../../modules/nf-core/circexplorer2/parse'
-include { CIRCEXPLORER2_ANNOTATE as CIRCEXPLORER2_ANN    } from '../../modules/nf-core/circexplorer2/annotate'
-include { CIRCEXPLORER2_FILTER as CIRCEXPLORER2_FLT      } from '../../modules/local/circexplorer2/filter'
 include { CIRCEXPLORER2_REFERENCE as MAPSPLICE_REFERENCE } from '../../modules/local/circexplorer2/reference'
 include { CIRCEXPLORER2_PARSE as MAPSPLICE_PARSE         } from '../../modules/nf-core/circexplorer2/parse'
 include { CIRCEXPLORER2_ANNOTATE as MAPSPLICE_ANNOTATE   } from '../../modules/nf-core/circexplorer2/annotate'
@@ -38,8 +34,9 @@ include { BEDTOOLS_GETFASTA                              } from '../../modules/n
 include { GAWK as ADD_BACKSPLICE                         } from '../../modules/nf-core/gawk'
 
 // SUBWORKFLOWS
-include { SEGEMEHL  } from './discovery/segemehl'
-include { STAR2PASS } from './discovery/star2pass'
+include { SEGEMEHL      } from './discovery/segemehl'
+include { STAR2PASS     } from './discovery/star2pass'
+include { CIRCEXPLORER2 } from './discovery/circexplorer2'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -75,24 +72,11 @@ workflow CIRCRNA_DISCOVERY {
     tools = params.tool.split(',').collect{it.trim().toLowerCase()}
     SEGEMEHL( reads, fasta, params.segemehl, bsj_reads )
     STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
+    CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
-
-    //
-    // CIRCEXPLORER2 WORKFLOW:
-    //
-
-    CIRCEXPLORER2_REF( gtf )
-    CIRCEXPLORER2_PAR( STAR2PASS.out.junction )
-    CIRCEXPLORER2_ANN( CIRCEXPLORER2_PAR.out.junction, fasta, CIRCEXPLORER2_REF.out.txt )
-    circexplorer2_filter = CIRCEXPLORER2_ANN.out.txt.map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt ] }
-    CIRCEXPLORER2_FLT( circexplorer2_filter, bsj_reads )
-
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_REF.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_PAR.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_ANN.out.versions)
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_FLT.out.versions)
+    ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
 
     //
     // CIRCRNA_FINDER WORKFLOW:
@@ -194,7 +178,7 @@ workflow CIRCRNA_DISCOVERY {
     // COUNT MATRIX WORKFLOW:
     //
 
-    ch_matrix = CIRCEXPLORER2_FLT.out.matrix.mix(SEGEMEHL.out.matrix,
+    ch_matrix = CIRCEXPLORER2.out.matrix.mix(SEGEMEHL.out.matrix,
                                                     CIRCRNA_FINDER_FILTER.out.matrix,
                                                     FIND_CIRC_FILTER.out.matrix,
                                                     CIRIQUANT_FILTER.out.matrix,
@@ -216,7 +200,7 @@ workflow CIRCRNA_DISCOVERY {
 
     ch_biotypes = Channel.fromPath("${projectDir}/bin/unwanted_biotypes.txt")
 
-    circrna_tools = CIRCEXPLORER2_FLT.out.results.mix(SEGEMEHL.out.results,
+    circrna_tools = CIRCEXPLORER2.out.results.mix(SEGEMEHL.out.results,
                                                             CIRCRNA_FINDER_FILTER.out.results,
                                                             FIND_CIRC_FILTER.out.results,
                                                             CIRIQUANT_FILTER.out.results,
