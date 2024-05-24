@@ -78,7 +78,7 @@ workflow CIRCRNA_DISCOVERY {
     }
 
     if (tools_selected.contains('find_circ')) {
-        FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
+        FIND_CIRC( reads, bowtie2_index, ch_fasta )
         ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
         ch_bed      = ch_bed     .mix(FIND_CIRC.out.bed)
     }
