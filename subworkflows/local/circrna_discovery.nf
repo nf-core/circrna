@@ -1,9 +1,4 @@
 // MODULES
-include { ANNOTATION                                     } from '../../modules/local/annotation/full_annotation'
-include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/nf-core/gnu/sort'
-include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort'
-include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk'
-include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
 include { UPSET as UPSET_SAMPLES                         } from '../../modules/local/upset'
@@ -20,6 +15,7 @@ include { FIND_CIRC      } from './discovery/find_circ'
 include { CIRIQUANT      } from './discovery/ciriquant'
 include { DCC            } from './discovery/dcc'
 include { MAPSPLICE      } from './discovery/mapsplice'
+include { ANNOTATION     } from './discovery/annotation'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -104,6 +100,9 @@ workflow CIRCRNA_DISCOVERY {
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
     COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
+    ch_results_incl_merged = ch_results.mix(
+        MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
+
     ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
     ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
 
@@ -127,43 +126,27 @@ workflow CIRCRNA_DISCOVERY {
     // ANNOTATION WORKFLOW:
     //
 
-    circrna_incl_merged = ch_results.mix(
-        MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
-
-    INTERSECT_ANNOTATION( circrna_incl_merged.combine(gtf), [[], []])
-    ANNOTATION( INTERSECT_ANNOTATION.out.intersect, exon_boundary )
-
-    ch_annotation_bed_merged = ANNOTATION.out.bed.filter{ meta, bed -> meta.tool == "merged" }
-    ch_annotation_gtf_merged = ANNOTATION.out.gtf.filter{ meta, gtf -> meta.tool == "merged" }
-
-    COMBINE_ANNOTATION_BEDS(ch_annotation_bed_merged.map{ meta, bed -> bed}.collect().map{[[id: "annotation"], it]})
-    REMOVE_SCORE_STRAND( COMBINE_ANNOTATION_BEDS.out.sorted, [])
-    COMBINE_ANNOTATION_GTFS(ch_annotation_gtf_merged.map{ meta, gtf -> gtf}.collect().map{[[id: "annotation"], it]})
-
-    ch_versions = ch_versions.mix(INTERSECT_ANNOTATION.out.versions)
+    ANNOTATION( ch_results_incl_merged, gtf, exon_boundary )
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_BEDS.out.versions)
-    ch_versions = ch_versions.mix(REMOVE_SCORE_STRAND.out.versions)
-    ch_versions = ch_versions.mix(COMBINE_ANNOTATION_GTFS.out.versions)
 
     //
     // FASTA WORKFLOW:
     //
 
-    BEDTOOLS_GETFASTA( ch_annotation_bed_merged, fasta )
+    BEDTOOLS_GETFASTA( ANNOTATION.out.merged_bed, fasta )
     ADD_BACKSPLICE( BEDTOOLS_GETFASTA.out.fasta, [])
 
     ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     emit:
-    circrna_bed12 = ch_annotation_bed_merged
-    fasta = ADD_BACKSPLICE.out.output
-    annotation_bed = REMOVE_SCORE_STRAND.out.output
-    annotation_gtf = COMBINE_ANNOTATION_GTFS.out.sorted
-    counts_bed = COUNTS_COMBINED.out.counts_bed
-    counts_tsv = COUNTS_COMBINED.out.counts_tsv
+    circrna_bed12  = ANNOTATION.out.merged_bed
+    fasta          = ADD_BACKSPLICE.out.output
+    annotation_bed = ANNOTATION.out.bed
+    annotation_gtf = ANNOTATION.out.gtf
+    counts_bed     = COUNTS_COMBINED.out.counts_bed
+    counts_tsv     = COUNTS_COMBINED.out.counts_tsv
 
-    multiqc_files = ch_multiqc_files
-    versions = ch_versions
+    multiqc_files  = ch_multiqc_files
+    versions       = ch_versions
 }
