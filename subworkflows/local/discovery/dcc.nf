@@ -4,7 +4,7 @@ include { SJDB       as MATE1_SJDB     } from '../../../modules/local/star/sjdb'
 include { STAR_ALIGN as MATE2_1ST_PASS } from '../../../modules/nf-core/star/align'
 include { STAR_ALIGN as MATE2_2ND_PASS } from '../../../modules/nf-core/star/align'
 include { SJDB       as MATE2_SJDB     } from '../../../modules/local/star/sjdb'
-include { DCC        as RUN            } from '../../../modules/local/dcc/dcc'
+include { DCC        as MAIN           } from '../../../modules/local/dcc/dcc'
 include { GAWK       as UNIFY          } from '../../../modules/nf-core/gawk'
 
 workflow DCC {
@@ -48,8 +48,8 @@ workflow DCC {
         .map{ id, meta, junction, mate1, mate2 -> return [ meta, junction, mate1, mate2 ]}
 
     dcc = dcc_stage.map{ it ->  [ it[0], it[1], it[2] ?: [], it[3] ?: [] ] }
-    RUN( dcc, ch_fasta.map{ meta, fasta -> fasta }, ch_gtf.map{ meta, gtf -> gtf } )
-    UNIFY( RUN.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, [] )
+    MAIN( dcc, ch_fasta.map{ meta, fasta -> fasta }, ch_gtf.map{ meta, gtf -> gtf } )
+    UNIFY( MAIN.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, [] )
 
     ch_versions = ch_versions.mix(MATE1_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(MATE1_SJDB.out.versions)
@@ -57,7 +57,7 @@ workflow DCC {
     ch_versions = ch_versions.mix(MATE2_1ST_PASS.out.versions)
     ch_versions = ch_versions.mix(MATE2_SJDB.out.versions)
     ch_versions = ch_versions.mix(MATE2_2ND_PASS.out.versions)
-    ch_versions = ch_versions.mix(RUN.out.versions)
+    ch_versions = ch_versions.mix(MAIN.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:

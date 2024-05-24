@@ -1,5 +1,5 @@
-include { CIRIQUANT as RUN } from '../../../modules/local/ciriquant/ciriquant'
-include { GAWK as UNIFY    } from '../../../modules/nf-core/gawk'
+include { CIRIQUANT as MAIN } from '../../../modules/local/ciriquant/ciriquant'
+include { GAWK as UNIFY     } from '../../../modules/nf-core/gawk'
 
 workflow CIRIQUANT {
     take:
@@ -12,11 +12,11 @@ workflow CIRIQUANT {
     main:
     ch_versions = Channel.empty()
 
-    RUN( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
-    UNIFY( RUN.out.gtf.map{ meta, gtf ->
+    MAIN( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
+    UNIFY( MAIN.out.gtf.map{ meta, gtf ->
         [ meta + [tool: "ciriquant"], gtf ] }, [] )
 
-    ch_versions = ch_versions.mix(RUN.out.versions)
+    ch_versions = ch_versions.mix(MAIN.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
