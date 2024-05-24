@@ -1,11 +1,11 @@
 // MODULES
-include { GAWK as FILTER_BSJS                            } from '../../modules/nf-core/gawk'
-include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
-include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
-include { UPSET as UPSET_SAMPLES                         } from '../../modules/local/upset'
-include { UPSET as UPSET_ALL                             } from '../../modules/local/upset'
-include { BEDTOOLS_GETFASTA                              } from '../../modules/nf-core/bedtools/getfasta'
-include { GAWK as ADD_BACKSPLICE                         } from '../../modules/nf-core/gawk'
+include { GAWK as FILTER_BSJS    } from '../../modules/nf-core/gawk'
+include { MERGE_TOOLS            } from '../../modules/local/count_matrix/merge_tools'
+include { MERGE_SAMPLES          } from '../../modules/local/count_matrix/merge_samples'
+include { UPSET as UPSET_SAMPLES } from '../../modules/local/upset'
+include { UPSET as UPSET_ALL     } from '../../modules/local/upset'
+include { BEDTOOLS_GETFASTA      } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as ADD_BACKSPLICE } from '../../modules/nf-core/gawk'
 
 // SUBWORKFLOWS
 include { SEGEMEHL       } from './discovery/segemehl'
@@ -103,33 +103,31 @@ workflow CIRCRNA_DISCOVERY {
         ch_bed      = ch_bed     .mix(MAPSPLICE.out.bed)
     }
 
-    FILTER_BSJS( ch_bed, [] )
+    ch_bed = FILTER_BSJS( ch_bed, [] ).output
     ch_versions = ch_versions.mix(FILTER_BSJS.out.versions)
 
     //
     // CREATE COUNT MATRIX
     //
 
-    ch_results = Channel.empty()
-
-    MERGE_TOOLS( FILTER_BSJS.out.output.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
+    MERGE_TOOLS( ch_bed.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
-    COUNTS_COMBINED( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
+    MERGE_SAMPLES( MERGE_TOOLS.out.merged.map{ meta, bed -> bed }.collect() )
 
-    ch_results_incl_merged = ch_results.mix(
+    ch_bed_incl_merged = ch_bed.mix(
         MERGE_TOOLS.out.merged.map{ meta, bed -> [meta + [tool: "merged"], bed] })
 
     ch_versions = ch_versions.mix(MERGE_TOOLS.out.versions)
-    ch_versions = ch_versions.mix(COUNTS_COMBINED.out.versions)
+    ch_versions = ch_versions.mix(MERGE_SAMPLES.out.versions)
 
     //
     // UPSET PLOTS
     //
 
-    UPSET_SAMPLES( ch_results.map{ meta, bed -> [meta.id, meta.tool, bed]}
+    UPSET_SAMPLES( ch_bed.map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-    UPSET_ALL( ch_results.map{ meta, bed -> ["all", meta.tool, bed] }
+    UPSET_ALL( ch_bed.map{ meta, bed -> ["all", meta.tool, bed] }
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
 
@@ -142,7 +140,7 @@ workflow CIRCRNA_DISCOVERY {
     // ANNOTATION WORKFLOW:
     //
 
-    ANNOTATION( ch_results_incl_merged, gtf, exon_boundary )
+    ANNOTATION( ch_bed_incl_merged, gtf, exon_boundary )
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 
     //
@@ -160,8 +158,8 @@ workflow CIRCRNA_DISCOVERY {
     fasta          = ADD_BACKSPLICE.out.output
     annotation_bed = ANNOTATION.out.bed
     annotation_gtf = ANNOTATION.out.gtf
-    counts_bed     = COUNTS_COMBINED.out.counts_bed
-    counts_tsv     = COUNTS_COMBINED.out.counts_tsv
+    counts_bed     = MERGE_SAMPLES.out.counts_bed
+    counts_tsv     = MERGE_SAMPLES.out.counts_tsv
 
     multiqc_files  = ch_multiqc_files
     versions       = ch_versions

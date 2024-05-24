@@ -1,4 +1,4 @@
-process COUNTS_COMBINED {
+process MERGE_SAMPLES {
     label "process_single"
 
     conda "bioconda::pandas=1.5.2"
@@ -16,7 +16,7 @@ process COUNTS_COMBINED {
 
     script:
     """
-    counts_combined.py --beds ${beds} --out_bed merged_counts.bed --out_tsv merged_counts.tsv
+    merge_samples.py --beds ${beds} --out_bed merged_counts.bed --out_tsv merged_counts.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
