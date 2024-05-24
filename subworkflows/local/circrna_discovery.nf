@@ -84,7 +84,7 @@ workflow CIRCRNA_DISCOVERY {
     }
 
     if (tools_selected.contains('ciriquant')) {
-        CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
+        CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
         ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
         ch_bed      = ch_bed     .mix(CIRIQUANT.out.bed)
     }
