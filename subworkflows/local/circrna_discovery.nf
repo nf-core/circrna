@@ -4,14 +4,6 @@ include { GNU_SORT as COMBINE_ANNOTATION_BEDS            } from '../../modules/n
 include { GNU_SORT as COMBINE_ANNOTATION_GTFS            } from '../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND                    } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as INTERSECT_ANNOTATION     } from '../../modules/nf-core/bedtools/intersect'
-include { STAR_ALIGN as DCC_MATE1_1ST_PASS               } from '../../modules/nf-core/star/align'
-include { STAR_ALIGN as DCC_MATE1_2ND_PASS               } from '../../modules/nf-core/star/align'
-include { SJDB as DCC_MATE1_SJDB                         } from '../../modules/local/star/sjdb'
-include { STAR_ALIGN as DCC_MATE2_1ST_PASS               } from '../../modules/nf-core/star/align'
-include { STAR_ALIGN as DCC_MATE2_2ND_PASS               } from '../../modules/nf-core/star/align'
-include { SJDB as DCC_MATE2_SJDB                         } from '../../modules/local/star/sjdb'
-include { DCC                                            } from '../../modules/local/dcc/dcc'
-include { DCC_FILTER                                     } from '../../modules/local/dcc/filter'
 include { MAPSPLICE_ALIGN                                } from '../../modules/local/mapsplice/align'
 include { MERGE_TOOLS                                    } from '../../modules/local/count_matrix/merge_tools'
 include { COUNTS_COMBINED                                } from '../../modules/local/count_matrix/combined'
@@ -31,6 +23,7 @@ include { CIRCEXPLORER2  } from './discovery/circexplorer2'
 include { CIRCRNA_FINDER } from './discovery/circrna_finder'
 include { FIND_CIRC      } from './discovery/find_circ'
 include { CIRIQUANT      } from './discovery/ciriquant'
+include { DCC            } from './discovery/dcc'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -70,6 +63,7 @@ workflow CIRCRNA_DISCOVERY {
     CIRCRNA_FINDER( fasta, STAR2PASS.out.sam, STAR2PASS.out.junction, STAR2PASS.out.tab, bsj_reads )
     FIND_CIRC( reads, bowtie2_index, ch_fasta, bsj_reads )
     CIRIQUANT( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index, bsj_reads )
+    DCC( reads, ch_fasta, ch_gtf, star_index, STAR2PASS.out.junction, star_ignore_sjdbgtf, seq_platform, seq_center, bsj_reads )
 
     ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
     ch_versions = ch_versions.mix(STAR2PASS.out.versions)
@@ -77,44 +71,8 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
     ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
     ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
-
-    //
-    // DCC WORKFLOW
-    //
-
-    mate1 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
-    DCC_MATE1_1ST_PASS( mate1, star_index, ch_gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
-    DCC_MATE1_SJDB( DCC_MATE1_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
-    DCC_MATE1_2ND_PASS( mate1, star_index, DCC_MATE1_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
-
-    mate2 = reads.filter{ meta, reads -> !meta.single_end }.map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[1] ] }
-    DCC_MATE2_1ST_PASS( mate2, star_index, ch_gtf, star_ignore_sjdbgtf, seq_platform, seq_center )
-    DCC_MATE2_SJDB( DCC_MATE2_1ST_PASS.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
-    DCC_MATE2_2ND_PASS( mate2, star_index, DCC_MATE2_SJDB.out.sjtab, star_ignore_sjdbgtf, seq_platform, seq_center )
-
-    dcc_stage = STAR2PASS.out.junction.map{ meta, junction -> return [ meta.id, meta, junction]}
-        .join(
-            DCC_MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
-            remainder: true
-        )
-        .join(
-            DCC_MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
-            remainder: true
-        )
-        .map{ id, meta, junction, mate1, mate2 -> return [ meta, junction, mate1, mate2 ]}
-
-    dcc = dcc_stage.map{ it ->  [ it[0], it[1], it[2] ?: [], it[3] ?: [] ] }
-    DCC( dcc, fasta, gtf )
-    DCC_FILTER( DCC.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, bsj_reads )
-
-    ch_versions = ch_versions.mix(DCC_MATE1_1ST_PASS.out.versions)
-    ch_versions = ch_versions.mix(DCC_MATE1_SJDB.out.versions)
-    ch_versions = ch_versions.mix(DCC_MATE1_2ND_PASS.out.versions)
-    ch_versions = ch_versions.mix(DCC_MATE2_1ST_PASS.out.versions)
-    ch_versions = ch_versions.mix(DCC_MATE2_SJDB.out.versions)
-    ch_versions = ch_versions.mix(DCC_MATE2_2ND_PASS.out.versions)
     ch_versions = ch_versions.mix(DCC.out.versions)
-    ch_versions = ch_versions.mix(DCC_FILTER.out.versions)
+
 
     //
     // MAPSPLICE WORKFLOW:
@@ -141,7 +99,7 @@ workflow CIRCRNA_DISCOVERY {
                                                     CIRCRNA_FINDER.out.matrix,
                                                     FIND_CIRC.out.matrix,
                                                     CIRIQUANT.out.matrix,
-                                                    DCC_FILTER.out.matrix,
+                                                    DCC.out.matrix,
                                                     MAPSPLICE_FILTER.out.matrix)
 
     tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
@@ -163,7 +121,7 @@ workflow CIRCRNA_DISCOVERY {
                                                             CIRCRNA_FINDER.out.results,
                                                             FIND_CIRC.out.results,
                                                             CIRIQUANT.out.results,
-                                                            DCC_FILTER.out.results,
+                                                            DCC.out.results,
                                                             MAPSPLICE_FILTER.out.results)
 
     UPSET_SAMPLES( circrna_tools.map{ meta, bed -> [meta.id, meta.tool, bed]}
