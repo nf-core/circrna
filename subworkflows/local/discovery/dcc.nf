@@ -18,10 +18,10 @@ workflow DCC {
     seq_platform
     seq_center
     bsj_reads
-    
+
     main:
     ch_versions = Channel.empty()
-    
+
     mate1 = reads.filter{ meta, reads -> !meta.single_end }
         .map{ meta, reads -> return [ [id: meta.id, single_end: true], reads[0] ] }
     MATE1_1ST_PASS( mate1, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
@@ -62,6 +62,6 @@ workflow DCC {
 
     emit:
     bed = UNIFY.out.output
-    
+
     versions = ch_versions
 }

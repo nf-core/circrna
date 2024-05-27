@@ -8,10 +8,10 @@ workflow CIRCEXPLORER2 {
     gtf
     fasta
     star_junctions
-    
+
     main:
     ch_versions = Channel.empty()
-    
+
     REFERENCE( gtf )
     PARSE( star_junctions )
     ANNOTATE( PARSE.out.junction, fasta, REFERENCE.out.txt )

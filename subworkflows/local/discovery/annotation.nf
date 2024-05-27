@@ -9,7 +9,7 @@ workflow ANNOTATION {
     regions
     gtf
     exon_boundary
-    
+
     main:
     ch_versions = Channel.empty()
 

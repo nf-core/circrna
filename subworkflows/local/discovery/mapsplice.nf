@@ -12,7 +12,7 @@ workflow MAPSPLICE {
     bowtie_index
     chromosomes
     star_junctions
-    
+
     main:
     ch_versions = Channel.empty()
 
@@ -28,7 +28,7 @@ workflow MAPSPLICE {
     ch_versions = ch_versions.mix(PARSE.out.versions)
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)
-    
+
     emit:
     bed = UNIFY.out.output
 

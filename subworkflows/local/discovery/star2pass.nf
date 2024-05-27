@@ -12,7 +12,7 @@ workflow STAR2PASS {
     ignore_sjdbgtf
     seq_center
     seq_platform
-    
+
     main:
     ch_versions = Channel.empty()
 

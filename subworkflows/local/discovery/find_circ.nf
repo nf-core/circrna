@@ -10,7 +10,7 @@ workflow FIND_CIRC {
     reads
     bowtie2_index
     ch_fasta
-    
+
     main:
     ch_versions = Channel.empty()
 

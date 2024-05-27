@@ -8,7 +8,7 @@ workflow CIRIQUANT {
     ch_fasta
     bwa_index
     hisat2_index
-    
+
     main:
     ch_versions = Channel.empty()
 
