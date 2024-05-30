@@ -32,7 +32,7 @@
                     },
                     "bowtie2/align": {
                         "branch": "master",
-                        "git_sha": "0fe30831abbc2ed115e46e92330edf38f56edc3d",
+                        "git_sha": "e4bad511789f16d0df39ee306b2cd50418365048",
                         "installed_by": ["modules"]
                     },
                     "bowtie2/build": {
@@ -42,7 +42,7 @@
                     },
                     "bwa/index": {
                         "branch": "master",
-                        "git_sha": "6278bf9afd4a4b2d00fa6052250e73da3d91546f",
+                        "git_sha": "086fa66260595e123b0ea47a6512539b72a9afa3",
                         "installed_by": ["modules"]
                     },
                     "cat/cat": {
@@ -52,7 +52,7 @@
                     },
                     "cat/fastq": {
                         "branch": "master",
-                        "git_sha": "0997b47c93c06b49aa7b3fefda87e728312cf2ca",
+                        "git_sha": "4fc983ad0b30e6e32696fa7d980c76c7bfe1c03e",
                         "installed_by": ["modules"]
                     },
                     "circexplorer2/annotate": {
@@ -67,12 +67,12 @@
                     },
                     "csvtk/join": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "614abbf126f287a3068dc86997b2e1b6a93abe20",
                         "installed_by": ["modules"]
                     },
                     "csvtk/split": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "614abbf126f287a3068dc86997b2e1b6a93abe20",
                         "installed_by": ["modules"]
                     },
                     "custom/dumpsoftwareversions": {
@@ -92,7 +92,7 @@
                     },
                     "gawk": {
                         "branch": "master",
-                        "git_sha": "b42fec6f7c6e5d0716685cabb825ef6bf6e386b5",
+                        "git_sha": "cf3ed075695639b0a0924eb0901146df1996dc08",
                         "installed_by": ["modules"]
                     },
                     "gnu/sort": {
@@ -162,7 +162,7 @@
                     },
                     "segemehl/align": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "9a6b0745dbb5359286d36dee2183ffab240abba0",
                         "installed_by": ["modules"]
                     },
                     "segemehl/index": {
@@ -192,7 +192,7 @@
                     },
                     "tximeta/tximport": {
                         "branch": "master",
-                        "git_sha": "c275c3baac6df8f0c7c500760a0cf014ce7b525d",
+                        "git_sha": "5d095e8413da1f4c72b7d07ce87f75c09482486f",
                         "installed_by": ["modules"]
                     }
                 }

@@ -14,8 +14,8 @@ workflow SEGEMEHL {
 
     index = index ?: INDEX( fasta ).index
     ALIGN( reads, fasta, index )
-    UNIFY( ALIGN.out.results
-        .map{ meta, results ->  [ meta + [tool: "segemehl"], results ] }, [] )
+    UNIFY( ALIGN.out.single_bed
+        .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed ] }, [] )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)
