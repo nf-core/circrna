@@ -47,7 +47,8 @@ process CIRIQUANT {
         --config config.yml \\
         --no-gene \\
         -o ${prefix} \\
-        -p ${prefix}
+        -p ${prefix} \\
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
