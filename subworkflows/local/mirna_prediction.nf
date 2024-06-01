@@ -17,13 +17,13 @@ workflow MIRNA_PREDICTION{
     circrna_bed12
     ch_mature
     ch_mirna
-	circrna_counts
+    circrna_counts
 
     main:
     ch_versions = Channel.empty()
     ch_predictions = Channel.empty()
-	ch_votings = Channel.empty()
-	ch_targetscan_meta_formatted = Channel.empty()
+    ch_votings = Channel.empty()
+    ch_targetscan_meta_formatted = Channel.empty()
 
     ADD_BACKSPLICE( circrna_fasta, [] )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
@@ -37,11 +37,11 @@ workflow MIRNA_PREDICTION{
     ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
     ch_mirna_filtered = MIRNA_FILTERING( ch_mirna_normalized, 
-	                                     params.mirna_min_sample_percentage,  
-										 params.mirna_min_reads
-										 ).filtered
+                                         params.mirna_min_sample_percentage,  
+                                         params.mirna_min_reads
+                                         ).filtered
     
-	ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
+    ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
 
     //
     // TARGETSCAN WORKFLOW:
@@ -50,20 +50,20 @@ workflow MIRNA_PREDICTION{
     ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.mix(formatMiRNAForTargetScan( ch_mature )).collect()
 
     TARGETSCAN( circrna_fasta, ch_targetscan_meta_formatted )
-	TARGETSCAN_TO_MAJORITY( TARGETSCAN.out.txt, [] )
+    TARGETSCAN_TO_MAJORITY( TARGETSCAN.out.txt, [] )
 
     ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
-	ch_predictions = ch_predictions.mix(TARGETSCAN_TO_MAJORITY.out.output)
+    ch_predictions = ch_predictions.mix(TARGETSCAN_TO_MAJORITY.out.output)
 
     //
     // MIRANDA WORKFLOW:
     //
 
     MIRANDA( circrna_fasta, ch_mature.map{meta, mature -> mature} )
-	MIRANDA_TO_MAJORITY( MIRANDA.out.txt, [] )
+    MIRANDA_TO_MAJORITY( MIRANDA.out.txt, [] )
     
-	ch_versions = ch_versions.mix(MIRANDA.out.versions)
-	ch_predictions = ch_predictions.mix(MIRANDA_TO_MAJORITY.out.output)
+    ch_versions = ch_versions.mix(MIRANDA.out.versions)
+    ch_predictions = ch_predictions.mix(MIRANDA_TO_MAJORITY.out.output)
 
 
     //
@@ -76,39 +76,39 @@ workflow MIRNA_PREDICTION{
     ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
 
 
-	//
-	// UNIFICATION OF PREDICTIONS
-	//
+    //
+    // UNIFICATION OF PREDICTIONS
+    //
 
     ch_combined = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}
-	
-	COMBINE_BINDINGSITES ( ch_combined )
     
-	ch_votings = ch_votings.mix(COMBINE_BINDINGSITES.out.file_out)
-	ch_versions.mix(COMBINE_BINDINGSITES.out.versions)
+    COMBINE_BINDINGSITES ( ch_combined )
+    
+    ch_votings = ch_votings.mix(COMBINE_BINDINGSITES.out.file_out)
+    ch_versions.mix(COMBINE_BINDINGSITES.out.versions)
 
-	//
-	// MAJORITY VOTE: 
-	//
+    //
+    // MAJORITY VOTE: 
+    //
 
-	ch_bindingsites = Channel.empty()
+    ch_bindingsites = Channel.empty()
 
     MAJORITY_VOTE( ch_votings )
 
-	ch_bindingsites = ch_bindingsites.mix(MAJORITY_VOTE.output.tsv)
-	ch_versions = ch_versions.mix(MAJORITY_VOTE.output.versions)
+    ch_bindingsites = ch_bindingsites.mix(MAJORITY_VOTE.output.tsv)
+    ch_versions = ch_versions.mix(MAJORITY_VOTE.output.versions)
 
-	//
-	// COMPUTE CORREALTION:
-	//
+    //
+    // COMPUTE CORREALTION:
+    //
 
-	COMPUTE_CORRELATIONS( ch_bindingsites, 
-	                      ch_mirna_filtered.map{meta, file -> file}.collect(),
-						  circrna_counts.map{meta, file -> file}.collect()
-						)
+    COMPUTE_CORRELATIONS( ch_bindingsites, 
+                          ch_mirna_filtered.map{meta, file -> file}.collect(),
+                          circrna_counts.map{meta, file -> file}.collect()
+                        )
 
-	ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions) 
-	
+    ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions) 
+    
     emit:
     versions = ch_versions
 }
@@ -127,22 +127,22 @@ workflow MIRNA_PREDICTION{
 // to new file
 def formatMiRNAForTargetScan(ch_mature) {
 
-	def ch_targetscan_meta_formatted = ch_mature
-		.map { meta, mature -> mature }
-		.splitFasta(by: 1)
-		.map { entry ->
-			def lines = entry.readLines()
-			def id = lines[0]
-			def seq = lines[1..-1].join()
-			return [id, seq]
-		}
-		.map { id, seq ->
-			def newSeq = seq[1..7]  // Extract sub-sequence (2)
-			return [id, newSeq, '0000']  // Add species ID (3)
-		}
-		.map { id, newSeq, s_id -> "$id\t$newSeq\t$s_id\n" }
-		.collectFile(name: 'mature.txt')
+    def ch_targetscan_meta_formatted = ch_mature
+        .map { meta, mature -> mature }
+        .splitFasta(by: 1)
+        .map { entry ->
+            def lines = entry.readLines()
+            def id = lines[0]
+            def seq = lines[1..-1].join()
+            return [id, seq]
+        }
+        .map { id, seq ->
+            def newSeq = seq[1..7]  // Extract sub-sequence (2)
+            return [id, newSeq, '0000']  // Add species ID (3)
+        }
+        .map { id, newSeq, s_id -> "$id\t$newSeq\t$s_id\n" }
+        .collectFile(name: 'mature.txt')
 
-	ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { [[id: "mature_targetscan"], it] }
-	return ch_targetscan_meta_formatted
+    ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { [[id: "mature_targetscan"], it] }
+    return ch_targetscan_meta_formatted
 }
