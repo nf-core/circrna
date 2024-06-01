@@ -33,10 +33,10 @@ workflow MIRNA_PREDICTION {
 
     ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
-    ch_mirna_filtered = MIRNA_FILTERING( ch_mirna_normalized, 
-                                         params.mirna_min_sample_percentage,  
-                                         params.mirna_min_reads
-                                         ).filtered
+    ch_mirna_filtered = MIRNA_FILTERING(ch_mirna_normalized, 
+                                        params.mirna_min_sample_percentage,  
+                                        params.mirna_min_reads
+                                        ).filtered
     
     ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
 
@@ -44,10 +44,10 @@ workflow MIRNA_PREDICTION {
     // COMPUTE CORREALTION:
     //
 
-    //COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
-    //                      ch_mirna_filtered.map{meta, file -> file}.collect(),
-    //                      transcript_counts.map{meta, file -> file}.collect()
-    //                    )
+    COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
+                          ch_mirna_filtered,
+                          quantification_rds
+                        )
 
     //ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     
