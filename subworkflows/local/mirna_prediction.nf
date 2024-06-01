@@ -58,8 +58,13 @@ workflow MIRNA_PREDICTION {
     COMPUTE_CORRELATIONS(   ch_binding_site_batches,
                             ch_mirna_filtered,
                             quantification_rds)
+    
+    ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
+        .map{meta, results -> results}
+        .flatten().collect()
+        .map{results -> [[id: 'correlation'], results]}
 
-    //ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+    ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     
     emit:
     versions = ch_versions
