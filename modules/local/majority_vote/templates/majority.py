@@ -34,6 +34,9 @@ df = df.drop('tool', axis=1)
 
 df.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
 
+df = df.groupby('target')['mirna'].apply(lambda x: ','.join(x)).reset_index()
+df.to_csv('${meta.id}.targets.tsv', sep='\\t', index=False, header=False)
+
 # Create version file
 versions = {
     "${task.process}" : {

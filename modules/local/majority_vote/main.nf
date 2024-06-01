@@ -12,8 +12,9 @@ process MAJORITY_VOTE {
 	
 
     output:
-    tuple val(meta), path("${meta.id}.majority.tsv")         , emit: tsv 
-    path "versions.yml"                                      , emit: versions
+    tuple val(meta), path("${meta.id}.majority.tsv"), emit: tsv
+    tuple val(meta), path("${meta.id}.targets.tsv") , emit: targets
+    path "versions.yml"                             , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
