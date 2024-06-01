@@ -33,7 +33,9 @@ for (i in 1:nrow(interactions)) {
 
   # TODO: Allow setting "spearman"
   result <- rowData(swish(transcript_expression, miRNA, cor = "pearson"))[, result_cols]
-  write.table(result, paste0(miRNA, '.tsv'))
+  # TODO: Find out why NaN rows occur
+  result <- result[complete.cases(result), ]
+  write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }
 
 ################################################
