@@ -23,10 +23,14 @@ workflow MIRNA_BINDINGSITES {
     ADD_BACKSPLICE( transcriptome_fasta)
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
+    ch_transcriptome_batches = ADD_BACKSPLICE.out.output
+        .splitFasta(by: 100, file: true)
+        .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+
     //
     // TARGETSCAN WORKFLOW:
     //
-    TARGETSCAN( ADD_BACKSPLICE.out.output, formatMiRNAForTargetScan( mirna_fasta ).collect() )
+    TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
     UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
 
     ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
@@ -37,7 +41,7 @@ workflow MIRNA_BINDINGSITES {
     // MIRANDA WORKFLOW:
     //
 
-    MIRANDA( ADD_BACKSPLICE.out.output, mirna_fasta.map{meta, mature -> mature} )
+    MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature} )
     UNIFY_MIRANDA( MIRANDA.out.txt, [] )
 
     ch_versions = ch_versions.mix(MIRANDA.out.versions)
