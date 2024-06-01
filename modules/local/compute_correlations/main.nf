@@ -4,8 +4,8 @@ process COMPUTE_CORRELATIONS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/r-base:4.2.1' :
-        'biocontainers/r-base:4.2.1' }"
+        'https://depot.galaxyproject.org/singularity/bioconductor-fishpond:2.8.0--r43hdfd78af_0' :
+        'biocontainers/bioconductor-fishpond:2.8.0--r43hdfd78af_0' }"
 
     input:
     tuple val(meta),  path(bindingsites)
@@ -13,7 +13,7 @@ process COMPUTE_CORRELATIONS {
     tuple val(meta3), path(transcript_rds)
 
     output:
-    tuple val(meta), path("${meta.id}.circrna_correlation.tsv"), emit: correlation
+    //tuple val(meta), path("${meta.id}.circrna_correlation.tsv"), emit: correlation
     path "versions.yml"                                        , emit: versions
 
     when:
