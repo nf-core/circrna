@@ -13,7 +13,8 @@ workflow MIRNA_PREDICTION {
     circrna_bed12
     ch_mature
     ch_mirna
-    circrna_counts
+    transcript_counts
+    quantification_rds
 
     main:
     ch_versions = Channel.empty()
@@ -45,7 +46,7 @@ workflow MIRNA_PREDICTION {
 
     //COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
     //                      ch_mirna_filtered.map{meta, file -> file}.collect(),
-    //                      circrna_counts.map{meta, file -> file}.collect()
+    //                      transcript_counts.map{meta, file -> file}.collect()
     //                    )
 
     //ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
