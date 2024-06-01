@@ -1,4 +1,4 @@
-include { GAWK as ADD_BACKSPLICE          } from '../../../modules/nf-core/gawk'
+include { BIOAWK as ADD_BACKSPLICE        } from '../../../modules/nf-core/bioawk'
 include { MIRANDA                         } from '../../../modules/nf-core/miranda'
 include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
 include { TARGETSCAN                      } from '../../../modules/local/targetscan/predict'
@@ -20,13 +20,13 @@ workflow MIRNA_BINDINGSITES {
     // miRNAs can potentially bind to circRNAs right at the backsplice site
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA
     // To account for this, the first 25bp of the circRNA are added to the end of the circRNA sequence
-    ADD_BACKSPLICE( transcriptome_fasta, [])
+    ADD_BACKSPLICE( transcriptome_fasta)
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     //
     // TARGETSCAN WORKFLOW:
     //
-    TARGETSCAN( transcriptome_fasta, formatMiRNAForTargetScan( mirna_fasta ).collect() )
+    TARGETSCAN( ADD_BACKSPLICE.out.output, formatMiRNAForTargetScan( mirna_fasta ).collect() )
     UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
 
     ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
@@ -37,7 +37,7 @@ workflow MIRNA_BINDINGSITES {
     // MIRANDA WORKFLOW:
     //
 
-    MIRANDA( transcriptome_fasta, mirna_fasta.map{meta, mature -> mature} )
+    MIRANDA( ADD_BACKSPLICE.out.output, mirna_fasta.map{meta, mature -> mature} )
     UNIFY_MIRANDA( MIRANDA.out.txt, [] )
 
     ch_versions = ch_versions.mix(MIRANDA.out.versions)
