@@ -9,7 +9,7 @@ include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
 workflow MIRNA_PREDICTION {
 
     take:
-    circrna_fasta
+    transcriptome_fasta
     circrna_bed12
     ch_mature
     ch_mirna
@@ -18,7 +18,7 @@ workflow MIRNA_PREDICTION {
     main:
     ch_versions = Channel.empty()
 
-    MIRNA_BINDINGSITES( circrna_fasta, circrna_bed12, ch_mature )
+    MIRNA_BINDINGSITES( transcriptome_fasta, circrna_bed12, ch_mature )
     ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
 
     ADD_BACKSPLICE( circrna_fasta, [] )
@@ -43,12 +43,12 @@ workflow MIRNA_PREDICTION {
     // COMPUTE CORREALTION:
     //
 
-    COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
-                          ch_mirna_filtered.map{meta, file -> file}.collect(),
-                          circrna_counts.map{meta, file -> file}.collect()
-                        )
+    //COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
+    //                      ch_mirna_filtered.map{meta, file -> file}.collect(),
+    //                      circrna_counts.map{meta, file -> file}.collect()
+    //                    )
 
-    ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+    //ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     
     emit:
     versions = ch_versions
