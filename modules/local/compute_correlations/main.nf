@@ -13,8 +13,8 @@ process COMPUTE_CORRELATIONS {
     tuple val(meta3), path(transcript_rds)
 
     output:
-    //tuple val(meta), path("${meta.id}.circrna_correlation.tsv"), emit: correlation
-    path "versions.yml"                                        , emit: versions
+    tuple val(meta), path("*.tsv"), emit: correlations
+    path "versions.yml"           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

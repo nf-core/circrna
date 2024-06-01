@@ -7,6 +7,8 @@ tx_expression <- readRDS('${transcript_rds}')
 mi_expression <- read.table('${mirna_expression}', header=TRUE, row.names=1, sep='\\t')
 interactions <- read.table('${bindingsites}', sep='\\t')
 
+result_cols <- c('stat', 'log2FC', 'pvalue', 'locfdr', 'qvalue')
+
 # Iterate rows of interactions
 for (i in 1:nrow(interactions)) {
   # Get miRNA and target gene
@@ -29,8 +31,9 @@ for (i in 1:nrow(interactions)) {
     t(mirna_expression[, rownames(colData(transcript_expression))])
   )
 
-  result <- rowData(swish(transcript_expression, miRNA, cor = "pearson"))
-  print(colnames(result))
+  # TODO: Allow setting "spearman"
+  result <- rowData(swish(transcript_expression, miRNA, cor = "pearson"))[, result_cols]
+  write.table(result, paste0(miRNA, '.tsv'))
 }
 
 ################################################
