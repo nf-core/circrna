@@ -89,18 +89,10 @@ def formatMiRNAForTargetScan(ch_mature) {
 
     def ch_targetscan_meta_formatted = ch_mature
         .map { meta, mature -> mature }
-        .splitFasta(by: 1)
-        .map { entry ->
-            def lines = entry.readLines()
-            def id = lines[0]
-            def seq = lines[1..-1].join()
-            return [id, seq]
+        .splitFasta(record: [id: true, seqString: true])
+        .map { record ->
+            return "${record.id}\t${record.seqString[1..7]}\t0000\n"
         }
-        .map { id, seq ->
-            def newSeq = seq[1..7]  // Extract sub-sequence (2)
-            return [id, newSeq, '0000']  // Add species ID (3)
-        }
-        .map { id, newSeq, s_id -> "$id\t$newSeq\t$s_id\n" }
         .collectFile(name: 'mature.txt')
 
     ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { [[id: "mature_targetscan"], it] }
