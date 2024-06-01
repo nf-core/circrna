@@ -68,7 +68,7 @@ workflow MIRNA_BINDINGSITES {
     ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
 
     emit:
-    binding_sites = MAJORITY_VOTE.out.tsv
+    binding_sites = MAJORITY_VOTE.out.targets
 
     versions = ch_versions
 }

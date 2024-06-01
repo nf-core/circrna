@@ -44,10 +44,14 @@ workflow MIRNA_PREDICTION {
     // COMPUTE CORREALTION:
     //
 
-    COMPUTE_CORRELATIONS( MIRNA_BINDINGSITES.out.binding_sites,
-                          ch_mirna_filtered,
-                          quantification_rds
-                        )
+    ch_binding_site_batches = MIRNA_BINDINGSITES.out.binding_sites
+        .splitText(by: 100, file: true)
+        .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+        .view()
+
+    // COMPUTE_CORRELATIONS(   ch_binding_site_batches,
+    //                         ch_mirna_filtered,
+    //                         quantification_rds)
 
     //ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     
