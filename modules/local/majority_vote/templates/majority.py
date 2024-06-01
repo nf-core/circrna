@@ -26,9 +26,10 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
 predictions = pd.read_csv("$bindingsites",
                           sep="\\t", header=0, names=['mirna', 'target', 'start', 'end', 'tool' ])
 
-# start = False  # TODO: Probably needs to be removed
+# start = False  
 # end = False 
-complete = True  # TODO: Ask if this means an exact match or an "either ..., or ..."
+# TODO: Ask if this means an exact match or an "either ..., or ..."
+complete = True  
 majority = ${params.mirna_vote}
 
 # if start:  # group by start indices
@@ -42,10 +43,10 @@ predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].a
 
 # performing majority vote keeping only mirna binding sites that meet the required number of votes
 post_vote_predictions = predictions[predictions['tool'].apply(len) >= majority].copy()
-post_vote_predictions = post_vote_predictions.drop('tool', axis=1)
+out = post_vote_predictions.drop('tool', axis=1)
 
 
-post_vote_predictions.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
+out.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
 
 # Create version file
 versions = {

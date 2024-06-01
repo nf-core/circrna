@@ -36,7 +36,6 @@ norm_data <- subset(merged_data, select = -c(order))
 write.table(norm_data, paste0("${meta.id}.normalized_counts.tsv"),
            quote = FALSE, sep = "\\t", row.names = FALSE)
 
-# TODO: Perform normalization and save as "${meta.id}.normalized_counts.tsv"
 # TODO: (Can be done later) Add support for Samplesheet so that we can eliminate batch effects
 
 
