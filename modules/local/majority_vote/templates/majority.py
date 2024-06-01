@@ -23,30 +23,16 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     return yaml_str
 
 
-predictions = pd.read_csv("$bindingsites",
+df = pd.read_csv("$bindingsites",
                           sep="\\t", header=0, names=['mirna', 'target', 'start', 'end', 'tool' ])
-
-# start = False  
-# end = False 
-# TODO: Ask if this means an exact match or an "either ..., or ..."
-complete = True  
-majority = ${params.mirna_vote}
-
-# if start:  # group by start indices
-#     predictions = predictions.groupby(['mirna', 'target', 'start'])['tool'].apply(set).reset_index()
-# elif end:  # group by end indices
-#     predictions = predictions.groupby(['mirna', 'target', 'end'])['tool'].apply(set).reset_index()
-# elif complete:  # group by both indices
-#     predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].apply(set).reset_index()
-
-predictions = predictions.groupby(['mirna', 'target', 'start', 'end'])['tool'].apply(set).reset_index()
+df = df.groupby(['mirna', 'target'])['tool'].apply(set).reset_index()
 
 # performing majority vote keeping only mirna binding sites that meet the required number of votes
-post_vote_predictions = predictions[predictions['tool'].apply(len) >= majority].copy()
-out = post_vote_predictions.drop('tool', axis=1)
+min_tools = int("${params.mirna_vote}")
+df = df[df['tool'].apply(len) >= min_tools].copy()
+df = df.drop('tool', axis=1)
 
-
-out.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
+df.to_csv('${meta.id}.majority.tsv', sep='\\t', index=False)
 
 # Create version file
 versions = {
