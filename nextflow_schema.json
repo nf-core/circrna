@@ -59,15 +59,6 @@
                     "default": "circexplorer2",
                     "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
                 },
-                "module": {
-                    "type": "string",
-                    "fa_icon": "fas fa-sliders-h",
-                    "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
-                    "mandatory": "circrna_discovery",
-                    "pattern": "^((circrna_discovery|mirna_prediction|differential_expression)?,?)*[^,]+$",
-                    "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n",
-                    "default": "circrna_discovery"
-                },
                 "bsj_reads": {
                     "type": "integer",
                     "fa_icon": "fas fa-circle-notch",
@@ -219,7 +210,7 @@
                 },
                 "mature": {
                     "type": "string",
-                    "description": "Path to FASTA file with mature miRNAs.",
+                    "description": "Path to FASTA file with mature miRNAs. This parameter needs to be specified to perform miRNA interaction analyses.",
                     "mimetype": "text/plain",
                     "help_text": "Typically this will be the `mature.fa` file from miRBase. Can be given either as a plain text `.fa` file or a compressed `.gz` file.",
                     "fa_icon": "fas fa-wheelchair",
