@@ -32,7 +32,7 @@
                 },
                 "phenotype": {
                     "type": "string",
-                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
+                    "description": "Phenotype CSV file specifying the experimental design for DESeq2. This parameter needs to be specified to perform differential gene expression analysis.",
                     "fa_icon": "fas fa-file-csv",
                     "mimetype": "text/csv",
                     "help_text": "There are two rules for providing the phenotype CSV file. 1) The phenotype 'sample' column must match the sample sheets 'sample' column. 2) The response variable containing the phenotype of primary interest in the experiment must have the column name condition.  All other columns included in the file are controlled for in the `DESeq2` design. \n\n| sample    \t| condition \t| replicate \t|\n|-----------\t|-----------\t|-----------\t|\n| control_1 \t| ctr       \t| 1         \t|\n| control_2 \t| ctr       \t| 2         \t|\n| control_3 \t| ctr       \t| 3         \t|\n| treated_1 \t| trt       \t| 1         \t|\n| treated_2 \t| trt       \t| 2         \t|\n| treated_3 \t| trt       \t| 3         \t|\n\nThe above phenotype file will identify differentially expressed circRNAs/mRNAs between control and treatment cells, whilst controlling for the effect of variation between replicates: ` ~ replicates + condition`",
@@ -55,15 +55,6 @@
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
                     "default": "circexplorer2",
                     "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
-                },
-                "module": {
-                    "type": "string",
-                    "fa_icon": "fas fa-sliders-h",
-                    "description": "Comma separated list of modules to run: 'circrna_discovery', 'mirna_prediction' & 'differential_expression'.",
-                    "mandatory": "circrna_discovery",
-                    "pattern": "^((circrna_discovery|mirna_prediction|differential_expression)?,?)*[^,]+$",
-                    "help_text": "The 'circrna_discovery' module is mandatory. After circRNA quantification, the user can select 'mirna_prediction', 'differential_expression' or both to deploy additional analyses e.g:\n--module 'circrna_discovery, mirna_prediction, differential_expression'\n",
-                    "default": "circrna_discovery"
                 },
                 "bsj_reads": {
                     "type": "integer",
@@ -216,7 +207,7 @@
                 },
                 "mature": {
                     "type": "string",
-                    "description": "Path to FASTA file with mature miRNAs.",
+                    "description": "Path to FASTA file with mature miRNAs. This parameter needs to be specified to perform miRNA interaction analyses.",
                     "mimetype": "text/plain",
                     "help_text": "Typically this will be the `mature.fa` file from miRBase. Can be given either as a plain text `.fa` file or a compressed `.gz` file.",
                     "fa_icon": "fas fa-wheelchair",
