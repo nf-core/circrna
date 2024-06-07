@@ -7,7 +7,7 @@ include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_t
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../modules/nf-core/cat/cat'
 include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
 
-workflow MIRNA_BINDINGSITES {
+workflow MIRNA_BINDINGSITES { 
     take:
     transcriptome_fasta
     circrna_bed12
@@ -20,7 +20,7 @@ workflow MIRNA_BINDINGSITES {
     // miRNAs can potentially bind to circRNAs right at the backsplice site
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA
     // To account for this, the first 25bp of the circRNA are added to the end of the circRNA sequence
-    ADD_BACKSPLICE( transcriptome_fasta)
+    ADD_BACKSPLICE( transcriptome_fasta )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     ch_transcriptome_batches = ADD_BACKSPLICE.out.output
@@ -28,32 +28,46 @@ workflow MIRNA_BINDINGSITES {
         .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
     //
-    // TARGETSCAN WORKFLOW:
+    // MIRNA PREDICTION TOOLS:
     //
-    TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
-    UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
+    tools_selected = params.mirna_tools.split(',').collect{it.trim().toLowerCase()}
 
-    ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
-    ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
-    ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
-
-    //
-    // MIRANDA WORKFLOW:
-    //
-
-    MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature} )
-    UNIFY_MIRANDA( MIRANDA.out.txt, [] )
-
-    ch_versions = ch_versions.mix(MIRANDA.out.versions)
-    ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
-    ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
+    if (tools_selected.size() == 0) {
+        error 'No tools selected for miRNA discovery.'
+    }
+    
+    if (tools_selected.contains('targetscan')) {
+        //
+        // TARGETSCAN WORKFLOW:
+        //
+        TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
+        UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
+        
+        ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
+    }
+    
+    if (tools_selected.contains('miranda')) {
+        //
+        // MIRANDA WORKFLOW:
+        //
+        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature} )
+        UNIFY_MIRANDA( MIRANDA.out.txt, [] )
+        
+        ch_versions = ch_versions.mix(MIRANDA.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
+    }
 
     //
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
     // TODO: This is an artifact and should be removed if we have a replacement
 
-    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
+    // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
+    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
+    
     MIRNA_TARGETS( consolidate_targets )
 
     ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
