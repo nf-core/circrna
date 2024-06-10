@@ -1,0 +1,5 @@
+name: circtest_prepare
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::r-base=4.2.1

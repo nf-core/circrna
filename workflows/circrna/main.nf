@@ -187,7 +187,10 @@ workflow CIRCRNA {
     //
 
     STATISTICAL_TESTS(
-        QUANTIFICATION.out.se
+        QUANTIFICATION.out.se,
+        QUANTIFICATION.out.gene_counts,
+        QUANTIFICATION.out.circular_tx_counts,
+        ch_phenotype
     )
 
     /*
