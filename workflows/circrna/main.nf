@@ -31,7 +31,7 @@ include { PREPARE_GENOME                   } from '../../subworkflows/local/prep
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
-include { DIFFERENTIAL_EXPRESSION          } from '../../subworkflows/local/differential_expression'
+include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,6 +183,15 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
 
     //
+    // 5. Statistical tests
+    //
+
+    STATISTICAL_TESTS(
+        QUANTIFICATION.out.se
+    )
+
+    /*
+    //
     // 5. Differential expression tests
     //
 
@@ -204,6 +213,7 @@ workflow CIRCRNA {
 
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
     ch_multiqc_files  = ch_multiqc_files.mix(DIFFERENTIAL_EXPRESSION.out.reports)
+    */
 
     //
     // Collate and save software versions
