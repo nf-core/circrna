@@ -26,6 +26,8 @@ process CIRIQUANT {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '2.1.0'
+    def strandedness = meta.strandedness ?: 'auto'
+    def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
     """
     BWA=`which bwa`
     HISAT2=`which hisat2`
@@ -48,6 +50,7 @@ process CIRIQUANT {
         --no-gene \\
         -o ${prefix} \\
         -p ${prefix} \\
+        ${library_type} \\
         ${args}
 
     cat <<-END_VERSIONS > versions.yml
