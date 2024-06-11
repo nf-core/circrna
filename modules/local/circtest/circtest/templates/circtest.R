@@ -439,7 +439,7 @@ write.table(test\$summary_table, "${prefix}_summary.txt", row.names=F)
 pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
 for (i in rownames(test\$summary_table)) {
     Circ.ratioplot(circs, genes, plotrow=i, groupindicator1=pheno\$condition,
-        lab_legend = condition,    circle_description = c(1:4) )
+        lab_legend = 'condition', circle_description = description )
 }
 dev.off()
 
