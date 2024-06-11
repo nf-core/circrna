@@ -193,10 +193,8 @@ workflow CIRCRNA {
         ch_phenotype
     )
 
-    /*
-    ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix(DIFFERENTIAL_EXPRESSION.out.reports)
-    */
+    ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
+
 
     //
     // Collate and save software versions
