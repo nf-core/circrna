@@ -46,13 +46,13 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
     # Rename the "mean" column
     datac <- rename(datac, c("mean" = measurevar))
 
-    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+    datac\$se <- datac\$sd / sqrt(datac\$N)  # Calculate standard error of the mean
 
     # Confidence interval multiplier for standard error
     # Calculate t-statistic for confidence interval:
     # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
-    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
-    datac$ci <- datac$se * ciMult
+    ciMult <- qt(conf.interval/2 + .5, datac\$N-1)
+    datac\$ci <- datac\$se * ciMult
 
     return(datac)
 }
@@ -144,7 +144,7 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
             theme(legend.text=element_text(size=size)) +
             theme(plot.title = element_text(size=size)) +
             theme(axis.text.y = element_text(margin=margin(5,5,10,5,"pt")))+
-            ggtitle(paste("Annotation: ", genename, "\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
+            ggtitle(paste("Annotation: ", genename, "\\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
             ylab("circRNA/(circRNA + Linear RNA)") +
             xlab("Sample") +
             geom_errorbar(aes(ymin=Ratio, ymax=Ratio+se), width=.2 , size=2) +
@@ -329,6 +329,8 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
 
         # groups
         if ( length(group) != ncol(Circ)-length(circle_description) ){
+                print(length(group))
+                print(ncol(Circ)-length(circle_description))
                 stop("length of 'group' must be equal to the number of samples of 'Circ' and 'Linear'. ")
         }
         group <- factor(group)
@@ -364,7 +366,7 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
                 tmp_rations <- data.frame(Ratio=as.numeric(Circ[i,-circle_description])/(as.numeric(Linear[i,-circle_description])+as.numeric(Circ[i,-circle_description])),
                 group=group)
                 for (rep_group in seq(1,max(as.numeric(levels(group))),1)){
-                        tmp_df[i, paste("group_",rep_group,"_ratio_mean",sep="")] <- mean(na.omit(unlist(tmp_rations[tmp_rations$group==rep_group,1])))
+                        tmp_df[i, paste("group_",rep_group,"_ratio_mean",sep="")] <- mean(na.omit(unlist(tmp_rations[tmp_rations\$group==rep_group,1])))
                 }
 
                 # Constract data frame
@@ -382,7 +384,7 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
         }
         message(paste(counter, "candidates processed in total"))
 
-        Circ$direction <- direction
+        Circ\$direction <- direction
         p.adj <- p.adjust(p.val,n=sum(!is.na(p.val)),'BH')
         # select significant ones
         sig_dat <- Circ[p.adj<=alpha    & !is.na(p.adj),]
@@ -418,40 +420,25 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
                 )
 }
 
-## MY CODE
+## MAIN
 
-args = commandArgs(trailingOnly = TRUE)
+circs = read.table("${circ_counts}", header=T, sep="\\t")
+genes = read.table("${gene_counts}", header=T, sep="\\t")
+pheno = read.csv  ("${phenotype}"  , header=T, row.names = "sample")
 
-circ = read.table(args[1], header=T, sep=",")
-linear = read.table(args[2], header=T, sep=",")
-pheno = read.table(args[3], header=T, sep=",", row.names = "Sample_ID")
+circs <- Circ.filter(circ = circs, linear = genes, filter.sample = 2, filter.count = 5, percentage = 0.00001)
+genes <- genes[rownames(circs),]
 
+description <- c(1)
+pheno <- pheno[colnames(circs[,-description]),,drop=FALSE]
 
-# No need to enforce any filtering for circTest.
-# 'filter.sample' - this has been applied to called circs using the 'tool.filter' param
-# 'filter.count' - this has been applied to called circs using bsj_filter param
-# 'percentage' - set to extremely low value (do not want to discard circRNAs - let the user inspect themselves).
+print(head(circs))
+print(head(genes))
 
-# Need to apply the phenotype csv file correctly to circtest.
-n_covars <- ncol(pheno)
-if( n_covars == 2){
-    covariate_1 <- as.factor(pheno[,1])
-    covariate_2 <- as.factor(pheno[,2])
-}else{
-    covariate_1 <- as.factor(pheno[,1])
-}
+test <- Circ.test(circs, genes, group=pheno\$condition, circle_description = description)
+write.table(test\$summary_table, "${prefix}_summary.txt", row.names=F)
 
-n_reps <- as.numeric(table(covariate_1)[1])
-
-Circ_filtered <- Circ.filter(circ = circ, linear = linear, Nreplicates = n_reps, filter.sample = 1, filter.count = 1, percentage = 0.00001, circle_description = c(1:4))
-Linear_filtered <- linear[rownames(Circ_filtered),]
-
-
-# groups must be numerically encoded
-group = as.numeric(covariate_1)
-test <- Circ.test(Circ_filtered, Linear_filtered, group=group, circle_description = c(1:4))
-write.table(test$summary_table, "summary_table.txt", row.names=F)
-
+q()
 
 # Apply pheno to output once more..
 
@@ -461,14 +448,14 @@ if( n_covars == 2 ){
     group_indicator2 <- as.character(covariate_2)
 
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
-    for (i in rownames(test$summary_table))    {
+    for (i in rownames(test\$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=groupindicator1, groupindicator2 = group_indicator2,
         circle_description = c(1:4) )
     }
     dev.off()
 
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
-    for (i in rownames(test$summary_table))    {
+    for (i in rownames(test\$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1, groupindicator2 = group_indicator2,
     circle_description = c(1:4) )
     }
@@ -479,14 +466,14 @@ if( n_covars == 2 ){
     group_indicator1 <- as.character(covariate_1)
 
     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
-    for (i in rownames(test$summary_table))    {
+    for (i in rownames(test\$summary_table))    {
         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
         lab_legend = colnames(pheno)[1],    circle_description = c(1:4) )
     }
     dev.off()
 
     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
-    for (i in rownames(test$summary_table))    {
+    for (i in rownames(test\$summary_table))    {
     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
     circle_description = c(1:4) )
     }

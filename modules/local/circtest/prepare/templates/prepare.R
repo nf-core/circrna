@@ -1,12 +1,15 @@
 #!/usr/bin/env Rscript
 
-circ = read.table("${circ_counts}", header=T, sep="\\t", check.names = FALSE)
-gene = read.table("${gene_counts}", header=T, sep="\\t", check.names = FALSE, row.names = 1)
+circ <- read.table("${circ_counts}", header=T, sep="\\t", check.names = FALSE)
+gene <- read.table("${gene_counts}", header=T, sep="\\t", check.names = FALSE, row.names = 1)
 
-gene = gene[circ\$gene_id, -1]
-circ = circ[, -2]
+gene <- gene[circ\$gene_id, ]
 
-write.table(circ, "${prefix}_circs.tsv", sep="\\t", quote=F, row.names=F)
+rownames(circ) <- circ\$tx
+rownames(gene) <- rownames(circ)
+circ\$tx <- NULL
+
+write.table(circ, "${prefix}_circs.tsv", sep="\\t", quote=F, row.names=T)
 write.table(gene, "${prefix}_genes.tsv", sep="\\t", quote=F, row.names=T)
 
 ################################################
