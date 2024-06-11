@@ -194,26 +194,6 @@ workflow CIRCRNA {
     )
 
     /*
-    //
-    // 5. Differential expression tests
-    //
-
-    ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
-
-    DIFFERENTIAL_EXPRESSION(
-        FASTQC_TRIMGALORE.out.reads,
-        ch_gtf,
-        ch_fasta,
-        hisat2_index,
-        PREPARE_GENOME.out.splice_sites,
-        ch_phenotype,
-        CIRCRNA_DISCOVERY.out.counts_bed,
-        CIRCRNA_DISCOVERY.out.counts_tsv,
-        ch_species,
-        ch_ensembl_database_map,
-        params.exon_boundary
-    )
-
     ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
     ch_multiqc_files  = ch_multiqc_files.mix(DIFFERENTIAL_EXPRESSION.out.reports)
     */
