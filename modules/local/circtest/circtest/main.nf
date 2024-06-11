@@ -12,8 +12,8 @@ process CIRCTEST_CIRCTEST {
     tuple val(meta3), path(phenotype)
 
     output:
-    path "*"           , emit: results
-    path "versions.yml", emit: versions
+    path "${prefix}_summary.txt", emit: summary
+    path "versions.yml"         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
