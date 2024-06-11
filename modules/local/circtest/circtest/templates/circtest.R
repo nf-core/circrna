@@ -435,45 +435,21 @@ pheno <- pheno[colnames(circs[,-description]),,drop=FALSE]
 test <- Circ.test(circs, genes, group=as.numeric(as.factor(pheno\$condition)), circle_description = description)
 write.table(test\$summary_table, "${prefix}_summary.txt", row.names=F)
 
-# Apply pheno to output once more..
 
-# if( n_covars == 2 ){
-# 
-#     group_indicator1 <- as.character(covariate_1)
-#     group_indicator2 <- as.character(covariate_2)
-# 
-#     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
-#     for (i in rownames(test\$summary_table))    {
-#         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=groupindicator1, groupindicator2 = group_indicator2,
-#         circle_description = c(1:4) )
-#     }
-#     dev.off()
-# 
-#     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
-#     for (i in rownames(test\$summary_table))    {
-#     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1, groupindicator2 = group_indicator2,
-#     circle_description = c(1:4) )
-#     }
-#     dev.off()
-# 
-# }else{
-# 
-#     group_indicator1 <- as.character(covariate_1)
-# 
-#     pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
-#     for (i in rownames(test\$summary_table))    {
-#         Circ.ratioplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-#         lab_legend = colnames(pheno)[1],    circle_description = c(1:4) )
-#     }
-#     dev.off()
-# 
-#     pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
-#     for (i in rownames(test\$summary_table))    {
-#     Circ.lineplot(Circ_filtered, Linear_filtered, plotrow=i, groupindicator1=group_indicator1,
-#     circle_description = c(1:4) )
-#     }
-#     dev.off()
-# }
+pdf("circ_linear_ratio_plots.pdf", width = 8, height = 10)
+for (i in rownames(test\$summary_table)) {
+    Circ.ratioplot(circs, genes, plotrow=i, groupindicator1=pheno\$condition,
+        lab_legend = condition,    circle_description = c(1:4) )
+}
+dev.off()
+
+pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
+for (i in rownames(test\$summary_table)) {
+    Circ.lineplot(circs, genes, plotrow=i, groupindicator1=pheno\$condition,
+        circle_description = description )
+}
+dev.off()
+
 
 ################################################
 ################################################
