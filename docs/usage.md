@@ -132,29 +132,11 @@ Valid examples for fastq input data in a CSV file is given below:
 
 ## Phenotype file
 
-When running the differential expression analysis module via the `--module differential_expression` parameter, an input `phenotype.csv` file is required to specify levels for `DESeq2`. At a minimum, the user must supply one column of levels for `DESeq2` which **must be called condition**. This should be the primary contrast of interest in your experiment (e.g case vs. control). If additional columns are supplied to the phenotype file, they will be controlled for in the linear mixed model. A brief proof of concept is given below in R notation:
-
-```R
-colnames(phenotype)
-  [1] 'Sample_ID' 'condition'
-
-print(dds$design)
-  [1] ' ~ condition'
-```
-
-```R
-colnames(phenotype)
-  [1] 'Sample_ID' 'condition' 'replicates' 'location'
-
-print(dds$design)
-  [1] ' ~ location + replicates + condition'
-```
-
-It is recommended to construct your input CSV file in conjunction with your phenotype file as the first column denoting sample names **must match** the first column of the `phenotype.csv` file.
+The CSV file provided via the `phenotype` parameter can be used to provide additional metadata about the samples in the input CSV file. If provided, it needs to at least contain a column called `sample` which corresponds to the `sample` column in the input CSV file and a column called `condition`. The `condition` column will be used to group samples for the [CircTest](https://github.com/dieterich-lab/CircTest) functionality. All metadata columns will be included in the result `SummarizedExperiment` RDS file.
 
 A valid example of a `phenotype.csv` file (matching the TCGA example input CSV file above) is given:
 
-| Sample_ID        | condition |
+| sample           | condition |
 | ---------------- | --------- |
 | TCGA-EJ-7783-11A | control   |
 | TCGA-G9-6365-11A | control   |
@@ -167,9 +149,9 @@ A valid example of a `phenotype.csv` file (matching the TCGA example input CSV f
 
 `nf-core/circrna` provides 3 analysis modules to the user:
 
-1. circRNA quantification & annotation.
-2. miRNA target prediction.
-3. Differential circRNA expression analysis.
+1. BSJ detection
+2. Common quantification of circular and linear transcriptome
+3. miRNA target prediction
 
 ## circRNA discovery
 
@@ -263,27 +245,10 @@ nextflow run nf-core/circrna \
     -profile <docker/singularity/podman/institute> \
     --genome 'GRCh37' \
     --input 'samples.csv' \
-    --module 'circrna_discovery, mirna_prediction'
+    --module 'circrna_discovery,mirna_prediction'
 ```
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
-
-## Differential circRNA analysis
-
-The third and final module of `nf-core/circrna` performs differential expression analysis of circRNAs, returning `DESeq2` result outputs, plots and diagnostic plots for the user. In order to run this module, it is essential that your `phenotype.csv` file is in the correct format - please refer to the input [specifications](https://nf-co.re/circrna/dev/usage#differential-expression-analysis).
-
-To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --phenotype 'phenotype.csv' \
-    --module 'circrna_discovery, differential_expression'
-```
-
-To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#differential-expression-analysis).
 
 ## Core Nextflow arguments
 

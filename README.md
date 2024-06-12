@@ -22,7 +22,7 @@
 
 ## Introduction
 
-**nf-core/circrna** is a bioinformatics best-practice analysis pipeline for Quantification, miRNA target prediction and differential expression analysis of circular RNAs.
+**nf-core/circrna** is a bioinformatics best-practice analysis pipeline for BSJ detection, quantification, annotation and miRNA target prediction of circular RNAs.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -50,7 +50,6 @@ On release, automated continuous integration tests run the pipeline on a full-si
   - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
   - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
   - Filter results, miRNAs must be called by both tools
-- Differential expression analysis [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
 - Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
@@ -86,7 +85,7 @@ nextflow run nf-core/circrna \
     --genome GRCh37 \
     -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> \
     --tool 'ciriquant' \
-    --module 'circrna_discovery,mirna_prediction,differential_expression' \
+    --module 'circrna_discovery,mirna_prediction' \
     --bsj_reads 2
 ```
 
