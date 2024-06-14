@@ -30,63 +30,48 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 ## Pipeline summary
 
+![Metro Map](./docs/images/metro-map.png)
+
 - Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
-- MultiQC report [`MultiQC`](http://multiqc.info/)
-- circRNA quantification
-- [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
-- [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
-  - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
-  - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-  - [`DCC`](https://github.com/dieterich-lab/DCC)
-- [`find circ`](https://github.com/marvin-jens/find_circ)
-- [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
-- [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+- BSJ detection
+  - [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+  - [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
+    - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+    - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+    - [`DCC`](https://github.com/dieterich-lab/DCC)
+  - [`find circ`](https://github.com/marvin-jens/find_circ)
+  - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+  - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
-- Export mature spliced length as FASTA file
-- Annotate parent gene, underlying transcripts.
-- circRNA count matrix
-- miRNA target prediction (only if the `mature` parameter is provided)
+- Extract circRNA sequences and build circular transcriptome
+- Merge circular transcriptome with linear transcriptome derived from provided GTF
+- Quantification of combined circular and linear transcriptome
+  - [`psirc-quant`](https://github.com/Christina-hshi/psirc)
+- miRNA binding affinity analysis (only if the `mature` parameter is provided)
   - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
   - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
-  - Filter results, miRNAs must be called by both tools
-- Circular - circRNA-Host ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest) (only if the `phenotype` parameter is provided)
-
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
+- Statistical tests (only if the `phenotype` parameter is provided)
+  - [`CircTest`](https://github.com/dieterich-lab/CircTest)
+- MultiQC report [`MultiQC`](http://multiqc.info/)
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
 
 First, prepare a samplesheet with your input data that looks as follows:
 
 `samplesheet.csv`:
-
 ```csv
 sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+CONTROL,CONTROL_R1.fastq.gz,CONTROL_R2.fastq.gz
+TREATMENT,TREATMENT_R1.fastq.gz,TREATMENT_R2.fastq.gz
 ```
-
 Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
 
--->
-
 Now, you can run the pipeline using:
-
-```bash
-nextflow run nf-core/circrna \
-    --input samplesheet.csv \
-    --outdir <OUTDIR> \
-    --genome GRCh37 \
-    -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> \
-    --tool 'ciriquant' \
-    --bsj_reads 2
-```
 
 ```bash
 nextflow run nf-core/circrna \
