@@ -14,7 +14,6 @@ process CIRCTEST_CIRCTEST {
     output:
     tuple val(meta), path("${prefix}_summary.txt"), emit: summary
     tuple val(meta), path("*.pdf")                , emit: plots
-
     path "versions.yml"                           , emit: versions
 
     when:
