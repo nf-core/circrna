@@ -60,7 +60,6 @@ On release, automated continuous integration tests run the pipeline on a full-si
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-
 First, prepare a samplesheet with your input data that looks as follows:
 
 ```csv title="samplesheet.csv"
@@ -68,6 +67,7 @@ sample,fastq_1,fastq_2
 CONTROL,CONTROL_R1.fastq.gz,CONTROL_R2.fastq.gz
 TREATMENT,TREATMENT_R1.fastq.gz,TREATMENT_R2.fastq.gz
 ```
+
 Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
 
 Now, you can run the pipeline using:

@@ -42,7 +42,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   - [`CircTest`](https://github.com/dieterich-lab/CircTest)
 - MultiQC report [`MultiQC`](http://multiqc.info/)
 
-
 ## Quality Control
 
 ### FastQC
