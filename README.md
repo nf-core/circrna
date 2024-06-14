@@ -46,7 +46,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
 - Export mature spliced length as FASTA file
 - Annotate parent gene, underlying transcripts.
 - circRNA count matrix
-- miRNA target prediction
+- miRNA target prediction (only if the `mature` parameter is provided)
   - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
   - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
   - Filter results, miRNAs must be called by both tools
