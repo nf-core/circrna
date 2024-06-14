@@ -97,7 +97,7 @@
                     },
                     "gnu/sort": {
                         "branch": "master",
-                        "git_sha": "ca199cfe5aa4f1ea3c41302158f0af2cfaa58957",
+                        "git_sha": "a3cc42943548378b726610f45bb5a79ab3f0b633",
                         "installed_by": ["modules"]
                     },
                     "hisat2/align": {

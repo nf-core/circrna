@@ -31,7 +31,7 @@ include { PREPARE_GENOME                   } from '../../subworkflows/local/prep
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
-include { DIFFERENTIAL_EXPRESSION          } from '../../subworkflows/local/differential_expression'
+include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,27 +183,18 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
 
     //
-    // 5. Differential expression tests
+    // 5. Statistical tests
     //
 
-    ch_ensembl_database_map = params.module.contains('differential_expression') ? Channel.fromPath("${projectDir}/bin/ensembl_database_map.txt") : Channel.empty()
-
-    DIFFERENTIAL_EXPRESSION(
-        FASTQC_TRIMGALORE.out.reads,
-        ch_gtf,
-        ch_fasta,
-        hisat2_index,
-        PREPARE_GENOME.out.splice_sites,
-        ch_phenotype,
-        CIRCRNA_DISCOVERY.out.counts_bed,
-        CIRCRNA_DISCOVERY.out.counts_tsv,
-        ch_species,
-        ch_ensembl_database_map,
-        params.exon_boundary
+    STATISTICAL_TESTS(
+        QUANTIFICATION.out.se,
+        QUANTIFICATION.out.gene_counts,
+        QUANTIFICATION.out.circular_tx_counts,
+        ch_phenotype
     )
 
-    ch_versions = ch_versions.mix(DIFFERENTIAL_EXPRESSION.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix(DIFFERENTIAL_EXPRESSION.out.reports)
+    ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
+
 
     //
     // Collate and save software versions

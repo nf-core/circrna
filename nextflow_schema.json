@@ -32,11 +32,14 @@
                 },
                 "phenotype": {
                     "type": "string",
-                    "description": "Phenotype CSV file specifying the experimental design for DESeq2.",
-                    "fa_icon": "fas fa-file-csv",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_phenotype.json",
                     "mimetype": "text/csv",
-                    "help_text": "There are two rules for providing the phenotype CSV file. 1) The phenotype 'sample' column must match the sample sheets 'sample' column. 2) The response variable containing the phenotype of primary interest in the experiment must have the column name condition.  All other columns included in the file are controlled for in the `DESeq2` design. \n\n| sample    \t| condition \t| replicate \t|\n|-----------\t|-----------\t|-----------\t|\n| control_1 \t| ctr       \t| 1         \t|\n| control_2 \t| ctr       \t| 2         \t|\n| control_3 \t| ctr       \t| 3         \t|\n| treated_1 \t| trt       \t| 1         \t|\n| treated_2 \t| trt       \t| 2         \t|\n| treated_3 \t| trt       \t| 3         \t|\n\nThe above phenotype file will identify differentially expressed circRNAs/mRNAs between control and treatment cells, whilst controlling for the effect of variation between replicates: ` ~ replicates + condition`",
-                    "pattern": "\\.csv$"
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Phenotype CSV file specifying the experimental design.",
+                    "help_text": "There are two rules for providing the phenotype CSV file. 1) The 'sample' column must match the sample sheets 'sample' column. 2) The response variable containing the phenotype of primary interest in the experiment must have the column name condition.  All other columns included in the file are controlled for in the `DESeq2` design. \n\n| sample    \t| condition \t| replicate \t|\n|-----------\t|-----------\t|-----------\t|\n| control_1 \t| ctr       \t| 1         \t|\n| control_2 \t| ctr       \t| 2         \t|\n| control_3 \t| ctr       \t| 3         \t|\n| treated_1 \t| trt       \t| 1         \t|\n| treated_2 \t| trt       \t| 2         \t|\n| treated_3 \t| trt       \t| 3         \t|\n\nThe above phenotype file will identify differentially expressed circRNAs/mRNAs between control and treatment cells, whilst controlling for the effect of variation between replicates: ` ~ replicates + condition`",
+                    "fa_icon": "fas fa-file-csv"
                 }
             }
         },

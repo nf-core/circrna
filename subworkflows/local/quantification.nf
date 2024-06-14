@@ -121,6 +121,7 @@ workflow QUANTIFICATION {
     )
 
     emit:
+    se                 = MERGE_EXPERIMENTS.out.merged
     gene_counts        = JOIN_GENE_COUNTS.out.csv
     gene_tpm           = JOIN_GENE_TPM.out.csv
     tx_counts          = JOIN_TX_COUNTS.out.csv

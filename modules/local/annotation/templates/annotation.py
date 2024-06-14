@@ -2,16 +2,27 @@
 
 import pandas as pd
 import numpy as np
-import argparse
+import platform
 import csv
 
-parser = argparse.ArgumentParser(description='Annotate circRNAs')
-parser.add_argument('--input', type=str, help='Path to the input file')
-parser.add_argument('--exon_boundary', type=int, help='Exon boundary')
-parser.add_argument('--output_bed', type=str, help='Path to the output bed file')
-parser.add_argument('--output_gtf', type=str, help='Path to the output gtf')
+def format_yaml_like(data: dict, indent: int = 0) -> str:
+    """Formats a dictionary to a YAML-like string.
 
-args = parser.parse_args()
+    Args:
+        data (dict): The dictionary to format.
+        indent (int): The current indentation level.
+
+    Returns:
+        str: A string formatted as YAML.
+    """
+    yaml_str = ""
+    for key, value in data.items():
+        spaces = "  " * indent
+        if isinstance(value, dict):
+            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
+        else:
+            yaml_str += f"{spaces}{key}: {value}\\n"
+    return yaml_str
 
 
 columns = {
@@ -28,9 +39,9 @@ columns = {
 
 attributes = ['gene_id', 'gene_name', 'transcript_id']
 
-exon_boundary = args.exon_boundary
+exon_boundary = int("${exon_boundary}")
 
-df = pd.read_csv(args.input, sep="\t", header=None, usecols=columns.keys())
+df = pd.read_csv("${intersection}", sep="\\t", header=None, usecols=columns.keys())
 df = df.rename(columns=columns)
 
 # Extract circRNAs without match
@@ -99,7 +110,7 @@ df = pd.concat([df, df_intergenic], axis=0)
 # Sort by chr, start, end
 df = df.sort_values(['chr', 'start', 'end'])
 
-df.to_csv(args.output_bed, sep='\t', index=False, header=False)
+df.to_csv("${prefix}.bed", sep='\\t', index=False, header=False)
 
 # Convert to GTF
 df['source'] = 'circRNA'
@@ -109,4 +120,17 @@ df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_nam
 gtf_order = ['chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'frame', 'attributes']
 df = df[gtf_order]
 
-df.to_csv(args.output_gtf, sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
+df.to_csv("${prefix}.gtf", sep='\\t', index=False, header=False, quoting=csv.QUOTE_NONE)
+
+# Versions
+
+versions = {
+    "${task.process}": {
+        "python": platform.python_version(),
+        "pandas": pd.__version__,
+        "numpy": np.__version__
+    }
+}
+
+with open("versions.yml", "w") as f:
+    f.write(format_yaml_like(versions))

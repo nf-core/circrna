@@ -12,16 +12,9 @@ process MERGE_SAMPLES {
     output:
     path("merged_counts.bed") , emit: counts_bed
     path("merged_counts.tsv") , emit: counts_tsv
+
     path "versions.yml"       , emit: versions
 
     script:
-    """
-    merge_samples.py --beds ${beds} --out_bed merged_counts.bed --out_tsv merged_counts.tsv
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        pandas: \$(python -c "import pandas; print(pandas.__version__)")
-    END_VERSIONS
-    """
+    template "merge_samples.py"
 }

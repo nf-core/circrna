@@ -1,5 +1,5 @@
 include { BEDTOOLS_INTERSECT as INTERSECT } from '../../../modules/nf-core/bedtools/intersect'
-include { ANNOTATION as ANNOTATE          } from '../../../modules/local/annotation/full_annotation'
+include { ANNOTATION as ANNOTATE          } from '../../../modules/local/annotation'
 include { GNU_SORT as COMBINE_BEDS        } from '../../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND     } from '../../../modules/nf-core/gawk'
 include { GNU_SORT as COMBINE_GTFS        } from '../../../modules/nf-core/gnu/sort'
