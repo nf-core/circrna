@@ -150,7 +150,7 @@ A valid example of a `phenotype.csv` file (matching the TCGA example input CSV f
 `nf-core/circrna` provides 3 analysis modules to the user:
 
 1. BSJ detection
-2. Common quantification of circular and linear transcriptome
+2. Joint quantification of circular and linear transcriptome
 3. miRNA target prediction
 
 ## circRNA discovery
