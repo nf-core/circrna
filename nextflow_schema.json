@@ -543,19 +543,19 @@
     },
     "allOf": [
         {
-            "$ref": "#/definitions/alignment_options"
-        },
-        {
             "$ref": "#/definitions/input_output_options"
-        },
-        {
-            "$ref": "#/definitions/discovery_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
         },
         {
             "$ref": "#/definitions/read_trimming_options"
+        },
+        {
+            "$ref": "#/definitions/alignment_options"
+        },
+        {
+            "$ref": "#/definitions/discovery_options"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
