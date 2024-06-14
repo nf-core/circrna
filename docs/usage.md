@@ -180,7 +180,6 @@ nextflow run nf-core/circrna \
     -profile <docker/singularity/podman/institute> \
     --genome 'GRCh37' \
     --input 'samples.csv' \
-    --module 'circrna_discovery' \
     --tool 'ciriquant,dcc,find_circ'
 ```
 
@@ -202,7 +201,6 @@ nextflow run nf-core/circrna \
     --genome 'GRCh37' \
     --input 'samples.csv' \
     --phenotype 'phenotype.csv' \
-    --module 'circrna_discovery' \
     --tool 'ciriquant, dcc, find_circ' \
     --bsj_reads 2
 ```
@@ -222,7 +220,6 @@ nextflow run nf-core/circrna \
     -profile <docker/singularity/podman/institute> \
     --genome 'GRCh37' \
     --input 'samples.csv' \
-    --module 'circrna_discovery' \
     --tool 'ciriquant, dcc, find_circ' \
     --bsj_reads 2 \
     --tool_filter 2

@@ -85,7 +85,6 @@ nextflow run nf-core/circrna \
     --genome GRCh37 \
     -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> \
     --tool 'ciriquant' \
-    --module 'circrna_discovery,mirna_prediction' \
     --bsj_reads 2
 ```
 

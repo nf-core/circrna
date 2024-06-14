@@ -19,7 +19,7 @@ workflow PREPARE_GENOME {
 
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
-    if( params.module.contains('circrna_discovery') && params.tool.contains('mapsplice') ) {
+    if( params.tool.contains('mapsplice') ) {
         CLEAN_FASTA(ch_fasta, [])
         ch_fasta = CLEAN_FASTA.out.output
 

@@ -43,13 +43,12 @@
                 }
             }
         },
-        "pipeline_options": {
-            "title": "Pipeline Options",
+        "discovery_options": {
+            "title": "Discovery Options",
             "type": "object",
             "fa_icon": "fas fa-circle-notch",
-            "description": "Main workflow parameters.",
-            "help_text": "Documentation for selecting circRNA quantification tools, analysis modules, outputs etc.",
-            "required": ["tool", "module"],
+            "description": "Parameters for circrna discovery.",
+            "required": ["tool"],
             "properties": {
                 "tool": {
                     "type": "string",
