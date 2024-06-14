@@ -549,7 +549,7 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/pipeline_options"
+            "$ref": "#/definitions/discovery_options"
         },
         {
             "$ref": "#/definitions/reference_genome_options"
