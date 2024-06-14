@@ -50,7 +50,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
   - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
   - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
   - Filter results, miRNAs must be called by both tools
-- Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
+- Circular - circRNA-Host ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest) (only if the `phenotype` parameter is provided)
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
