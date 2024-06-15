@@ -5,7 +5,6 @@ library(SummarizedExperiment)
 paths <- c('${experiments.join("\', \'")}')
 experiments <- lapply(paths, readRDS)
 
-phenotype <- read.csv('${phenotype}', stringsAsFactors = FALSE)
 annotation <- rtracklayer::import('${gtf}')
 tpm <- read.table('${tpm}', header=TRUE, row.names=1)[, -1]
 
@@ -30,7 +29,11 @@ se_cbind <- do.call(SummarizedExperiment::cbind, experiments)
 se <- SummarizedExperiment(assays = se_assays, colData = colData(se_cbind), rowData = rowData(se_cbind))
 
 # Join phenotype data
-colData(se) <- merge(colData(se), phenotype, by.x="names", by.y=colnames(phenotype)[1])
+phenotype_path <- '${phenotype}'
+if (file.exists(phenotype_path)) {
+    phenotype <- read.csv(phenotype_path, stringsAsFactors = FALSE)
+    colData(se) <- merge(colData(se), phenotype, by.x="names", by.y=colnames(phenotype)[1])
+}
 
 # Convert string columns to factors
 for (col in colnames(colData(se))) {

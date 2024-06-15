@@ -58,9 +58,9 @@ workflow NFCORE_CIRCRNA {
     ch_samplesheet = Channel.fromSamplesheet("input")
     ch_fasta       = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists:true)])
     ch_gtf         = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists:true)])
-    ch_mature      = params.module.split(',').contains('mirna_prediction') ? Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)]) : Channel.empty()
-    ch_phenotype   = Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists:true)])
-    ch_species     = params.module.split(',').contains('differential_expression') ? Channel.value(params.species_id) : Channel.empty()
+    ch_mature      = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)]) : Channel.empty()
+    ch_phenotype   = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists:true)]) : Channel.empty()
+    ch_species     = params.phenotype ? Channel.value(params.species_id) : Channel.empty()
 
     CIRCRNA (
         ch_samplesheet,

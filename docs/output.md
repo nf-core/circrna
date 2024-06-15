@@ -2,19 +2,18 @@
 
 ## Introduction
 
-This documentation describes the output of `nf-core/circrna` for the test dataset which runs all modules in the workflow.
+:::warning
+This page has not been updated for a long time and might not align with the current pipeline output. We are working on updating it.
+If you have questions regarding the pipeline output, feel free to reach out in the [nf-core slack](https://nfcore.slack.com/channels/circrna) channel.
+:::
 
-A full run of the workflow will produce the following directory output structure:
+This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report generated from the [full-sized test dataset](https://github.com/nf-core/test-datasets/tree/circrna) for the pipeline using a command similar to the one below:
 
-```console
-|-- results/
-        |-- circrna_discovery
-        |-- mirna_prediction
-        |-- multiqc
-        |-- pipeline_info
-        |-- quality_control
-        |-- references
+```bash
+nextflow run nf-core/circrna -profile test_full,<docker/singularity/institute>
 ```
+
+The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
 ## Pipeline Overview
 
@@ -22,25 +21,26 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
-- MultiQC report [`MultiQC`](http://multiqc.info/)
-- circRNA quantification
-- [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
-- [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
-  - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
-  - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-  - [`DCC`](https://github.com/dieterich-lab/DCC)
-- [`find circ`](https://github.com/marvin-jens/find_circ)
-- [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
-- [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
+- BSJ detection
+  - [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+  - [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
+    - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
+    - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
+    - [`DCC`](https://github.com/dieterich-lab/DCC)
+  - [`find circ`](https://github.com/marvin-jens/find_circ)
+  - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+  - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
-- Export mature spliced length as FASTA file
-- Annotate parent gene, underlying transcripts.
-- circRNA count matrix
-- miRNA target prediction
+- Extract circRNA sequences and build circular transcriptome
+- Merge circular transcriptome with linear transcriptome derived from provided GTF
+- Quantification of combined circular and linear transcriptome
+  - [`psirc-quant`](https://github.com/Christina-hshi/psirc)
+- miRNA binding affinity analysis (only if the `mature` parameter is provided)
   - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
   - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
-  - Filter results, miRNAs must be called by both tools
-- Circular - Linear ratio tests ['CircTest'](https://github.com/dieterich-lab/CircTest)
+- Statistical tests (only if the `phenotype` parameter is provided)
+  - [`CircTest`](https://github.com/dieterich-lab/CircTest)
+- MultiQC report [`MultiQC`](http://multiqc.info/)
 
 ## Quality Control
 
