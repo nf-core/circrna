@@ -58,6 +58,7 @@ workflow CIRCRNA {
     ch_fasta
     ch_gtf
     ch_mature
+    ch_annotations
     ch_species
     ch_versions
 
@@ -143,6 +144,7 @@ workflow CIRCRNA {
         chromosomes,
         hisat2_index,
         star_index,
+        ch_annotations,
         params.bsj_reads,
         params.tool_filter,
         params.duplicates_fun,

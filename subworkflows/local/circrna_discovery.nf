@@ -30,6 +30,7 @@ workflow CIRCRNA_DISCOVERY {
     chromosomes
     hisat2_index
     star_index
+    ch_annotations
     bsj_reads
     tool_filter
     duplicates_fun
@@ -140,7 +141,7 @@ workflow CIRCRNA_DISCOVERY {
     // ANNOTATION WORKFLOW:
     //
 
-    ANNOTATION( ch_bed_incl_merged, gtf, exon_boundary )
+    ANNOTATION( ch_bed_incl_merged, gtf, exon_boundary, ch_annotations )
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 
     //

@@ -9,12 +9,15 @@ workflow ANNOTATION {
     regions
     gtf
     exon_boundary
+    ch_annotations
 
     main:
     ch_versions = Channel.empty()
 
     INTERSECT( regions.combine(gtf), [[], []])
     ANNOTATE( INTERSECT.out.intersect, exon_boundary )
+
+    ch_annotations.view()
 
     ch_bed_merged = ANNOTATE.out.bed.filter{ meta, bed -> meta.tool == "merged" }
     ch_gtf_merged = ANNOTATE.out.gtf.filter{ meta, gtf -> meta.tool == "merged" }
