@@ -30,7 +30,8 @@ workflow ANNOTATION {
     ANNOTATE( INTERSECT_GTF.out.intersect
         .join(INTERSECT_DATABASE.out.intersect
             .map{ meta, bed -> [meta.original_meta, bed] }
-            .groupTuple()),
+            .groupTuple(), remainder: true)
+        .map{ meta, gtf_intersection, db_intersections -> [meta, gtf_intersection, db_intersections ?: []]},
         exon_boundary )
 
     ch_bed_merged = ANNOTATE.out.bed.filter{ meta, bed -> meta.tool == "merged" }
