@@ -10,7 +10,8 @@
             "name": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Annotation file name must be provided and cannot contain spaces"
+                "errorMessage": "Annotation file name must be provided and cannot contain spaces",
+                "meta": ["id"]
             },
             "file": {
                 "type": "string",
@@ -24,7 +25,8 @@
                 "minimum": 0,
                 "maximum": 1,
                 "default": 0.9,
-                "errorMessage": "Minimum overlap must be a number between 0 and 1"
+                "errorMessage": "Minimum overlap must be a number between 0 and 1",
+                "meta": ["min_overlap"]
             }
         },
         "required": ["name", "file"]
