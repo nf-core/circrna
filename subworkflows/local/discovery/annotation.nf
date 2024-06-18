@@ -3,6 +3,7 @@ include { ANNOTATION as GTF_ANNOTATION              } from '../../../modules/loc
 include { GAWK as INGEST_DATABASE_NAMES             } from '../../../modules/nf-core/gawk'
 include { GNU_SORT as COMBINE_DATABASES             } from '../../../modules/nf-core/gnu/sort'
 include { BEDTOOLS_INTERSECT as DATABASE_ANNOTATION } from '../../../modules/nf-core/bedtools/intersect'
+include { GAWK as CLEAN_DATABASE_ANNOTATION         } from '../../../modules/nf-core/gawk'
 include { GNU_SORT as COMBINE_BEDS                  } from '../../../modules/nf-core/gnu/sort'
 include { GAWK as REMOVE_SCORE_STRAND               } from '../../../modules/nf-core/gawk'
 include { GNU_SORT as COMBINE_GTFS                  } from '../../../modules/nf-core/gnu/sort'
@@ -31,7 +32,8 @@ workflow ANNOTATION {
                 db: meta2.id,
                 min_overlap: meta2.min_overlap], regions, database] },
         [[], []])
-    COMBINE_DATABASES( DATABASE_ANNOTATION.out.intersect
+    CLEAN_DATABASE_ANNOTATION( DATABASE_ANNOTATION.out.intersect, [] )
+    COMBINE_DATABASES( CLEAN_DATABASE_ANNOTATION.out.output
         .map{ meta, annotated -> [[id: meta.sample], annotated] }
         .groupTuple())
 
