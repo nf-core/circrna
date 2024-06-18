@@ -175,7 +175,6 @@ workflow CIRCRNA {
             bwa_index,
             chromosomes,
             hisat2_index,
-            segemehl_index,
             star_index,
             params.bsj_reads,
             params.tool_filter,
@@ -184,8 +183,8 @@ workflow CIRCRNA {
         )
 
         BENCHMARKING(
-            CIRCRNA_DISCOVERY.out.tool_bed,
-            CIRCRNA_DISCOVERY_BENCHMARKING.out.tool_bed,
+            CIRCRNA_DISCOVERY.out.annotation_bed,
+            CIRCRNA_DISCOVERY_BENCHMARKING.out.annotation_bed,
             CIRCRNA_DISCOVERY.out.star_bam,
             CIRCRNA_DISCOVERY_BENCHMARKING.out.star_bam,
             FASTQC_TRIMGALORE.out.trim_log

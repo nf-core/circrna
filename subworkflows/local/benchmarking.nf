@@ -37,8 +37,6 @@ workflow BENCHMARKING {
             benchmarking: meta.benchmarking
         }.set { ch_merged }
 
-    ch_merged.real.view {"emits: $it"}
-
     ch_joined = ch_merged.real.map{ meta, bed -> [[id: meta.tool], bed]}
         .join(ch_merged.benchmarking.map{ meta, bed -> [[id: meta.tool], bed]})
 
@@ -68,17 +66,6 @@ workflow BENCHMARKING {
     ch_path = ch_joined.map { it[1] }
     ch_corr_inputs = ch_meta.combine(ch_path)
 
-    ch_real_bed.combine(ch_depthfile)
-        .flatMap { bed, depthfile ->
-            def (meta, bed_path) = bed
-            [meta, bed_path, depthfile]
-        }
-        .set { ch_depth_correlation }
-
-    ch_depth_correlation.collect()
-        .collectFile(name: 'corr.txt', storeDir: params.outdir, newLine: true) { file ->
-            file.collect { it.text }.join('\n')
-        }
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
 

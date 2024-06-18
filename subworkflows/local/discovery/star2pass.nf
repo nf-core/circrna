@@ -29,6 +29,7 @@ workflow STAR2PASS {
     junction = PASS_2.out.junction
     sam = PASS_2.out.sam
     tab = PASS_2.out.tab
+    bam = PASS_2.out.bam
 
     versions = ch_versions
 }
