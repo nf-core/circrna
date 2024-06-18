@@ -8,7 +8,7 @@ process ANNOTATION {
         'biocontainers/pandas:1.5.2' }"
 
     input:
-    tuple val(meta), path(intersection)
+    tuple val(meta), path(gtf_intersection), path(db_intersections)
     val(exon_boundary)
 
     output:

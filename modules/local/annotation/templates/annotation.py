@@ -41,7 +41,7 @@ attributes = ['gene_id', 'gene_name', 'transcript_id']
 
 exon_boundary = int("${exon_boundary}")
 
-df = pd.read_csv("${intersection}", sep="\\t", header=None, usecols=columns.keys())
+df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
 df = df.rename(columns=columns)
 
 # Extract circRNAs without match
