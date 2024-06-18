@@ -107,16 +107,24 @@ df_intergenic = df_intergenic[bed_order]
 
 df = pd.concat([df, df_intergenic], axis=0)
 
-db_colnames = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_chr', 'db_start', 'db_end', 'db_name', 'db_score', 'db_strand']
-db_usecols = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_name']
-df_databases = pd.concat([pd.read_csv(db_path, sep="\\t", names=db_colnames, usecols=db_usecols) for db_path in "${db_intersections}".split()])
+db_intersections = "${db_intersections}".split()
+has_db = len(db_intersections) > 0
 
-# Group by chr, start, end, name, score, strand, and aggregate the db_name to csv string
-df_databases = df_databases.groupby(['chr', 'start', 'end', 'name', 'score', 'strand']).aggregate({
-    'db_name': lambda x: ",".join(x) if len(x) > 0 else "."
-})
+if has_db:
+    db_colnames = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_chr', 'db_start', 'db_end', 'db_name', 'db_score', 'db_strand']
+    db_usecols = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_name']
+    df_databases = pd.concat([pd.read_csv(db_path, sep="\\t", names=db_colnames, usecols=db_usecols) for db_path in db_intersections])
 
-df = df.merge(df_databases, how='left', on=['chr', 'start', 'end', 'name', 'score', 'strand'])
+    # Group by chr, start, end, name, score, strand, and aggregate the db_name to list
+    df_databases = df_databases.groupby(['chr', 'start', 'end', 'name', 'score', 'strand']).aggregate({
+        'db_name': lambda x: ",".join([val for val in x if val != '.'])
+    })
+
+    df_databases['db_name'] = df_databases['db_name'].apply(lambda x: x if x else '.')
+
+    df = df.merge(df_databases, how='left', on=['chr', 'start', 'end', 'name', 'score', 'strand'])
+else:
+    df['db_name'] = "."
 
 # Sort by chr, start, end
 df = df.sort_values(['chr', 'start', 'end'])
@@ -126,7 +134,7 @@ df.to_csv("${prefix}.bed", sep='\\t', index=False, header=False)
 # Convert to GTF
 df['source'] = 'circRNA'
 df['frame'] = '.'
-df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_name'] + '"; transcript_id "circ_' + df['name'] + '";'
+df['attributes'] = 'gene_id "' + df['gene_id'] + '"; gene_name "' + df['gene_name'] + '"; transcript_id "circ_' + df['name'] + '"; db_ids "' + df['db_name'] + '";'
 
 gtf_order = ['chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'frame', 'attributes']
 df = df[gtf_order]
