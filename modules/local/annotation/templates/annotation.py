@@ -109,7 +109,7 @@ df = pd.concat([df, df_intergenic], axis=0)
 
 db_colnames = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_chr', 'db_start', 'db_end', 'db_name', 'db_score', 'db_strand']
 db_usecols = ['chr', 'start', 'end', 'name', 'score', 'strand', 'db_name']
-df_databases = pd.concat([pd.read_csv(db_path, sep="\\t", header=0, names=db_colnames, usecols=db_usecols) for db_path in "${db_intersections}".split()])
+df_databases = pd.concat([pd.read_csv(db_path, sep="\\t", names=db_colnames, usecols=db_usecols) for db_path in "${db_intersections}".split()])
 
 # Group by chr, start, end, name, score, strand, and aggregate the db_name to csv string
 df_databases = df_databases.groupby(['chr', 'start', 'end', 'name', 'score', 'strand']).aggregate({
