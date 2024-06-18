@@ -40,6 +40,17 @@
                     "description": "Phenotype CSV file specifying the experimental design. If provided, the pipeline will run CIRCTEST.",
                     "help_text": "There are two rules for providing the phenotype CSV file. 1) The 'sample' column must match the sample sheets 'sample' column. 2) The response variable containing the phenotype of primary interest in the experiment must have the column name condition.  All other columns included in the file are controlled for in the `DESeq2` design. \n\n| sample    \t| condition \t| replicate \t|\n|-----------\t|-----------\t|-----------\t|\n| control_1 \t| ctr       \t| 1         \t|\n| control_2 \t| ctr       \t| 2         \t|\n| control_3 \t| ctr       \t| 3         \t|\n| treated_1 \t| trt       \t| 1         \t|\n| treated_2 \t| trt       \t| 2         \t|\n| treated_3 \t| trt       \t| 3         \t|\n\nThe above phenotype file will identify differentially expressed circRNAs/mRNAs between control and treatment cells, whilst controlling for the effect of variation between replicates: ` ~ replicates + condition`",
                     "fa_icon": "fas fa-file-csv"
+                },
+                "annotation": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_annotation.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to a CSV file containing BED files that should be used for annotation.",
+                    "help_text": "The annotation file should be a CSV file with the following columns: `name`, `file` and `min_overlap`. The `name` column should contain a unique identifier for the annotation, the `file` column should contain the path to the BED file and the `min_overlap` column should contain the minimum overlap required for a circRNA to be considered as overlapping with the annotation. The `min_overlap` column is optional and defaults to 0.9 if not provided.",
+                    "fa_icon": "fas fa-file-csv"
                 }
             }
         },

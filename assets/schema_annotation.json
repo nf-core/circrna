@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/circrna/master/assets/schema_annotation.json",
+    "title": "nf-core/circrna pipeline - params.annotation schema",
+    "description": "Schema for the file provided with params.annotation",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Annotation file name must be provided and cannot contain spaces",
+                "meta": ["id"]
+            },
+            "file": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.bed$",
+                "errorMessage": "Annotation file must be provided and must be a BED file"
+            },
+            "min_overlap": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.9,
+                "errorMessage": "Minimum overlap must be a number between 0 and 1",
+                "meta": ["min_overlap"]
+            }
+        },
+        "required": ["name", "file"]
+    }
+}
