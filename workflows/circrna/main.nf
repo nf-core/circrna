@@ -185,7 +185,10 @@ workflow CIRCRNA {
 
         BENCHMARKING(
             CIRCRNA_DISCOVERY.out.tool_bed,
-            CIRCRNA_DISCOVERY_BENCHMARKING.out.tool_bed
+            CIRCRNA_DISCOVERY_BENCHMARKING.out.tool_bed,
+            CIRCRNA_DISCOVERY.out.star_bam,
+            CIRCRNA_DISCOVERY_BENCHMARKING.out.star_bam,
+            FASTQC_TRIMGALORE.out.trim_log
         )
 
         ch_multiqc_files = ch_multiqc_files.mix(BENCHMARKING.out.reports)

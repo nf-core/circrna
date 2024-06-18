@@ -161,6 +161,7 @@ workflow CIRCRNA_DISCOVERY {
     annotation_gtf = ANNOTATION.out.gtf
     counts_bed     = MERGE_SAMPLES.out.counts_bed
     counts_tsv     = MERGE_SAMPLES.out.counts_tsv
+    star_bam = STAR_2ND_PASS.out.bam
 
     multiqc_files  = ch_multiqc_files
     versions       = ch_versions
