@@ -27,7 +27,7 @@ process PSIRC_QUANT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p')
+        psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*\$/\\1/p')
     END_VERSIONS
     """
 }
