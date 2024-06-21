@@ -52,7 +52,7 @@ workflow MIRNA_BINDINGSITES {
         //
         // MIRANDA WORKFLOW:
         //
-        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature} )
+        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature}.collect() )
         UNIFY_MIRANDA( MIRANDA.out.txt, [] )
         
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
