@@ -30,21 +30,34 @@ workflow BENCHMARKING {
                             benchmarking: meta.benchmarking], bed]}
         .groupTuple()
 
+    ch_all.view {"all: $it"}
+
     SORT(ch_all)
+
+    SORT.out.sorted.view { "sort: $it"}
 
     BEDTOOLS_MERGE(SORT.out.sorted).bed.branch{ meta, bed ->
             real: !meta.benchmarking
             benchmarking: meta.benchmarking
         }.set { ch_merged }
 
+    ch_merged.real.view { "merged_rea: $it" }
+
+    ch_merged.benchmarking.view { "merged_ben: $it" }
+
     ch_joined = ch_merged.real.map{ meta, bed -> [[id: meta.tool], bed]}
         .join(ch_merged.benchmarking.map{ meta, bed -> [[id: meta.tool], bed]})
 
+    ch_joined.view { "joined1: $it"}
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
 
     OVERLAP_PLOT(ch_intersect)
 
+    ch_joined.view { "joined2: $it"}
+
     LOCATION_PLOT(ch_joined)
+
+    ch_joined.view { "joined3: $it"}
 
     ch_meta = ch_real_bam.map { it[0] }
     ch_path = ch_real_bam.map { it[1] }
@@ -56,15 +69,10 @@ workflow BENCHMARKING {
 
     ch_genomecov = BEDTOOLS_GENOMECOV(ch_genomecov_inputs, [], "bg",false)
 
-    ch_depthfile = WRITE(ch_genomecov.genomecov).flatten()
-        .collectFile(storeDir: params.outdir, newLine: true) { file ->
-                def content = file.text
-                return ['genomecovs.txt', content]
-        }
+    ch_joined.view { "joined: $it"}
 
-    ch_meta = ch_joined.map { it[0] }
-    ch_path = ch_joined.map { it[1] }
-    ch_corr_inputs = ch_meta.combine(ch_path)
+    ch_corr = SEQ_DEPTH_CORRELLATION(ch_joined, ch_genomecov.genomecov)
+    ch_corr.view { "emits: $it"}
 
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
