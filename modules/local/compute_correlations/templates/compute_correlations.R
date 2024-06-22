@@ -7,6 +7,13 @@ tx_expression <- readRDS('${transcript_rds}')
 mi_expression <- read.table('${mirna_expression}', header=TRUE, row.names=1, sep='\\t')
 interactions <- read.table('${bindingsites}', sep='\\t')
 
+tx_expression <- scaleInfReps(tx_expression)
+tx_expression <- labelKeep(tx_expression) # Here one can perform custom filtering
+
+if (!any(mcols(tx_expression)\$keep)) {
+  stop('No transcripts left after filtering')
+}
+
 result_cols <- c('stat', 'log2FC', 'pvalue', 'locfdr', 'qvalue')
 
 # Iterate rows of interactions
@@ -15,15 +22,13 @@ for (i in 1:nrow(interactions)) {
   miRNA <- interactions[i, 1]
   targets <- unlist(strsplit(interactions[i, 2], ','))
 
-  # TODO: Remove this check after making sure that lowly expressed miRNAs
-  # are filtered out before binding site detection
-  if (!miRNA %in% rownames(mi_expression)) {
-    print(paste('miRNA', miRNA, 'not found'))
-    next
-  }
-
   mirna_expression <- mi_expression[miRNA,]
   transcript_expression <- tx_expression[targets,]
+
+  if (!any(mcols(transcript_expression)\$keep)) {
+    print(paste('No transcripts left after filtering for miRNA', miRNA))
+    next
+  }
 
   # Add miRNA expression to colData so that it can be used for correlation
   colData(transcript_expression) <- cbind(
@@ -32,8 +37,10 @@ for (i in 1:nrow(interactions)) {
   )
 
   # TODO: Allow setting "spearman"
-  result <- rowData(swish(transcript_expression, miRNA, cor = "pearson"))[, result_cols]
+  result <- rowData(swish(transcript_expression, miRNA, cor = "${params.mirna_correlation}"))[, result_cols]
   # TODO: Find out why NaN rows occur
+  # NaNs occur whenever mcols(transcript_expression)\$keep is false
+  # Because in this case the corresponding entry is ignored
   result <- result[complete.cases(result), ]
   write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }

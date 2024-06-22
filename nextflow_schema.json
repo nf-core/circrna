@@ -66,8 +66,8 @@
                     "format": "file-path",
                     "exists": true,
                     "mimetype": "text/tsv",
-                    "pattern": "^\\S+\\.tsv$",
-                    "description": "Path to tab-separated file providing the expression counts of miRNAs, which are created in pipeline 'smrnaseq'. \n\nmirna \t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
+                    "pattern": "^\\s+\\.tsv$",
+                    "description": "path to tab-separated file providing the expression counts of mirnas, which are created in pipeline 'smrnaseq'. \n\nmirna \t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
                     "fa_icon": "fas fa-file-tsv"
                 },
                 "mirna_min_sample_percentage": {
@@ -85,6 +85,14 @@
                     "help_text": "This parameter determines the minimum number of reads that a miRNA must have to pass filtering. The default is 5, meaning a miRNA must have at least 5 reads across the samples to be considered for analysis.",
                     "default": 5,
                     "minimum": 0
+                },
+                "mirna_correlation": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "Specifies the type of correlation to be used when analyzing the relationship between miRNA and transcript expression levels. Valid options are 'pearson' or 'spearman'.",
+                    "help_text": "Select the correlation method to be applied in the correlation analysis of miRNAs.",
+                    "default": "pearson",
+                    "pattern": "^(pearson|spearman)$"
                 }
             }
         },
