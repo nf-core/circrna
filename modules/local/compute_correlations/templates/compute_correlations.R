@@ -36,7 +36,6 @@ for (i in 1:nrow(interactions)) {
     t(mirna_expression[, rownames(colData(transcript_expression))])
   )
 
-  # TODO: Allow setting "spearman"
   result <- rowData(swish(transcript_expression, miRNA, cor = "${params.mirna_correlation}"))[, result_cols]
   # TODO: Find out why NaN rows occur
   # NaNs occur whenever mcols(transcript_expression)\$keep is false
