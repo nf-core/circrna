@@ -44,7 +44,7 @@ def tab_delimited(file: str) -> float:
     """Check if file is tab-delimited and return median number of tabs."""
     with open(file, "r") as f:
         data = f.read(102400)
-        return statistics.median(line.count("\t") for line in data.split("\n"))
+        return statistics.median(line.count("\\t") for line in data.split("\\n"))
 
 
 def filter_gtf(fasta: str, gtf_in: str, filtered_gtf_out: str, skip_transcript_id_check: bool) -> None:
@@ -61,7 +61,7 @@ def filter_gtf(fasta: str, gtf_in: str, filtered_gtf_out: str, skip_transcript_i
         with open(gtf_in) as gtf, open(filtered_gtf_out, "w") as out:
             line_count = 0
             for line in gtf:
-                seq_name = line.split("\t")[0]
+                seq_name = line.split("\\t")[0]
                 seq_names_in_gtf.add(seq_name)  # Add sequence name to the set
 
                 if seq_name in seq_names_in_genome:
