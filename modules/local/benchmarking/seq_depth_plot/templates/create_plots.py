@@ -9,17 +9,6 @@ meta = "$meta"
 depth = "$depth"
 bed = "$bed"
 
-def extract_matching_paths(array, filepath):
-    array_id = array.split(",")[0].split(":")[1]
-    matching_paths = []
-    with open(filepath, 'r') as file:
-        for line in file:
-            line_id = line.split(",")[0].split(":")[1]
-            if array_id == line_id:
-                path = line.split()[-1]
-                matching_paths.append(path)
-    return matching_paths
-
 def calculate_correlation(bed_file_path, depth_file_path):
     # Read the BED file and store circRNA regions
     circRNA_regions = []
@@ -62,9 +51,10 @@ def calculate_correlation(bed_file_path, depth_file_path):
     
     return correlation
 
-with open('stats.txt', 'w') as outfile:
-    for path in extract_matching_paths(meta, depth):
-        corr = calculate_correlation(bed, path)
-        output_line = meta.split(",")[3] + '      ' + str(corr)
-        outfile.write(output_line)
-        logging.debug(f'Written to stats.txt: {output_line.strip()}')
+# Calculate correlation using the provided bed and depth files
+corr = calculate_correlation(bed, depth)
+
+header = "tool\\tpearson_corr\\n"
+# Write the correlation to stats.txt
+with open('stats.tsv', 'w') as outfile:    
+    outfile.write(header + meta.split(",")[4][:-1] + '\\t' + str(corr))

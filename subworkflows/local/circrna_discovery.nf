@@ -154,6 +154,9 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
+
+
+
     emit:
     tool_bed  = ANNOTATION.out.merged_bed
     fasta          = ADD_BACKSPLICE.out.output
@@ -161,7 +164,8 @@ workflow CIRCRNA_DISCOVERY {
     annotation_gtf = ANNOTATION.out.gtf
     counts_bed     = MERGE_SAMPLES.out.counts_bed
     counts_tsv     = MERGE_SAMPLES.out.counts_tsv
-    star_bam = STAR2PASS.out.bam
+    star_bam       = STAR2PASS.out.bam
+    tool_bed       = ch_bed
 
     multiqc_files  = ch_multiqc_files
     versions       = ch_versions

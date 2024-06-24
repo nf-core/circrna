@@ -10,6 +10,8 @@ include { SEQ_DEPTH_CORRELLATION} from '../../modules/local/benchmarking/seq_dep
 include { WRITE                 } from '../../modules/local/benchmarking/write_file'
 include { WRITE as WRITE2       } from '../../modules/local/benchmarking/write_file'
 
+import groovy.json.JsonSlurper
+
 
 workflow BENCHMARKING {
 
@@ -22,6 +24,8 @@ workflow BENCHMARKING {
 
     main:
 
+    ch_real_bed.view{"real:$it}"}
+
     ch_versions = Channel.empty()
 
     ch_all = ch_real_bed.mix(ch_benchmarking_bed)
@@ -30,34 +34,24 @@ workflow BENCHMARKING {
                             benchmarking: meta.benchmarking], bed]}
         .groupTuple()
 
-    ch_all.view {"all: $it"}
 
     SORT(ch_all)
-
-    SORT.out.sorted.view { "sort: $it"}
 
     BEDTOOLS_MERGE(SORT.out.sorted).bed.branch{ meta, bed ->
             real: !meta.benchmarking
             benchmarking: meta.benchmarking
         }.set { ch_merged }
 
-    ch_merged.real.view { "merged_rea: $it" }
-
-    ch_merged.benchmarking.view { "merged_ben: $it" }
-
     ch_joined = ch_merged.real.map{ meta, bed -> [[id: meta.tool], bed]}
         .join(ch_merged.benchmarking.map{ meta, bed -> [[id: meta.tool], bed]})
 
-    ch_joined.view { "joined1: $it"}
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
 
     OVERLAP_PLOT(ch_intersect)
 
-    ch_joined.view { "joined2: $it"}
-
     LOCATION_PLOT(ch_joined)
 
-    ch_joined.view { "joined3: $it"}
+    ch_real_bam.view {"bam: $it"}
 
     ch_meta = ch_real_bam.map { it[0] }
     ch_path = ch_real_bam.map { it[1] }
@@ -69,13 +63,21 @@ workflow BENCHMARKING {
 
     ch_genomecov = BEDTOOLS_GENOMECOV(ch_genomecov_inputs, [], "bg",false)
 
-    ch_joined.view { "joined: $it"}
+    ch_corr = SEQ_DEPTH_CORRELLATION(ch_real_bed, ch_genomecov.genomecov)
 
-    ch_corr = SEQ_DEPTH_CORRELLATION(ch_joined, ch_genomecov.genomecov)
-    ch_corr.view { "emits: $it"}
+    ch_pearson = ch_corr.splitCsv(header: true, sep: "\t")
+    .map{ values -> [values.tool, values.pearson_corr]}
+    .collectFile( newLine: true,
+                    storeDir: params.outdir,
+                    seed: "tool\tpearson_corr") {
+                        row -> ["pearson.tsv", row.join("\t")]
+    }
 
+    ch_pearson.view { "pearson: $it" }
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
+
+    ch_jaccard.view { "jaccard: $it" }
 
     ch_stats = ch_jaccard.splitCsv(header: true, sep: "\t")
         .map{ meta, values -> [meta.id, values.intersection, values.union, values.jaccard, values.n_intersections]}
@@ -84,6 +86,8 @@ workflow BENCHMARKING {
                         seed: "tool\tintersection\tunion\tjaccard\tn_intersections") {
                             row -> ["jaccard.tsv", row.join("\t")]
         }
+
+    ch_stats.view {"stats: $it"}
 
     BENCHMARKING_MULTIQC(ch_stats)
 
