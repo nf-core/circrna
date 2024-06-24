@@ -2,9 +2,7 @@ process CIRCTEST_PREPARE {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/biocontainers/r-base:4.2.1' :
-        'biocontainers/r-base:4.2.1' }"
+    container "biocontainers/r-base:4.2.1"
 
     input:
     tuple val(meta), path(circ_counts)
