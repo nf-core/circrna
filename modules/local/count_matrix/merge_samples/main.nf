@@ -1,7 +1,7 @@
 process MERGE_SAMPLES {
     label "process_single"
 
-    conda "bioconda::pandas=1.5.2"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/pandas:1.5.2' :
         'biocontainers/pandas:1.5.2' }"
