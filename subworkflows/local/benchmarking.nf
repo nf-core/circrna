@@ -3,14 +3,13 @@ include { BEDTOOLS_MERGE        } from '../../modules/nf-core/bedtools/merge'
 include { BEDTOOLS_INTERSECT    } from '../../modules/nf-core/bedtools/intersect'
 include { BEDTOOLS_JACCARD      } from '../../modules/nf-core/bedtools/jaccard'
 include { BEDTOOLS_GENOMECOV    } from '../../modules/nf-core/bedtools/genomecov'
-include { BENCHMARKING_MULTIQC  } from '../../modules/local/benchmarking/multiqc'
+include { BENCHMARKING_MULTIQC as JACCARD_MULTIQC } from '../../modules/local/benchmarking/multiqc'
+include { BENCHMARKING_MULTIQC as CORRELATION_MULTIQC } from '../../modules/local/benchmarking/multiqc'
 include { LOCATION_PLOT         } from '../../modules/local/benchmarking/location_plots'
 include { OVERLAP_PLOT          } from '../../modules/local/benchmarking/overlap_plot'
 include { SEQ_DEPTH_CORRELLATION} from '../../modules/local/benchmarking/seq_depth_plot'
-include { WRITE                 } from '../../modules/local/benchmarking/write_file'
-include { WRITE as WRITE2       } from '../../modules/local/benchmarking/write_file'
+include { AVERGAGE_TSV          } from '../../modules/local/benchmarking/average_tsv'
 
-import groovy.json.JsonSlurper
 
 
 workflow BENCHMARKING {
@@ -23,8 +22,6 @@ workflow BENCHMARKING {
     ch_trim_report
 
     main:
-
-    ch_real_bed.view{"real:$it}"}
 
     ch_versions = Channel.empty()
 
@@ -51,8 +48,6 @@ workflow BENCHMARKING {
 
     LOCATION_PLOT(ch_joined)
 
-    ch_real_bam.view {"bam: $it"}
-
     ch_meta = ch_real_bam.map { it[0] }
     ch_path = ch_real_bam.map { it[1] }
     ch_scale = Channel.value(1)
@@ -73,11 +68,13 @@ workflow BENCHMARKING {
                         row -> ["pearson.tsv", row.join("\t")]
     }
 
-    ch_pearson.view { "pearson: $it" }
+    AVERGAGE_TSV(ch_pearson)
+    CORRELATION_MULTIQC(AVERGAGE_TSV.out)
+
+    CORRELATION_MULTIQC.out.report.view {"emits: $it"}
+
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
-
-    ch_jaccard.view { "jaccard: $it" }
 
     ch_stats = ch_jaccard.splitCsv(header: true, sep: "\t")
         .map{ meta, values -> [meta.id, values.intersection, values.union, values.jaccard, values.n_intersections]}
@@ -87,17 +84,17 @@ workflow BENCHMARKING {
                             row -> ["jaccard.tsv", row.join("\t")]
         }
 
-    ch_stats.view {"stats: $it"}
-
-    BENCHMARKING_MULTIQC(ch_stats)
+    JACCARD_MULTIQC(ch_stats)
 
     ch_versions = ch_versions.mix(SORT.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)
-    ch_versions = ch_versions.mix(BENCHMARKING_MULTIQC.out.versions)
+    ch_versions = ch_versions.mix(JACCARD_MULTIQC.out.versions)
+    ch_versions = ch_versions.mix(CORRELATION_MULTIQC.out.versions)
 
-    ch_reports = BENCHMARKING_MULTIQC.out.report.mix(LOCATION_PLOT.out.report)
+    ch_reports = JACCARD_MULTIQC.out.report.mix(LOCATION_PLOT.out.report)
     ch_reports = ch_reports.mix(OVERLAP_PLOT.out.report)
+    ch_reports = ch_reports.mix(CORRELATION_MULTIQC.out.report)
 
     emit:
     reports = ch_reports

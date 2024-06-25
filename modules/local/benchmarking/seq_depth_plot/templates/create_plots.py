@@ -2,9 +2,6 @@
 import logging
 import numpy as np
 
-# Initialize logging
-logging.basicConfig(filename='process_log.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 meta = "$meta"
 depth = "$depth"
 bed = "$bed"
@@ -54,7 +51,8 @@ def calculate_correlation(bed_file_path, depth_file_path):
 # Calculate correlation using the provided bed and depth files
 corr = calculate_correlation(bed, depth)
 
-header = "tool\\tpearson_corr\\n"
+
 # Write the correlation to stats.txt
-with open('stats.tsv', 'w') as outfile:    
+with open('corr_mqc.tsv', 'w') as outfile:   
+    header = "tool\\tpearson_corr\\n" 
     outfile.write(header + meta.split(",")[4][:-1] + '\\t' + str(corr))

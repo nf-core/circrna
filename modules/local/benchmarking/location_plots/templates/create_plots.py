@@ -42,33 +42,30 @@ df = pd.DataFrame({
     'File Label': combined_data['file_label']
 })
 
-# Combine File Label and Strand into a single column for easier plotting
-df['File_Strand'] = df['File Label'] + ' ' + df['Strand']
-
-# Separate the data by strand
-df_plus = df[df['Strand'] == '+']
-df_minus = df[df['Strand'] == '-']
+# Separate the data by file label
+df_real = df[df['File Label'] == 'real']
+df_benchmark = df[df['File Label'] == 'benchmark']
 
 # Create figure and axes
 fig, ax = plt.subplots(figsize=(12, 6))
 
 # Define the color palette
-palette_plus = {
-    "real +": "red", 
-    "benchmark +": "blue"
+palette_real = {
+    "+": "red", 
+    "-": "lightcoral"
 }
-palette_minus = {
-    "real -": "lightcoral",  
-    "benchmark -": "lightblue"
+palette_benchmark = {
+    "+": "blue", 
+    "-": "lightblue"
 }
 
-# Draw violins for the + strand
+# Draw violins for the real file
 sns.violinplot(
     x="Chromosome", 
     y="Start Location", 
-    hue="File_Strand",
-    data=df_plus,
-    palette=palette_plus,
+    hue="Strand",
+    data=df_real,
+    palette=palette_real,
     split=True,
     ax=ax,
     scale="count",
@@ -77,13 +74,13 @@ sns.violinplot(
     inner=None
 )
 
-# Draw violins for the - strand
+# Draw violins for the benchmark file
 sns.violinplot(
     x="Chromosome", 
     y="Start Location", 
-    hue="File_Strand",
-    data=df_minus,
-    palette=palette_minus,
+    hue="Strand",
+    data=df_benchmark,
+    palette=palette_benchmark,
     split=True,
     ax=ax,
     scale="count",
@@ -98,21 +95,14 @@ for violin in ax.collections:
 
 # Compose a custom legend
 custom_lines = [
-    Line2D([0], [0], color=color, lw=4, alpha=0.25) 
-    for color in palette_plus.values()
-] + [
-    Line2D([0], [0], color=color, lw=4, alpha=0.25) 
-    for color in palette_minus.values()
+    Line2D([0], [0], color=palette_real["+"], lw=4, alpha=0.25),
+    Line2D([0], [0], color=palette_real["-"], lw=4, alpha=0.25),
+    Line2D([0], [0], color=palette_benchmark["+"], lw=4, alpha=0.25),
+    Line2D([0], [0], color=palette_benchmark["-"], lw=4, alpha=0.25)
 ]
-ax.legend(
-    custom_lines, 
-    list(palette_plus.keys()) + list(palette_minus.keys()), 
-    title="File : Strand"
-)
+ax.legend(custom_lines, ["Total +", "Total -", "PolyA +", "PolyA -"], title="File : Strand")
 
 plt.title('Start Locations of circRNA by Chromosome and Strand')
 plot_file_name = f"{input_bed_file_1.replace('.bed','')}_{input_bed_file_2.replace('.bed','')}_mqc.png"
 # Save the plot
 plt.savefig(plot_file_name, bbox_inches='tight')
-
-
