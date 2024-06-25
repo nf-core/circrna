@@ -5,4 +5,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - "biocnda::bioconductor-rtracklayer=1.62.0"
+  - "bioconda::bioconductor-rtracklayer=1.62.0"
