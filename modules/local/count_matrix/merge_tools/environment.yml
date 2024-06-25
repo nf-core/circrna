@@ -1,0 +1,5 @@
+name: merge_tools
+channels:
+  - conda-forge
+dependencies:
+  - pandas=1.5.2

@@ -2,7 +2,7 @@ process MERGE_EXPERIMENTS {
     tag "$meta.id"
     label "process_medium"
 
-    conda "${moduleDir}/environment.yaml"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bioconductor-rtracklayer:1.62.0--r43ha9d7317_0' :
         'biocontainers/bioconductor-rtracklayer:1.62.0--r43ha9d7317_0' }"
