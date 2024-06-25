@@ -13,7 +13,7 @@ process COMPUTE_CORRELATIONS {
     tuple val(meta3), path(transcript_rds)
 
     output:
-    tuple val(meta), path("*.tsv"), emit: correlations
+    tuple val(meta), path("*.tsv"), emit: correlations, optional: true
     path "versions.yml"           , emit: versions
 
     when:
