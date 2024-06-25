@@ -11,7 +11,6 @@ report_section_order:
     order: -1002
   "nf-core-circrna-summary":
     order: -1003
-  
 
 export_plots: true
 

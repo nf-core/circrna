@@ -8,9 +8,7 @@
                     "bedtools/genomecov": {
                         "branch": "master",
                         "git_sha": "81b90194ce9911dbd55bba2c65c6919f6677abc4",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bedtools/getfasta": {
                         "branch": "master",
@@ -20,44 +18,32 @@
                     "bedtools/intersect": {
                         "branch": "master",
                         "git_sha": "575e1bc54b083fb15e7dd8b5fcc40bea60e8ce83",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bedtools/jaccard": {
                         "branch": "master",
                         "git_sha": "3b248b84694d1939ac4bb33df84bf6233a34d668",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bedtools/merge": {
                         "branch": "master",
                         "git_sha": "a5377837fe9013bde89de8689829e83e84086536",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bedtools/sort": {
                         "branch": "master",
                         "git_sha": "571a5feac4c9ce0a8df0bc15b94230e7f3e8db47",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bowtie/align": {
                         "branch": "master",
                         "git_sha": "3c77ca9aac783e76c3614a06db3bfe4fef619bde",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bowtie/build": {
                         "branch": "master",
                         "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bowtie2/align": {
                         "branch": "master",
@@ -67,9 +53,7 @@
                     "bowtie2/build": {
                         "branch": "master",
                         "git_sha": "1fea64f5132a813ec97c1c6d3a74e0aee7142b6d",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "bwa/index": {
                         "branch": "master",
@@ -79,9 +63,7 @@
                     "cat/cat": {
                         "branch": "master",
                         "git_sha": "9437e6053dccf4aafa022bfd6e7e9de67e625af8",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "cat/fastq": {
                         "branch": "master",
@@ -91,16 +73,12 @@
                     "circexplorer2/annotate": {
                         "branch": "master",
                         "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "circexplorer2/parse": {
                         "branch": "master",
                         "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "csvtk/join": {
                         "branch": "master",
@@ -115,16 +93,12 @@
                     "custom/dumpsoftwareversions": {
                         "branch": "master",
                         "git_sha": "de45447d060b8c8b98575bc637a4a575fd0638e1",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "custom/tx2gene": {
                         "branch": "master",
                         "git_sha": "ec155021a9104441bf6a9bae3b55d1b5b0bfdb3a",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "fastqc": {
                         "branch": "master",
@@ -144,37 +118,27 @@
                     "hisat2/align": {
                         "branch": "master",
                         "git_sha": "400037f54de4b0c42712ec5a499d9fd9e66250d1",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "hisat2/build": {
                         "branch": "master",
                         "git_sha": "400037f54de4b0c42712ec5a499d9fd9e66250d1",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "hisat2/extractsplicesites": {
                         "branch": "master",
                         "git_sha": "400037f54de4b0c42712ec5a499d9fd9e66250d1",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "miranda": {
                         "branch": "master",
                         "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
                         "git_sha": "b7ebe95761cd389603f9cc0e0dc384c0f663815a",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
                         "branch": "master",
@@ -219,37 +183,27 @@
                     "segemehl/index": {
                         "branch": "master",
                         "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "star/align": {
                         "branch": "master",
                         "git_sha": "a21faa6a3481af92a343a10926f59c189a2c16c9",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "star/genomegenerate": {
                         "branch": "master",
                         "git_sha": "a21faa6a3481af92a343a10926f59c189a2c16c9",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "stringtie/stringtie": {
                         "branch": "master",
                         "git_sha": "b1b959609bda44341120aed1766329909f54b8d0",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "trimgalore": {
                         "branch": "master",
                         "git_sha": "a98418419ae6c9df3cf6cf108d1e1aba71037d5a",
-                        "installed_by": [
-                            "modules"
-                        ]
+                        "installed_by": ["modules"]
                     },
                     "tximeta/tximport": {
                         "branch": "master",
@@ -273,9 +227,7 @@
                     "utils_nextflow_pipeline": {
                         "branch": "master",
                         "git_sha": "5caf7640a9ef1d18d765d55339be751bb0969dfa",
-                        "installed_by": [
-                            "subworkflows"
-                        ]
+                        "installed_by": ["subworkflows"]
                     },
                     "utils_nfcore_pipeline": {
                         "branch": "master",
@@ -285,9 +237,7 @@
                     "utils_nfvalidation_plugin": {
                         "branch": "master",
                         "git_sha": "5caf7640a9ef1d18d765d55339be751bb0969dfa",
-                        "installed_by": [
-                            "subworkflows"
-                        ]
+                        "installed_by": ["subworkflows"]
                     }
                 }
             }

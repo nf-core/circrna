@@ -10,7 +10,7 @@ process SEQ_DEPTH_CORRELLATION {
         tuple val(depth_meta),
         path(depth)
     output:
-       path("*.tsv")  , emit: report
+        path("*.tsv")  , emit: report
     script:
         template "create_plots.py"
 }

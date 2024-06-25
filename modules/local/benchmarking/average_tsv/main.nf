@@ -9,10 +9,10 @@ process AVERGAGE_TSV {
 
     input:
     path(tsv)
-    
+
     output:
     path(tsv)
-    
+
     script:
     template "average.py"
 }

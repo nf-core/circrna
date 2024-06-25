@@ -51,18 +51,18 @@ fig, ax = plt.subplots(figsize=(12, 6))
 
 # Define the color palette
 palette_real = {
-    "+": "red", 
+    "+": "red",
     "-": "lightcoral"
 }
 palette_benchmark = {
-    "+": "blue", 
+    "+": "blue",
     "-": "lightblue"
 }
 
 # Draw violins for the real file
 sns.violinplot(
-    x="Chromosome", 
-    y="Start Location", 
+    x="Chromosome",
+    y="Start Location",
     hue="Strand",
     data=df_real,
     palette=palette_real,
@@ -76,8 +76,8 @@ sns.violinplot(
 
 # Draw violins for the benchmark file
 sns.violinplot(
-    x="Chromosome", 
-    y="Start Location", 
+    x="Chromosome",
+    y="Start Location",
     hue="Strand",
     data=df_benchmark,
     palette=palette_benchmark,
