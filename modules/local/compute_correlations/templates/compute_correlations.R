@@ -37,9 +37,6 @@ for (i in 1:nrow(interactions)) {
   )
 
   result <- rowData(swish(transcript_expression, miRNA, cor = "${params.mirna_correlation}"))[, result_cols]
-  # TODO: Find out why NaN rows occur
-  # NaNs occur whenever mcols(transcript_expression)\$keep is false
-  # Because in this case the corresponding entry is ignored
   result <- result[complete.cases(result), ]
   write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }
