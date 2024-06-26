@@ -1,14 +1,16 @@
-include { GNU_SORT as SORT      } from '../../modules/nf-core/gnu/sort'
-include { BEDTOOLS_MERGE        } from '../../modules/nf-core/bedtools/merge'
-include { BEDTOOLS_INTERSECT    } from '../../modules/nf-core/bedtools/intersect'
-include { BEDTOOLS_JACCARD      } from '../../modules/nf-core/bedtools/jaccard'
-include { BEDTOOLS_GENOMECOV    } from '../../modules/nf-core/bedtools/genomecov'
+include { GNU_SORT as SORT          } from '../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_MERGE            } from '../../modules/nf-core/bedtools/merge'
+include { BEDTOOLS_INTERSECT        } from '../../modules/nf-core/bedtools/intersect'
+include { BEDTOOLS_JACCARD          } from '../../modules/nf-core/bedtools/jaccard'
+include { BEDTOOLS_GENOMECOV        } from '../../modules/nf-core/bedtools/genomecov'
 include { BENCHMARKING_MULTIQC as JACCARD_MULTIQC } from '../../modules/local/benchmarking/multiqc'
 include { BENCHMARKING_MULTIQC as CORRELATION_MULTIQC } from '../../modules/local/benchmarking/multiqc'
-include { LOCATION_PLOT         } from '../../modules/local/benchmarking/location_plots'
-include { OVERLAP_PLOT          } from '../../modules/local/benchmarking/overlap_plot'
-include { SEQ_DEPTH_CORRELLATION} from '../../modules/local/benchmarking/seq_depth_plot'
-include { AVERGAGE_TSV          } from '../../modules/local/benchmarking/average_tsv'
+include { PNG_JSON as LOCATION_JSON } from '../../modules/local/benchmarking/png_json'
+include { PNG_JSON as OVERLAP_JSON  } from '../../modules/local/benchmarking/png_json'
+include { LOCATION_PLOT             } from '../../modules/local/benchmarking/location_plots'
+include { OVERLAP_PLOT              } from '../../modules/local/benchmarking/overlap_plot'
+include { SEQ_DEPTH_CORRELLATION    } from '../../modules/local/benchmarking/seq_depth_plot'
+include { AVERGAGE_TSV              } from '../../modules/local/benchmarking/average_tsv'
 
 
 
@@ -45,8 +47,10 @@ workflow BENCHMARKING {
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
 
     OVERLAP_PLOT(ch_intersect)
+    OVERLAP_JSON(OVERLAP_PLOT.out, "Overlap plots", "Plot the overlap circRNAs found in total and polyA data for the tools")
 
     LOCATION_PLOT(ch_joined)
+    LOCATION_JSON(LOCATION_PLOT.out, "Location plots", "Plots the location of the circRNAs found" )
 
     ch_meta = ch_real_bam.map { it[0] }
     ch_path = ch_real_bam.map { it[1] }
@@ -58,7 +62,13 @@ workflow BENCHMARKING {
 
     ch_genomecov = BEDTOOLS_GENOMECOV(ch_genomecov_inputs, [], "bg",false)
 
-    ch_corr = SEQ_DEPTH_CORRELLATION(ch_real_bed, ch_genomecov.genomecov)
+    ch_seqdepths = ch_genomecov.genomecov
+        .map { genomecov_result -> genomecov_result[1].toString() }
+        .collectFile(name: 'genomecov_paths.txt',
+
+                        newLine: true)
+    
+    ch_corr = SEQ_DEPTH_CORRELLATION(ch_real_bed, ch_seqdepths.collect())
 
     ch_pearson = ch_corr.splitCsv(header: true, sep: "\t")
     .map{ values -> [values.tool, values.pearson_corr]}
@@ -70,8 +80,6 @@ workflow BENCHMARKING {
 
     AVERGAGE_TSV(ch_pearson)
     CORRELATION_MULTIQC(AVERGAGE_TSV.out)
-
-    CORRELATION_MULTIQC.out.report.view {"emits: $it"}
 
 
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
@@ -92,8 +100,8 @@ workflow BENCHMARKING {
     ch_versions = ch_versions.mix(JACCARD_MULTIQC.out.versions)
     ch_versions = ch_versions.mix(CORRELATION_MULTIQC.out.versions)
 
-    ch_reports = JACCARD_MULTIQC.out.report.mix(LOCATION_PLOT.out.report)
-    ch_reports = ch_reports.mix(OVERLAP_PLOT.out.report)
+    ch_reports = JACCARD_MULTIQC.out.report.mix(LOCATION_JSON.out.report)
+    ch_reports = ch_reports.mix(OVERLAP_JSON.out.report)
     ch_reports = ch_reports.mix(CORRELATION_MULTIQC.out.report)
 
     emit:

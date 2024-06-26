@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import logging
+import os
+import re
 import numpy as np
 
 meta = "$meta"
@@ -48,11 +49,17 @@ def calculate_correlation(bed_file_path, depth_file_path):
 
     return correlation
 
-# Calculate correlation using the provided bed and depth files
-corr = calculate_correlation(bed, depth)
+id = re.search(r'id:(\\w+)', meta).group(1)
 
-
-# Write the correlation to stats.txt
-with open('corr_mqc.tsv', 'w') as outfile:
-    header = "tool\\tpearson_corr\\n"
-    outfile.write(header + meta.split(",")[4][:-1] + '\\t' + str(corr))
+with open(depth, 'r') as paths:
+    for path in paths:
+        path = path.strip()
+        basename = os.path.splitext(os.path.basename(path))[0]
+        
+        if basename == id:    
+            # Calculate correlation using the provided bed and depth files
+            corr = calculate_correlation(bed, path)
+            # Write the correlation to stats.txt
+            with open('corr_mqc.tsv', 'w') as outfile:
+                header = "tool\\tpearson_corr\\n"
+                outfile.write(header + meta.split(",")[4][:-1] + '\\t' + str(corr))

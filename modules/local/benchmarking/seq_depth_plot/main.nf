@@ -7,7 +7,6 @@ process SEQ_DEPTH_CORRELLATION {
     input:
         tuple val(meta),
         path(bed)
-        tuple val(depth_meta),
         path(depth)
     output:
         path("*.tsv")  , emit: report

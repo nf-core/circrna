@@ -7,7 +7,7 @@ process LOCATION_PLOT {
     input:
         tuple val(id), path(bedfile1), path(bedfile2)
     output:
-        path("*_mqc.png") , emit: report
+        path("*_mqc.png")
     script:
         template "create_plots.py"
 }
