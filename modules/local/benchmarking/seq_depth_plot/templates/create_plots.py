@@ -55,8 +55,8 @@ with open(depth, 'r') as paths:
     for path in paths:
         path = path.strip()
         basename = os.path.splitext(os.path.basename(path))[0]
-        
-        if basename == id:    
+
+        if basename == id:
             # Calculate correlation using the provided bed and depth files
             corr = calculate_correlation(bed, path)
             # Write the correlation to stats.txt

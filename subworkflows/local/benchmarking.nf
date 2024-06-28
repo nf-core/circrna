@@ -65,9 +65,8 @@ workflow BENCHMARKING {
     ch_seqdepths = ch_genomecov.genomecov
         .map { genomecov_result -> genomecov_result[1].toString() }
         .collectFile(name: 'genomecov_paths.txt',
-
                         newLine: true)
-    
+
     ch_corr = SEQ_DEPTH_CORRELLATION(ch_real_bed, ch_seqdepths.collect())
 
     ch_pearson = ch_corr.splitCsv(header: true, sep: "\t")
