@@ -176,6 +176,7 @@ workflow CIRCRNA {
             chromosomes,
             hisat2_index,
             star_index,
+            ch_annotation,
             params.bsj_reads,
             params.tool_filter,
             params.duplicates_fun,

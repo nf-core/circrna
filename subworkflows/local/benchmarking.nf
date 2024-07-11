@@ -24,7 +24,7 @@ workflow BENCHMARKING {
     ch_trim_report
 
     main:
-    
+
     //data preparation
     ch_versions = Channel.empty()
 
