@@ -11,5 +11,5 @@ process SEQ_DEPTH_CORRELLATION {
     output:
         path("*.tsv")  , emit: report
     script:
-        template "create_plots.py"
+        template "correlation.py"
 }

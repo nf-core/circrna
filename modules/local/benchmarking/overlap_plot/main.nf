@@ -7,8 +7,10 @@ process OVERLAP_PLOT {
     input:
         tuple val(meta), path(bed)
         path "versions.yml"
+
     output:
         path("*_mqc.png") , emit: report
+
     script:
         template "create_plots.py"
 }

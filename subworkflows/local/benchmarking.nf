@@ -24,7 +24,8 @@ workflow BENCHMARKING {
     ch_trim_report
 
     main:
-
+    
+    //data preparation
     ch_versions = Channel.empty()
 
     ch_all = ch_real_bed.mix(ch_benchmarking_bed)
@@ -44,14 +45,17 @@ workflow BENCHMARKING {
     ch_joined = ch_merged.real.map{ meta, bed -> [[id: meta.tool], bed]}
         .join(ch_merged.benchmarking.map{ meta, bed -> [[id: meta.tool], bed]})
 
+    //Overlap plot
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
-
     OVERLAP_PLOT(ch_intersect)
     OVERLAP_JSON(OVERLAP_PLOT.out, "Overlap plots", "Plot the overlap circRNAs found in total and polyA data for the tools")
 
+    //Location plot workflow
     LOCATION_PLOT(ch_joined)
     LOCATION_JSON(LOCATION_PLOT.out, "Location plots", "Plots the location of the circRNAs found" )
 
+
+    //Pearson correllation workflow
     ch_meta = ch_real_bam.map { it[0] }
     ch_path = ch_real_bam.map { it[1] }
     ch_scale = Channel.value(1)
@@ -80,7 +84,7 @@ workflow BENCHMARKING {
     AVERGAGE_TSV(ch_pearson)
     CORRELATION_MULTIQC(AVERGAGE_TSV.out)
 
-
+    //Jaccard Workflow
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
 
     ch_stats = ch_jaccard.splitCsv(header: true, sep: "\t")
@@ -93,6 +97,7 @@ workflow BENCHMARKING {
 
     JACCARD_MULTIQC(ch_stats)
 
+    //combine results
     ch_versions = ch_versions.mix(SORT.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
     ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)

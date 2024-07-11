@@ -57,7 +57,7 @@ with open(depth, 'r') as paths:
         basename = os.path.splitext(os.path.basename(path))[0]
 
         if basename == id:
-            # Calculate correlation using the provided bed and depth files
+            # Calculate correlation
             corr = calculate_correlation(bed, path)
             # Write the correlation to stats.txt
             with open('corr_mqc.tsv', 'w') as outfile:

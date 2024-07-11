@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 import csv
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from matplotlib.lines import Line2D
 
-# Inputs directly from Nextflow variables
 input_bed_file_1 = '$bedfile1'
 input_bed_file_2 = '$bedfile2'
 
-# Read input files function
+# Read input files
 def read_bed_file(file_path, label):
     data = {'chromosome': [], 'start': [], 'strand': [], 'file_label': []}
     with open(file_path, 'r') as file:
@@ -18,11 +16,10 @@ def read_bed_file(file_path, label):
         for row in reader:
             data['chromosome'].append(row[0])
             data['start'].append(int(row[1]))
-            data['strand'].append(row[3])  # Assuming strand information is in the 4th column
-            data['file_label'].append(label.lower())  # Label to indicate the source file
+            data['strand'].append(row[3])
+            data['file_label'].append(label.lower())
     return data
 
-# Combine data function
 def combine_data(data1, data2):
     for key in data1:
         data1[key].extend(data2[key])
@@ -45,10 +42,9 @@ df = pd.DataFrame({
 # Sort DataFrame to ensure consistent plotting order
 df.sort_values(by=['File Label', 'Strand'], inplace=True)
 
-# Create figure and axes
+# Plotting
 fig, ax = plt.subplots(figsize=(12, 6))
 
-# Define the color palette
 palette = {
     "total +": "red",
     "total -": "lightcoral",
@@ -56,7 +52,7 @@ palette = {
     "polya -": "lightblue"
 }
 
-# Draw violins for each file separately
+# Draw violins
 for file_label in df['File Label'].unique():
     sns.violinplot(
         x="Chromosome",
@@ -76,7 +72,7 @@ for file_label in df['File Label'].unique():
 for violin in ax.collections:
     violin.set_alpha(0.25)
 
-# Compose a custom legend
+# Legend
 custom_lines = [
     Line2D([0], [0], color=palette[f"{file} {strand}"], lw=4, alpha=0.25)
     for file in df['File Label'].unique()

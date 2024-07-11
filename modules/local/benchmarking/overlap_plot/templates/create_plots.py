@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 import csv
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-# Input directly from Nextflow variable
 input_bed_file = '$bed'
 
-# Read input file function
+# Read input file
 def read_bed_file(file_path):
     data = {'chromosome': [], 'start': [], 'strand': []}
     with open(file_path, 'r') as file:
@@ -22,7 +20,7 @@ def read_bed_file(file_path):
 # Read the data
 data = read_bed_file(input_bed_file)
 
-# Create a DataFrame for seaborn
+# Create a DataFrame
 df = pd.DataFrame({
     'Chromosome': data['chromosome'],
     'Start Location': data['start'],
@@ -36,7 +34,4 @@ plt.title('Start Locations of circRNA by Chromosome and Strand')
 plt.legend(title="Strand")
 plot_file_name = f"{input_bed_file.replace('.bed','')}_overlaps_mqc.png"
 
-# Save the plot
 plt.savefig(plot_file_name, bbox_inches='tight')
-print("Plot saved as:", plot_file_name)
-print("Current working directory:", os.getcwd())
