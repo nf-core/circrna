@@ -41,7 +41,10 @@ attributes = ['gene_id', 'gene_name', 'transcript_id']
 
 exon_boundary = int("${exon_boundary}")
 
-df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
+try:
+    df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
+except pd.errors.EmptyDataError:
+    raise ValueError("Intersection between circRNAs and GTF file is empty.")
 df = df.rename(columns=columns)
 
 # Extract circRNAs without match
