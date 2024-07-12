@@ -216,6 +216,7 @@
                     "fa_icon": "fas fa-address-book",
                     "mimetype": "text/plain",
                     "description": "Path to reference GTF file.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. Needs to contain the following attributes: `gene_id`, `transcript_id` and `gene_name`.",
                     "pattern": "\\.gtf$"
                 },
                 "mature": {
