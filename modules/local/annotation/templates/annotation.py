@@ -60,6 +60,7 @@ df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ', 1)] for entry in row.split(';') if entry]))
 # Make sure all attributes are present
 df_incomplete = df['attributes'].apply(lambda row: ", ".join([key for key in attributes if key not in row]))
+df_incomplete = df_incomplete[df_incomplete != ""]
 if len(df_incomplete) > 0:
     counts = df_incomplete.value_counts()
     counts.name = 'count'
