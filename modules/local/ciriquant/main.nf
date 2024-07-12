@@ -9,7 +9,7 @@ process CIRIQUANT {
 
     input:
     tuple val(meta), path(reads)
-    tuple val(meta2), path(gtf)
+    tuple val(meta2), path(gtf, stageAs: 'annotations.gtf')
     tuple val(meta3), path(fasta)
     tuple val(meta4), path(bwa)
     tuple val(meta5), path(hisat2)
