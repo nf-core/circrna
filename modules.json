@@ -80,6 +80,11 @@
                         "git_sha": "de45447d060b8c8b98575bc637a4a575fd0638e1",
                         "installed_by": ["modules"]
                     },
+                    "custom/gtffilter": {
+                        "branch": "master",
+                        "git_sha": "a0aee18374b7f072aa0f89f4d66f5a3a9f8176d2",
+                        "installed_by": ["modules"]
+                    },
                     "custom/tx2gene": {
                         "branch": "master",
                         "git_sha": "ec155021a9104441bf6a9bae3b55d1b5b0bfdb3a",

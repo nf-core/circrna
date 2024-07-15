@@ -112,6 +112,7 @@ workflow CIRCRNA {
         ch_gtf
     )
 
+    ch_gtf         = PREPARE_GENOME.out.gtf
     bowtie_index   = PREPARE_GENOME.out.bowtie
     bowtie2_index  = PREPARE_GENOME.out.bowtie2
     bwa_index      = PREPARE_GENOME.out.bwa
