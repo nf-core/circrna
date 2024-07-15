@@ -82,7 +82,7 @@
                     },
                     "custom/gtffilter": {
                         "branch": "master",
-                        "git_sha": "7888e16f3c8678dfc5d59c899f79b7286271f177",
+                        "git_sha": "a0aee18374b7f072aa0f89f4d66f5a3a9f8176d2",
                         "installed_by": ["modules"]
                     },
                     "custom/tx2gene": {
