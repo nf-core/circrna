@@ -1,13 +1,13 @@
-include { GTF_FILTER                } from '../../modules/local/gtf_filter'
-include { SEQKIT_SPLIT              } from '../../modules/local/seqkit/split'
-include { BOWTIE_BUILD              } from '../../modules/nf-core/bowtie/build'
-include { BOWTIE2_BUILD             } from '../../modules/nf-core/bowtie2/build'
-include { BWA_INDEX                 } from '../../modules/nf-core/bwa/index'
-include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites'
-include { HISAT2_BUILD              } from '../../modules/nf-core/hisat2/build'
-include { STAR_GENOMEGENERATE       } from '../../modules/nf-core/star/genomegenerate'
-include { GAWK as CLEAN_FASTA       } from '../../modules/nf-core/gawk'
-include { SAMTOOLS_FAIDX            } from '../../modules/nf-core/samtools/faidx'
+include { CUSTOM_GTFFILTER as GTFFILTER } from '../../modules/nf-core/custom/gtffilter'
+include { SEQKIT_SPLIT                  } from '../../modules/local/seqkit/split'
+include { BOWTIE_BUILD                  } from '../../modules/nf-core/bowtie/build'
+include { BOWTIE2_BUILD                 } from '../../modules/nf-core/bowtie2/build'
+include { BWA_INDEX                     } from '../../modules/nf-core/bwa/index'
+include { HISAT2_EXTRACTSPLICESITES     } from '../../modules/nf-core/hisat2/extractsplicesites'
+include { HISAT2_BUILD                  } from '../../modules/nf-core/hisat2/build'
+include { STAR_GENOMEGENERATE           } from '../../modules/nf-core/star/genomegenerate'
+include { GAWK as CLEAN_FASTA           } from '../../modules/nf-core/gawk'
+include { SAMTOOLS_FAIDX                } from '../../modules/nf-core/samtools/faidx'
 
 workflow PREPARE_GENOME {
 
@@ -27,8 +27,8 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(CLEAN_FASTA.out.versions)
     }
 
-    GTF_FILTER(ch_fasta, ch_gtf)
-    ch_gtf = GTF_FILTER.out.filtered
+    GTFFILTER(ch_gtf, ch_fasta)
+    ch_gtf = GTFFILTER.out.gtf
 
     SEQKIT_SPLIT(ch_fasta)
 
@@ -47,7 +47,7 @@ workflow PREPARE_GENOME {
     SAMTOOLS_FAIDX(ch_fasta, [[], []])
 
     // Collect versions
-    ch_versions = ch_versions.mix(GTF_FILTER.out.versions,
+    ch_versions = ch_versions.mix(GTFFILTER.out.versions,
                                     SEQKIT_SPLIT.out.versions,
                                     BOWTIE_BUILD.out.versions,
                                     BOWTIE2_BUILD.out.versions,
