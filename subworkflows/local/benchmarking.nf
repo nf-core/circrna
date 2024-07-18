@@ -34,6 +34,7 @@ workflow BENCHMARKING {
                             benchmarking: meta.benchmarking], bed]}
         .groupTuple()
 
+    ch_all.view {"all: $it"}
 
     SORT(ch_all)
 
