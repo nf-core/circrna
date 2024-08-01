@@ -28,7 +28,19 @@ if duplicates_fun not in ['sum', 'mean', 'max', 'min']:
     raise ValueError(f"Invalid value for duplicates_fun: {duplicates_fun}")
 
 columns = ['chr', 'start', 'end', 'name', 'count', 'strand']
-dfs = [pd.read_csv(bed, sep='\t', header=None, names=columns) for bed in "${beds}".split()]
+columns_no_count = ['chr', 'start', 'end', 'name', 'strand']
+dfs = []
+
+for bed_path in "${beds}".split():
+    df = pd.read_csv(bed_path, sep='\\t', header=None, names=columns)
+
+    # If there are duplicate rows, throw an error
+    if df.duplicated(subset=columns_no_count).any():
+        print(df[df.duplicated(subset=columns_no_count)])
+        raise ValueError("Duplicate rows found in input BED file: " + bed_path)
+    
+    dfs.append(df)
+
 df = pd.concat(dfs)
 
 df['tool_count'] = 1
