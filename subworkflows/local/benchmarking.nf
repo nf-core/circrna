@@ -34,8 +34,6 @@ workflow BENCHMARKING {
                             benchmarking: meta.benchmarking], bed]}
         .groupTuple()
 
-    ch_all.view {"all: $it"}
-
     SORT(ch_all)
 
     BEDTOOLS_MERGE(SORT.out.sorted).bed.branch{ meta, bed ->
