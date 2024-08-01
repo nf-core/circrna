@@ -12,7 +12,7 @@ input_bed_file_2 = '$bedfile2'
 def read_bed_file(file_path, label):
     data = {'chromosome': [], 'start': [], 'strand': [], 'file_label': []}
     with open(file_path, 'r') as file:
-        reader = csv.reader(file, delimiter='\t')
+        reader = csv.reader(file, delimiter='\\t')
         for row in reader:
             data['chromosome'].append(row[0])
             data['start'].append(int(row[1]))
