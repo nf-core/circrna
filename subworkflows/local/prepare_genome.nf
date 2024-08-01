@@ -1,12 +1,13 @@
-include { SEQKIT_SPLIT        } from '../../modules/local/seqkit/split'
-include { BOWTIE_BUILD        } from '../../modules/nf-core/bowtie/build'
-include { BOWTIE2_BUILD       } from '../../modules/nf-core/bowtie2/build'
-include { BWA_INDEX           } from '../../modules/nf-core/bwa/index'
-include { HISAT2_EXTRACTSPLICESITES } from '../../modules/nf-core/hisat2/extractsplicesites'
-include { HISAT2_BUILD        } from '../../modules/nf-core/hisat2/build'
-include { STAR_GENOMEGENERATE } from '../../modules/nf-core/star/genomegenerate'
-include { GAWK as CLEAN_FASTA } from '../../modules/nf-core/gawk'
-include { SAMTOOLS_FAIDX      } from '../../modules/nf-core/samtools/faidx'
+include { CUSTOM_GTFFILTER as GTFFILTER } from '../../modules/nf-core/custom/gtffilter'
+include { SEQKIT_SPLIT                  } from '../../modules/local/seqkit/split'
+include { BOWTIE_BUILD                  } from '../../modules/nf-core/bowtie/build'
+include { BOWTIE2_BUILD                 } from '../../modules/nf-core/bowtie2/build'
+include { BWA_INDEX                     } from '../../modules/nf-core/bwa/index'
+include { HISAT2_EXTRACTSPLICESITES     } from '../../modules/nf-core/hisat2/extractsplicesites'
+include { HISAT2_BUILD                  } from '../../modules/nf-core/hisat2/build'
+include { STAR_GENOMEGENERATE           } from '../../modules/nf-core/star/genomegenerate'
+include { GAWK as CLEAN_FASTA           } from '../../modules/nf-core/gawk'
+include { SAMTOOLS_FAIDX                } from '../../modules/nf-core/samtools/faidx'
 
 workflow PREPARE_GENOME {
 
@@ -26,6 +27,9 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(CLEAN_FASTA.out.versions)
     }
 
+    GTFFILTER(ch_gtf, ch_fasta)
+    ch_gtf = GTFFILTER.out.gtf
+
     SEQKIT_SPLIT(ch_fasta)
 
     BOWTIE_BUILD(ch_fasta.map{ meta, fasta -> fasta })
@@ -43,7 +47,8 @@ workflow PREPARE_GENOME {
     SAMTOOLS_FAIDX(ch_fasta, [[], []])
 
     // Collect versions
-    ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions,
+    ch_versions = ch_versions.mix(GTFFILTER.out.versions,
+                                    SEQKIT_SPLIT.out.versions,
                                     BOWTIE_BUILD.out.versions,
                                     BOWTIE2_BUILD.out.versions,
                                     BWA_INDEX.out.versions,
@@ -53,6 +58,7 @@ workflow PREPARE_GENOME {
                                     SAMTOOLS_FAIDX.out.versions)
 
     emit:
+    gtf          = ch_gtf
     faidx        = SAMTOOLS_FAIDX.out.fai
     bowtie       = params.bowtie   ?: BOWTIE_BUILD.out.index
     bowtie2      = params.bowtie2  ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()
