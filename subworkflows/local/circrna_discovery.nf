@@ -131,7 +131,7 @@ workflow CIRCRNA_DISCOVERY {
     FILTER_MIN_TOOLS( COUNT_TOOLS.out.bed, [] )
     ch_versions = ch_versions.mix(FILTER_MIN_TOOLS.out.versions)
     ch_bsj_bed_per_sample = FILTER_MIN_TOOLS.out.output
-        .filter{ meta, bed -> !bed.empty }
+        .filter{ meta, bed -> bed.size() > 0 }
 
     CONCAT_SAMPLES(
         ch_bsj_bed_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
@@ -158,6 +158,7 @@ workflow CIRCRNA_DISCOVERY {
     //
     // ANNOTATION
     //
+
     ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, exon_boundary, ch_annotation )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
     ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed
