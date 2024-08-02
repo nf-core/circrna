@@ -28,7 +28,6 @@ workflow ANNOTATION {
         [[], []])
     ch_versions = ch_versions.mix(INTERSECT_DATABASE.out.versions)
 
-
     ANNOTATE( INTERSECT_GTF.out.intersect
         .join(INTERSECT_DATABASE.out.intersect
             .map{ meta, bed -> [meta.original_meta, bed] }

@@ -140,6 +140,7 @@ workflow CIRCRNA {
         FASTQC_TRIMGALORE.out.reads,
         ch_fasta,
         ch_gtf,
+        ch_annotation,
         bowtie_index,
         bowtie2_index,
         bwa_index,
@@ -147,34 +148,22 @@ workflow CIRCRNA {
         hisat2_index,
         star_index,
         params.bsj_reads,
+        params.exon_boundary
     )
 
     ch_multiqc_files  = ch_multiqc_files.mix(CIRCRNA_DISCOVERY.out.multiqc_files)
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
     //
-    // 3. circRNA Annotation
-    //
-
-    ANNOTATION(
-        CIRCRNA_DISCOVERY.out.bsj_bed_combined,
-        ch_gtf,
-        params.exon_boundary,
-        ch_annotation
-    )
-    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
-
-    //
-    // 4. circRNA quantification
+    // 3. circRNA quantification
     //
 
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
-        CIRCRNA_DISCOVERY.out.bsj_bed_combined,
         FASTQC_TRIMGALORE.out.reads,
-        ANNOTATION.out.bed,
-        ANNOTATION.out.gtf,
+        CIRCRNA_DISCOVERY.out.bsj_bed12_combined,
+        CIRCRNA_DISCOVERY.out.bsj_gtf_combined,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx
@@ -183,19 +172,19 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
     //
-    // 5. miRNA prediction
+    // 4. miRNA prediction
     //
     if (params.mature) {
         MIRNA_PREDICTION(
             CIRCRNA_DISCOVERY.out.bsj_fasta_combined,
-            ANNOTATION.out.bed,
+            CIRCRNA_DISCOVERY.out.bsj_bed_combined,
             ch_mature
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
     }
 
     //
-    // 6. Statistical tests
+    // 5. Statistical tests
     //
 
     STATISTICAL_TESTS(
@@ -215,7 +204,7 @@ workflow CIRCRNA {
         .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_pipeline_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
-    // MODULE: MultiQC
+    // MultiQC
     ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo   ? Channel.fromPath(params.multiqc_logo)   : Channel.empty()
     summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")

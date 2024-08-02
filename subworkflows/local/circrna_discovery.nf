@@ -12,14 +12,17 @@ include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE      } from '../../modules/nf-co
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL } from '../../modules/nf-core/bedtools/getfasta'
 
 // SUBWORKFLOWS
-include { SEGEMEHL       } from './discovery/segemehl'
-include { STAR2PASS      } from './discovery/star2pass'
-include { CIRCEXPLORER2  } from './discovery/circexplorer2'
-include { CIRCRNA_FINDER } from './discovery/circrna_finder'
-include { FIND_CIRC      } from './discovery/find_circ'
-include { CIRIQUANT      } from './discovery/ciriquant'
-include { DCC            } from './discovery/dcc'
-include { MAPSPLICE      } from './discovery/mapsplice'
+include { SEGEMEHL                               } from './discovery/segemehl'
+include { STAR2PASS                              } from './discovery/star2pass'
+include { CIRCEXPLORER2                          } from './discovery/circexplorer2'
+include { CIRCRNA_FINDER                         } from './discovery/circrna_finder'
+include { FIND_CIRC                              } from './discovery/find_circ'
+include { CIRIQUANT                              } from './discovery/ciriquant'
+include { DCC                                    } from './discovery/dcc'
+include { MAPSPLICE                              } from './discovery/mapsplice'
+include { ANNOTATION as ANNOTATE_COMBINED        } from './annotation'
+include { ANNOTATION as ANNOTATE_PER_SAMPLE      } from './annotation'
+include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL } from './annotation'
 
 workflow CIRCRNA_DISCOVERY {
 
@@ -27,6 +30,7 @@ workflow CIRCRNA_DISCOVERY {
     reads
     ch_fasta
     ch_gtf
+    ch_annotation
     bowtie_index
     bowtie2_index
     bwa_index
@@ -34,6 +38,7 @@ workflow CIRCRNA_DISCOVERY {
     hisat2_index
     star_index
     bsj_reads
+    exon_boundary
 
     main:
     ch_versions      = Channel.empty()
@@ -149,6 +154,24 @@ workflow CIRCRNA_DISCOVERY {
     ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
 
     //
+    // ANNOTATION
+    //
+    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, exon_boundary, ch_annotation )
+    ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
+    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed
+    ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf
+
+    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_gtf, exon_boundary, ch_annotation )
+    ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
+    ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed
+    ch_bsj_gtf_per_sample   = ANNOTATE_PER_SAMPLE.out.gtf
+
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_gtf, exon_boundary, ch_annotation )
+    ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
+    ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed
+    ch_bsj_gtf_per_sample_tool   = ANNOTATE_PER_SAMPLE_TOOL.out.gtf
+
+    //
     // FASTA WORKFLOW:
     //
 
@@ -166,12 +189,18 @@ workflow CIRCRNA_DISCOVERY {
 
     emit:
     bsj_bed_combined          = ch_bsj_bed_combined
+    bsj_bed12_combined        = ch_bsj_bed12_combined
+    bsj_gtf_combined          = ch_bsj_gtf_combined
     bsj_fasta_combined        = ch_bsj_fasta_combined
 
     bsj_bed_per_sample        = ch_bsj_bed_per_sample
+    bsj_bed12_per_sample      = ch_bsj_bed12_per_sample
+    bsj_gtf_per_sample        = ch_bsj_gtf_per_sample
     bsj_fasta_per_sample      = ch_bsj_fasta_per_sample
 
     bsj_bed_per_sample_tool   = ch_bsj_bed_per_sample_tool
+    bsj_bed12_per_sample_tool = ch_bsj_bed12_per_sample_tool
+    bsj_gtf_per_sample_tool   = ch_bsj_gtf_per_sample_tool
     bsj_fasta_per_sample_tool = ch_bsj_fasta_per_sample_tool
 
     multiqc_files             = ch_multiqc_files
