@@ -1,13 +1,15 @@
 // MODULES
-include { GAWK as FILTER_BSJS                 } from '../../modules/nf-core/gawk'
-include { GAWK as MASK_SCORES                 } from '../../modules/nf-core/gawk'
-include { GNU_SORT as CONCAT_TOOLS_PER_SAMPLE } from '../../modules/nf-core/gnu/sort'
-include { BEDTOOLS_GROUPBY as COUNT_TOOLS     } from '../../modules/nf-core/bedtools/groupby'
-include { GAWK as FILTER_MIN_TOOLS            } from '../../modules/nf-core/gawk'
-include { GNU_SORT as CONCAT_SAMPLES          } from '../../modules/nf-core/gnu/sort'
-include { UPSET as UPSET_SAMPLES              } from '../../modules/local/upset'
-include { UPSET as UPSET_ALL                  } from '../../modules/local/upset'
-include { BEDTOOLS_GETFASTA                   } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as FILTER_BSJS                        } from '../../modules/nf-core/gawk'
+include { GAWK as MASK_SCORES                        } from '../../modules/nf-core/gawk'
+include { GNU_SORT as CONCAT_TOOLS_PER_SAMPLE        } from '../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_GROUPBY as COUNT_TOOLS            } from '../../modules/nf-core/bedtools/groupby'
+include { GAWK as FILTER_MIN_TOOLS                   } from '../../modules/nf-core/gawk'
+include { GNU_SORT as CONCAT_SAMPLES                 } from '../../modules/nf-core/gnu/sort'
+include { UPSET as UPSET_SAMPLES                     } from '../../modules/local/upset'
+include { UPSET as UPSET_ALL                         } from '../../modules/local/upset'
+include { BEDTOOLS_GETFASTA as FASTA_COMBINED        } from '../../modules/nf-core/bedtools/getfasta'
+include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE      } from '../../modules/nf-core/bedtools/getfasta'
+include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL } from '../../modules/nf-core/bedtools/getfasta'
 
 // SUBWORKFLOWS
 include { SEGEMEHL       } from './discovery/segemehl'
@@ -150,28 +152,27 @@ workflow CIRCRNA_DISCOVERY {
     // FASTA WORKFLOW:
     //
 
-    BEDTOOLS_GETFASTA(
-        ch_bsj_bed_combined.mix(ch_bsj_bed_per_sample).mix(ch_bsj_bed_per_sample_tool),
-        fasta
-    )
-    ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
+    FASTA_COMBINED( ch_bsj_bed_combined, fasta )
+    ch_versions = ch_versions.mix(FASTA_COMBINED.out.versions)
+    ch_bsj_fasta_combined = FASTA_COMBINED.out.fasta
 
-    ch_bsj_fasta = BEDTOOLS_GETFASTA.out.fasta.branch{
-        meta, fasta ->
-            combined: meta.id == 'all'
-            per_sample_tool: meta.containsKey('tool')
-            per_sample: true
-    }
+    FASTA_PER_SAMPLE( ch_bsj_bed_per_sample, fasta )
+    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE.out.versions)
+    ch_bsj_fasta_per_sample = FASTA_PER_SAMPLE.out.fasta
+
+    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta )
+    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
+    ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
 
     emit:
     bsj_bed_combined          = ch_bsj_bed_combined
-    bsj_fasta_combined        = ch_bsj_fasta.combined
+    bsj_fasta_combined        = ch_bsj_fasta_combined
 
     bsj_bed_per_sample        = ch_bsj_bed_per_sample
-    bsj_fasta_per_sample      = ch_bsj_fasta.per_sample
+    bsj_fasta_per_sample      = ch_bsj_fasta_per_sample
 
     bsj_bed_per_sample_tool   = ch_bsj_bed_per_sample_tool
-    bsj_fasta_per_sample_tool = ch_bsj_fasta.per_sample_tool
+    bsj_fasta_per_sample_tool = ch_bsj_fasta_per_sample_tool
 
     multiqc_files             = ch_multiqc_files
     versions                  = ch_versions
