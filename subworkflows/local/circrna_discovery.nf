@@ -118,6 +118,7 @@ workflow CIRCRNA_DISCOVERY {
     MASK_SCORES( ch_bed, [] )
     ch_versions = ch_versions.mix(MASK_SCORES.out.versions)
     ch_bsj_bed_per_sample_tool = MASK_SCORES.out.output
+        .filter{ meta, bed -> !bed.empty }
 
     CONCAT_TOOLS_PER_SAMPLE(
         MASK_SCORES.out.output.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple()
@@ -130,6 +131,7 @@ workflow CIRCRNA_DISCOVERY {
     FILTER_MIN_TOOLS( COUNT_TOOLS.out.bed, [] )
     ch_versions = ch_versions.mix(FILTER_MIN_TOOLS.out.versions)
     ch_bsj_bed_per_sample = FILTER_MIN_TOOLS.out.output
+        .filter{ meta, bed -> !bed.empty }
 
     CONCAT_SAMPLES(
         ch_bsj_bed_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
