@@ -1,11 +1,16 @@
 // MODULES
-include { GAWK as FILTER_BSJS    } from '../../modules/nf-core/gawk'
-include { MERGE_TOOLS            } from '../../modules/local/count_matrix/merge_tools'
-include { MERGE_SAMPLES          } from '../../modules/local/count_matrix/merge_samples'
-include { UPSET as UPSET_SAMPLES } from '../../modules/local/upset'
-include { UPSET as UPSET_ALL     } from '../../modules/local/upset'
-include { BEDTOOLS_GETFASTA      } from '../../modules/nf-core/bedtools/getfasta'
-include { GAWK as ADD_BACKSPLICE } from '../../modules/nf-core/gawk'
+include { GAWK as FILTER_BSJS                 } from '../../modules/nf-core/gawk'
+include { GAWK as MASK_SCORES                 } from '../../modules/nf-core/gawk'
+include { GNU_SORT as CONCAT_TOOLS_PER_SAMPLE } from '../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_GROUPBY as COUNT_TOOLS     } from '../../modules/nf-core/bedtools/groupby'
+include { GAWK as FILTER_MIN_TOOLS            } from '../../modules/nf-core/gawk'
+include { GNU_SORT as CONCAT_SAMPLES          } from '../../modules/nf-core/gnu/sort'
+include { MERGE_TOOLS                         } from '../../modules/local/count_matrix/merge_tools'
+include { MERGE_SAMPLES                       } from '../../modules/local/count_matrix/merge_samples'
+include { UPSET as UPSET_SAMPLES              } from '../../modules/local/upset'
+include { UPSET as UPSET_ALL                  } from '../../modules/local/upset'
+include { BEDTOOLS_GETFASTA                   } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as ADD_BACKSPLICE              } from '../../modules/nf-core/gawk'
 
 // SUBWORKFLOWS
 include { SEGEMEHL       } from './discovery/segemehl'
@@ -110,6 +115,28 @@ workflow CIRCRNA_DISCOVERY {
     //
     // CREATE COUNT MATRIX
     //
+
+    MASK_SCORES( ch_bed, [] )
+    ch_versions = ch_versions.mix(MASK_SCORES.out.versions)
+
+    CONCAT_TOOLS_PER_SAMPLE(
+        MASK_SCORES.out.output.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple()
+    )
+    ch_versions = ch_versions.mix(CONCAT_TOOLS_PER_SAMPLE.out.versions)
+
+    COUNT_TOOLS( CONCAT_TOOLS_PER_SAMPLE.out.sorted, 5 )
+    ch_versions = ch_versions.mix(COUNT_TOOLS.out.versions)
+
+    FILTER_MIN_TOOLS( COUNT_TOOLS.out.bed, [] )
+    ch_versions = ch_versions.mix(FILTER_MIN_TOOLS.out.versions)
+
+    ch_bsjome_per_sample = FILTER_MIN_TOOLS.out.output
+
+    CONCAT_SAMPLES(
+        ch_bsjome_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
+    )
+    ch_versions = ch_versions.mix(CONCAT_SAMPLES.out.versions)
+    ch_bsjome = CONCAT_SAMPLES.out.sorted
 
     MERGE_TOOLS( ch_bed.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple(),
                 tools_selected.size() > 1 ? tool_filter : 1, duplicates_fun )
