@@ -162,8 +162,8 @@ workflow CIRCRNA {
         ch_gtf,
         ch_fasta,
         FASTQC_TRIMGALORE.out.reads,
-        CIRCRNA_DISCOVERY.out.bsj_bed12_combined,
-        CIRCRNA_DISCOVERY.out.bsj_gtf_combined,
+        CIRCRNA_DISCOVERY.out.bed12,
+        CIRCRNA_DISCOVERY.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx
@@ -176,8 +176,8 @@ workflow CIRCRNA {
     //
     if (params.mature) {
         MIRNA_PREDICTION(
-            CIRCRNA_DISCOVERY.out.bsj_fasta_combined,
-            CIRCRNA_DISCOVERY.out.bsj_bed_combined,
+            CIRCRNA_DISCOVERY.out.fasta,
+            CIRCRNA_DISCOVERY.out.bed,
             ch_mature
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
