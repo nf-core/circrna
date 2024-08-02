@@ -29,6 +29,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
+include { ANNOTATION                       } from '../../subworkflows/local/annotation'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
 include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
@@ -145,27 +146,35 @@ workflow CIRCRNA {
         chromosomes,
         hisat2_index,
         star_index,
-        ch_annotation,
         params.bsj_reads,
-        params.tool_filter,
-        params.duplicates_fun,
-        params.exon_boundary
     )
 
     ch_multiqc_files  = ch_multiqc_files.mix(CIRCRNA_DISCOVERY.out.multiqc_files)
     ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
 
     //
-    // 3. Quantification
+    // 3. circRNA Annotation
+    //
+
+    ANNOTATION(
+        CIRCRNA_DISCOVERY.out.bsj_bed_combined,
+        ch_gtf,
+        params.exon_boundary,
+        ch_annotation
+    )
+    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
+
+    //
+    // 4. circRNA quantification
     //
 
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
-        CIRCRNA_DISCOVERY.out.counts_bed,
+        CIRCRNA_DISCOVERY.out.bsj_bed_combined,
         FASTQC_TRIMGALORE.out.reads,
-        CIRCRNA_DISCOVERY.out.annotation_bed,
-        CIRCRNA_DISCOVERY.out.annotation_gtf,
+        ANNOTATION.out.bed,
+        ANNOTATION.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx
@@ -174,19 +183,19 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
     //
-    // 4. miRNA prediction
+    // 5. miRNA prediction
     //
     if (params.mature) {
         MIRNA_PREDICTION(
-            CIRCRNA_DISCOVERY.out.fasta,
-            CIRCRNA_DISCOVERY.out.circrna_bed12,
+            CIRCRNA_DISCOVERY.out.bsj_fasta_combined,
+            ANNOTATION.out.bed,
             ch_mature
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
     }
 
     //
-    // 5. Statistical tests
+    // 6. Statistical tests
     //
 
     STATISTICAL_TESTS(
