@@ -10,6 +10,7 @@ include { UPSET as UPSET_ALL                         } from '../../modules/local
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED        } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE      } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL } from '../../modules/nf-core/bedtools/getfasta'
+include { FAIL_ON_EMPTY                              } from '../../modules/local/fail_on_empty'
 
 // SUBWORKFLOWS
 include { SEGEMEHL                               } from './discovery/segemehl'
@@ -143,13 +144,15 @@ workflow CIRCRNA_DISCOVERY {
     // UPSET PLOTS
     //
 
-    UPSET_SAMPLES( ch_bed.map{ meta, bed -> [meta.id, meta.tool, bed]}
+    UPSET_SAMPLES( ch_bsj_bed_per_sample_tool
+        .map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
     ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
 
-    UPSET_ALL( ch_bed.map{ meta, bed -> ["all", meta.tool, bed] }
+    UPSET_ALL( ch_bsj_bed_per_sample_tool
+        .map{ meta, bed -> ["all", meta.tool, bed] }
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
@@ -189,6 +192,22 @@ workflow CIRCRNA_DISCOVERY {
     FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta )
     ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
+
+    // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
+    FAIL_ON_EMPTY(
+        ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
+        // Make sure to wait for per-sample results
+        Channel.empty()
+            .mix(ch_bsj_bed12_combined)
+            .mix(ch_bsj_bed12_per_sample)
+            .mix(ch_bsj_bed12_per_sample_tool)
+            .mix(ch_bsj_fasta_combined)
+            .mix(ch_bsj_fasta_per_sample)
+            .mix(ch_bsj_fasta_per_sample_tool)
+            .mix(UPSET_SAMPLES.out.plot)
+            .map{ meta, f -> f }
+            .collect()
+    )
 
     emit:
     bed           = ch_bsj_bed_combined
