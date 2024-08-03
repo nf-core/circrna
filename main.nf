@@ -36,7 +36,6 @@ params.star       = getGenomeAttribute('star')
 params.bowtie     = getGenomeAttribute('bowtie')
 params.bowtie2    = getGenomeAttribute('bowtie2')
 params.mature     = getGenomeAttribute('mature')
-params.species_id = getGenomeAttribute('species_id')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,7 +59,6 @@ workflow NFCORE_CIRCRNA {
     ch_gtf         = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists:true)])
     ch_mature      = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)]) : Channel.empty()
     ch_phenotype   = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists:true)]) : Channel.empty()
-    ch_species     = params.phenotype ? Channel.value(params.species_id) : Channel.empty()
     ch_annotation  = params.annotation ? Channel.fromSamplesheet("annotation") : Channel.empty()
 
     CIRCRNA (
@@ -70,7 +68,6 @@ workflow NFCORE_CIRCRNA {
         ch_gtf,
         ch_mature,
         ch_annotation,
-        ch_species,
         ch_versions
     )
 

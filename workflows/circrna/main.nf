@@ -60,7 +60,6 @@ workflow CIRCRNA {
     ch_gtf
     ch_mature
     ch_annotation
-    ch_species
     ch_versions
 
     main:

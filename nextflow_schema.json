@@ -220,13 +220,6 @@
                     "fa_icon": "fas fa-wheelchair",
                     "default": null
                 },
-                "species_id": {
-                    "type": "string",
-                    "fa_icon": "fas fa-dog",
-                    "description": "String identifying species.",
-                    "help_text": "Check the igenomes.config file for species configured to work with nf-core/circrna",
-                    "default": null
-                },
                 "bowtie": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
