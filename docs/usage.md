@@ -71,17 +71,11 @@ TREATMENT_REP3,treatment
 
 Note that `TREATMENT_REP3` only has one entry in the `phenotype.csv` file, even though it has two entries in the `samplesheet.csv` file.
 
-# Analysis modules
-
-`nf-core/circrna` provides 3 analysis modules to the user:
-
-1. BSJ detection
-2. Joint quantification of circular and linear transcriptome
-3. miRNA target prediction
-
 ## circRNA discovery
 
-The core module of `nf-core/circrna`, a user can utilise up to seven circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` , `MapSplice` & `Segemehl` however, the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
+The core module of `nf-core/circrna`, a user can utilise up to seven circRNA quantification tools to fully characterise the circRNA profile in samples. 
+
+Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` , `MapSplice` & `Segemehl` however, the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
 
 By default, `nf-core/circrna` runs the circRNA discovery analysis module.
 

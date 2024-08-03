@@ -28,7 +28,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
-include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
+include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
 include { ANNOTATION                       } from '../../subworkflows/local/annotation'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
@@ -133,10 +133,10 @@ workflow CIRCRNA {
     ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
 
     //
-    // 2. circRNA Discovery
+    // 2. BSJ Discovery
     //
 
-    CIRCRNA_DISCOVERY(
+    BSJ_DETECTION(
         FASTQC_TRIMGALORE.out.reads,
         ch_fasta,
         ch_gtf,
@@ -151,8 +151,8 @@ workflow CIRCRNA {
         params.exon_boundary
     )
 
-    ch_multiqc_files  = ch_multiqc_files.mix(CIRCRNA_DISCOVERY.out.multiqc_files)
-    ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
+    ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
+    ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
     //
     // 3. circRNA quantification
@@ -162,8 +162,8 @@ workflow CIRCRNA {
         ch_gtf,
         ch_fasta,
         FASTQC_TRIMGALORE.out.reads,
-        CIRCRNA_DISCOVERY.out.bed12,
-        CIRCRNA_DISCOVERY.out.gtf,
+        BSJ_DETECTION.out.bed12,
+        BSJ_DETECTION.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx
@@ -176,8 +176,8 @@ workflow CIRCRNA {
     //
     if (params.mature) {
         MIRNA_PREDICTION(
-            CIRCRNA_DISCOVERY.out.fasta,
-            CIRCRNA_DISCOVERY.out.bed,
+            BSJ_DETECTION.out.fasta,
+            BSJ_DETECTION.out.bed,
             ch_mature
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)

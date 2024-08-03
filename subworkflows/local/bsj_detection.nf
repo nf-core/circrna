@@ -13,19 +13,19 @@ include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL } from '../../modules/nf-co
 include { FAIL_ON_EMPTY                              } from '../../modules/local/fail_on_empty'
 
 // SUBWORKFLOWS
-include { SEGEMEHL                               } from './discovery/segemehl'
-include { STAR2PASS                              } from './discovery/star2pass'
-include { CIRCEXPLORER2                          } from './discovery/circexplorer2'
-include { CIRCRNA_FINDER                         } from './discovery/circrna_finder'
-include { FIND_CIRC                              } from './discovery/find_circ'
-include { CIRIQUANT                              } from './discovery/ciriquant'
-include { DCC                                    } from './discovery/dcc'
-include { MAPSPLICE                              } from './discovery/mapsplice'
+include { SEGEMEHL                               } from './detection_tools/segemehl'
+include { STAR2PASS                              } from './detection_tools/star2pass'
+include { CIRCEXPLORER2                          } from './detection_tools/circexplorer2'
+include { CIRCRNA_FINDER                         } from './detection_tools/circrna_finder'
+include { FIND_CIRC                              } from './detection_tools/find_circ'
+include { CIRIQUANT                              } from './detection_tools/ciriquant'
+include { DCC                                    } from './detection_tools/dcc'
+include { MAPSPLICE                              } from './detection_tools/mapsplice'
 include { ANNOTATION as ANNOTATE_COMBINED        } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE      } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL } from './annotation'
 
-workflow CIRCRNA_DISCOVERY {
+workflow BSJ_DETECTION {
 
     take:
     reads
