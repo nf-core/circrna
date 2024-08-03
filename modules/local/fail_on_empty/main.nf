@@ -7,13 +7,13 @@ process FAIL_ON_EMPTY {
 
     exec:
     if (!bed) {
-        if (params.tool_filter <= 1) {
-            log.error "No circular RNAs were found by any tool in any sample.\n" +
-                "Please check the input data."
-        } else {
-            log.error "No circular RNAs were found by at least ${params.tool_filter} tools in any sample.\n" +
-                "Please check the input data or lower the tool_filter parameter."
-        }
+        log.error ((params.tool_filter <= 1 ? 
+            "No circular RNAs were found by any tool in any sample.\n" : 
+            "No circular RNAs were found by at least ${params.tool_filter} tools in any sample.\n") +
+            "Feel free to check the preliminary results in '${params.outdir}'\n" +
+            (params.save_intermediates ? "" : 
+            "You can enable saving intermediate files by setting the parameter 'save_intermediates' to 'true'."))
+
         exit 1
     }
 }
