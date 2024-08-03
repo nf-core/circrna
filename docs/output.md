@@ -312,17 +312,42 @@ An exemption of the above is `star`, which is not used as a standalone BSJ detec
 
 STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. The first pass of STAR is used to generate a genome index and align reads to the reference genome. The second pass of STAR uses the splice junctions identified in the first pass to align reads to the reference genome. This does not increase the number of detected novel junctions, but allows for more sensitive detection of splice reads mapping to novel junctions.
 
-### Count Matrix
+### Per sample
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `circrna_discovery/`
-  - `count_matrix.txt`: Raw circRNA read counts for all samples in matrix format.
+- `bsj_detection/samples/${sample_id}/`
+  - `*.grouped.bed`: Grouped BSJ calls in BED format. Score column represents the number of tools that support the BSJ.
+  - `*.filtered.bed`: Based on `*.grouped.bed`, but filtered for BSJs with at least `tool_filter` supporting tools.
+  - `*.intersect_gtf.bed`: Intersection of `*.filtered.bed` with the reference GTF file. Intermediate file for annotation.
+  - `*.intersect_database.bed`: Intersection of `*.filtered.bed` with the database BED file. Intermediate file for annotation.
+  - `*.annotated.bed`: Annotated BSJ calls in BED format, based on `*.filtered.bed`.
+  - `*.annotated.gtf`: Annotated BSJ calls in GTF format, based on `*.filtered.bed`.
+  - `*.fa`: Extracted sequences of the circRNAs in FASTA format, based on `*.filtered.bed`.
+  - `*.upset.png`: Sample-specific upset plot of BSJ calls across tools.
 
 </details>
 
-`nf-core/circrna` produces a counts matrix of circRNA read counts for each sample. circRNAs with BSJ reads < `--bsj_reads <int>` have been removed during the quantification step, with a further filtering step included depending on the number of quantification tools selected. If the user has selected more than one circRNA quantification tool, `nf-core/circrna` will demand that a circRNA be called by at least two quantification tools or else it is removed. This approach is recommended to reduce the number of false positives.
+`nf-core/circrna` produces a sample-specific set of BSJ calls. The BSJ calls are filtered for BSJs with at least `tool_filter` supporting tools. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
+
+### Combined
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `bsj_detection/combined/`
+  - `*.combined.bed`: Unique BSJ calls across samples in BED format.
+  - `*.intersect_gtf.bed`: Intersection of `*.filtered.bed` with the reference GTF file. Intermediate file for annotation.
+  - `*.intersect_database.bed`: Intersection of `*.filtered.bed` with the database BED file. Intermediate file for annotation.
+  - `*.annotated.bed`: Annotated BSJ calls in BED format, based on `*.filtered.bed`.
+  - `*.annotated.gtf`: Annotated BSJ calls in GTF format, based on `*.filtered.bed`.
+  - `*.fa`: Extracted sequences of the circRNAs in FASTA format, based on `*.filtered.bed`.
+  - `*.upset.png`: Combined upset plot of BSJ calls across samples.
+
+</details>
+
+`nf-core/circrna` combines the sample-specific BSJ calls into a single file. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
 
 ## miRNA Prediction
 
