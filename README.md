@@ -40,6 +40,8 @@
   - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
   - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
+  - Based on GTF file
+  - Based on database files (if provided)
 - Extract circRNA sequences and build circular transcriptome
 - Merge circular transcriptome with linear transcriptome derived from provided GTF
 - Quantification of combined circular and linear transcriptome
@@ -108,15 +110,17 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/circrna was originally written by Barry Digby.
+nf-core/circrna was originally written by [Barry Digby](https://github.com/BarryDigby).
+It was later refactored, extended and improved by [Nico Trummer](https://github.com/nictru).
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+We thank the following people for their extensive assistance in the development of this pipeline (in alphabetical order):
 
-- @apeltzer
-- @ewels
-- @maxulysse
-- @KevinMenden
-- @bj-w
+- [Alexander Peltzer](https://github.com/apeltzer)
+- [Ben Whittle](https://github.com/bj-w)
+- [Kevin Menden](https://github.com/KevinMenden)
+- [Marieke Vromman](https://github.com/MariekeVromman)
+- [Maxime Garcia](https://github.com/maxulysse)
+- [Phil Ewels](https://github.com/ewels)
 
 ## Acknowledgements
 
