@@ -133,6 +133,7 @@ The FastQC plots displayed in the MultiQC report show _untrimmed_ reads. They ma
 ## BSJ detection
 
 The rough workflow for the BSJ detection looks like this:
+
 1. Each tools detects BSJs in each sample and quantifies how many reads support each BSJ.
 2. Bring the tool outputs into a common format.
 3. Apply a threshold (parameter `bsj_reads) to the BSJ reads to filter out lowly supported BSJs.

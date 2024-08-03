@@ -56,11 +56,12 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 ## BSJ detection
 
 This part of the pipeline is responsible for the detection of back-splice junctions (BSJs) in the input data. The following tools are currently supported:
+
 - `CIRCexplorer2`
 - `circRNA finder`
 - `CIRIquant`
 - `DCC`
-- `find circ` 
+- `find circ`
 - `MapSplice`
 - `Segemehl`
 
@@ -76,23 +77,25 @@ The annotation is generally based on the reference GTF file. It can also utilize
 The GTF-based annotation allows setting the parameter `exon_boundary` to specify a window around exons. If the BSJ is within this window, it will be annotated as a circRNA - otherwise, it will be annotated as an exon-intron circRNA (EI-circRNA). The default value is 0.
 
 For the database-based annotation, an additional sample sheet is required:
+
 ```csv title="annotation.csv"
 name,file,min_overlap
 db1,db1.bed,0.9
 db2,db2.bed,0.8
 ```
 
-| Column       | Description                                                                                   |
-| ------------ | --------------------------------------------------------------------------------------------- |
-| `name`       | Name of the database. This will be used as a prefix for the region names in the output files. |
-| `file`       | Path to the BED file. The file has to be a valid BED6 file.                                   |
-| `min_overlap`| Minimum bidirectional overlap required between the BSJ and the region in the BED file.        |
+| Column        | Description                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| `name`        | Name of the database. This will be used as a prefix for the region names in the output files. |
+| `file`        | Path to the BED file. The file has to be a valid BED6 file.                                   |
+| `min_overlap` | Minimum bidirectional overlap required between the BSJ and the region in the BED file.        |
 
 The output of the annotation step will be bundled with the outputs of the BSJ detection step.
 
 ## miRNA prediction
 
 This section allows looking for miRNA binding sites in the circRNAs. The following tools are currently supported:
+
 - `miRanda`
 - `TargetScan`
 
