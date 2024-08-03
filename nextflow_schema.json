@@ -81,17 +81,10 @@
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
                     "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
-                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.\n\nPlease note this is only reflected in the circRNA count matrix generated.",
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
                     "default": 0,
                     "minimum": 0,
-                    "maximum": 6
-                },
-                "duplicates_fun": {
-                    "type": "string",
-                    "fa_icon": "fas fa-copy",
-                    "description": "Aggregate function to apply to duplicate circRNAs when more than one quantification tool has been selected. Options: max, mean",
-                    "default": "mean",
-                    "enum": ["mean", "max"]
+                    "maximum": 7
                 },
                 "save_intermediates": {
                     "type": "boolean",
