@@ -349,6 +349,69 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 
 `nf-core/circrna` combines the sample-specific BSJ calls into a single file. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
 
+## Quantification
+
+Since we now know the BSJ locations, we can now quantify their expression by mapping the reads to the region between the BSJ start and end coordinates. As each read can potentially originate from both linear and circular transcripts, the pipeline performs a joint quantification of the linear and circular transcriptome.
+The quantification is performed using psirc-quant, which is a wrapper around `kallisto`. It allows for inferential-uncertainty aware quantification of linear and circular transcripts.
+
+### Transcriptome
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `quantification/transcriptome/`
+  - `*.combined.gtf`: Combined linear and circular transcriptome in GTF format.
+  - `*.filtered.gtf`: Filtered linear and circular transcriptome in GTF format, based on `*.combined.gtf`.
+  - `*.fasta`: Combined linear and circular transcriptome in FASTA format, based on `*.filtered.gtf`.
+  - `*.marked.fasta`: Transcript sequences in FASTA format with the circRNA sequences marked with a `C` field in the header.
+  - `*.tx2gene.tsv`: Transcript to gene mapping file.
+
+### Per sample
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `quantification/samples/${sample_id}/`
+  - `psirc`
+    - `*.abundance.h5`: Abundance estimates in HDF5 format.
+    - `*.abundance.tsv`: Abundance estimates in TSV format.
+    - `*.run_info.json`: Run information in JSON format.
+    - `pseudoalignments.bam`: Pseudoalignments in BAM format.
+    - `pseudoalignments.bai`: Index file for pseudoalignments.
+  - `tximeta/`
+    - `*.rds`: RDS file containing the the sample-specific transcript quantification data.
+  - `tximport/`
+    - `*.gene_counts_length_scaled.tsv`: Gene counts scaled by transcript length.
+    - `*.gene_counts_scaled.tsv`: Gene counts scaled by library size.
+    - `*.gene_counts.tsv`: Gene counts.
+    - `*.gene_lengths.tsv`: Gene lengths.
+    - `*.gene_tpm.tsv`: Gene TPM values.
+    - `*.transcript_counts.tsv`: Transcript counts.
+    - `*.transcript_lengths.tsv`: Transcript lengths.
+    - `*.transcript_tpm.tsv`: Transcript TPM values.
+
+</details>
+
+`nf-core/circrna` performs quantification of linear and circular transcripts using `psirc-quant`. The quantification results are stored in HDF5 and TSV format. The pipeline also generates a `tximeta` RDS file containing the sample-specific transcript quantification data. The `tximport` directory contains gene and transcript counts, lengths and TPM values.
+
+### Combined
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `quantification/combined/`
+  - `gene_counts.csv`: Count matrix of genes across samples.
+  - `gene_tpm.csv`: TPM matrix of genes across samples.
+  - `tx_counts.csv`: Count matrix of transcripts across samples.
+  - `tx_tpm.csv`: TPM matrix of transcripts across samples.
+  - `linear.tsv`: Count matrix of linear transcripts across samples.
+  - `circular.tsv`: Count matrix of circular transcripts across samples.
+  - `experiments.merged.rds`: RDS file containing a SummarizedExperiment with the merged transcript quantification data.
+
+</details>
+
+`nf-core/circrna` combines the sample-specific quantification results into proper count matrices. It also generates an RDS file containing a SummarizedExperiment with the merged transcript quantification data.
+
 ## miRNA Prediction
 
 ### miRanda
@@ -356,7 +419,7 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `mirna_prediction/miRanda/${sample_id}/`
+- `mirna_prediction/miranda/`
   - `*.miRanda.txt`: Raw outputs from `miRanda`.
 
 </details>
@@ -371,19 +434,19 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `mirna_prediction/TargetScan/${sample_id}/`
+- `mirna_prediction/targetscan/`
   - `*.targetscan.txt`: Raw outputs from `TargetScan`.
 
 </details>
 
 [TargetScan](http://www.targetscan.org/vert_72/) predicts biological targets of miRNAs by searching for the presence of conserved 8mer, 7mer, and 6mer sites within the circRNA mature sequence that match the seed region of each miRNA.
 
-### miRNA targets
+### Combined
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `mirna_prediction/${sample_id}/`
+- `mirna_prediction/combined/`
   - `*_miRNA_targets.txt`: Filtered target miRNAs of circRNAs called by quantification tools. Columns are self explanatory: miRNA, Score, Energy_KcalMol, Start, End, Site_type.
 
 </details>
