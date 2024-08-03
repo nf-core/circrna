@@ -59,9 +59,9 @@
             "type": "object",
             "fa_icon": "fas fa-circle-notch",
             "description": "Parameters for circrna discovery.",
-            "required": ["tool"],
+            "required": ["tools"],
             "properties": {
-                "tool": {
+                "tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
@@ -74,16 +74,16 @@
                     "fa_icon": "fas fa-circle-notch",
                     "description": "Minimum number of reads spanning circRNA back-splice junction required for circRNA to be output by workflow.",
                     "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 0 (default).",
-                    "default": 0,
-                    "minimum": 0
+                    "default": 1,
+                    "minimum": 1
                 },
                 "tool_filter": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
                     "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
-                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 0/1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
-                    "default": 0,
-                    "minimum": 0,
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
+                    "default": 1,
+                    "minimum": 1,
                     "maximum": 7
                 },
                 "save_intermediates": {

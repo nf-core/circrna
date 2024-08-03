@@ -58,7 +58,7 @@ workflow BSJ_DETECTION {
     //
     // DISCOVERY TOOLS:
     //
-    tools_selected = params.tool.split(',').collect{it.trim().toLowerCase()}
+    tools_selected = params.tools.split(',').collect{it.trim().toLowerCase()}
 
     if (tools_selected.size() == 0) {
         error 'No tools selected for circRNA discovery.'
