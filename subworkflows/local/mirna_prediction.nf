@@ -20,7 +20,7 @@ workflow MIRNA_PREDICTION {
     main:
     ch_versions = Channel.empty()
 
-    ADD_BACKSPLICE( transcriptome_fasta, [] )
+    ADD_BACKSPLICE( transcriptome_fasta )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     //
