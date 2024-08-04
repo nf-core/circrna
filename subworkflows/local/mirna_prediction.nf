@@ -20,9 +20,6 @@ workflow MIRNA_PREDICTION {
     main:
     ch_versions = Channel.empty()
 
-    ADD_BACKSPLICE( transcriptome_fasta )
-    ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
-
     //
     // MIRNA NORMALIZATION WORKFLOW:
     //
@@ -48,20 +45,19 @@ workflow MIRNA_PREDICTION {
         ch_uniq_mirnas = ch_mirna_filtered.map{ meta, path -> path }.splitCsv( sep: '\t' ).map{ it[0] }.unique().collect()
 
         ch_mature = ch_mature
-                             .map{ meta, path ->
-                                 path
-                             }
-                             .splitFasta( record: [id:true, seqString:true] )
-                             .combine(ch_uniq_mirnas.map{ it -> [it]}) // Not sure why this mapping is necessary but I think it is
-                             .filter{ record, mirnas ->
-                                 ch_uniq_mirnas.contains(record.id).value
-                             }.map{ record, mirnas -> 
-                                 ">${record.id}\n${record.seqString}" 
-                             }
-                             .collectFile( name: 'mature_filtered.fa', newLine: true)
-        ch_mature = ch_mature.map{ it -> [[id: 'mature_filtered'], it]}
+            .map{ meta, path ->
+                path
+            }
+            .splitFasta( record: [id:true, seqString:true] )
+            .combine(ch_uniq_mirnas.map{ it -> [it]}) // Not sure why this mapping is necessary but I think it is
+            .filter{ record, mirnas ->
+                ch_uniq_mirnas.contains(record.id).value
+            }.map{ record, mirnas -> 
+                ">${record.id}\n${record.seqString}" 
+            }
+            .collectFile( name: 'mature_filtered.fa', newLine: true)
+            .map{ it -> [[id: 'mature_filtered'], it]}
     }
-
 
     MIRNA_BINDINGSITES( transcriptome_fasta, circrna_annotation, ch_mature )
     ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
