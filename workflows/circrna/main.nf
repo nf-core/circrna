@@ -177,11 +177,11 @@ workflow CIRCRNA {
 
     if (params.mature) {
         MIRNA_PREDICTION(
-            BSJ_DETECTION.out.fasta,
-            BSJ_DETECTION.out.bed,
-            ch_mature
-            ch_mirna
-            QUANTIFICATION.out.circular_tx_counts
+            QUANTIFICATION.out.transcriptome,
+            BSJ_DETECTION.out.bed12,
+            ch_mature,
+            ch_mirna,
+            QUANTIFICATION.out.circular_tx_counts,
             QUANTIFICATION.out.rds
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)

@@ -1,4 +1,5 @@
 // MODULES
+include { BIOAWK as ADD_BACKSPLICE        } from '../../modules/nf-core/bioawk'
 include { DESEQ2_NORMALIZATION            } from '../../modules/local/deseq2/normalization'
 include { MIRNA_FILTERING                 } from '../../modules/local/mirna_filtering'
 include { COMPUTE_CORRELATIONS            } from '../../modules/local/compute_correlations'
@@ -10,7 +11,7 @@ workflow MIRNA_PREDICTION {
 
     take: 
     transcriptome_fasta
-    circrna_bed12
+    circrna_annotation
     ch_mature
     ch_mirna
     transcript_counts
@@ -19,10 +20,7 @@ workflow MIRNA_PREDICTION {
     main:
     ch_versions = Channel.empty()
 
-    MIRNA_BINDINGSITES( transcriptome_fasta, circrna_bed12, ch_mature )
-    ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
-
-    ADD_BACKSPLICE( circrna_fasta, [] )
+    ADD_BACKSPLICE( transcriptome_fasta, [] )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     //
@@ -65,7 +63,7 @@ workflow MIRNA_PREDICTION {
     }
 
 
-    MIRNA_BINDINGSITES( transcriptome_fasta, circrna_bed12, ch_mature )
+    MIRNA_BINDINGSITES( transcriptome_fasta, circrna_annotation, ch_mature )
     ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
 
     if (params.mirna_expression) {
