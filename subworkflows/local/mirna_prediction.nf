@@ -82,7 +82,6 @@ workflow MIRNA_PREDICTION {
         ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     }
 
-    
     emit:
     versions = ch_versions
 }
