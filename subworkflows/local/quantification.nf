@@ -19,7 +19,6 @@ workflow QUANTIFICATION {
     take:
     ch_gtf
     ch_fasta
-    counts
     reads
     circ_annotation_bed
     circ_annotation_gtf

@@ -9,8 +9,14 @@ rownames(circ) <- circ\$tx
 rownames(gene) <- rownames(circ)
 circ\$tx <- NULL
 
-write.table(circ, "${prefix}_circs.tsv", sep="\\t", quote=F, row.names=T)
-write.table(gene, "${prefix}_genes.tsv", sep="\\t", quote=F, row.names=T)
+if (nrow(circ) != nrow(gene)) {
+    stop("Number of rows in circ and gene counts do not match")
+}
+
+if (nrow(circ) > 0) {
+    write.table(circ, "${prefix}_circs.tsv", sep="\\t", quote=F, row.names=T)
+    write.table(gene, "${prefix}_genes.tsv", sep="\\t", quote=F, row.names=T)
+}
 
 ################################################
 ################################################

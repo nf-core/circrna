@@ -41,7 +41,10 @@ attributes = ['gene_id', 'gene_name', 'transcript_id']
 
 exon_boundary = int("${exon_boundary}")
 
-df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
+try:
+    df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
+except pd.errors.EmptyDataError:
+    raise ValueError("Intersection between circRNAs and GTF file is empty.")
 df = df.rename(columns=columns)
 
 # Extract circRNAs without match
@@ -55,6 +58,14 @@ df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 
 # Convert attributes to a dictionary
 df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ', 1)] for entry in row.split(';') if entry]))
+# Make sure all attributes are present
+df_incomplete = df['attributes'].apply(lambda row: ", ".join([key for key in attributes if key not in row]))
+df_incomplete = df_incomplete[df_incomplete != ""]
+if len(df_incomplete) > 0:
+    counts = df_incomplete.value_counts()
+    counts.name = 'count'
+    counts.index.name = 'missing'
+    raise ValueError(f"The following attributes are missing in the intersection file:\\n\\n{counts.to_frame()}")
 # Keep only the attributes we want
 df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in attributes if key in row})
 # Convert attributes to columns

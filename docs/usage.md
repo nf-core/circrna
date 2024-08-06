@@ -53,6 +53,75 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,,reverse
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
+## BSJ detection
+
+This part of the pipeline is responsible for the detection of back-splice junctions (BSJs) in the input data. The following tools are currently supported:
+
+- `CIRCexplorer2`
+- `circRNA finder`
+- `CIRIquant`
+- `DCC`
+- `find circ`
+- `MapSplice`
+- `Segemehl`
+
+The tools to be used can be specified using the `tools` parameter.
+Each of the tools also quantifies how many reads support each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter.
+Additionally, the parameter `tool_filter` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
+
+For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/output#bsj-detection).
+
+## Annotation
+
+The annotation is generally based on the reference GTF file. It can also utilize BED files that are provided by the various circRNA databases.
+The GTF-based annotation allows setting the parameter `exon_boundary` to specify a window around exons. If the BSJ is within this window, it will be annotated as a circRNA - otherwise, it will be annotated as an exon-intron circRNA (EI-circRNA). The default value is `0`.
+
+For the database-based annotation, an additional sample sheet is required:
+
+```csv title="annotation.csv"
+name,file,min_overlap
+db1,db1.bed,0.9
+db2,db2.bed,0.8
+```
+
+| Column        | Description                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| `name`        | Name of the database. This will be used as a prefix for the region names in the output files. |
+| `file`        | Path to the BED file. The file has to be a valid BED6 file.                                   |
+| `min_overlap` | Minimum bidirectional overlap required between the BSJ and the region in the BED file.        |
+
+The output of the annotation step will be bundled with the outputs of the BSJ detection step.
+
+## miRNA prediction
+
+This section allows looking for miRNA binding sites in the circRNAs. The following tools are currently supported:
+
+- `miRanda`
+- `TargetScan`
+
+This section will only be executed if the `mature` parameter is provided. The parameter should point to a FASTA file containing mature miRNA sequences.
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
+
+## Statistical tests
+
+Currently, only [CircTest](https://github.com/dieterich-lab/CircTest) is supported for the statistical analysis of the circRNA expression data. The `phenotype` parameter is required for this step.
+
+A valid example of a `phenotype.csv` file (matching the "Full samplesheet") is shown here:
+
+```csv title="phenotype.csv"
+sample,condition
+CONTROL_REP1,control
+CONTROL_REP2,control
+CONTROL_REP3,control
+TREATMENT_REP1,treatment
+TREATMENT_REP2,treatment
+TREATMENT_REP3,treatment
+```
+
+Note that `TREATMENT_REP3` only has one entry in the `phenotype.csv` file, even though it has two entries in the `samplesheet.csv` file.
+If the `phenotype` parameter is provided, the phenotype information will also be added to the `SummarizedExperiment` object, that results from the "Quantification" step.
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
@@ -130,140 +199,6 @@ To further assist in reproducbility, you can use share and re-use [parameter fil
 :::tip
 If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
 :::
-
-# Input specifications
-
-Input data can be passed to `nf-core/circrna` using a CSV file containing the absolute paths to input fastq files.
-
-The header of the CSV file must at least contain the `sample` and `fastq_1` columns. The `fastq_2` column is optional and only required for paired-end data. With an additional `strandness` column, the user can specify the strandedness of the library. The `sample` column should contain a unique identifier for each sample, and the `fastq_1` and `fastq_2` columns should contain the paths to the input fastq files.
-
-Valid examples for fastq input data in a CSV file is given below:
-
-| sample           | fastq_1                                                                 | fastq_2                                                                 |
-| ---------------- | :---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| TCGA-EJ-7783-11A | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R1.fastq.gz | /data/f4c1b2b1-ba1f-4355-a1ac-3e952cf351a5_gdc_realn_rehead_R2.fastq.gz |
-| TCGA-G9-6365-11A | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R1.fastq.gz | /data/8a36555b-9e27-40ee-a8df-4b15d6580a02_gdc_realn_rehead_R2.fastq.gz |
-| TCGA-EJ-7782-11A | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R1.fastq.gz | /data/8b3d4a3d-2bfa-48f8-b31f-901f49a5bf6b_gdc_realn_rehead_R2.fastq.gz |
-| TCGA-CH-5772-01A | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R1.fastq.gz | /data/b6546f66-3c13-4390-9643-d1fb3d660a2f_gdc_realn_rehead_R2.fastq.gz |
-| TCGA-EJ-5518-01A | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R1.fastq.gz | /data/afbbc370-5970-43d3-b9f8-f40f8e649bb6_gdc_realn_rehead_R2.fastq.gz |
-| TCGA-KK-A8I4-01A | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R1.fastq.gz | /data/81254692-ee1e-4985-bd0a-4929eed4c620_gdc_realn_rehead_R2.fastq.gz |
-
-## Phenotype file
-
-The CSV file provided via the `phenotype` parameter can be used to provide additional metadata about the samples in the input CSV file. If provided, it needs to at least contain a column called `sample` which corresponds to the `sample` column in the input CSV file and a column called `condition`. The `condition` column will be used to group samples for the [CircTest](https://github.com/dieterich-lab/CircTest) functionality. All metadata columns will be included in the result `SummarizedExperiment` RDS file.
-
-A valid example of a `phenotype.csv` file (matching the TCGA example input CSV file above) is given:
-
-| sample           | condition |
-| ---------------- | --------- |
-| TCGA-EJ-7783-11A | control   |
-| TCGA-G9-6365-11A | control   |
-| TCGA-EJ-7782-11A | control   |
-| TCGA-CH-5772-01A | tumor     |
-| TCGA-EJ-5518-01A | tumor     |
-| TCGA-KK-A8I4-01A | tumor     |
-
-# Analysis modules
-
-`nf-core/circrna` provides 3 analysis modules to the user:
-
-1. BSJ detection
-2. Joint quantification of circular and linear transcriptome
-3. miRNA target prediction
-
-## circRNA discovery
-
-The core module of `nf-core/circrna`, a user can utilise up to seven circRNA quantification tools to fully characterise the circRNA profile in samples. Currently, supported tools include `CIRCexplorer2`, `circRNA finder`, `CIRIquant`, `DCC`, `find circ` , `MapSplice` & `Segemehl` however, the authors of `nf-core/circrna` welcome contributions from authors of novel quantification tools to keep the workflow current.
-
-By default, `nf-core/circrna` runs the circRNA discovery analysis module.
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --module 'circrna_discovery'
-```
-
-To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#circrna-quantification).
-
-> Please note that this module must be included for every run of the workflow
-
-### Tool selection
-
-The user may use one, all or any combination of circRNA quantification tools listed above in the analysis. To select which tools to use for the analysis, specify the `--tool` parameter in the configuration profile or pass it via the command line when running the workflow:
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --tool 'ciriquant,dcc,find_circ'
-```
-
-> When providing multiple tools, separate each entry with a comma.
-
-### circRNA filtering
-
-`nf-core/circrna` offers robust filtering of each called circRNA to reduce the number of spurious calls within the dataset.
-
-#### BSJ reads
-
-The user can specify the minimum number of reads spanning the back-splice junction site required for a circRNA to be considered for further analysis. circRNAs with counts below this value will be filtered to remove from the results.
-
-To apply this filtering method, specify the `--bsj_reads` parameter in the configuration profile or pass it via the command line when running the workflow:
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --phenotype 'phenotype.csv' \
-    --tool 'ciriquant, dcc, find_circ' \
-    --bsj_reads 2
-```
-
-Disable the filter by setting the value to 0.
-
-#### Multiple tool filtering
-
-When more than one tool has been provided using the `--tool` parameter, the user can specify the minimum number of tools circRNAs must be called by using `--tool_filter`. Setting this parameter to 0 or 1 will result in the union being output, i.e no filtering is applied. Setting this parameter to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.
-
-> The integer provided to the parameter must be less than or equal to the number of quantification tools provided to `--tool`.
-
-To apply this filtering method, specify the `--tool_filter` parameter in the configuration profile or pass it via the command line when running the workflow:
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --tool 'ciriquant, dcc, find_circ' \
-    --bsj_reads 2 \
-    --tool_filter 2
-```
-
-> This filtering method is reflected in the circRNA count matrix. Per tool circRNA annotations are subject to back-splice read filtering only.
-
-#### Handling duplicate circRNAs
-
-In the event a circRNA has been called by more than one quantification tool, the user can specify which aggregate function to apply to the duplicated circRNA. The accepted values are 'mean' and 'max', which are passed to the workflow using the `--duplicates_fun` parameter.
-
-## miRNA prediction
-
-The second module of `nf-core/circrna`, `mirna_prediction` analyses the mature spliced sequences of circRNAs to test for the presence of miRNA response elements using both `miRanda` and `TargetScan`. Results from both tools are consolidated and filtering methods are applied to produce robust miRNA target predictions of circRNAs in the dataset.
-
-To invoke the module, specify the `--module` parameter via the configuration profile or pass it via the command line when running the workflow:
-
-```bash
-nextflow run nf-core/circrna \
-    -profile <docker/singularity/podman/institute> \
-    --genome 'GRCh37' \
-    --input 'samples.csv' \
-    --module 'circrna_discovery,mirna_prediction'
-```
-
-To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
 
 ## Core Nextflow arguments
 

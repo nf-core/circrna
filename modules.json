@@ -10,6 +10,11 @@
                         "git_sha": "cdcdd5e3d806f0ff3983c40c69e0b07bb44ec299",
                         "installed_by": ["modules"]
                     },
+                    "bedtools/groupby": {
+                        "branch": "master",
+                        "git_sha": "3b248b84694d1939ac4bb33df84bf6233a34d668",
+                        "installed_by": ["modules"]
+                    },
                     "bedtools/intersect": {
                         "branch": "master",
                         "git_sha": "575e1bc54b083fb15e7dd8b5fcc40bea60e8ce83",

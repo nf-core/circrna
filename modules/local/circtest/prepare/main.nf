@@ -9,11 +9,10 @@ process CIRCTEST_PREPARE {
     tuple val(meta2), path(gene_counts)
 
     output:
-    tuple val(meta), path('*_circs.tsv'), emit: circ_counts
-    tuple val(meta), path('*_genes.tsv'), emit: gene_counts
+    tuple val(meta), path('*_circs.tsv'), emit: circ_counts, optional: true
+    tuple val(meta), path('*_genes.tsv'), emit: gene_counts, optional: true
 
     path "versions.yml"                 , emit: versions
-
 
     when:
     task.ext.when == null || task.ext.when

@@ -22,11 +22,15 @@
 
 ## Introduction
 
-**nf-core/circrna** is a bioinformatics best-practice analysis pipeline for back-splice junction (BSJ) detection, quantification, annotation and miRNA target prediction of circular RNAs.
+**nf-core/circrna** is a bioinformatics pipeline to analyse total RNA sequencing data obtained from organisms with a reference genome and annotation. It takes a samplesheet and FASTQ files as input, performs quality control (QC), trimming, back-splice junction (BSJ) detection, annotation, quantification and miRNA target prediction of circular RNAs.
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
+The pipeline is still under development, but the BSJ detection and quantification steps are already implemented and functional. The following features are planned to be implemented soon:
 
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources.The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/circrna/results).
+- Isoform-level circRNA detection and quantification
+- circRNA-miRNA interaction analysis using [SPONGE](https://doi.org/10.1093/bioinformatics/btz314) and [spongEffects](https://doi.org/10.1093/bioinformatics/btad276)
+- Improved downstream analyses
+
+If you want to contribute, feel free to create an issue or pull request on the [GitHub repository](https://github.com/nf-core/circrna) or join the [Slack channel](https://nf-co.re/join/slack).
 
 ## Pipeline summary
 
@@ -44,6 +48,8 @@ On release, automated continuous integration tests run the pipeline on a full-si
   - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
   - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
+  - Based on a GTF file
+  - Based on database files (if provided)
 - Extract circRNA sequences and build circular transcriptome
 - Merge circular transcriptome with linear transcriptome derived from provided GTF
 - Quantification of combined circular and linear transcriptome
@@ -112,15 +118,17 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/circrna was originally written by Barry Digby.
+nf-core/circrna was originally written by [Barry Digby](https://github.com/BarryDigby).
+It was later refactored, extended and improved by [Nico Trummer](https://github.com/nictru).
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+We thank the following people for their extensive assistance in the development of this pipeline (in alphabetical order):
 
-- @apeltzer
-- @ewels
-- @maxulysse
-- @KevinMenden
-- @bj-w
+- [Alexander Peltzer](https://github.com/apeltzer)
+- [Ben Whittle](https://github.com/bj-w)
+- [Kevin Menden](https://github.com/KevinMenden)
+- [Marieke Vromman](https://github.com/MariekeVromman)
+- [Maxime Garcia](https://github.com/maxulysse)
+- [Phil Ewels](https://github.com/ewels)
 
 ## Acknowledgements
 
