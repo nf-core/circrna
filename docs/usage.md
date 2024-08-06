@@ -69,7 +69,7 @@ The tools to be used can be specified using the `tools` parameter.
 Each of the tools also quantifies how many reads support each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter.
 Additionally, the parameter `tool_filter` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
 
-For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/dev/output#bsj-detection).
+For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/output#bsj-detection).
 
 ## Annotation
 
