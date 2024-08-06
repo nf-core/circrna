@@ -350,7 +350,7 @@ nf-core/circrna produces a sample-specific set of BSJ calls. The BSJ calls are f
 
 </details>
 
-`nf-core/circrna` combines the sample-specific BSJ calls into a single file. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
+nf-core/circrna combines the sample-specific BSJ calls into a single file. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
 
 ## Quantification
 
