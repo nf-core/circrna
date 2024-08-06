@@ -65,6 +65,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
+                    "pattern": "^(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl)(,(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl))*$"
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
                     "default": "circexplorer2",
                     "pattern": "^((circexplorer2|circrna_finder|ciriquant|dcc|find_circ|mapsplice|segemehl)?,?)*[^,]+$"
