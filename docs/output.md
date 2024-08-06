@@ -395,7 +395,7 @@ The quantification is performed using psirc-quant, which is a wrapper around `ka
 
 </details>
 
-`nf-core/circrna` performs quantification of linear and circular transcripts using `psirc-quant`. The quantification results are stored in HDF5 and TSV format. The pipeline also generates a `tximeta` RDS file containing the sample-specific transcript quantification data. The `tximport` directory contains gene and transcript counts, lengths and TPM values.
+nf-core/circrna performs quantification of linear and circular transcripts using `psirc-quant`. The quantification results are stored in HDF5 and TSV format. The pipeline also generates a `tximeta` RDS file containing the sample-specific transcript quantification data. The `tximport` directory contains gene and transcript counts, lengths and TPM values.
 
 ### Combined
 
