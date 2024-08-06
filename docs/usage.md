@@ -74,7 +74,7 @@ For instructions on how to interpret the output of this section, please check ou
 ## Annotation
 
 The annotation is generally based on the reference GTF file. It can also utilize BED files that are provided by the various circRNA databases.
-The GTF-based annotation allows setting the parameter `exon_boundary` to specify a window around exons. If the BSJ is within this window, it will be annotated as a circRNA - otherwise, it will be annotated as an exon-intron circRNA (EI-circRNA). The default value is 0.
+The GTF-based annotation allows setting the parameter `exon_boundary` to specify a window around exons. If the BSJ is within this window, it will be annotated as a circRNA - otherwise, it will be annotated as an exon-intron circRNA (EI-circRNA). The default value is `0`.
 
 For the database-based annotation, an additional sample sheet is required:
 
