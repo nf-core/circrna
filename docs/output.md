@@ -332,7 +332,7 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 
 </details>
 
-`nf-core/circrna` produces a sample-specific set of BSJ calls. The BSJ calls are filtered for BSJs with at least `tool_filter` supporting tools. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
+nf-core/circrna produces a sample-specific set of BSJ calls. The BSJ calls are filtered for BSJs with at least `tool_filter` supporting tools. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
 
 ### Combined
 
