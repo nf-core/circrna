@@ -48,7 +48,7 @@ If you want to contribute, feel free to create an issue or pull request on the [
   - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
   - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
-  - Based on GTF file
+  - Based on a GTF file
   - Based on database files (if provided)
 - Extract circRNA sequences and build circular transcriptome
 - Merge circular transcriptome with linear transcriptome derived from provided GTF
