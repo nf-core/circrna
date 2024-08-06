@@ -136,7 +136,7 @@ The FastQC plots in this directory are generated relative to the raw, input read
 
 The rough workflow for the BSJ detection looks like this:
 
-1. Each tools detects BSJs in each sample and quantifies how many reads support each BSJ.
+1. Each tool detects BSJs in each sample and quantifies how many reads support each BSJ.
 2. Bring the tool outputs into a common format.
 3. Apply a threshold (parameter `bsj_reads) to the BSJ reads to filter out lowly supported BSJs.
 4. Combine all tool-specific BSJ calls per sample into a single file.
