@@ -140,7 +140,7 @@ The rough workflow for the BSJ detection looks like this:
 2. Bring the tool outputs into a common format.
 3. Apply a threshold (parameter `bsj_reads`) to the BSJ reads to filter out lowly supported BSJs.
 4. Combine all tool-specific BSJ calls per sample into a single file.
-5. Filter out BSJs that are not supported by at least `tool_filter` tools.
+5. Filter out BSJs that are not supported by at least as many tools as specified by`tool_filter`.
 6. Merge all samples into a single file. This now represents the "circular transcriptome"
 
 ### Per tool
