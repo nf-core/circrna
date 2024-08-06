@@ -73,7 +73,7 @@
                     "type": "integer",
                     "fa_icon": "fas fa-circle-notch",
                     "description": "Minimum number of reads spanning circRNA back-splice junction required for circRNA to be output by workflow.",
-                    "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 0 (default).",
+                    "help_text": "Filter low confidence circRNAs by removing circRNAs with read counts below a specified value. To disable, set the value to 1 (default).",
                     "default": 1,
                     "minimum": 1
                 },
