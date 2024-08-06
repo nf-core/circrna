@@ -118,7 +118,7 @@ The FastQC plots in this directory are generated relative to the raw, input read
 
 </details>
 
-`nf-core/circrna` will add the reference files to the output directory if `save_reference` is set to `true`. The resulting files, especially the aligner indices, can be used for speeding up future runs (if the `resume` option cannot be used). In order to achieve this, copy the indices to a location outside of the pipeline's output directory and provide the path to the indices via the corresponding aligner flags (check the [parameters documentation](https://nf-co.re/circrna/dev/parameters/#reference-genome-options) for more information).
+`nf-core/circrna` will add the reference files to the output directory if `save_reference` is set to `true`. The resulting files, especially the aligner indices, can be used for speeding up future runs (if the `resume` option cannot be used). In order to achieve this, copy the indices to a location outside of the pipeline's output directory and provide the path to the indices via the corresponding aligner flags (check the [parameters documentation](https://nf-co.re/circrna/parameters/#reference-genome-options) for more information).
 
 ## Pipeline info
 
