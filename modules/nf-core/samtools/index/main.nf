@@ -35,11 +35,10 @@ process SAMTOOLS_INDEX {
     """
 
     stub:
-    def args = task.ext.args ?: ''
-    def extension = file(input).getExtension() == 'cram' ?
-                    "crai" : args.contains("-c") ?  "csi" : "bai"
     """
-    touch ${input}.${extension}
+    touch ${input}.bai
+    touch ${input}.crai
+    touch ${input}.csi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
