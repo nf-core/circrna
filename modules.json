@@ -15,7 +15,9 @@
                     "bedtools/groupby": {
                         "branch": "master",
                         "git_sha": "3b248b84694d1939ac4bb33df84bf6233a34d668",
-                        "installed_by": ["modules"]
+                        "installed_by": [
+                            "modules"
+                        ]
                     },
                     "bedtools/intersect": {
                         "branch": "master",
@@ -126,7 +128,9 @@
                     "custom/gtffilter": {
                         "branch": "master",
                         "git_sha": "a0aee18374b7f072aa0f89f4d66f5a3a9f8176d2",
-                        "installed_by": ["modules"]
+                        "installed_by": [
+                            "modules"
+                        ]
                     },
                     "custom/tx2gene": {
                         "branch": "master",
