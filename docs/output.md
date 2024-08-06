@@ -118,7 +118,7 @@ The FastQC plots in this directory are generated relative to the raw, input read
 
 </details>
 
-`nf-core/circrna` will add the reference files to the output directory if `save_reference` is set to `true`. The resulting files, especially the aligner indices, can be used for speeding up future runs (if the `resume` option cannot be used). In order to achieve this, copy the indices to a location outside of the pipeline's output directory and provide the path to the indices via the corresponding aligner flags (check the [parameters documentation](https://nf-co.re/circrna/parameters/#reference-genome-options) for more information).
+nf-core/circrna will add the reference files to the output directory if `save_reference` is set to `true`. The resulting files, especially the aligner indices, can be used for speeding up future runs (if the `resume` option cannot be used). In order to achieve this, copy the indices to a location outside of the pipeline's output directory and provide the path to the indices via the corresponding aligner flags (check the [parameters documentation](https://nf-co.re/circrna/parameters/#reference-genome-options) for more information).
 
 ## Pipeline info
 
@@ -223,7 +223,7 @@ An exemption of the above is `star`, which is not used as a standalone BSJ detec
 `DCC` then performs a series of filtering steps on candidate circular reads:
 
 1. Mapping of mates must be consistent with a circular RNA template i.e align to the back-splice junction.
-2. Filtering by a minimum number of junction reads per replicate (`nf-core/circrna` has set this parameter to`-Nr 1 1` allowing all reads).
+2. Filtering by a minimum number of junction reads per replicate (nf-core/circrna has set this parameter to`-Nr 1 1` allowing all reads).
 3. Circular reads are not allowed span more than one gene.
 4. Circular reads aligning to mitochondrial genome are removed.
 5. Circular reads that lack a canonical (GT/AG) splicing signal at the circRNA junction borders are removed.
@@ -413,7 +413,7 @@ nf-core/circrna performs quantification of linear and circular transcripts using
 
 </details>
 
-`nf-core/circrna` combines the sample-specific quantification results into proper count matrices. It also generates an RDS file containing a SummarizedExperiment with the merged transcript quantification data.
+nf-core/circrna combines the sample-specific quantification results into proper count matrices. It also generates an RDS file containing a SummarizedExperiment with the merged transcript quantification data.
 
 ## miRNA Prediction
 
@@ -454,7 +454,7 @@ nf-core/circrna performs quantification of linear and circular transcripts using
 
 </details>
 
-`nf-core/circrna` performs miRNA target filtering on `miRanda` and `TargetScan` predictions:
+nf-core/circrna performs miRNA target filtering on `miRanda` and `TargetScan` predictions:
 
 1. miRNA must be called by both `miRanda` and `TargetScan`.
 2. If a site within the circRNA mature sequence shares duplicate miRNA ID's overlapping the same coordinates, the miRNA with the highest score is kept.
