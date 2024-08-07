@@ -59,7 +59,6 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define paths and threasholds for miRNA analysis.",
-            "required": ["mirna_expression"],
             "properties": {
                 "mirna_expression": {
                     "type": "string",
