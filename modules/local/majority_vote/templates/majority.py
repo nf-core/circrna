@@ -28,7 +28,7 @@ df = pd.read_csv("$bindingsites",
 df = df.groupby(['mirna', 'target'])['tool'].apply(set).reset_index()
 
 # performing majority vote keeping only mirna binding sites that meet the required number of votes
-min_tools = int("${params.mirna_vote}")
+min_tools = int("${params.mirna_tool_filter}")
 df = df[df['tool'].apply(len) >= min_tools].copy()
 df = df.drop('tool', axis=1)
 

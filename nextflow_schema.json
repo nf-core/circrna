@@ -147,7 +147,7 @@
                     "default": "miranda, targetscan",
                     "pattern": "^((miranda|targetscan|pita|tarpmir)?,?)*[^,]+$"
                 },
-                "mirna_vote": {
+                "mirna_tool_filter": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
                     "description": "Specify the number of votes required for a miRNA to be further considered in downstream analysis.'",
