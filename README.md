@@ -54,9 +54,13 @@ If you want to contribute, feel free to create an issue or pull request on the [
 - Merge circular transcriptome with linear transcriptome derived from provided GTF
 - Quantification of combined circular and linear transcriptome
   - [`psirc-quant`](https://github.com/Christina-hshi/psirc)
-- miRNA binding affinity analysis (only if the `mature` parameter is provided)
-  - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
-  - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+- miRNA binding affinity analysis (only if the `mature` and `mirna_expression` parameter is provided)
+  - Normalizes miRNA expression
+  - Binding site prediction
+    - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
+    - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
+  - Perform  majority vote on binding sites
+  - Compute correlations between miRNA and transcript expression levels
 - Statistical tests (only if the `phenotype` parameter is provided)
   - [`CircTest`](https://github.com/dieterich-lab/CircTest)
 - MultiQC report [`MultiQC`](http://multiqc.info/)
