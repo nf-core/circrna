@@ -369,6 +369,7 @@ The quantification is performed using psirc-quant, which is a wrapper around `ka
   - `*.marked.fasta`: Transcript sequences in FASTA format with the circRNA sequences marked with a `C` field in the header.
   - `*.tx2gene.tsv`: Transcript to gene mapping file.
 
+</details>
 ### Per sample
 
 <details markdown="1">
