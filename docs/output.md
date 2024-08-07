@@ -510,4 +510,4 @@ nf-core/circrna processes miRNA expression data by normalizing and filtering it 
 
 </details>
 
-nf-core/circrna computes correlations between miRNA and transcript expression levels and writes the results to individual tsv files for each miRNA-target interaction specified in the input binding sites file.
+nf-core/circrna computes correlations between miRNA and transcript expression levels and writes the results to individual TSV files for each miRNA-target interaction specified in the input binding sites file.
