@@ -1,4 +1,4 @@
-name: mirna_filtering 
+name: mirna_filtering
 channels:
   - conda-forge
   - defaults

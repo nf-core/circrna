@@ -59,7 +59,7 @@ If you want to contribute, feel free to create an issue or pull request on the [
   - Binding site prediction
     - [`miRanda`](http://cbio.mskcc.org/miRNA2003/miranda.html)
     - [`TargetScan`](http://www.targetscan.org/cgi-bin/targetscan/data_download.vert72.cgi)
-  - Perform  majority vote on binding sites
+  - Perform majority vote on binding sites
   - Compute correlations between miRNA and transcript expression levels (only if the `mirna_expression` parameter is provided)
 - Statistical tests (only if the `phenotype` parameter is provided)
   - [`CircTest`](https://github.com/dieterich-lab/CircTest)

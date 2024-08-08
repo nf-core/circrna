@@ -457,7 +457,6 @@ Each tool utilizes unique algorithms and criteria to identify potential miRNA bi
 
 [TargetScan](http://www.targetscan.org/vert_72/) predicts biological targets of miRNAs by searching for the presence of conserved 8mer, 7mer, and 6mer sites within the circRNA mature sequence that match the seed region of each miRNA.
 
-
 #### Targets
 
 <details markdown="1">
