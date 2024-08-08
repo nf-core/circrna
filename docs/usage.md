@@ -100,9 +100,11 @@ The following tools are currently supported:
 - `miRanda`
 - `TargetScan`
 
-This section will only be executed if the `mature` and `mirna_expression` parameters are provided.
+This section will only be executed if the `mature` parameter is provided.
 The parameter `mature` should point to a FASTA file containing mature miRNA sequences.
-The `mirna_expression` parameter should reference a TSV file containing the miRNA expression for each sample in your samplesheet.
+By providing a TSV file containing the miRNA expression of all samples via `mirna_expression`, this
+subworkflow will perform additional normalization and filtering of `mirna_expression` and `mature` before
+executing the miRNA binding size prediction.
 
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
 
