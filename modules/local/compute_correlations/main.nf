@@ -21,7 +21,7 @@ process COMPUTE_CORRELATIONS {
 
     script:
     template 'compute_correlations.R'
-    
+
     stub:
     """
     touch ${meta.id}.circrna_correlation.tsv
