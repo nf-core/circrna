@@ -111,9 +111,6 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(MAPSPLICE.out.bed)
     }
 
-    ch_bsj_bed_per_sample_tool     = FILTER_BSJS( ch_bsj_bed_per_sample_tool, [] ).output
-    ch_versions                    = ch_versions.mix(FILTER_BSJS.out.versions)
-
     //
     // QUANTIFY BSJs PER TOOL
     //
@@ -127,10 +124,18 @@ workflow BSJ_DETECTION {
     ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
 
     //
+    // APPLY bsj_reads FILTER
+    //
+
+    ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS( ch_bsj_bed_per_sample_tool, [] ).output
+    ch_versions                         = ch_versions.mix(FILTER_BSJS.out.versions)
+
+
+    //
     // MERGE BED FILES
     //
 
-    MASK_SCORES( ch_bsj_bed_per_sample_tool, [] )
+    MASK_SCORES( ch_bsj_bed_per_sample_tool_filtered, [] )
     ch_versions = ch_versions.mix(MASK_SCORES.out.versions)
     ch_bsj_bed_per_sample_tool_masked = MASK_SCORES.out.output
         .filter{ meta, bed -> !bed.empty }
