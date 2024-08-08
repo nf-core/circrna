@@ -9,7 +9,7 @@ include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
 
 workflow MIRNA_PREDICTION {
 
-    take: 
+    take:
     transcriptome_fasta
     circrna_annotation
     ch_mature
@@ -25,16 +25,16 @@ workflow MIRNA_PREDICTION {
     //
 
     if (params.mirna_expression) {
-        
+
         ch_mirna_normalized = DESEQ2_NORMALIZATION( ch_mirna ).normalized
 
         ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
-        ch_mirna_filtered = MIRNA_FILTERING(ch_mirna_normalized, 
-                                            params.mirna_min_sample_percentage,  
+        ch_mirna_filtered = MIRNA_FILTERING(ch_mirna_normalized,
+                                            params.mirna_min_sample_percentage,
                                             params.mirna_min_reads
                                             ).filtered
-        
+
         ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
 
         //
@@ -52,8 +52,8 @@ workflow MIRNA_PREDICTION {
             .combine(ch_uniq_mirnas.map{ it -> [it]}) // Not sure why this mapping is necessary but I think it is
             .filter{ record, mirnas ->
                 ch_uniq_mirnas.contains(record.id).value
-            }.map{ record, mirnas -> 
-                ">${record.id}\n${record.seqString}" 
+            }.map{ record, mirnas ->
+                ">${record.id}\n${record.seqString}"
             }
             .collectFile( name: 'mature_filtered.fa', newLine: true)
             .map{ it -> [[id: 'mature_filtered'], it]}
@@ -70,10 +70,8 @@ workflow MIRNA_PREDICTION {
             .splitText(by: 100, file: true)
             .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-        COMPUTE_CORRELATIONS( ch_binding_site_batches,
-                              ch_mirna_filtered,
-                              quantification_rds )
-        
+        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
+
         ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
             .map{meta, results -> results}
             .flatten().collect()
