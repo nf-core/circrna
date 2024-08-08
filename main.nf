@@ -60,6 +60,7 @@ workflow NFCORE_CIRCRNA {
     ch_mature      = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)]) : Channel.empty()
     ch_phenotype   = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists:true)]) : Channel.empty()
     ch_annotation  = params.annotation ? Channel.fromSamplesheet("annotation") : Channel.empty()
+    ch_mirna       = params.mature && params.mirna_expression ? Channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists:true)]) : Channel.empty()
 
     CIRCRNA (
         ch_samplesheet,
@@ -68,7 +69,8 @@ workflow NFCORE_CIRCRNA {
         ch_gtf,
         ch_mature,
         ch_annotation,
-        ch_versions
+        ch_versions,
+        ch_mirna
     )
 
     emit:

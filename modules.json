@@ -25,6 +25,12 @@
                         "git_sha": "571a5feac4c9ce0a8df0bc15b94230e7f3e8db47",
                         "installed_by": ["modules"]
                     },
+                    "bioawk": {
+                        "branch": "master",
+                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/bioawk/bioawk.diff"
+                    },
                     "bowtie/align": {
                         "branch": "master",
                         "git_sha": "3c77ca9aac783e76c3614a06db3bfe4fef619bde",
@@ -142,32 +148,32 @@
                     },
                     "samtools/flagstat": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["bam_stats_samtools"]
                     },
                     "samtools/idxstats": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["bam_stats_samtools"]
                     },
                     "samtools/index": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["bam_sort_stats_samtools", "modules"]
                     },
                     "samtools/sort": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["bam_sort_stats_samtools", "modules"]
                     },
                     "samtools/stats": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["bam_stats_samtools"]
                     },
                     "samtools/view": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "6c2309aaec566c0d44a6cf14d4b2d0c51afe2e91",
                         "installed_by": ["modules"]
                     },
                     "segemehl/align": {
@@ -211,12 +217,12 @@
                 "nf-core": {
                     "bam_sort_stats_samtools": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "46eca555142d6e597729fcb682adcc791796f514",
                         "installed_by": ["subworkflows"]
                     },
                     "bam_stats_samtools": {
                         "branch": "master",
-                        "git_sha": "04fbbc7c43cebc0b95d5b126f6d9fe4effa33519",
+                        "git_sha": "0eacd714effe5aac1c1de26593873960b3346cab",
                         "installed_by": ["bam_sort_stats_samtools", "subworkflows"]
                     },
                     "utils_nextflow_pipeline": {
