@@ -6,6 +6,7 @@ include { BEDTOOLS_GROUPBY as COUNT_TOOLS            } from '../../modules/nf-co
 include { GAWK as FILTER_MIN_TOOLS                   } from '../../modules/nf-core/gawk'
 include { GNU_SORT as CONCAT_SAMPLES                 } from '../../modules/nf-core/gnu/sort'
 include { GAWK as EXTRACT_COUNTS                     } from '../../modules/nf-core/gawk'
+include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL      } from '../../modules/nf-core/csvtk/join'
 include { UPSET as UPSET_SAMPLES                     } from '../../modules/local/upset'
 include { UPSET as UPSET_ALL                         } from '../../modules/local/upset'
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED        } from '../../modules/nf-core/bedtools/getfasta'
@@ -147,9 +148,10 @@ workflow BSJ_DETECTION {
     EXTRACT_COUNTS( ch_bsj_bed_per_sample_tool, [] )
     ch_versions = ch_versions.mix(EXTRACT_COUNTS.out.versions)
 
-    EXTRACT_COUNTS.out.output.map{ meta, bed -> [[id: meta.tool], meta.id, bed]}
-        .groupTuple()
-        .view()
+    COMBINE_COUNTS_PER_TOOL( EXTRACT_COUNTS.out.output
+        .map{ meta, bed -> [[id: meta.tool], bed]}
+        .groupTuple() )
+    ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
 
     //
     // UPSET PLOTS
