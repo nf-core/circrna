@@ -7,7 +7,7 @@ include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_t
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../modules/nf-core/cat/cat'
 include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
 
-workflow MIRNA_BINDINGSITES { 
+workflow MIRNA_BINDINGSITES {
     take:
     transcriptome_fasta
     circrna_bed12
@@ -35,26 +35,26 @@ workflow MIRNA_BINDINGSITES {
     if (tools_selected.size() == 0) {
         error 'No tools selected for miRNA discovery.'
     }
-    
+
     if (tools_selected.contains('targetscan')) {
         //
         // TARGETSCAN WORKFLOW:
         //
         TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
         UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
-        
+
         ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
         ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
     }
-    
+
     if (tools_selected.contains('miranda')) {
         //
         // MIRANDA WORKFLOW:
         //
         MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature}.collect() )
         UNIFY_MIRANDA( MIRANDA.out.txt, [] )
-        
+
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
         ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
@@ -67,7 +67,7 @@ workflow MIRNA_BINDINGSITES {
 
     // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
     consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
-    
+
     MIRNA_TARGETS( consolidate_targets )
 
     ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
