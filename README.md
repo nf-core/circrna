@@ -130,6 +130,7 @@ We thank the following people for their extensive assistance in the development 
 - [Alexander Peltzer](https://github.com/apeltzer)
 - [Ben Whittle](https://github.com/bj-w)
 - [Kevin Menden](https://github.com/KevinMenden)
+- [Malte Weyrich](https://github.com/mweyrich28)
 - [Marieke Vromman](https://github.com/MariekeVromman)
 - [Maxime Garcia](https://github.com/maxulysse)
 - [Phil Ewels](https://github.com/ewels)
