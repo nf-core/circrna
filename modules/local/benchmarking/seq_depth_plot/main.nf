@@ -10,6 +10,7 @@ process SEQ_DEPTH_CORRELLATION {
         path(depth)
     output:
         path("*.tsv")  , emit: report
+        path("versions.yml"), emit: versions
     script:
         template "correlation.py"
 }

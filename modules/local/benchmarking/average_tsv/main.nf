@@ -1,4 +1,4 @@
-process AVERGAGE_TSV {
+process AVERAGE_TSV {
     label "process_single"
 
     conda "bioconda::pandas=1.5.2"
@@ -11,7 +11,8 @@ process AVERGAGE_TSV {
     path(tsv)
 
     output:
-    path(tsv)
+    path(tsv), emit: tsv
+    path("versions.yml"), emit: versions
 
     script:
     template "average.py"

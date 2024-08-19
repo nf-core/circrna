@@ -13,6 +13,7 @@ process PNG_JSON {
 
     output:
     path("*_mqc.json")  , emit: report
+    path("versions.yml"), emit: versions
 
     script:
     template "json.py"

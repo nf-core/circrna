@@ -9,7 +9,8 @@ process OVERLAP_PLOT {
         path "versions.yml"
 
     output:
-        path("*_mqc.png") , emit: report
+        path("*_mqc.png") , emit: plots
+        path("versions.yml"), emit: versions
 
     script:
         template "create_plots.py"
