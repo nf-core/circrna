@@ -26,6 +26,7 @@ process CIRIQUANT {
     def VERSION = '2.1.0'
     def strandedness = meta.strandedness ?: 'auto'
     def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
+    def reads_string = meta.single_end ? "-r ${reads}" : "-1 ${reads[0]} -2 ${reads[1]}"
     """
     BWA_FILE=`ls ${bwa}/*.bwt`
     BWA_PREFIX=`basename \$BWA_FILE .bwt`
@@ -37,8 +38,7 @@ process CIRIQUANT {
 
     CIRIquant \\
         -t ${task.cpus} \\
-        -1 ${reads[0]} \\
-        -2 ${reads[1]} \\
+        ${reads_string} \\
         --config config.yml \\
         --no-gene \\
         -o ${prefix} \\
