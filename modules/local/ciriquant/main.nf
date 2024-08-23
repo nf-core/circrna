@@ -7,10 +7,11 @@ process CIRIQUANT {
 
     input:
     tuple val(meta), path(reads)
-    tuple val(meta2), path(gtf)
-    tuple val(meta3), path(fasta)
-    tuple val(meta4), path(bwa)
-    tuple val(meta5), path(hisat2)
+    tuple val(meta2), path(bed)
+    tuple val(meta3), path(gtf)
+    tuple val(meta4), path(fasta)
+    tuple val(meta5), path(bwa)
+    tuple val(meta6), path(hisat2)
 
     output:
     tuple val(meta), path("${prefix}/${prefix}.gtf"), emit: gtf
@@ -27,6 +28,7 @@ process CIRIQUANT {
     def strandedness = meta.strandedness ?: 'auto'
     def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
     def reads_string = meta.single_end ? "-r ${reads}" : "-1 ${reads[0]} -2 ${reads[1]}"
+    def bed_string = bed ? "--bed ${bed}" : ''
     """
     BWA_FILE=`ls ${bwa}/*.bwt`
     BWA_PREFIX=`basename \$BWA_FILE .bwt`
@@ -39,6 +41,7 @@ process CIRIQUANT {
     CIRIquant \\
         -t ${task.cpus} \\
         ${reads_string} \\
+        ${bed_string} \\
         --config config.yml \\
         --no-gene \\
         -o ${prefix} \\
