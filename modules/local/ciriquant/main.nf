@@ -43,7 +43,6 @@ process CIRIQUANT {
         ${reads_string} \\
         ${bed_string} \\
         --config config.yml \\
-        --no-gene \\
         -o ${prefix} \\
         -p ${prefix} \\
         ${library_type} \\
