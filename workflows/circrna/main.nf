@@ -176,7 +176,9 @@ workflow CIRCRNA {
         BSJ_DETECTION.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
-        PREPARE_GENOME.out.faidx
+        PREPARE_GENOME.out.faidx,
+        PREPARE_GENOME.out.bwa,
+        PREPARE_GENOME.out.hisat2
     )
 
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)

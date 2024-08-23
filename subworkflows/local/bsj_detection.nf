@@ -157,7 +157,7 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
     )
     ch_versions = ch_versions.mix(CONCAT_SAMPLES.out.versions)
-    ch_bsj_bed_combined = CONCAT_SAMPLES.out.sorted
+    ch_bsj_bed_combined = CONCAT_SAMPLES.out.sorted.collect()
 
     //
     // UPSET PLOTS
@@ -183,8 +183,8 @@ workflow BSJ_DETECTION {
 
     ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, exon_boundary, ch_annotation )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
-    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed
-    ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf
+    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed.collect()
+    ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf.collect()
 
     ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_gtf, exon_boundary, ch_annotation )
     ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)

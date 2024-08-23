@@ -1,4 +1,5 @@
 include { PSIRC_QUANT } from './quantification_tools/psirc_quant'
+include { CIRIQUANT   } from './quantification_tools/ciriquant'
 
 workflow QUANTIFICATION {
     take:
@@ -12,6 +13,8 @@ workflow QUANTIFICATION {
     bootstrap_samples
     ch_phenotype
     ch_faidx
+    bwa_index
+    hisat2_index
 
     main:
     ch_versions = Channel.empty()
@@ -41,6 +44,17 @@ workflow QUANTIFICATION {
         ch_versions = ch_versions.mix(PSIRC_QUANT.out.versions)
     }
 
+    if (tools_selected.contains('ciriquant')) {
+        CIRIQUANT(
+            reads,
+            circ_annotation_bed,
+            ch_gtf,
+            ch_fasta,
+            bwa_index,
+            hisat2_index
+        )
+        ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
+    }
 
     emit:
     gene     = ch_gene_counts
