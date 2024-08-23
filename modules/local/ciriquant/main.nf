@@ -3,9 +3,7 @@ process CIRIQUANT {
     label 'process_high'
 
     conda "bioconda::ciriquant=1.1.2"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ciriquant:1.1.2--pyhdfd78af_2' :
-        'biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
+    container "docker.io/nicotru/ciriquant"
 
     input:
     tuple val(meta), path(reads)
@@ -29,18 +27,13 @@ process CIRIQUANT {
     def strandedness = meta.strandedness ?: 'auto'
     def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
     """
-    BWA=`which bwa`
-    HISAT2=`which hisat2`
-    STRINGTIE=`which stringtie`
-    SAMTOOLS=`which samtools`
-
     BWA_FILE=`ls ${bwa}/*.bwt`
     BWA_PREFIX=`basename \$BWA_FILE .bwt`
 
     HISAT2_FILE=`ls ${hisat2}/*.1.ht2`
     HISAT2_PREFIX=`basename \$HISAT2_FILE .1.ht2`
 
-    printf "name: ciriquant\\ntools:\\n  bwa: \$BWA\\n  hisat2: \$HISAT2\\n  stringtie: \$STRINGTIE\\n  samtools: \$SAMTOOLS\\n\\nreference:\\n  fasta: ${fasta}\\n  gtf: ${gtf}\\n  bwa_index: ${bwa}/\$BWA_PREFIX\\n  hisat_index: ${hisat2}/\$HISAT2_PREFIX" > config.yml
+    printf "name: ciriquant\\nreference:\\n  fasta: ${fasta}\\n  gtf: ${gtf}\\n  bwa_index: ${bwa}/\$BWA_PREFIX\\n  hisat_index: ${hisat2}/\$HISAT2_PREFIX" > config.yml
 
     CIRIquant \\
         -t ${task.cpus} \\
