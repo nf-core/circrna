@@ -22,6 +22,7 @@ workflow QUANTIFICATION {
     ch_circ_counts = Channel.empty()
     ch_ciriquant = Channel.empty()
     ch_stringtie = Channel.empty()
+    ch_rds = Channel.empty()
 
     tools_selected = params.quantification_tools.split(',').collect{it.trim().toLowerCase()}
     if (tools_selected.size() == 0) {
@@ -44,6 +45,7 @@ workflow QUANTIFICATION {
         ch_circ_counts = ch_circ_counts
             .mix(PSIRC_QUANT.out.circular_tx_counts.map{meta, counts -> [meta + [quantification: 'psirc'], counts]})
         ch_versions = ch_versions.mix(PSIRC_QUANT.out.versions)
+        ch_rds = ch_rds.mix(PSIRC_QUANT.out.rds)
     }
 
     if (tools_selected.contains('ciriquant')) {
@@ -67,6 +69,7 @@ workflow QUANTIFICATION {
     circ      = ch_circ_counts
     ciriquant = ch_ciriquant
     stringtie = ch_stringtie
+    rds       = ch_rds
 
     versions = ch_versions
 }
