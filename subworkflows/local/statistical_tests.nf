@@ -32,8 +32,14 @@ workflow STATISTICAL_TESTS {
         .map{ annotations -> [annotations.sample, annotations.condition] }
         .join(ch_ciriquant.map{ meta, gtf -> [meta.id, gtf] })
         .join(ch_stringtie.map{ meta, gtf -> [meta.id, gtf] })
-        .groupTuple(by: 1)
-        .map{ samples, condition, ciriquant, stringtie -> [condition, samples, ciriquant, stringtie] }
+        .map{ sample, condition, ciriquant, stringtie -> [condition, [sample, ciriquant, stringtie]] }
+        .groupTuple()
+        .map{ condition, samples -> 
+            [condition, samples.sort({ a, b -> a[0] <=> b[0] }).transpose()]
+        }
+        .map{ condition, samples -> 
+            [condition, samples[0], samples[1], samples[2]]
+        }
 
     ch_condition_pairs = ch_condition_samples
         .combine(ch_condition_samples)
@@ -44,7 +50,8 @@ workflow STATISTICAL_TESTS {
                 s_control + s_treatment,
                 f_ciri_control + f_ciri_treatment,
                 f_stringtie_control + f_stringtie_treatment,
-                ['C'] * s_control.size() + ['T'] * s_treatment.size()]}
+                ['C'] * s_control.size() + ['T'] * s_treatment.size()
+            ]}
 
     CIRIQUANT_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, ciri, conditions]}
