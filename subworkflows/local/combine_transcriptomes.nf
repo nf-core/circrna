@@ -24,6 +24,9 @@ workflow COMBINE_TRANSCRIPTOMES {
     TRANSCRIPTOME(EXCLUDE_OVERLONG_TRANSCRIPTS.out.output, ch_genome_fasta)
     ch_versions = ch_versions.mix(TRANSCRIPTOME.out.versions)
 
+    TRANSCRIPTOME.out.fasta.ifEmpty {
+        error 'No transcriptome fasta file produced.'
+    }
 
     emit:
     fasta = TRANSCRIPTOME.out.fasta

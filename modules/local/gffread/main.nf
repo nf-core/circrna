@@ -12,9 +12,9 @@ process GFFREAD {
     tuple val(meta2), path(genome)
 
     output:
-    tuple val(meta), path("$outfile")    , emit: output
-    tuple val(meta), path("*.(fa|fasta)"), emit: fasta, optional: true
-    path "versions.yml"                  , emit: versions
+    tuple val(meta), path("$outfile"), emit: output
+    tuple val(meta), path("*.fasta") , emit: fasta, optional: true
+    path "versions.yml"              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,9 +22,9 @@ process GFFREAD {
     script:
     def args          = task.ext.args   ?: ''
     def prefix        = task.ext.prefix ?: "${meta.id}"
-    def extension     = task.ext.extension ?: gff.extension
+    def suffix        = task.ext.suffix ?: gff.extension
     def genome_string = genome ? "-g ${genome}" : ''
-    outfile           = "${prefix}.${extension}"
+    outfile           = "${prefix}.${suffix}"
     """
     gffread \\
         ${genome_string} \\
