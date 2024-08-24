@@ -1,4 +1,4 @@
-include { CIRIQUANT as MAIN                } from '../../../modules/local/ciriquant'
+include { CIRIQUANT as MAIN                } from '../../../modules/local/ciriquant/ciriquant'
 include { PYGTFTK_TABULATE as EXTRACT_CIRC } from '../../../modules/local/pygtftk/tabulate'
 include { GAWK as EXTRACT_GENES            } from '../../../modules/nf-core/gawk'
 include { GAWK as NAME_EXPRESSION          } from '../../../modules/nf-core/gawk'
@@ -38,7 +38,7 @@ workflow CIRIQUANT {
 
     ch_tables = NAME_EXPRESSION.out.output.branch{ meta, table ->
         circ: meta.type == 'circ'
-        gene: meta.type == 'gene'    
+        gene: meta.type == 'gene'
     }
 
     JOIN_GENE(
@@ -54,6 +54,7 @@ workflow CIRIQUANT {
     emit:
     gene_tpm = JOIN_GENE.out.csv
     circ_cpm = JOIN_CIRC.out.csv
+    raw = MAIN.out.gtf
 
     versions = ch_versions
 }

@@ -1,4 +1,4 @@
-include { CIRIQUANT as MAIN } from '../../../modules/local/ciriquant'
+include { CIRIQUANT as MAIN } from '../../../modules/local/ciriquant/ciriquant'
 include { GAWK as UNIFY     } from '../../../modules/nf-core/gawk'
 
 workflow CIRIQUANT {

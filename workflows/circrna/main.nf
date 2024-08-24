@@ -206,6 +206,7 @@ workflow CIRCRNA {
     STATISTICAL_TESTS(
         QUANTIFICATION.out.gene,
         QUANTIFICATION.out.circ,
+        QUANTIFICATION.out.ciriquant,
         ch_phenotype
     )
 

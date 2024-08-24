@@ -20,6 +20,7 @@ workflow QUANTIFICATION {
     ch_versions = Channel.empty()
     ch_gene_counts = Channel.empty()
     ch_circ_counts = Channel.empty()
+    ch_ciriquant = Channel.empty()
 
     tools_selected = params.quantification_tools.split(',').collect{it.trim().toLowerCase()}
     if (tools_selected.size() == 0) {
@@ -56,11 +57,13 @@ workflow QUANTIFICATION {
         ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
         ch_gene_counts = ch_gene_counts.mix(CIRIQUANT.out.gene_tpm)
         ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
+        ch_ciriquant = ch_ciriquant.mix(CIRIQUANT.out.raw)
     }
 
     emit:
-    gene     = ch_gene_counts
-    circ     = ch_circ_counts
+    gene      = ch_gene_counts
+    circ      = ch_circ_counts
+    ciriquant = ch_ciriquant
 
     versions = ch_versions
 }
