@@ -1,5 +1,6 @@
 include { CIRCTEST_PREPARE  } from '../../modules/local/circtest/prepare'
 include { CIRCTEST_CIRCTEST } from '../../modules/local/circtest/circtest'
+include { CIRIQUANT_DEA     } from '../../modules/local/ciriquant/dea'
 
 workflow STATISTICAL_TESTS {
     take:
@@ -32,10 +33,14 @@ workflow STATISTICAL_TESTS {
 
     ch_condition_pairs = ch_condition_samples
         .combine(ch_condition_samples)
-        .filter{ c_control, s_control, f_control, c_case, s_case, f_case -> c_control != c_case }
-        .map{ c_control, s_control, f_control, c_case, s_case, f_case ->
-            [s_control + s_case, f_control + f_case, [c_control] * s_control.size() + [c_case] * s_case.size()] }
-        .view()
+        .filter{ c_control, s_control, f_control, c_treatment, s_treatment, f_treatment -> c_control != c_treatment }
+        .map{ c_control, s_control, f_control, c_treatment, s_treatment, f_treatment ->
+            [   [id: "${c_control}:${c_treatment}"],
+                s_control + s_treatment,
+                f_control + f_treatment,
+                ['C'] * s_control.size() + ['T'] * s_treatment.size()]}
+
+    CIRIQUANT_DEA(ch_condition_pairs)
 
     emit:
     versions = ch_versions
