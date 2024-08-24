@@ -11,7 +11,7 @@ process CIRIQUANT_DEA {
     tuple val(meta), val(samples), path(gtfs), val(conditions)
 
     output:
-    tuple val(meta), path("${samplesheet_path}"), emit: samplesheet
+    tuple val(meta), path("${library_path}"), path("${annotation_path}"), path("${expression_path}"), path("${ratio_path}"), emit: results
     path "versions.yml"                         , emit: versions
 
     when:
@@ -25,8 +25,18 @@ process CIRIQUANT_DEA {
         .collect{ sample, gtf, condition ->
             "${sample}\t${gtf}\t${condition}" }.join('\n')
     samplesheet_path = "${prefix}_samplesheet.tsv"
+    library_path = "${prefix}_library.tsv"
+    annotation_path = "${prefix}_annotation.tsv"
+    expression_path = "${prefix}_expression.tsv"
+    ratio_path = "${prefix}_ratio.tsv"
     """
     echo -e "${samplesheet}" > ${samplesheet_path}
+
+    prep_CIRIquant -i ${samplesheet_path} \\
+        --lib ${library_path} \\
+        --circ ${annotation_path} \\
+        --bsj ${expression_path} \\
+        --ratio ${ratio_path}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
