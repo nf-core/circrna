@@ -26,7 +26,7 @@ workflow COMBINE_TRANSCRIPTOMES {
 
 
     emit:
-    fasta = TRANSCRIPTOME.out.output
+    fasta = TRANSCRIPTOME.out.fasta
     gtf   = EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
 
     versions = ch_versions

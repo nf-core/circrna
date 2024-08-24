@@ -12,8 +12,9 @@ process GFFREAD {
     tuple val(meta2), path(genome)
 
     output:
-    tuple val(meta), path("$outfile"), emit: output
-    path "versions.yml"              , emit: versions
+    tuple val(meta), path("$outfile")    , emit: output
+    tuple val(meta), path("*.(fa|fasta)"), emit: fasta, optional: true
+    path "versions.yml"                  , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,9 +28,8 @@ process GFFREAD {
     """
     gffread \\
         ${genome_string} \\
-        -w $outfile \\
         $args \\
-        $gff
+        $gff > ${outfile}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
