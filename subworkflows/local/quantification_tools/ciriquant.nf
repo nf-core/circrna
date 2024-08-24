@@ -1,7 +1,10 @@
 include { CIRIQUANT as MAIN                } from '../../../modules/local/ciriquant'
 include { PYGTFTK_TABULATE as EXTRACT_CIRC } from '../../../modules/local/pygtftk/tabulate'
 include { GAWK as EXTRACT_GENES            } from '../../../modules/nf-core/gawk'
-include { GAWK as NAME_EXPRESSION           } from '../../../modules/nf-core/gawk'
+include { GAWK as NAME_EXPRESSION          } from '../../../modules/nf-core/gawk'
+include { CSVTK_JOIN as JOIN_GENE          } from '../../../modules/nf-core/csvtk/join'
+include { CSVTK_JOIN as JOIN_CIRC          } from '../../../modules/nf-core/csvtk/join'
+
 
 workflow CIRIQUANT {
     take:
@@ -31,6 +34,22 @@ workflow CIRIQUANT {
         )
     
     NAME_EXPRESSION(ch_tables, [])
+    ch_versions = ch_versions.mix(NAME_EXPRESSION.out.versions)
+
+    ch_tables = NAME_EXPRESSION.out.output.branch{ meta, table ->
+        circ: meta.type == 'circ'
+        gene: meta.type == 'gene'    
+    }
+
+    JOIN_GENE(
+        ch_tables.gene.map{meta, table -> table}.collect().map{[[id: "gene"], it]}
+    )
+    ch_versions = ch_versions.mix(JOIN_GENE.out.versions)
+
+    JOIN_CIRC(
+        ch_tables.circ.map{meta, table -> table}.collect().map{[[id: "circ"], it]}
+    )
+    ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
     
     emit:
 
