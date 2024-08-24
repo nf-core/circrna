@@ -2,7 +2,7 @@ process CIRIQUANT_DE {
     tag "$meta.id"
     label 'process_high'
 
-    container "docker.io/nicotru/ciriquant:1.0.1"
+    container "docker.io/nicotru/ciriquant:1.0.2"
 
     input:
     tuple val(meta), path(library), path(expression), path(gene)
@@ -24,7 +24,8 @@ process CIRIQUANT_DE {
         --lib ${library} \\
         --bsj ${expression} \\
         --gene ${gene} \\
-        --out ${circ_path}
+        --out ${circ_path} \\
+        --out2 ${gene_path}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
