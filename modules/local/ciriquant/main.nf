@@ -14,9 +14,10 @@ process CIRIQUANT {
     tuple val(meta6), path(hisat2)
 
     output:
-    tuple val(meta), path("${prefix}/${prefix}.gtf"), emit: gtf
-    path("${prefix}")                               , emit: results
-    path "versions.yml"                             , emit: versions
+    tuple val(meta), path("${prefix}/${prefix}.gtf")            , emit: gtf
+    tuple val(meta), path("${prefix}/gene/${prefix}_genes.list"), emit: gene, optional: true
+    path("${prefix}")                                           , emit: results
+    path "versions.yml"                                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
