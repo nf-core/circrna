@@ -24,7 +24,7 @@ workflow CIRIQUANT {
     EXTRACT_CIRC( MAIN.out.gtf )
     ch_versions = ch_versions.mix(EXTRACT_CIRC.out.versions)
 
-    EXTRACT_GENES( MAIN.out.gene, [] )
+    EXTRACT_GENES( MAIN.out.gene_list, [] )
     ch_versions = ch_versions.mix(EXTRACT_GENES.out.versions)
 
     ch_tables = EXTRACT_CIRC.out.table
@@ -52,9 +52,10 @@ workflow CIRIQUANT {
     ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
     
     emit:
-    gene_tpm = JOIN_GENE.out.csv
-    circ_cpm = JOIN_CIRC.out.csv
-    raw = MAIN.out.gtf
+    gene_tpm  = JOIN_GENE.out.csv
+    circ_cpm  = JOIN_CIRC.out.csv
+    raw       = MAIN.out.gtf
+    stringtie = MAIN.out.gene_gtf
 
-    versions = ch_versions
+    versions  = ch_versions
 }

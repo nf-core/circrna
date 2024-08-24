@@ -7,6 +7,7 @@ workflow STATISTICAL_TESTS {
     ch_gene_counts
     ch_circ_counts
     ch_ciriquant
+    ch_stringtie
     ch_phenotype
 
     main:
@@ -41,6 +42,8 @@ workflow STATISTICAL_TESTS {
                 ['C'] * s_control.size() + ['T'] * s_treatment.size()]}
 
     CIRIQUANT_DEA(ch_condition_pairs)
+
+    ch_stringtie.view()
 
     emit:
     versions = ch_versions

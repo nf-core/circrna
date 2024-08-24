@@ -207,6 +207,7 @@ workflow CIRCRNA {
         QUANTIFICATION.out.gene,
         QUANTIFICATION.out.circ,
         QUANTIFICATION.out.ciriquant,
+        QUANTIFICATION.out.stringtie,
         ch_phenotype
     )
 
