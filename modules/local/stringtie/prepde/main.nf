@@ -25,7 +25,7 @@ process STRINGTIE_PREPDE {
     samplesheet = [samples, gtfs]
         .transpose()
         .collect{ sample, gtf ->
-            "${sample}\t${gtf}" }.join('\n')
+            "${sample}\\t${gtf}" }.join('\\n')
     transcript_path = "${prefix}_transcript_count_matrix.csv"
     gene_path = "${prefix}_gene_count_matrix.csv"
     """

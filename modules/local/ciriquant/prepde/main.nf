@@ -23,7 +23,7 @@ process CIRIQUANT_PREPDE {
     samplesheet = [samples, gtfs, conditions]
         .transpose()
         .collect{ sample, gtf, condition ->
-            "${sample}\t${gtf}\t${condition}" }.join('\n')
+            "${sample}\\t${gtf}\\t${condition}" }.join('\\n')
     """
     echo -e "${samplesheet}" > samples.txt
 

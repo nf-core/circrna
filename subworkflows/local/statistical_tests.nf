@@ -56,12 +56,12 @@ workflow STATISTICAL_TESTS {
     CIRIQUANT_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, ciri, conditions]}
     )
-    // ch_versions = ch_versions.mix(CIRIQUANT_DEA.out.versions)
+    ch_versions = ch_versions.mix(CIRIQUANT_PREPDE.out.versions)
 
     STRINGTIE_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, stringtie]}
     )
-    //ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
+    ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
 
     CIRIQUANT_DE(
         CIRIQUANT_PREPDE.out.library.join(
@@ -70,6 +70,7 @@ workflow STATISTICAL_TESTS {
             STRINGTIE_PREPDE.out.gene_matrix
         )
     )
+    ch_versions = ch_versions.mix(CIRIQUANT_DE.out.versions)
 
     emit:
     versions = ch_versions
