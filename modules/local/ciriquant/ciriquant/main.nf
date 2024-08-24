@@ -3,7 +3,9 @@ process CIRIQUANT {
     label 'process_high'
 
     conda "bioconda::ciriquant=1.1.2"
-    container "docker.io/nicotru/ciriquant"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/ciriquant:1.1.2--pyhdfd78af_2' :
+        'quay.io/biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
 
     input:
     tuple val(meta), path(reads)
@@ -32,13 +34,18 @@ process CIRIQUANT {
     def reads_string = meta.single_end ? "-r ${reads}" : "-1 ${reads[0]} -2 ${reads[1]}"
     def bed_string = bed ? "--bed ${bed}" : ''
     """
+    BWA=`which bwa`
+    HISAT2=`which hisat2`
+    STRINGTIE=`which stringtie`
+    SAMTOOLS=`which samtools`
+
     BWA_FILE=`ls ${bwa}/*.bwt`
     BWA_PREFIX=`basename \$BWA_FILE .bwt`
 
     HISAT2_FILE=`ls ${hisat2}/*.1.ht2`
     HISAT2_PREFIX=`basename \$HISAT2_FILE .1.ht2`
 
-    printf "name: ciriquant\\nreference:\\n  fasta: ${fasta}\\n  gtf: ${gtf}\\n  bwa_index: ${bwa}/\$BWA_PREFIX\\n  hisat_index: ${hisat2}/\$HISAT2_PREFIX" > config.yml
+    printf "name: ciriquant\\ntools:\\n  bwa: \$BWA\\n  hisat2: \$HISAT2\\n  stringtie: \$STRINGTIE\\n  samtools: \$SAMTOOLS\\n\\nreference:\\n  fasta: ${fasta}\\n  gtf: ${gtf}\\n  bwa_index: ${bwa}/\$BWA_PREFIX\\n  hisat_index: ${hisat2}/\$HISAT2_PREFIX" > config.yml
 
     CIRIquant \\
         -t ${task.cpus} \\

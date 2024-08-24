@@ -48,7 +48,7 @@ workflow STATISTICAL_TESTS {
     CIRIQUANT_DEA(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, ciri, conditions]}
     )
-    ch_versions = ch_versions.mix(CIRIQUANT_DEA.out.versions)
+    // ch_versions = ch_versions.mix(CIRIQUANT_DEA.out.versions)
 
     STRINGTIE_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, stringtie]}
