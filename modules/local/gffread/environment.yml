@@ -1,4 +1,4 @@
-name: transcriptome
+name: gffread
 channels:
   - conda-forge
   - bioconda

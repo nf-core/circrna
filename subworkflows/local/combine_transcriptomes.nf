@@ -1,6 +1,6 @@
 include { GNU_SORT as COMBINE_TRANSCRIPTOME_GTFS } from '../../modules/nf-core/gnu/sort'
 include { GAWK as EXCLUDE_OVERLONG_TRANSCRIPTS   } from '../../modules/nf-core/gawk'
-include { TRANSCRIPTOME                          } from '../../modules/local/quantification/transcriptome'
+include { GFFREAD as TRANSCRIPTOME               } from '../../modules/local/gffread'
 
 workflow COMBINE_TRANSCRIPTOMES {
     take:
@@ -26,7 +26,7 @@ workflow COMBINE_TRANSCRIPTOMES {
 
 
     emit:
-    fasta = TRANSCRIPTOME.out.transcriptome
+    fasta = TRANSCRIPTOME.out.output
     gtf   = EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
 
     versions = ch_versions

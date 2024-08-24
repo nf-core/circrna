@@ -1,4 +1,4 @@
-process TRANSCRIPTOME {
+process GFFREAD {
     tag "$meta.id"
     label 'process_low'
 
@@ -12,20 +12,21 @@ process TRANSCRIPTOME {
     tuple val(meta2), path(genome)
 
     output:
-    tuple val(meta), path("$outfile"), emit: transcriptome
+    tuple val(meta), path("$outfile"), emit: output
     path "versions.yml"              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args        = task.ext.args   ?: ''
-    def prefix      = task.ext.prefix ?: "${meta.id}"
-    def extension   = task.ext.extension ?: "fasta"
-    outfile         = "${prefix}.${extension}"
+    def args          = task.ext.args   ?: ''
+    def prefix        = task.ext.prefix ?: "${meta.id}"
+    def extension     = task.ext.extension ?: gff.extension
+    def genome_string = genome ? "-g ${genome}" : ''
+    outfile           = "${prefix}.${extension}"
     """
     gffread \\
-        -g $genome \\
+        ${genome_string} \\
         -w $outfile \\
         $args \\
         $gff
