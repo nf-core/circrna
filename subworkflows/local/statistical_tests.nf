@@ -1,7 +1,8 @@
 include { CIRCTEST_PREPARE  } from '../../modules/local/circtest/prepare'
 include { CIRCTEST_CIRCTEST } from '../../modules/local/circtest/circtest'
-include { CIRIQUANT_PREPDE     } from '../../modules/local/ciriquant/prepde'
+include { CIRIQUANT_PREPDE  } from '../../modules/local/ciriquant/prepde'
 include { STRINGTIE_PREPDE  } from '../../modules/local/stringtie/prepde'
+include { CIRIQUANT_DE      } from '../../modules/local/ciriquant/de'
 
 workflow STATISTICAL_TESTS {
     take:
@@ -39,7 +40,7 @@ workflow STATISTICAL_TESTS {
         .filter{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment
              -> c_control != c_treatment }
         .map{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment ->
-            [   [id: "${c_control}:${c_treatment}"],
+            [   [id: "${c_control}_${c_treatment}"],
                 s_control + s_treatment,
                 f_ciri_control + f_ciri_treatment,
                 f_stringtie_control + f_stringtie_treatment,
@@ -54,6 +55,14 @@ workflow STATISTICAL_TESTS {
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, stringtie]}
     )
     //ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
+
+    CIRIQUANT_DE(
+        CIRIQUANT_PREPDE.out.library.join(
+            CIRIQUANT_PREPDE.out.expression
+        ).join(
+            STRINGTIE_PREPDE.out.gene_matrix
+        )
+    )
 
     emit:
     versions = ch_versions

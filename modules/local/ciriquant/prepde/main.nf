@@ -11,8 +11,11 @@ process CIRIQUANT_PREPDE {
     tuple val(meta), val(samples), path(gtfs), val(conditions)
 
     output:
-    tuple val(meta), path("${library_path}"), path("${annotation_path}"), path("${expression_path}"), path("${ratio_path}"), emit: results
-    path "versions.yml", emit: versions
+    tuple val(meta), path("${prefix}_library.tsv")   , emit: library
+    tuple val(meta), path("${prefix}_annotation.tsv"), emit: annotation
+    tuple val(meta), path("${prefix}_expression.tsv"), emit: expression
+    tuple val(meta), path("${prefix}_ratio.tsv")     , emit: gene
+    path "versions.yml"                              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,18 +27,14 @@ process CIRIQUANT_PREPDE {
         .transpose()
         .collect{ sample, gtf, condition ->
             "${sample}\t${gtf}\t${condition}" }.join('\n')
-    library_path = "${prefix}_library.tsv"
-    annotation_path = "${prefix}_annotation.tsv"
-    expression_path = "${prefix}_expression.tsv"
-    ratio_path = "${prefix}_ratio.tsv"
     """
     echo -e "${samplesheet}" > samples.txt
 
     prep_CIRIquant -i samples.txt \\
-        --lib ${library_path} \\
-        --circ ${annotation_path} \\
-        --bsj ${expression_path} \\
-        --ratio ${ratio_path} \\
+        --lib ${prefix}_library.tsv \\
+        --circ ${prefix}_annotation.tsv \\
+        --bsj ${prefix}_expression.tsv \\
+        --ratio ${prefix}_ratio.tsv \\
         ${args}
 
     cat <<-END_VERSIONS > versions.yml
