@@ -17,8 +17,8 @@ process CIRIQUANT_DE {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    circ_path = "${prefix}.circ.tsv"
-    gene_path = "${prefix}.gene.tsv"
+    circ_path = "${prefix}.circ.csv"
+    gene_path = "${prefix}.gene.csv"
     """
     CIRI_DE_replicate \\
         --lib ${library} \\
