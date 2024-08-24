@@ -1,6 +1,7 @@
 include { CIRIQUANT as MAIN                } from '../../../modules/local/ciriquant'
 include { PYGTFTK_TABULATE as EXTRACT_CIRC } from '../../../modules/local/pygtftk/tabulate'
 include { GAWK as EXTRACT_GENES            } from '../../../modules/nf-core/gawk'
+include { GAWK as NAME_EXPRESSION           } from '../../../modules/nf-core/gawk'
 
 workflow CIRIQUANT {
     take:
@@ -22,6 +23,14 @@ workflow CIRIQUANT {
 
     EXTRACT_GENES( MAIN.out.gene, [] )
     ch_versions = ch_versions.mix(EXTRACT_GENES.out.versions)
+
+    ch_tables = EXTRACT_CIRC.out.table
+        .map{ meta, table -> [meta + [type: 'circ'], table] }
+        .mix(EXTRACT_GENES.out.output
+            .map{ meta, table -> [meta + [type: 'gene'], table] }
+        )
+    
+    NAME_EXPRESSION(ch_tables, [])
     
     emit:
 

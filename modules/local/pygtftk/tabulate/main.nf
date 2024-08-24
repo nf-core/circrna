@@ -11,7 +11,7 @@ process PYGTFTK_TABULATE {
     tuple val(meta), path(gtf)
 
     output:
-    tuple val(meta), path("$outfile"), emit: output
+    tuple val(meta), path("$outfile"), emit: table
     path "versions.yml"              , emit: versions
 
     when:
