@@ -1,6 +1,6 @@
 include { GNU_SORT as COMBINE_TRANSCRIPTOME_GTFS } from '../../modules/nf-core/gnu/sort'
 include { GAWK as EXCLUDE_OVERLONG_TRANSCRIPTS   } from '../../modules/nf-core/gawk'
-include { GFFREAD as TRANSCRIPTOME               } from '../../modules/local/gffread'
+include { GFFREAD as TRANSCRIPTOME               } from '../../modules/nf-core/gffread'
 
 workflow COMBINE_TRANSCRIPTOMES {
     take:
@@ -21,15 +21,18 @@ workflow COMBINE_TRANSCRIPTOMES {
     )
     ch_versions = ch_versions.mix(EXCLUDE_OVERLONG_TRANSCRIPTS.out.versions)
 
-    TRANSCRIPTOME(EXCLUDE_OVERLONG_TRANSCRIPTS.out.output, ch_genome_fasta)
+    TRANSCRIPTOME(
+        EXCLUDE_OVERLONG_TRANSCRIPTS.out.output,
+        ch_genome_fasta.map{meta, fasta -> fasta}
+    )
     ch_versions = ch_versions.mix(TRANSCRIPTOME.out.versions)
 
-    TRANSCRIPTOME.out.fasta.ifEmpty {
+    TRANSCRIPTOME.out.gffread_fasta.ifEmpty {
         error 'No transcriptome fasta file produced.'
     }
 
     emit:
-    fasta = TRANSCRIPTOME.out.fasta
+    fasta = TRANSCRIPTOME.out.gffread_fasta
     gtf   = EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
 
     versions = ch_versions

@@ -1,19 +1,17 @@
-process GFFREAD {
+process PYGTFTK_TABULATE {
     tag "$meta.id"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/gffread:0.12.1--h8b12597_0' :
-        'biocontainers/gffread:0.12.1--h8b12597_0' }"
+        'depot.galaxyproject.org/singularity/pygtftk:1.6.2--py39h4e691d4_2' :
+        'biocontainers/pygtftk:1.6.2--py39h4e691d4_2' }"
 
     input:
-    tuple val(meta), path(gff)
-    tuple val(meta2), path(genome)
+    tuple val(meta), path(gtf)
 
     output:
     tuple val(meta), path("$outfile"), emit: output
-    tuple val(meta), path("*.fasta") , emit: fasta, optional: true
     path "versions.yml"              , emit: versions
 
     when:
@@ -23,17 +21,15 @@ process GFFREAD {
     def args          = task.ext.args   ?: ''
     def prefix        = task.ext.prefix ?: "${meta.id}"
     def suffix        = task.ext.suffix ?: gff.extension
-    def genome_string = genome ? "-g ${genome}" : ''
     outfile           = "${prefix}.${suffix}"
     """
-    gffread \\
-        ${genome_string} \\
+    gtftk tabulate \\
         $args \\
-        $gff > ${outfile}
+        -i $gtf > ${outfile}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        gffread: \$(gffread --version 2>&1)
+        gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
     END_VERSIONS
     """
 }
