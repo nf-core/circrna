@@ -52,7 +52,8 @@ workflow CIRIQUANT {
     ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
     
     emit:
-
+    gene_tpm = JOIN_GENE.out.csv
+    circ_cpm = JOIN_CIRC.out.csv
 
     versions = ch_versions
 }

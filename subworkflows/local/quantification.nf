@@ -54,6 +54,8 @@ workflow QUANTIFICATION {
             hisat2_index
         )
         ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
+        ch_gene_counts = ch_gene_counts.mix(CIRIQUANT.out.gene_tpm)
+        ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
     }
 
     emit:
