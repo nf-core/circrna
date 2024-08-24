@@ -2,10 +2,7 @@ process CIRIQUANT_PREPDE {
     tag "$meta.id"
     label 'process_high'
 
-    conda "bioconda::ciriquant=1.1.2"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ciriquant:1.1.2--pyhdfd78af_2' :
-        'biocontainers/ciriquant:1.1.2--pyhdfd78af_2' }"
+    container "docker.io/nicotru/ciriquant:1.0.1"
 
     input:
     tuple val(meta), val(samples), path(gtfs), val(conditions)
