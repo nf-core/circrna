@@ -1,4 +1,4 @@
-process CIRIQUANT_DEA {
+process CIRIQUANT_PREPDE {
     tag "$meta.id"
     label 'process_high'
 

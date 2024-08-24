@@ -1,6 +1,6 @@
 include { CIRCTEST_PREPARE  } from '../../modules/local/circtest/prepare'
 include { CIRCTEST_CIRCTEST } from '../../modules/local/circtest/circtest'
-include { CIRIQUANT_DEA     } from '../../modules/local/ciriquant/dea'
+include { CIRIQUANT_PREPDE     } from '../../modules/local/ciriquant/prepde'
 include { STRINGTIE_PREPDE  } from '../../modules/local/stringtie/prepde'
 
 workflow STATISTICAL_TESTS {
@@ -45,7 +45,7 @@ workflow STATISTICAL_TESTS {
                 f_stringtie_control + f_stringtie_treatment,
                 ['C'] * s_control.size() + ['T'] * s_treatment.size()]}
 
-    CIRIQUANT_DEA(ch_condition_pairs
+    CIRIQUANT_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, ciri, conditions]}
     )
     // ch_versions = ch_versions.mix(CIRIQUANT_DEA.out.versions)
