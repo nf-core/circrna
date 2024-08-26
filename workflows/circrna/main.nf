@@ -29,6 +29,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
+include { ISOFORM_DETECTION                } from '../../subworkflows/local/isoform_detection'
 include { ANNOTATION                       } from '../../subworkflows/local/annotation'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
@@ -155,7 +156,17 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
     //
-    // 3. circRNA quantification
+    // 3. Isoform detection
+    //
+
+    ISOFORM_DETECTION(
+        bwa_index,
+        ch_fasta,
+        FASTQC_TRIMGALORE.out.reads
+    )
+
+    //
+    // 4. circRNA quantification
     //
 
     QUANTIFICATION(
@@ -172,7 +183,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
     //
-    // 4. miRNA prediction
+    // 5. miRNA prediction
     //
 
     if (params.mature) {
@@ -188,7 +199,7 @@ workflow CIRCRNA {
     }
 
     //
-    // 5. Statistical tests
+    // 6. Statistical tests
     //
 
     STATISTICAL_TESTS(
