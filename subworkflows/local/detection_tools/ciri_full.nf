@@ -12,7 +12,7 @@ workflow CIRI_FULL {
     main:
     ch_versions = Channel.empty()
 
-    BWA_MEM(ch_reads, ch_bwa_index, ch_fasta, true)
+    BWA_MEM(ch_reads, ch_bwa_index, ch_fasta, false)
     ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     CIRI_CIRI2(BWA_MEM.out.bam, ch_fasta, ch_gtf)

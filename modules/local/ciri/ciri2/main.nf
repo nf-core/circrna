@@ -22,7 +22,7 @@ process CIRI_CIRI2 {
     def args = task.ext.args ?: ''
     """
     samtools view -h ${bam} -o ${sam}
-    CIRI -I ${sam} -O ${meta.id}.ciri -F ${fasta} -A ${gtf} --log ${meta.id}.log ${args}
+    CIRI -I ${sam} -O ${meta.id}.ciri -F ${fasta} -A ${gtf} --log ${meta.id}.log -T ${task.cpus} ${args}
     rm ${sam}
 
     cat <<-END_VERSIONS > versions.yml
