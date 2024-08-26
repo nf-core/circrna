@@ -12,8 +12,12 @@ workflow ISOFORM_DETECTION {
 
     ch_versions = Channel.empty()
 
-    CIRI_FULL ( ch_reads_untrimmed, ch_fasta, ch_gtf )
-    ch_versions = ch_versions.mix(CIRI_FULL.out.versions)
+    tools_selected = params.tools.split(',').collect{it.trim().toLowerCase()}
+
+    if (tools_selected.contains('ciri-full')) {
+        CIRI_FULL ( ch_reads_untrimmed, ch_fasta, ch_gtf )
+        ch_versions = ch_versions.mix(CIRI_FULL.out.versions)
+    }
 
     emit:
 

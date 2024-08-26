@@ -9,6 +9,9 @@ workflow CIRI_FULL {
     main:
     ch_versions = Channel.empty()
 
+    // TODO: Make sure all reads have the same length before running CIRI-full
+    // https://www.biostars.org/p/332512/
+
     MAIN(ch_reads, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(MAIN.out.versions)
     
