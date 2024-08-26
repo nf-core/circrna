@@ -7,6 +7,7 @@ workflow ISOFORM_DETECTION {
     ch_reads_untrimmed
     ch_fasta
     ch_gtf
+    ch_bsjs
 
     main:
 

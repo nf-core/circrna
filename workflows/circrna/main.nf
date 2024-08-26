@@ -163,7 +163,8 @@ workflow CIRCRNA {
         FASTQC_TRIMGALORE.out.reads,
         ch_cat_fastq,
         ch_fasta,
-        ch_gtf
+        ch_gtf,
+        BSJ_DETECTION.out.bed12
     )
 
     //
