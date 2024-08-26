@@ -1,4 +1,4 @@
-include { CIRI_FULL } from './detection_tools/ciri_full'
+include { CIRI_FULL } from './isoform_tools/ciri_full'
 
 workflow ISOFORM_DETECTION {
 
