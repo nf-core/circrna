@@ -2,7 +2,7 @@ process CIRIQUANT {
     tag "$meta.id"
     label 'process_high'
 
-    container "docker.io/nicotru/ciriquant:1.0.3"
+    container "docker.io/nicotru/ciriquant:1.0.4"
 
     input:
     tuple val(meta), path(reads)
