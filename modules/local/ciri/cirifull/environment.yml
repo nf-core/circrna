@@ -1,0 +1,6 @@
+name: "ciri_cirifull"
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::ciri-full=2.1.2

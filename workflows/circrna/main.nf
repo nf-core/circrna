@@ -160,10 +160,10 @@ workflow CIRCRNA {
     //
 
     ISOFORM_DETECTION(
-        bwa_index,
+        FASTQC_TRIMGALORE.out.reads,
+        ch_cat_fastq,
         ch_fasta,
-        ch_gtf,
-        FASTQC_TRIMGALORE.out.reads
+        ch_gtf
     )
 
     //
