@@ -5,6 +5,7 @@ workflow ISOFORM_DETECTION {
     take:
     ch_reads
     ch_reads_untrimmed
+    ch_bwa_index
     ch_fasta
     ch_gtf
     ch_bsjs
@@ -16,7 +17,7 @@ workflow ISOFORM_DETECTION {
     tools_selected = params.tools.split(',').collect{it.trim().toLowerCase()}
 
     if (tools_selected.contains('ciri-full')) {
-        CIRI_FULL ( ch_reads_untrimmed, ch_fasta, ch_gtf )
+        CIRI_FULL ( ch_reads_untrimmed, ch_fasta, ch_gtf, ch_bwa_index )
         ch_versions = ch_versions.mix(CIRI_FULL.out.versions)
     }
 
