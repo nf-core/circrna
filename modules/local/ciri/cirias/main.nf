@@ -1,4 +1,4 @@
-process CIRI_CIRI2 {
+process CIRI_CIRIAS {
     tag "$meta.id"
     label 'process_medium'
 
@@ -8,13 +8,11 @@ process CIRI_CIRI2 {
         'community.wave.seqera.io/library/ciri-full_samtools:754497818ad973a6' }"
 
     input:
-    tuple val(meta),  path(bam)
+    tuple val(meta),  path(bam), path(ciri)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
-    
-    output:
-    tuple val(meta), path("${meta.id}.ciri"), emit: ciri
 
+    output:
     path "versions.yml", emit: versions
     
     script:
@@ -22,12 +20,12 @@ process CIRI_CIRI2 {
     def args = task.ext.args ?: ''
     """
     samtools view -h ${bam} -o ${sam}
-    CIRI -I ${sam} -O ${meta.id}.ciri -F ${fasta} -A ${gtf} --log ${meta.id}.log ${args}
+    CIRI-AS -S ${sam} -C ${ciri} -F ${fasta} -A ${gtf} -O ${meta.id} ${args}
     rm ${sam}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ciri: \$(echo \$(CIRI --help 2>&1) | sed 's/^.*Version: //; s/ Contact.*\$//')
+        ciri-as: \$(echo \$(CIRI-AS --help 2>&1) | sed 's/^.*version //; s/, a detection.*\$//')
         samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
     END_VERSIONS
     """

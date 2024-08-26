@@ -5,13 +5,14 @@ workflow ISOFORM_DETECTION {
     take:
     ch_bwa_index
     ch_fasta
+    ch_gtf
     ch_reads
 
     main:
 
     ch_versions = Channel.empty()
 
-    CIRI_FULL ( ch_bwa_index, ch_fasta, ch_reads )
+    CIRI_FULL ( ch_bwa_index, ch_fasta, ch_gtf, ch_reads )
     ch_versions = ch_versions.mix(CIRI_FULL.out.versions)
 
     emit:
