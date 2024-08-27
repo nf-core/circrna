@@ -5,7 +5,7 @@ import platform
 import polars as pl
 import yaml
 
-samples = "${samples}".split(" ")
+samples = "${samples.join(' ')}".split(" ")
 matrices = "${matrices}".split(" ")
 metacols = "${metacols}".split(",")
 
