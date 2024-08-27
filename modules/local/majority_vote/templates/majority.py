@@ -14,8 +14,7 @@ df = pl.scan_csv(paths,
 
 df = df.select(["mirna", "target", "tool"])
 
-df = df.group_by(['mirna', 'target']).agg(pl.col("tool")) \
-    .with_columns(pl.col("tool").map_elements(lambda s: len(set(s)), return_dtype=int))
+df = df.group_by(['mirna', 'target']).agg(pl.col("tool").n_unique())
 
 df = df.filter(pl.col("tool") > int("${min_tools}")) \
     .select(["mirna", "target"])
@@ -26,8 +25,7 @@ df.write_csv('${meta.id}.majority.tsv', separator='\\t', include_header=False)
 
 # Create targets file
 
-df = df.group_by('mirna').agg(pl.col("target")) \
-    .with_columns(pl.col("target").map_elements(lambda s: ','.join(s)))
+df = df.group_by('mirna').agg(pl.col("target").str.concat(","))
 
 df.write_csv('${meta.id}.targets.tsv', separator='\\t', include_header=False)
 
