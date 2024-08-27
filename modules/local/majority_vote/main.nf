@@ -2,14 +2,13 @@ process MAJORITY_VOTE {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::pandas=1.5.2"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-            'https://depot.galaxyproject.org/singularity/pandas:1.5.2' :
-            'biocontainers/pandas:1.5.2' }"
+            'oras://community.wave.seqera.io/library/polars_pyyaml:962a0cf7480258c7' :
+            'community.wave.seqera.io/library/polars_pyyaml:ad93db0d7bcd508e' }"
 
     input:
     tuple val(meta), path(bindingsites)
-
 
     output:
     tuple val(meta), path("${meta.id}.majority.tsv"), emit: tsv
@@ -20,6 +19,7 @@ process MAJORITY_VOTE {
     task.ext.when == null || task.ext.when
 
     script:
+    min_tools = params.mirna_tool_filter
     template 'majority.py'
 
     stub:
