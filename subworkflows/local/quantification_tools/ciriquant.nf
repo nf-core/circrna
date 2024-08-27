@@ -1,10 +1,8 @@
 include { CIRIQUANT as MAIN                } from '../../../modules/local/ciriquant/ciriquant'
 include { PYGTFTK_TABULATE as EXTRACT_CIRC } from '../../../modules/local/pygtftk/tabulate'
 include { GAWK as EXTRACT_GENES            } from '../../../modules/nf-core/gawk'
-include { GAWK as NAME_EXPRESSION          } from '../../../modules/nf-core/gawk'
-include { CSVTK_JOIN as JOIN_GENE          } from '../../../modules/nf-core/csvtk/join'
-include { CSVTK_JOIN as JOIN_CIRC          } from '../../../modules/nf-core/csvtk/join'
-
+include { JOIN_SAMPLES as JOIN_GENE        } from '../../../modules/local/matrix/join_samples'
+include { JOIN_SAMPLES as JOIN_CIRC        } from '../../../modules/local/matrix/join_samples'
 
 workflow CIRIQUANT {
     take:
@@ -27,33 +25,19 @@ workflow CIRIQUANT {
     EXTRACT_GENES( MAIN.out.gene_list, [] )
     ch_versions = ch_versions.mix(EXTRACT_GENES.out.versions)
 
-    ch_tables = EXTRACT_CIRC.out.table
-        .map{ meta, table -> [meta + [type: 'circ'], table] }
-        .mix(EXTRACT_GENES.out.output
-            .map{ meta, table -> [meta + [type: 'gene'], table] }
-        )
-    
-    NAME_EXPRESSION(ch_tables, [])
-    ch_versions = ch_versions.mix(NAME_EXPRESSION.out.versions)
-
-    ch_tables = NAME_EXPRESSION.out.output.branch{ meta, table ->
-        circ: meta.type == 'circ'
-        gene: meta.type == 'gene'
-    }
-
     JOIN_GENE(
-        ch_tables.gene.map{meta, table -> table}.collect().map{[[id: "gene"], it]}
+        EXTRACT_GENES.out.output.map{meta, table -> [[id: 'gene'], meta.id, table]}.groupTuple()
     )
     ch_versions = ch_versions.mix(JOIN_GENE.out.versions)
 
     JOIN_CIRC(
-        ch_tables.circ.map{meta, table -> table}.collect().map{[[id: "circ"], it]}
+        EXTRACT_CIRC.out.table.map{meta, table -> [[id: 'circ'], meta.id, table]}.groupTuple()
     )
     ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
     
     emit:
-    gene_tpm  = JOIN_GENE.out.csv
-    circ_cpm  = JOIN_CIRC.out.csv
+    gene_tpm  = JOIN_GENE.out.joined
+    circ_cpm  = JOIN_CIRC.out.joined
     raw       = MAIN.out.gtf
     stringtie = MAIN.out.gene_gtf
 
