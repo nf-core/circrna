@@ -3,6 +3,7 @@ include { BIOAWK as ADD_BACKSPLICE        } from '../../modules/nf-core/bioawk'
 include { DESEQ2_NORMALIZATION            } from '../../modules/local/deseq2/normalization'
 include { MIRNA_FILTERING                 } from '../../modules/local/mirna_filtering'
 include { COMPUTE_CORRELATIONS            } from '../../modules/local/compute_correlations'
+include { SPONGE                          } from '../../modules/local/sponge'
 
 // SUBWORKFLOWS
 include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
@@ -14,8 +15,8 @@ workflow MIRNA_PREDICTION {
     circrna_annotation
     ch_mature
     ch_mirna
-    transcript_counts
     quantification_rds
+    tx_counts
 
     main:
     ch_versions = Channel.empty()
@@ -26,7 +27,7 @@ workflow MIRNA_PREDICTION {
 
     if (params.mirna_expression) {
 
-        ch_mirna_normalized = DESEQ2_NORMALIZATION( ch_mirna ).normalized
+        ch_mirna_normalized = DESEQ2_NORMALIZATION(ch_mirna).normalized
 
         ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
@@ -59,14 +60,14 @@ workflow MIRNA_PREDICTION {
             .map{ it -> [[id: 'mature_filtered'], it]}
     }
 
-    MIRNA_BINDINGSITES( transcriptome_fasta, circrna_annotation, ch_mature )
+    MIRNA_BINDINGSITES(transcriptome_fasta, circrna_annotation, ch_mature)
     ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
 
     if (params.mirna_expression) {
         //
         // COMPUTE CORRELATION:
         //
-        ch_binding_site_batches = MIRNA_BINDINGSITES.out.binding_sites
+        ch_binding_site_batches = MIRNA_BINDINGSITES.out.targets
             .splitText(by: 100, file: true)
             .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
@@ -79,6 +80,9 @@ workflow MIRNA_PREDICTION {
 
         ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     }
+
+    // if (params.sponge)
+    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, tx_counts, ch_mirna_filtered)
 
     emit:
     versions = ch_versions
