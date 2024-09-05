@@ -1,8 +1,7 @@
 // MODULES
-include { BIOAWK as ADD_BACKSPLICE        } from '../../modules/nf-core/bioawk'
-include { DESEQ2_NORMALIZATION            } from '../../modules/local/deseq2/normalization'
-include { MIRNA_FILTERING                 } from '../../modules/local/mirna_filtering'
-include { COMPUTE_CORRELATIONS            } from '../../modules/local/compute_correlations'
+include { DESEQ2_NORMALIZATION } from '../../modules/local/deseq2/normalization'
+include { MIRNA_FILTERING      } from '../../modules/local/mirna_filtering'
+include { COMPUTE_CORRELATIONS } from '../../modules/local/compute_correlations'
 
 // SUBWORKFLOWS
 include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
