@@ -229,11 +229,13 @@ workflow BSJ_DETECTION {
     )
 
     emit:
-    bed           = ch_bsj_bed_combined
-    bed12         = ch_bsj_bed12_combined
-    gtf           = ch_bsj_gtf_combined
-    fasta         = ch_bsj_fasta_combined
+    bed                 = ch_bsj_bed_combined
+    bed12               = ch_bsj_bed12_combined
+    gtf                 = ch_bsj_gtf_combined
+    fasta               = ch_bsj_fasta_combined
+    star_bam            = STAR2PASS.out.bam
+    bed_per_sample_tool = ch_bsj_bed_per_sample_tool
 
-    multiqc_files = ch_multiqc_files
-    versions      = ch_versions
+    multiqc_files       = ch_multiqc_files
+    versions            = ch_versions
 }

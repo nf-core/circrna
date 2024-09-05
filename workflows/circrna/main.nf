@@ -184,8 +184,8 @@ workflow CIRCRNA {
         )
 
         BENCHMARKING(
-            BSJ_DETECTION.out.tool_bed,
-            BSJ_DETECTION_BENCHMARKING.out.tool_bed,
+            BSJ_DETECTION.out.bed_per_sample_tool,
+            BSJ_DETECTION_BENCHMARKING.out.bed_per_sample_tool,
             BSJ_DETECTION.out.star_bam,
             BSJ_DETECTION_BENCHMARKING.out.star_bam,
             FASTQC_TRIMGALORE.out.trim_log
