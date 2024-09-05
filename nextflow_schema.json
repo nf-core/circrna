@@ -5,8 +5,7 @@
     "description": "Quantification, miRNA target prediction and differential expression analysis of circular RNAs",
     "type": "object",
     "definitions": {
-        "input_output_options": {
-            "title": "Input/output options",
+        "input_output_options": { "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
@@ -196,6 +195,89 @@
                     "description": "Determins whether to apply elastic net regression filtering or not.",
                     "help_text": "Option to filter with elastic net.",
                     "default": true
+                },
+
+                "sponge_coeff_threshold": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Threshold to cross for a regression coefficient to be called significant.",
+                    "help_text": "Option to filter with different coefficient thresholds.",
+                    "default": -0.05,
+                    "minimum": -1
+                },
+                "sponge_ef_training": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Percentage used for training set size.",
+                    "help_text": "Control the train datafram size",
+                    "default": 0.8
+                },
+                "sponge_ef_folds": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Number of folds used in cross validation while calibrating 'SpongingActivity Model'.",
+                    "help_text": "This parameter is used in the 'calibrate_model' function of the SPONGE module. Use it to control how many folds are computed in training.",
+                    "default": 10,
+                    "minimum": 2
+                },
+                "sponge_ef_mscor": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Filters interactions in the computed network based on their mscor. An interaction needs a more significant mscor than this threshold in order to stay inside the network.",
+                    "help_text": "This parameter is used in the 'filter_ceRNA_network' function of the SPONGE module. Use it to change the mscor threshold while filtering the network.",
+                    "default": 0.01
+                },
+                "sponge_ef_fdr": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "False discovery rate for padj ceRNA interactions.",
+                    "help_text": "This parameter is used in the 'filter_ceRNA_network' function of the SPONGE module. Use it to adjust the false discovery rate.",
+                    "default": 0.05
+                },
+                "sponge_ef_enrichment_modules": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Defines the maximum number of top modules (based on centrality), ensuring that only the most important or influential modules are retained.",
+                    "help_text": "This parameter is used in the 'get_central_modules' function of the SPONGE module. It is used to limits the number of top-ranked modules returned for further processing.",
+                    "default": 750
+                },
+                "sponge_ef_enrichment_bins": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "An integer specifying the bin size for the Overall Enrichment (OE) method. Bins are used to group genes for the enrichment calculation.",
+                    "help_text": "This parameter is used in the 'enrichment_modules' function of the SPONGE module. Use it to finetune the enichment analysis of the gene expression.",
+                    "default": 100
+                },
+                "sponge_ef_enrichment_min": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "An integer representing the minimum number of expressed genes required in a module for enrichment analysis.",
+                    "help_text": "This parameter is used in the 'enrichment_modules' function of the SPONGE module. Use it to finetune the enichment analysis of the gene expression.",
+                    "default": 60,
+                    "minimum": 1
+                },
+                "sponge_ef_enrichment_max": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "An integer specifying the maximum number of genes allowed in a module for it to be included.",
+                    "help_text": "This parameter is used in the 'enrichment_modules' function of the SPONGE module. Use it to finetune the enichment analysis of the gene expression.",
+                    "default": 2000
+                },
+                "sponge_ef_enrichment_expr": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum amount of expression required for enrichment analysis.",
+                    "help_text": "This parameter is used in the 'enrichment_modules' function of the SPONGE module. Use it to control the minimum amount of expression required for enrichment analysis.",
+                    "default": 10,
+                    "minimum": 1
+                },
+                "sponge_ef_enrichment_method": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "A string specifying the enrichment method to use. Available options are 'OE' for Overall Enrichment and 'gsva' for Gene Set Variation Analysis",
+                    "pattern": "^(OE|gsva)",
+                    "help_text": "Select one of two enrichment methods for sponge effects.",
+                    "default": "OE"
                 }
             }
         },
