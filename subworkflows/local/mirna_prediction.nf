@@ -4,6 +4,7 @@ include { DESEQ2_NORMALIZATION            } from '../../modules/local/deseq2/nor
 include { MIRNA_FILTERING                 } from '../../modules/local/mirna_filtering'
 include { COMPUTE_CORRELATIONS            } from '../../modules/local/compute_correlations'
 include { SPONGE                          } from '../../modules/local/sponge'
+include { SPONGE_EFFECTS                  } from '../../modules/local/sponge_effects'
 
 // SUBWORKFLOWS
 include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
@@ -83,6 +84,9 @@ workflow MIRNA_PREDICTION {
 
     // if (params.sponge)
     SPONGE(MIRNA_BINDINGSITES.out.binding_sites, tx_counts, ch_mirna_filtered)
+    ch_versions = ch_versions.mix(SPONGE.out.versions)
+    SPONGE_EFFECTS(SPONGE.out.sponge_data)
+    
 
     emit:
     versions = ch_versions
