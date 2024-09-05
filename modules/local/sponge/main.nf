@@ -15,7 +15,7 @@ process SPONGE {
 
     output:
     path "versions.yml"                             , emit: versions
-    path "sponge.RData"                             , emit: sponge_data
+    tuple val(meta), path("sponge.RData")           , emit: sponge_data
     path "circRNAs_as_ceRNAs.tsv"                   , emit: cernas
     path "total_plots.pdf"                          , emit: total_plots
     path "simulation_plots.pdf"                     , emit: simulation_plots
