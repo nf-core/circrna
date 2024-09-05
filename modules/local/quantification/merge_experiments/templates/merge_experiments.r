@@ -42,12 +42,15 @@ for (col in colnames(colData(se))) {
     }
 }
 
+rownames(colData(se)) <- colData(se)\$names
+colData(se)\$names <- NULL
+
 # Add transcript annotation
 annotation <- annotation[match(rownames(se), annotation\$transcript_id),]
 rowData(se) <- annotation
 
 # Add TPM
-assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), colData(se)\$names]
+assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), rownames(colData(se))]
 
 saveRDS(se, '${meta.id}.merged.rds')
 

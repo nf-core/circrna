@@ -19,7 +19,6 @@ workflow QUANTIFICATION {
     take:
     ch_gtf
     ch_fasta
-    counts
     reads
     circ_annotation_bed
     circ_annotation_gtf
@@ -122,6 +121,8 @@ workflow QUANTIFICATION {
 
     emit:
     se                 = MERGE_EXPERIMENTS.out.merged
+    transcriptome      = TRANSCRIPTOME.out.transcriptome
+    rds                = MERGE_EXPERIMENTS.out.merged
     gene_counts        = JOIN_GENE_COUNTS.out.csv
     gene_tpm           = JOIN_GENE_TPM.out.csv
     tx_counts          = JOIN_TX_COUNTS.out.csv

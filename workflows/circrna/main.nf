@@ -22,18 +22,19 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 */
 
 // SUBWORKFLOWS:
-include { paramsSummaryMap                 } from 'plugin/nf-validation'
-include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
-include { validateInputSamplesheet         } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
+include { paramsSummaryMap                            } from 'plugin/nf-validation'
+include { paramsSummaryMultiqc                        } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { validateInputSamplesheet                    } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
 
-include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
-include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
-include { CIRCRNA_DISCOVERY                } from '../../subworkflows/local/circrna_discovery'
-include { CIRCRNA_DISCOVERY as CIRCRNA_DISCOVERY_BENCHMARKING } from '../../subworkflows/local/circrna_discovery'
-include { BENCHMARKING                     } from '../../subworkflows/local/benchmarking'
-include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
-include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
-include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
+include { softwareVersionsToYAML                      } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { PREPARE_GENOME                              } from '../../subworkflows/local/prepare_genome'
+include { BSJ_DETECTION                               } from '../../subworkflows/local/bsj_detection'
+include { BSJ_DETECTION as BSJ_DETECTION_BENCHMARKING } from '../../subworkflows/local/bsj_detection'
+include { BENCHMARKING                                } from '../../subworkflows/local/benchmarking'
+include { ANNOTATION                                  } from '../../subworkflows/local/annotation'
+include { QUANTIFICATION                              } from '../../subworkflows/local/quantification'
+include { MIRNA_PREDICTION                            } from '../../subworkflows/local/mirna_prediction'
+include { STATISTICAL_TESTS                           } from '../../subworkflows/local/statistical_tests'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,8 +62,8 @@ workflow CIRCRNA {
     ch_gtf
     ch_mature
     ch_annotation
-    ch_species
     ch_versions
+    ch_mirna
 
     main:
 
@@ -134,7 +135,7 @@ workflow CIRCRNA {
     ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
 
     //
-    // 2. circRNA Discovery
+    // 2. BSJ Discovery
     //
 
     FASTQC_TRIMGALORE.out.reads.branch{
@@ -142,32 +143,30 @@ workflow CIRCRNA {
         benchmarking: it[0].benchmarking
     }.set{ ch_reads }
 
-    CIRCRNA_DISCOVERY(
+    BSJ_DETECTION(
         ch_reads.real,
         ch_fasta,
         ch_gtf,
+        ch_annotation,
         bowtie_index,
         bowtie2_index,
         bwa_index,
         chromosomes,
         hisat2_index,
         star_index,
-        ch_annotation,
         params.bsj_reads,
-        params.tool_filter,
-        params.duplicates_fun,
         params.exon_boundary
     )
 
-    ch_multiqc_files  = ch_multiqc_files.mix(CIRCRNA_DISCOVERY.out.multiqc_files)
-    ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY.out.versions)
+    ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
+    ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
     //
     // 3. Benchmarking
     //
 
     if (params.benchmarking) {
-        CIRCRNA_DISCOVERY_BENCHMARKING(
+        BSJ_DETECTION(
             ch_reads.benchmarking,
             ch_fasta,
             ch_gtf,
@@ -185,16 +184,15 @@ workflow CIRCRNA {
         )
 
         BENCHMARKING(
-            CIRCRNA_DISCOVERY.out.tool_bed,
-            CIRCRNA_DISCOVERY_BENCHMARKING.out.tool_bed,
-            CIRCRNA_DISCOVERY.out.star_bam,
-            CIRCRNA_DISCOVERY_BENCHMARKING.out.star_bam,
+            BSJ_DETECTION.out.tool_bed,
+            BSJ_DETECTION_BENCHMARKING.out.tool_bed,
+            BSJ_DETECTION.out.star_bam,
+            BSJ_DETECTION_BENCHMARKING.out.star_bam,
             FASTQC_TRIMGALORE.out.trim_log
         )
 
         ch_multiqc_files = ch_multiqc_files.mix(BENCHMARKING.out.reports)
-
-        ch_versions = ch_versions.mix(CIRCRNA_DISCOVERY_BENCHMARKING.out.versions)
+        ch_versions = ch_versions.mix(BSJ_DETECTION_BENCHMARKING.out.versions)
     }
 
     //
@@ -204,10 +202,9 @@ workflow CIRCRNA {
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
-        CIRCRNA_DISCOVERY.out.counts_bed,
-        FASTQC_TRIMGALORE.out.reads,
-        CIRCRNA_DISCOVERY.out.annotation_bed,
-        CIRCRNA_DISCOVERY.out.annotation_gtf,
+        ch_reads.real,
+        BSJ_DETECTION.out.bed12,
+        BSJ_DETECTION.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx
@@ -218,11 +215,15 @@ workflow CIRCRNA {
     //
     // 5. miRNA prediction
     //
+
     if (params.mature) {
         MIRNA_PREDICTION(
-            CIRCRNA_DISCOVERY.out.fasta,
-            CIRCRNA_DISCOVERY.out.circrna_bed12,
-            ch_mature
+            QUANTIFICATION.out.transcriptome,
+            BSJ_DETECTION.out.bed12,
+            ch_mature,
+            ch_mirna,
+            QUANTIFICATION.out.circular_tx_counts,
+            QUANTIFICATION.out.rds
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
     }
@@ -248,7 +249,7 @@ workflow CIRCRNA {
         .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_pipeline_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
-    // MODULE: MultiQC
+    // MultiQC
     ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo   ? Channel.fromPath(params.multiqc_logo)   : Channel.empty()
     summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
