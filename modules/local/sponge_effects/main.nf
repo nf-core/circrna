@@ -4,8 +4,10 @@ process SPONGE_EFFECTS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-sponge_r-base_r-data.table_r-doparallel_pruned:6546daac72b5cf47' :
-        'community.wave.seqera.io/library/bioconductor-sponge_r-base_r-data.table_r-doparallel_pruned:75a4fa44f511e1d4' }"
+        'oras://community.wave.seqera.io/library/bioconductor-gsva_bioconductor-rtracklayer_bioconductor-sponge_r-base_pruned:ac5be0e145e964fc' :
+        'community.wave.seqera.io/library/bioconductor-gsva_bioconductor-rtracklayer_bioconductor-sponge_r-base_pruned:5fad30741cf73551' }"
+
+
 
     input:
     tuple val(meta), path(sponge_data)
