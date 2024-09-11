@@ -1,10 +1,11 @@
 // MODULES
-include { BIOAWK as ADD_BACKSPLICE        } from '../../modules/nf-core/bioawk'
-include { DESEQ2_NORMALIZATION            } from '../../modules/local/deseq2/normalization'
-include { MIRNA_FILTERING                 } from '../../modules/local/mirna_filtering'
-include { COMPUTE_CORRELATIONS            } from '../../modules/local/compute_correlations'
-include { SPONGE                          } from '../../modules/local/sponge'
-include { SPONGE_EFFECTS                  } from '../../modules/local/sponge_effects'
+include { BIOAWK as ADD_BACKSPLICE                } from '../../modules/nf-core/bioawk'
+include { MIRNA_NORMALIZATION                     } from '../../modules/local/deseq2/mirna_normalization'
+include { TX_NORMALIZATION                        } from '../../modules/local/deseq2/tx_normalization'
+include { MIRNA_FILTERING                         } from '../../modules/local/mirna_filtering'
+include { COMPUTE_CORRELATIONS                    } from '../../modules/local/compute_correlations'
+include { SPONGE                                  } from '../../modules/local/sponge'
+include { SPONGE_EFFECTS                          } from '../../modules/local/sponge_effects'
 
 // SUBWORKFLOWS
 include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
@@ -28,9 +29,9 @@ workflow MIRNA_PREDICTION {
 
     if (params.mirna_expression) {
 
-        ch_mirna_normalized = DESEQ2_NORMALIZATION(ch_mirna).normalized
+        ch_mirna_normalized = MIRNA_NORMALIZATION(ch_mirna).normalized
 
-        ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
+        ch_versions = ch_versions.mix(MIRNA_NORMALIZATION.out.versions)
 
         ch_mirna_filtered = MIRNA_FILTERING(ch_mirna_normalized,
                                             params.mirna_min_sample_percentage,
@@ -83,8 +84,16 @@ workflow MIRNA_PREDICTION {
     }
 
     // if (params.sponge)
-    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, tx_counts, ch_mirna_filtered)
+
+
+    ch_tx_normalized = TX_NORMALIZATION(tx_counts.map{ it -> [[id: 'tx'], it]}).normalized
+
+    ch_versions = ch_versions.mix(TX_NORMALIZATION.out.versions)
+    
+    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_tx_normalized, ch_mirna_filtered)
+
     ch_versions = ch_versions.mix(SPONGE.out.versions)
+
     SPONGE_EFFECTS(SPONGE.out.sponge_data)
     
 
