@@ -4,22 +4,12 @@ library(SPONGE)
 library(visNetwork)
 library(doParallel)
 library(foreach)
-library(DESeq2)
 
 circ_mRNA_subnetwork <- function(interactions, pattern) {
     return(interactions[
         (grepl(pattern, interactions\$geneA) & !grepl(pattern, interactions\$geneB)) |
         (grepl(pattern, interactions\$geneB) & !grepl(pattern, interactions\$geneA)),
     ])
-}
-
-normalize_data <- function(data){
-    samples <- colnames(data)
-    meta <- data.frame(row.names = samples)
-    data <- as.matrix(data)
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = round(data + 1), colData = meta, design = ~ 1)
-    dds <- DESeq2::estimateSizeFactors(dds)
-    return(DESeq2::counts(dds, normalized=TRUE))
 }
 
 # load binding sites matrix
@@ -32,8 +22,6 @@ bindingsites_matrix <- as.matrix(bindingsites)
 # load gene expression
 genes <- read.csv("${gene_expr}", sep = "\\t", row.names = "tx")
 genes <- subset(genes, select = -gene_id)
-# prep for DESeq2
-gene_expr <- normalize_data(as.matrix(genes))
 gene_expr <- t(as.matrix(genes))
 
 
@@ -187,7 +175,6 @@ save.image(file =  "sponge.RData")
 ################################################
 ################################################
 
-deseq2.version <- as.character(packageVersion('DESeq2'))
 sponge.version <- as.character(packageVersion('SPONGE'))
 visnetwork.version <- as.character(packageVersion('visNetwork'))
 doparallel.version <- as.character(packageVersion('doParallel'))
@@ -196,7 +183,6 @@ foreach.version <- as.character(packageVersion('foreach'))
 writeLines(
     c(
         '"${task.process}":',
-        paste('    bioconductor-deseq2:', deseq2.version),
         paste('    bioconductor-sponge:', sponge.version),
         paste('    r-visnetwork:', visnetwork.version),
         paste('    r-doparallel:', doparallel.version),
