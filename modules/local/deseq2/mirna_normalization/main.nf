@@ -1,4 +1,4 @@
-process DESEQ2_NORMALIZATION {
+process MIRNA_NORMALIZATION {
     tag "$meta.id"
     label 'process_single'
 
