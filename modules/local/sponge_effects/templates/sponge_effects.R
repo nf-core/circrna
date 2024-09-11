@@ -1,7 +1,16 @@
 #!/usr/bin/env Rscript
 
-if(!require(pacman)) install.packages("pacman", repos = "http://cran.us.r-project.org")
-pacman::p_load(SPONGE, doParallel, foreach, dplyr, visNetwork, pheatmap, ggplot2, reshape2, ggpubr, rtracklayer)
+library("SPONGE")
+library("rtracklayer")
+library("doParallel")
+library("foreach")
+library("dplyr")
+library("visNetwork")
+library("pheatmap")
+library("ggplot2")
+library("reshape2")
+library("ggpubr")
+library("GSVA")
 
 ########################
 ## GENERAL FUNCTIONS ###
@@ -66,6 +75,7 @@ plot_network <- function(ceRNA_network, signif_hits = NULL,
 }
 
 
+
 circ.mRNA.subnetwork <- function(interactions, pattern){
   return(interactions[
     (grepl(pattern, interactions\$geneA) & !grepl(pattern, interactions\$geneB)) |
@@ -76,7 +86,7 @@ circ.mRNA.subnetwork <- function(interactions, pattern){
 # plot model performance (spongEffects)
 plot_performance <- function (trained_model, central_genes_model = NULL,
                               random_model, training_dataset_name = "TCGA",
-                              testing_dataset_name = "TCGA", subtypes){
+                              testing_dataset_name = "TCGA", subtypes) {
   trained.model <- trained_model
   CentralGenes.model <- central_genes_model
   Random.model <- random_model
@@ -177,7 +187,7 @@ plot_performance <- function (trained_model, central_genes_model = NULL,
 plot_modules <- function (trained_model,
                           k_modules = 25,
                           k_modules_red = 10,
-                          text_size = 16){
+                          text_size = 16) {
   final.model <- trained_model\$Model\$finalModel
   Variable.importance <- importance(final.model) %>% as.data.frame() %>%
     tibble::rownames_to_column("Module") %>% arrange(desc(MeanDecreaseGini))
@@ -209,7 +219,7 @@ plot_hmap <- function (trained_model,
                        sampleIDs,
                        Modules_to_Plot = 5,
                        show.rownames = F,
-                       show.colnames = F){
+                       show.colnames = F) {
   if (label %in% colnames(meta_data) & sampleIDs %in% colnames(meta_data)) {
     final.model <- trained_model\$Model\$finalModel
     Variable.importance <- importance(final.model) %>% as.data.frame() %>%
@@ -248,7 +258,7 @@ plot_target_gene_expressions <- function(target, target_genes,
                                          annotation = NULL,
                                          split = "condition", unit = "counts",
                                          show_rows = TRUE,
-                                         annotation_colors = NULL){
+                                         annotation_colors = NULL) {
   # get target expression
   target_expression <- gene_expression[ ,target, drop = FALSE]
   # get target genes expressions
@@ -345,6 +355,67 @@ plot_miRNAs_per_gene <- function(target, genes_miRNA_candidates,
   return(bars)
 }
 
+#################################################################
+## SPONGE FUNCTIONS DUE TO VERSION CONFLICTS WITH RTRACKLAYSER ##
+#################################################################
+
+fn_filter_network <- function(network, mscor.threshold = .1, padj.threshold = .01) {
+   network %>% filter(mscor > mscor.threshold & p.adj < padj.threshold)
+}
+
+fn_weighted_degree <- function(network, undirected = T, Alpha = 1) {
+  # Format input matrix by using numeric as node IDs
+  Nodes <- data.frame(Nodes = union(network\$geneA, network\$geneB),
+                      Nodes_numeric = seq(1, length(union(network\$geneA, network\$geneB))))
+
+  geneA.numeric <- Nodes\$Nodes_numeric[match(network\$geneA, Nodes\$Nodes)]
+  geneB.numeric <- Nodes\$Nodes_numeric[match(network\$geneB, Nodes\$Nodes)]
+
+  Input.network <- data.frame(Sender = geneA.numeric, Receiver = geneB.numeric, Weight = network\$mscor)
+
+  if (undirected) {
+    # Define networks as undirected
+    Undirected.net <- Input.network %>% tnet::symmetrise_w()
+    Weighted_degree <- tnet::degree_w(Undirected.net, alpha = Alpha) %>% as.data.frame()
+    Nodes\$Weighted_degree <- Weighted_degree\$output[match(Weighted_degree\$node, Nodes\$Nodes_numeric)]
+    return(Nodes)
+  }
+}
+
+filter_ceRNA_network <- function(sponge_effects, 
+                                 Node_Centrality = NA, 
+                                 add_weighted_centrality = T, 
+                                 mscor.threshold = NA, 
+                                 padj.threshold = NA) {
+
+  #Filter SPONGE network for significant edges
+  Sponge.filtered <- sponge_effects %>%
+    fn_filter_network(mscor.threshold =  mscor.threshold, padj.threshold = padj.threshold)
+        
+  # Some gene columns from SPONGEdb start with an uppercase G, so we need to adjust it just in case
+  if("GeneA" %in% colnames(Sponge.filtered)) {
+    Sponge.filtered = Sponge.filtered %>% rename(geneA = GeneA)
+  }
+  if("GeneB" %in% colnames(Sponge.filtered)) {
+    Sponge.filtered = Sponge.filtered %>% rename(geneB = GeneB)
+  }
+    Node_Centrality <- Node_Centrality %>% dplyr::filter(gene %in% Sponge.filtered\$geneA | gene %in% Sponge.filtered\$geneB)
+
+  # Calculate weighted centrality scores and add them to the ones present in SpongeDB
+  if(!add_weighted_centrality) {
+    sponge_network_centralites <- list(Sponge.filtered)
+    names(sponge_network_centralites) <- c("Sponge.filtered")
+  }
+  else {
+    Nodes <- fn_weighted_degree(Sponge.filtered, undirected = T, Alpha = 1)
+    Node_Centrality <- Node_Centrality %>%
+       mutate(Weighted_Degree = Nodes\$Weighted_degree[match(Node_Centrality\$gene, Nodes\$Nodes)])
+    sponge_network_centralites <- list(Sponge.filtered,Node_Centrality)
+    names(sponge_network_centralites) <- c("Sponge.filtered","Node_Centrality")
+  }
+  return(sponge_network_centralites)
+}
+
 #---------------------------OUTPUT DIR--------------------------------
 ROOT = "."
 # create plot directory
@@ -362,16 +433,16 @@ colnames(gene.ens.all) <- c("ensembl_gene_id", "hgnc_symbol", "gene_type")
 rownames(gene.ens.all) <- gene.ens.all\$hgnc_symbol
 
 #---------------------------PARAMETERS--------------------------------
-mscor.threshold = 0.001 # "${params.sponge_ef_mscor}"
-padj.threshold = 0.7 # "${params.sponge_ef_fdr}"
-modules_cutoff = "${params.sponge_ef_enrichment_modules}"
-bin.size = "${params.sponge_ef_enrichment_bins}"
-min.size = "${params.sponge_ef_enrichment_min}"
-max.size = "${params.sponge_ef_enrichment_max}"
-min.expr = "${params.sponge_ef_enrichment_expr}"
+mscor.threshold = 0.001 # ${params.sponge_ef_mscor}
+padj.threshold = 0.7 # ${params.sponge_ef_fdr}
+modules_cutoff = ${params.sponge_ef_enrichment_modules}
+bin.size = ${params.sponge_ef_enrichment_bins}
+min.size = ${params.sponge_ef_enrichment_min}
+max.size = ${params.sponge_ef_enrichment_max}
+min.expr = ${params.sponge_ef_enrichment_expr}
 method = "${params.sponge_ef_enrichment_method}"
-split_training = "${params.sponge_ef_training}"
-folds = "${params.sponge_ef_folds}"
+split_training = ${params.sponge_ef_training}
+folds = ${params.sponge_ef_folds}
 
 #---------------------------PARALLEL BACKGROUND-----------------------
 num.of.cores <- 8 
@@ -416,7 +487,7 @@ test_mirna_expr <- mir_expr[rownames(mir_expr) %in% test.meta\$sampleIDs, ]
 #-------------------------CE RNA SPLITTING------------------------
 # MALTE TODO: no circ interactions -> empty df
 # MALTE TODO: hard code path for now in template
-ceRNA_interactions_sign <- read.table("/nfs/home/students/mweyrich/sponge/ceRNA_interactions_sign.tsv", header = TRUE, check.names = FALSE)
+ceRNA_interactions_sign <- read.table("/nfs/data3/CIRCEST/runs/sponging/sponge_res/ceRNA_interactions_sign.tsv", header = TRUE, check.names = FALSE, sep = "\\t")
 
 ceRNA_interactions_fdr <- ceRNA_interactions_sign[which(ceRNA_interactions_sign\$p.adj < padj.threshold), ]
 ceRNA_interactions_fdr <- circ.mRNA.subnetwork(ceRNA_interactions_fdr, "circ")
@@ -661,24 +732,26 @@ save.image(file.path(ROOT, "spongEffects.RData"))
 ################################################
 ################################################
 
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-rtracklayer.version <- as.character(packageVersion('rtracklayer'))
-sponge.version <- as.character(packageVersion('SPONGE'))
 doparallel.version <- as.character(packageVersion('doParallel'))
 dplyr.version <- as.character(packageVersion('dplyr'))
 foreach.version <- as.character(packageVersion('foreach'))
 ggplot2.version <- as.character(packageVersion('ggplot2'))
 ggpubr.version <- as.character(packageVersion('ggpubr'))
+gsva.version <- as.character(packageVersion('GSVA'))
 pheatmap.version <- as.character(packageVersion('pheatmap'))
+r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
 reshape2.version <- as.character(packageVersion('reshape2'))
+rtracklayer.version <- as.character(packageVersion('rtracklayer'))
+sponge.version <- as.character(packageVersion('SPONGE'))
 visnetwork.version <- as.character(packageVersion('visNetwork'))
 
 writeLines(
     c(
         '"${task.process}":',
-        paste('    r-base:', r.version)
+        paste('    bioconductor-gsva:', gsva.version)
         paste('    bioconductor-rtracklayer', rtracklayer.version)
         paste('    bioconductor-sponge', sponge.version)
+        paste('    r-base:', r.version)
         paste('    r-doparallel', doparallel.version)
         paste('    r-dplyr', dplyr.version)
         paste('    r-foreach', foreach.version)
