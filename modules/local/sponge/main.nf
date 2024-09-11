@@ -4,8 +4,8 @@ process SPONGE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-deseq2_bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:379bbce95f2c4913' :
-        'community.wave.seqera.io/library/bioconductor-deseq2_bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:f38bbe7441604bcc' }"
+        'oras://community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:086ecad7b1034ff0' :
+        'community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:e79cb4c59aecf7ba' }"
 
     input:
     tuple val(meta), path(binding_sites)
@@ -34,7 +34,6 @@ process SPONGE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-deseq2: \$(Rscript -e "library(DESeq2); cat(as.character(packageVersion('DESeq2')))")
         bioconductor-sponge: \$(Rscript -e "library(SPONGE); cat(as.character(packageVersion('SPONGE')))")
         r-visnetwork: \$(Rscript -e "library(visNetwork); cat(as.character(packageVersion('visNetwork')))")
         r-doparallel: \$(Rscript -e "library(doParallel); cat(as.character(packageVersion('doParallel')))")
