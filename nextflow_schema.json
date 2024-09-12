@@ -196,15 +196,6 @@
                     "help_text": "Option to filter with elastic net.",
                     "default": true
                 },
-
-                "sponge_coeff_threshold": {
-                    "type": "number",
-                    "fa_icon": "fas fa-circle-notch",
-                    "description": "Threshold to cross for a regression coefficient to be called significant.",
-                    "help_text": "Option to filter with different coefficient thresholds.",
-                    "default": -0.05,
-                    "minimum": -1
-                },
                 "sponge_ef_training": {
                     "type": "number",
                     "fa_icon": "fas fa-circle-notch",
