@@ -86,7 +86,7 @@ workflow MIRNA_PREDICTION {
     // if (params.sponge)
 
 
-    ch_tx_normalized = TX_NORMALIZATION(tx_counts.map{ it -> [[id: 'tx'], it]}).normalized
+    ch_tx_normalized = TX_NORMALIZATION(tx_counts).normalized
 
     ch_versions = ch_versions.mix(TX_NORMALIZATION.out.versions)
     
