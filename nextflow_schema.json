@@ -144,7 +144,7 @@
                     "description": "Run the pipeline in benchmarking mode.",
                     "default": false,
                     "fa_icon": "fas fa-chart-line",
-                    "help_text": "This enables parallel analysis of polyA-enriched data with the same circRNA quantification tools to compare performance."
+                    "help_text": "This enables parallel analysis of polyA-enriched data with the same circRNA quantification tools to compare results."
                 },
                 "mirna_tools": {
                     "type": "string",

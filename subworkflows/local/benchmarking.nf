@@ -35,24 +35,30 @@ workflow BENCHMARKING {
         .groupTuple()
 
     SORT(ch_all)
+    ch_versions = ch_versions.mix(SORT.out.versions)
 
     BEDTOOLS_MERGE(SORT.out.sorted).bed.branch{ meta, bed ->
             real: !meta.benchmarking
             benchmarking: meta.benchmarking
         }.set { ch_merged }
+    ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
 
     ch_joined = ch_merged.real.map{ meta, bed -> [[id: meta.tool], bed]}
         .join(ch_merged.benchmarking.map{ meta, bed -> [[id: meta.tool], bed]})
 
     //Overlap plot
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
-    OVERLAP_PLOT(ch_intersect)
+    OVERLAP_PLOT(ch_intersect.out.intersect)
     OVERLAP_JSON(OVERLAP_PLOT.out.plots, "Overlap plots", "Plot the overlap circRNAs found in total and polyA data for the tools")
+    ch_versions = ch_versions.mix(BEDTOOLS_INTERSECT.out.versions)
+    ch_versions = ch_versions.mix(OVERLAP_PLOT.out.versions)
+    ch_versions = ch_versions.mix(OVERLAP_JSON.out.versions)
 
     //Location plot workflow
     LOCATION_PLOT(ch_joined)
     LOCATION_JSON(LOCATION_PLOT.out.plots, "Location plots", "Plots the location of the circRNAs found" )
-
+    ch_versions = ch_versions.mix(LOCATION_PLOT.out.versions)
+    ch_versions = ch_versions.mix(LOCATION_JSON.out.versions)
 
     //Pearson correllation workflow
     ch_meta = ch_real_bam.map { it[0] }
@@ -64,6 +70,7 @@ workflow BENCHMARKING {
         }
 
     ch_genomecov = BEDTOOLS_GENOMECOV(ch_genomecov_inputs, [], "bg",false)
+    ch_versions = ch_versions.mix(BEDTOOLS_GENOMECOV.out.versions)
 
     ch_seqdepths = ch_genomecov.genomecov
         .map { genomecov_result -> genomecov_result[1].toString() }
@@ -71,6 +78,7 @@ workflow BENCHMARKING {
                         newLine: true)
 
     ch_corr = SEQ_DEPTH_CORRELLATION(ch_real_bed, ch_seqdepths.collect()).report
+    ch_versions = ch_versions.mix(SEQ_DEPTH_CORRELLATION.out.versions)
 
     ch_pearson = ch_corr.splitCsv(header: true, sep: "\t")
     .map{ values -> [values.tool, values.pearson_corr]}
@@ -82,9 +90,12 @@ workflow BENCHMARKING {
 
     AVERAGE_TSV(ch_pearson)
     CORRELATION_MULTIQC(AVERAGE_TSV.out.tsv)
+    ch_versions = ch_versions.mix(AVERAGE_TSV.out.versions)
+    ch_versions = ch_versions.mix(CORRELATION_MULTIQC.out.versions)
 
     //Jaccard Workflow
     ch_jaccard = BEDTOOLS_JACCARD(ch_joined, [[], []]).tsv
+    ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)
 
     ch_stats = ch_jaccard.splitCsv(header: true, sep: "\t")
         .map{ meta, values -> [meta.id, values.intersection, values.union, values.jaccard, values.n_intersections]}
@@ -95,22 +106,22 @@ workflow BENCHMARKING {
         }
 
     JACCARD_MULTIQC(ch_stats)
+    ch_versions = ch_versions.mix(JACCARD_MULTIQC.out.versions)
 
     //combine results
-    ch_versions = ch_versions.mix(SORT.out.versions)
-    ch_versions = ch_versions.mix(BEDTOOLS_MERGE.out.versions)
-    ch_versions = ch_versions.mix(BEDTOOLS_JACCARD.out.versions)
-    ch_versions = ch_versions.mix(BEDTOOLS_GENOMECOV.out.versions)
-    ch_versions = ch_versions.mix(BEDTOOLS_INTERSECT.out.versions)
-    ch_versions = ch_versions.mix(JACCARD_MULTIQC.out.versions)
-    ch_versions = ch_versions.mix(AVERAGE_TSV.out.versions)
-    ch_versions = ch_versions.mix(OVERLAP_PLOT.out.versions)
-    ch_versions = ch_versions.mix(OVERLAP_JSON.out.versions)
-    ch_versions = ch_versions.mix(LOCATION_PLOT.out.versions)
-    ch_versions = ch_versions.mix(LOCATION_JSON.out.versions)
-    ch_versions = ch_versions.mix(SEQ_DEPTH_CORRELLATION.out.versions)
 
-    ch_versions = ch_versions.mix(CORRELATION_MULTIQC.out.versions)
+
+
+
+
+
+
+
+
+
+
+
+
 
     ch_reports = JACCARD_MULTIQC.out.report.mix(LOCATION_JSON.out.report)
     ch_reports = ch_reports.mix(OVERLAP_JSON.out.report)

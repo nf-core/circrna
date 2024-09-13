@@ -1,4 +1,5 @@
 process SEQ_DEPTH_CORRELLATION {
+    tag "$meta.id"
     label "process_single"
 
     conda "bioconda::matplotlib=3.5.1 bioconda::seaborn=0.11.2"

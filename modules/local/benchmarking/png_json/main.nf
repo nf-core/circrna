@@ -1,4 +1,5 @@
 process PNG_JSON {
+    tag "$meta.id"
     label "process_single"
 
     conda "bioconda::pandas=1.5.2"

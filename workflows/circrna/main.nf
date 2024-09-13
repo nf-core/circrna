@@ -170,16 +170,14 @@ workflow CIRCRNA {
             ch_reads.benchmarking,
             ch_fasta,
             ch_gtf,
+            ch_annotation,
             bowtie_index,
             bowtie2_index,
             bwa_index,
             chromosomes,
             hisat2_index,
             star_index,
-            ch_annotation,
             params.bsj_reads,
-            params.tool_filter,
-            params.duplicates_fun,
             params.exon_boundary
         )
 
