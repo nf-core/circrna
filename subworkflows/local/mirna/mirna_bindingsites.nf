@@ -3,6 +3,8 @@ include { MIRANDA                         } from '../../../modules/nf-core/miran
 include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
 include { TARGETSCAN                      } from '../../../modules/local/targetscan/predict'
 include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
+include { TARPMIR                         } from '../../../modules/local/tarpmir'
+include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
 include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_targets'
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../modules/nf-core/cat/cat'
 include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
@@ -58,6 +60,19 @@ workflow MIRNA_BINDINGSITES {
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
         ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
+    }
+
+    if (tools_selected.contains('tarpmir')) {
+        //
+        // TARPMIR WORKFLOW:
+        //
+
+        TARPMIR( ch_transcriptome_batches, mirna_fasta.collect() )
+        UNIFY_TARPMIR( TARPMIR.out.bindings, [] )
+
+        ch_versions = ch_versions.mix(TARPMIR.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
     }
 
     //
