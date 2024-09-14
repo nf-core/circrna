@@ -7,13 +7,12 @@ process SPONGE_EFFECTS {
         'oras://community.wave.seqera.io/library/bioconductor-gsva_bioconductor-rtracklayer_bioconductor-sponge_r-base_pruned:ac5be0e145e964fc' :
         'community.wave.seqera.io/library/bioconductor-gsva_bioconductor-rtracklayer_bioconductor-sponge_r-base_pruned:5fad30741cf73551' }"
 
-
-
     input:
     tuple val(meta), path(sponge_data)
 
     output:
     // TODO
+    path "versions.yml"                             , emit: versions
 
 
     when:
