@@ -139,6 +139,13 @@
                     "help_text": "During annotation, if one of the start or end position of a circular candidate imperfectly overlaps an exon boundary, the script will consider positions within 'exon_boundary' (default 0bp) to be an exonic circRNA. If they fall outside of this range, the candidate is assumed to be an exonic-intronic circRNA, and the entire underlying sequence is taken for miRNA analysis, as opposed to just the exonic sequences for canonical exonic circRNAs. ",
                     "default": 0
                 },
+                "benchmarking": {
+                    "type": "boolean",
+                    "description": "Run the pipeline in benchmarking mode.",
+                    "default": false,
+                    "fa_icon": "fas fa-chart-line",
+                    "help_text": "This enables parallel analysis of polyA-enriched data with the same circRNA quantification tools to compare results."
+                },
                 "mirna_tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",

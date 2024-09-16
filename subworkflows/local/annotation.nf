@@ -1,6 +1,5 @@
 include { BEDTOOLS_INTERSECT as INTERSECT_GTF       } from '../../modules/nf-core/bedtools/intersect'
 include { GAWK as INGEST_DATABASE_NAMES             } from '../../modules/nf-core/gawk'
-include { GNU_SORT as COMBINE_DATABASES             } from '../../modules/nf-core/gnu/sort'
 include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE  } from '../../modules/nf-core/bedtools/intersect'
 include { ANNOTATION as ANNOTATE                    } from '../../modules/local/annotation'
 

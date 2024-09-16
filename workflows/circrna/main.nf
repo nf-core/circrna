@@ -22,17 +22,19 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 */
 
 // SUBWORKFLOWS:
-include { paramsSummaryMap                 } from 'plugin/nf-validation'
-include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
-include { validateInputSamplesheet         } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
+include { paramsSummaryMap                            } from 'plugin/nf-validation'
+include { paramsSummaryMultiqc                        } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { validateInputSamplesheet                    } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
 
-include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
-include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
-include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
-include { ANNOTATION                       } from '../../subworkflows/local/annotation'
-include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
-include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
-include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
+include { softwareVersionsToYAML                      } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { PREPARE_GENOME                              } from '../../subworkflows/local/prepare_genome'
+include { BSJ_DETECTION                               } from '../../subworkflows/local/bsj_detection'
+include { BSJ_DETECTION as BSJ_DETECTION_BENCHMARKING } from '../../subworkflows/local/bsj_detection'
+include { BENCHMARKING                                } from '../../subworkflows/local/benchmarking'
+include { ANNOTATION                                  } from '../../subworkflows/local/annotation'
+include { QUANTIFICATION                              } from '../../subworkflows/local/quantification'
+include { MIRNA_PREDICTION                            } from '../../subworkflows/local/mirna_prediction'
+include { STATISTICAL_TESTS                           } from '../../subworkflows/local/statistical_tests'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,8 +138,13 @@ workflow CIRCRNA {
     // 2. BSJ Discovery
     //
 
+    FASTQC_TRIMGALORE.out.reads.branch{
+        real: !it[0].benchmarking
+        benchmarking: it[0].benchmarking
+    }.set{ ch_reads }
+
     BSJ_DETECTION(
-        FASTQC_TRIMGALORE.out.reads,
+        ch_reads.real,
         ch_fasta,
         ch_gtf,
         ch_annotation,
@@ -155,13 +162,45 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
     //
-    // 3. circRNA quantification
+    // 3. Benchmarking
+    //
+
+    if (params.benchmarking) {
+        BSJ_DETECTION_BENCHMARKING(
+            ch_reads.benchmarking,
+            ch_fasta,
+            ch_gtf,
+            ch_annotation,
+            bowtie_index,
+            bowtie2_index,
+            bwa_index,
+            chromosomes,
+            hisat2_index,
+            star_index,
+            params.bsj_reads,
+            params.exon_boundary
+        )
+
+        BENCHMARKING(
+            BSJ_DETECTION.out.bed_per_sample_tool,
+            BSJ_DETECTION_BENCHMARKING.out.bed_per_sample_tool,
+            BSJ_DETECTION.out.star_bam,
+            BSJ_DETECTION_BENCHMARKING.out.star_bam,
+            FASTQC_TRIMGALORE.out.trim_log
+        )
+
+        ch_multiqc_files = ch_multiqc_files.mix(BENCHMARKING.out.reports)
+        ch_versions = ch_versions.mix(BSJ_DETECTION_BENCHMARKING.out.versions)
+    }
+
+    //
+    // 4. Quantification
     //
 
     QUANTIFICATION(
         ch_gtf,
         ch_fasta,
-        FASTQC_TRIMGALORE.out.reads,
+        ch_reads.real,
         BSJ_DETECTION.out.bed12,
         BSJ_DETECTION.out.gtf,
         params.bootstrap_samples,
@@ -172,7 +211,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
     //
-    // 4. miRNA prediction
+    // 5. miRNA prediction
     //
 
     if (params.mature) {
