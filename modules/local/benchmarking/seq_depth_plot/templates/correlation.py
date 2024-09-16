@@ -13,6 +13,7 @@ def calculate_correlation(bed_file_path, depth_file_path):
     circRNA_regions = []
     with open(bed_file_path, 'r') as bed_file:
         for line in bed_file:
+            if line.startswith('#'): continue
             parts = line.strip().split()
             chr = parts[0]
             start = int(parts[1])

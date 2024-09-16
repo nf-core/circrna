@@ -48,7 +48,7 @@ workflow BENCHMARKING {
 
     //Overlap plot
     ch_intersect = BEDTOOLS_INTERSECT(ch_joined,[[], []])
-    OVERLAP_PLOT(ch_intersect.out.intersect)
+    OVERLAP_PLOT(ch_intersect.intersect)
     OVERLAP_JSON(OVERLAP_PLOT.out.plots, "Overlap plots", "Plot the overlap circRNAs found in total and polyA data for the tools")
     ch_versions = ch_versions.mix(BEDTOOLS_INTERSECT.out.versions)
     ch_versions = ch_versions.mix(OVERLAP_PLOT.out.versions)
@@ -109,20 +109,6 @@ workflow BENCHMARKING {
     ch_versions = ch_versions.mix(JACCARD_MULTIQC.out.versions)
 
     //combine results
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     ch_reports = JACCARD_MULTIQC.out.report.mix(LOCATION_JSON.out.report)
     ch_reports = ch_reports.mix(OVERLAP_JSON.out.report)
     ch_reports = ch_reports.mix(CORRELATION_MULTIQC.out.report)

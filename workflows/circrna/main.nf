@@ -166,7 +166,7 @@ workflow CIRCRNA {
     //
 
     if (params.benchmarking) {
-        BSJ_DETECTION(
+        BSJ_DETECTION_BENCHMARKING(
             ch_reads.benchmarking,
             ch_fasta,
             ch_gtf,

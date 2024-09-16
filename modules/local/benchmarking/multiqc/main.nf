@@ -1,5 +1,4 @@
 process BENCHMARKING_MULTIQC {
-    tag "$meta.id"
     label "process_single"
 
     conda "bioconda::pandas=1.5.2"
