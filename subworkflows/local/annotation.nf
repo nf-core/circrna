@@ -23,6 +23,7 @@ workflow ANNOTATION {
     INTERSECT_DATABASE( regions.combine(INGEST_DATABASE_NAMES.out.output)
         .map{ meta1, regions, meta2, database ->
             [[id: "${meta1.id}-${meta2.id}",
+                tool: meta1.tool,
                 original_meta: meta1,
                 min_overlap: meta2.min_overlap], regions, database] },
         [[], []])

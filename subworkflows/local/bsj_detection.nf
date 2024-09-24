@@ -44,11 +44,11 @@ workflow BSJ_DETECTION {
     exon_boundary
 
     main:
-    ch_versions      = Channel.empty()
-    ch_bsj_bed_per_sample_tool           = Channel.empty()
-    ch_multiqc_files = Channel.empty()
-    fasta            = ch_fasta.map{meta, fasta -> fasta}
-    gtf              = ch_gtf.map{meta, gtf -> gtf}
+    ch_versions                = Channel.empty()
+    ch_bsj_bed_per_sample_tool = Channel.empty()
+    ch_multiqc_files           = Channel.empty()
+    fasta                      = ch_fasta.map{meta, fasta -> fasta}
+    gtf                        = ch_gtf.map{meta, gtf -> gtf}
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
