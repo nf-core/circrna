@@ -139,6 +139,14 @@
                     "help_text": "During annotation, if one of the start or end position of a circular candidate imperfectly overlaps an exon boundary, the script will consider positions within 'exon_boundary' (default 0bp) to be an exonic circRNA. If they fall outside of this range, the candidate is assumed to be an exonic-intronic circRNA, and the entire underlying sequence is taken for miRNA analysis, as opposed to just the exonic sequences for canonical exonic circRNAs. ",
                     "default": 0
                 },
+                "quantification_tools": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, psirc",
+                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--quantification_tools 'ciriquant,psirc'",
+                    "default": "ciriquant,psirc",
+                    "pattern": "^((ciriquant|psirc)(,(ciriquant|psirc))*)+$"
+                },
                 "mirna_tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
