@@ -102,7 +102,7 @@
                 }
             }
         },
-        "mirna_processing_options": {
+        "mirna_options": {
             "title": "miRNA options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
