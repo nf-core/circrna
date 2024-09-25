@@ -54,49 +54,8 @@
                 }
             }
         },
-        "mirna_processing_options": {
-            "title": "miRNA options",
-            "type": "object",
-            "fa_icon": "fas fa-terminal",
-            "description": "Define paths and threasholds for miRNA analysis.",
-            "properties": {
-                "mirna_expression": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/tsv",
-                    "pattern": "^\\S+\\.tsv$",
-                    "description": "path to tab-separated file providing the expression counts of mirnas, which are created in pipeline 'smrnaseq'. \n\nmirna \t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
-                    "fa_icon": "fas fa-file-tsv"
-                },
-                "mirna_min_sample_percentage": {
-                    "type": "number",
-                    "fa_icon": "fas fa-circle-notch",
-                    "description": "Minimum percentage of samples, a miRNA has to be expressed in to pass filtering.",
-                    "help_text": "The mirna_min_percentage parameter sets the minimum percentage of samples in which a miRNA must be expressed to pass filtering. The default value is 0.2, which means a miRNA must be detected in at least 20% of the samples to be included in the analysis.",
-                    "default": 0.2,
-                    "minimum": 0
-                },
-                "mirna_min_reads": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-circle-notch",
-                    "description": "Minimum number of reads, a miRNA is required to have to pass filtering.",
-                    "help_text": "This parameter determines the minimum number of reads that a miRNA must have to pass filtering. The default is 5, meaning a miRNA must have at least 5 reads across the samples to be considered for analysis.",
-                    "default": 5,
-                    "minimum": 0
-                },
-                "mirna_correlation": {
-                    "type": "string",
-                    "fa_icon": "fas fa-wrench",
-                    "description": "Specifies the type of correlation to be used when analyzing the relationship between miRNA and transcript expression levels. Valid options are 'pearson' or 'spearman'.",
-                    "help_text": "Select the correlation method to be applied in the correlation analysis of miRNAs.",
-                    "default": "pearson",
-                    "pattern": "^(pearson|spearman)$"
-                }
-            }
-        },
-        "discovery_options": {
-            "title": "Discovery Options",
+        "circrna_options": {
+            "title": "circRNA Options",
             "type": "object",
             "fa_icon": "fas fa-circle-notch",
             "description": "Parameters for circrna discovery.",
@@ -140,6 +99,47 @@
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--quantification_tools 'ciriquant,psirc'",
                     "default": "ciriquant,psirc",
                     "pattern": "^((ciriquant|psirc)(,(ciriquant|psirc))*)+$"
+                }
+            }
+        },
+        "mirna_processing_options": {
+            "title": "miRNA options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define paths and threasholds for miRNA analysis.",
+            "properties": {
+                "mirna_expression": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/tsv",
+                    "pattern": "^\\S+\\.tsv$",
+                    "description": "path to tab-separated file providing the expression counts of mirnas, which are created in pipeline 'smrnaseq'. \n\nmirna \t sample1 \t sample2 \t sample3 \t\nid1\t count_sample1 \t count_sample2 \t count_sample3 \t\nid2 \t ...    \t ...    \t ...    \t \n",
+                    "fa_icon": "fas fa-file-tsv"
+                },
+                "mirna_min_sample_percentage": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum percentage of samples, a miRNA has to be expressed in to pass filtering.",
+                    "help_text": "The mirna_min_percentage parameter sets the minimum percentage of samples in which a miRNA must be expressed to pass filtering. The default value is 0.2, which means a miRNA must be detected in at least 20% of the samples to be included in the analysis.",
+                    "default": 0.2,
+                    "minimum": 0
+                },
+                "mirna_min_reads": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Minimum number of reads, a miRNA is required to have to pass filtering.",
+                    "help_text": "This parameter determines the minimum number of reads that a miRNA must have to pass filtering. The default is 5, meaning a miRNA must have at least 5 reads across the samples to be considered for analysis.",
+                    "default": 5,
+                    "minimum": 0
+                },
+                "mirna_correlation": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "Specifies the type of correlation to be used when analyzing the relationship between miRNA and transcript expression levels. Valid options are 'pearson' or 'spearman'.",
+                    "help_text": "Select the correlation method to be applied in the correlation analysis of miRNAs.",
+                    "default": "pearson",
+                    "pattern": "^(pearson|spearman)$"
                 },
                 "mirna_tools": {
                     "type": "string",
@@ -619,10 +619,10 @@
             "$ref": "#/definitions/alignment_options"
         },
         {
-            "$ref": "#/definitions/discovery_options"
+            "$ref": "#/definitions/circrna_options"
         },
         {
-            "$ref": "#/definitions/mirna_processing_options"
+            "$ref": "#/definitions/mirna_options"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
