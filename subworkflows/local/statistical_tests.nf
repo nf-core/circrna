@@ -34,17 +34,17 @@ workflow STATISTICAL_TESTS {
         .join(ch_stringtie.map{ meta, gtf -> [meta.id, gtf] })
         .map{ sample, condition, ciriquant, stringtie -> [condition, [sample, ciriquant, stringtie]] }
         .groupTuple()
-        .map{ condition, samples -> 
+        .map{ condition, samples ->
             [condition, samples.sort({ a, b -> a[0] <=> b[0] }).transpose()]
         }
-        .map{ condition, samples -> 
+        .map{ condition, samples ->
             [condition, samples[0], samples[1], samples[2]]
         }
 
     ch_condition_pairs = ch_condition_samples
         .combine(ch_condition_samples)
         .filter{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment
-             -> c_control > c_treatment }
+            -> c_control > c_treatment }
         .map{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment ->
             [   [id: "${c_control}_${c_treatment}"],
                 s_control + s_treatment,

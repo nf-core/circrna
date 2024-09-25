@@ -34,7 +34,7 @@ workflow CIRIQUANT {
         EXTRACT_CIRC.out.table.map{meta, table -> [[id: 'circ'], meta.id, table]}.groupTuple()
     )
     ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
-    
+
     emit:
     gene_tpm  = JOIN_GENE.out.joined
     circ_cpm  = JOIN_CIRC.out.joined

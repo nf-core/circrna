@@ -11,8 +11,8 @@ metacols = "${metacols}".split(",")
 
 dfs = {
     sample:
-    pl.scan_csv(matrix, 
-                separator="\\t", 
+    pl.scan_csv(matrix,
+                separator="\\t",
                 new_columns=metacols + [sample],
                 has_header="${has_header}" == "true")
         .group_by(metacols).agg(pl.sum(sample).alias(sample))
