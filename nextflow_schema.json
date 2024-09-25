@@ -77,6 +77,13 @@
                     "default": 1,
                     "minimum": 1
                 },
+                "max_shift": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-file-plus-minus",
+                    "description": "If both start and end of a pair of BSJs are within max_shift bp, they are considered as the same BSJ.",
+                    "default": 1,
+                    "minimum": 0
+                },
                 "tool_filter": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
