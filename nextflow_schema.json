@@ -127,12 +127,6 @@
                     "minimum": 1,
                     "maximum": 7
                 },
-                "save_intermediates": {
-                    "type": "boolean",
-                    "description": "Save intermediate alignment/circRNA files.",
-                    "default": false,
-                    "fa_icon": "fas fa-save"
-                },
                 "exon_boundary": {
                     "type": "integer",
                     "description": "Specify the distance at which the annotation script decides if a candidate is a circRNA or EI-circRNA.",
@@ -499,6 +493,12 @@
                     "description": "Display version and exit.",
                     "fa_icon": "fas fa-question-circle",
                     "hidden": true
+                },
+                "save_intermediates": {
+                    "type": "boolean",
+                    "description": "Save intermediate files.",
+                    "default": false,
+                    "fa_icon": "fas fa-save"
                 },
                 "publish_dir_mode": {
                     "type": "string",
