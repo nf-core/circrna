@@ -46,7 +46,7 @@ df = (df.group_by(["chr", "start_group", "end_group"])
                   score=pl.lit("."),
                   strand=pl.lit(".")))
 
-df.collect().write_csv("${prefix}.bed", separator="\\t", include_header=False)
+df.collect().write_csv("${prefix}.${suffix}", separator="\\t", include_header=False)
 
 # Versions
 
