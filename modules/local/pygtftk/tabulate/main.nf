@@ -25,7 +25,8 @@ process PYGTFTK_TABULATE {
     """
     gtftk tabulate \\
         $args \\
-        -i $gtf > ${outfile}
+        -i $gtf | \\
+        grep -v '^tabulate()' > ${outfile}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
