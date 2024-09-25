@@ -99,6 +99,11 @@
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--quantification_tools 'ciriquant,psirc'",
                     "default": "ciriquant,psirc",
                     "pattern": "^((ciriquant|psirc)(,(ciriquant|psirc))*)+$"
+                },
+                "bootstrap_samples": {
+                    "type": "integer",
+                    "description": "Number of bootstrap samples to use during psirc quantification.",
+                    "default": 30
                 }
             }
         },
@@ -221,11 +226,6 @@
                     "type": "string",
                     "description": "Sequencing center information to be added to read group of BAM files.",
                     "fa_icon": "fas fa-synagogue"
-                },
-                "bootstrap_samples": {
-                    "type": "integer",
-                    "description": "Number of bootstrap samples to generate during quantification.",
-                    "default": 30
                 },
                 "save_unaligned": {
                     "type": "boolean",
