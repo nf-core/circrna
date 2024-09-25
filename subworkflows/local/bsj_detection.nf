@@ -1,12 +1,9 @@
 // MODULES
-include { GAWK as FILTER_BSJS                        } from '../../modules/nf-core/gawk'
-include { GAWK as MASK_SCORES                        } from '../../modules/nf-core/gawk'
-include { GNU_SORT as CONCAT_TOOLS_PER_SAMPLE        } from '../../modules/nf-core/gnu/sort'
-include { BEDTOOLS_GROUPBY as COUNT_TOOLS            } from '../../modules/nf-core/bedtools/groupby'
-include { GAWK as FILTER_MIN_TOOLS                   } from '../../modules/nf-core/gawk'
-include { GNU_SORT as CONCAT_SAMPLES                 } from '../../modules/nf-core/gnu/sort'
 include { GAWK as EXTRACT_COUNTS                     } from '../../modules/nf-core/gawk'
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL      } from '../../modules/nf-core/csvtk/join'
+include { GAWK as FILTER_BSJS                        } from '../../modules/nf-core/gawk'
+include { COMBINE_BEDS as COMBINE_TOOLS_PER_SAMPLE   } from '../../modules/local/combine_beds'
+include { COMBINE_BEDS as COMBINE_SAMPLES            } from '../../modules/local/combine_beds'
 include { UPSET as UPSET_SAMPLES                     } from '../../modules/local/upset'
 include { UPSET as UPSET_ALL                         } from '../../modules/local/upset'
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED        } from '../../modules/nf-core/bedtools/getfasta'
@@ -135,42 +132,33 @@ workflow BSJ_DETECTION {
     // MERGE BED FILES
     //
 
-    MASK_SCORES( ch_bsj_bed_per_sample_tool_filtered, [] )
-    ch_versions = ch_versions.mix(MASK_SCORES.out.versions)
-    ch_bsj_bed_per_sample_tool_masked = MASK_SCORES.out.output
+    COMBINE_TOOLS_PER_SAMPLE( 
+        ch_bsj_bed_per_sample_tool_filtered
+            .map{ meta, bed -> [ [id: meta.id], bed ] }
+            .groupTuple() 
+    )
+    ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
+    ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined
         .filter{ meta, bed -> !bed.empty }
 
-    CONCAT_TOOLS_PER_SAMPLE(
-        MASK_SCORES.out.output.map{ meta, bed -> [ [id: meta.id], bed ] }.groupTuple()
-    )
-    ch_versions = ch_versions.mix(CONCAT_TOOLS_PER_SAMPLE.out.versions)
-
-    COUNT_TOOLS( CONCAT_TOOLS_PER_SAMPLE.out.sorted, 5 )
-    ch_versions = ch_versions.mix(COUNT_TOOLS.out.versions)
-
-    FILTER_MIN_TOOLS( COUNT_TOOLS.out.bed, [] )
-    ch_versions = ch_versions.mix(FILTER_MIN_TOOLS.out.versions)
-    ch_bsj_bed_per_sample = FILTER_MIN_TOOLS.out.output
-        .filter{ meta, bed -> bed.size() > 0 }
-
-    CONCAT_SAMPLES(
+    COMBINE_SAMPLES(
         ch_bsj_bed_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
     )
-    ch_versions = ch_versions.mix(CONCAT_SAMPLES.out.versions)
-    ch_bsj_bed_combined = CONCAT_SAMPLES.out.sorted.collect()
+    ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
+    ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined.collect()
 
     //
     // UPSET PLOTS
     //
 
-    UPSET_SAMPLES( ch_bsj_bed_per_sample_tool_masked
+    UPSET_SAMPLES( ch_bsj_bed_per_sample_tool
         .map{ meta, bed -> [meta.id, meta.tool, bed]}
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
     ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
     ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
 
-    UPSET_ALL( ch_bsj_bed_per_sample_tool_masked
+    UPSET_ALL( ch_bsj_bed_per_sample_tool
         .map{ meta, bed -> ["all", meta.tool, bed] }
         .groupTuple()
         .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
@@ -191,7 +179,7 @@ workflow BSJ_DETECTION {
     ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed
     ch_bsj_gtf_per_sample   = ANNOTATE_PER_SAMPLE.out.gtf
 
-    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool_masked, ch_gtf, exon_boundary, ch_annotation )
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_gtf, exon_boundary, ch_annotation )
     ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed
     ch_bsj_gtf_per_sample_tool   = ANNOTATE_PER_SAMPLE_TOOL.out.gtf
@@ -208,7 +196,7 @@ workflow BSJ_DETECTION {
     ch_versions = ch_versions.mix(FASTA_PER_SAMPLE.out.versions)
     ch_bsj_fasta_per_sample = FASTA_PER_SAMPLE.out.fasta
 
-    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool_masked, fasta )
+    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta )
     ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
 
