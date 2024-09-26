@@ -5,12 +5,10 @@ process CIRCTEST_PREPARE {
     container "biocontainers/r-base:4.2.1"
 
     input:
-    tuple val(meta), path(circ_counts)
-    tuple val(meta2), path(gene_counts)
+    tuple val(meta), path(gene_counts), path(circ_counts)
 
     output:
-    tuple val(meta), path('*_circs.tsv'), emit: circ_counts, optional: true
-    tuple val(meta), path('*_genes.tsv'), emit: gene_counts, optional: true
+    tuple val(meta), path('*_genes.tsv'), path('*_circs.tsv'), emit: counts, optional: true
 
     path "versions.yml"                 , emit: versions
 

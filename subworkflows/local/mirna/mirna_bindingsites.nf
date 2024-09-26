@@ -75,10 +75,7 @@ workflow MIRNA_BINDINGSITES {
     //
     // MAJORITY VOTING:
     //
-    COMBINE_BINDINGSITES ( ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]} )
-    MAJORITY_VOTE( COMBINE_BINDINGSITES.out.file_out )
-
-    ch_versions = ch_versions.mix(COMBINE_BINDINGSITES.out.versions)
+    MAJORITY_VOTE( ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]} )
     ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
 
     emit:

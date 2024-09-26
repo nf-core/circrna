@@ -1,4 +1,4 @@
-include { CIRIQUANT as MAIN } from '../../../modules/local/ciriquant'
+include { CIRIQUANT as MAIN } from '../../../modules/local/ciriquant/ciriquant'
 include { GAWK as UNIFY     } from '../../../modules/nf-core/gawk'
 
 workflow CIRIQUANT {
@@ -12,7 +12,7 @@ workflow CIRIQUANT {
     main:
     ch_versions = Channel.empty()
 
-    MAIN( reads, ch_gtf, ch_fasta, bwa_index, hisat2_index )
+    MAIN( reads, [[], []], ch_gtf, ch_fasta, bwa_index, hisat2_index )
     UNIFY( MAIN.out.gtf.map{ meta, gtf ->
         [ meta + [tool: "ciriquant"], gtf ] }, [] )
 

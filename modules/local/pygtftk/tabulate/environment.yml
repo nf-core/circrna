@@ -1,6 +1,6 @@
-name: transcriptome
+name: pygtftk_tabulate
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - gffread=0.12.1
+  - pygtftk=1.6.2

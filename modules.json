@@ -111,6 +111,11 @@
                         "git_sha": "cf3ed075695639b0a0924eb0901146df1996dc08",
                         "installed_by": ["modules"]
                     },
+                    "gffread": {
+                        "branch": "master",
+                        "git_sha": "6c996d7fbe0816dcbb68ce587ad5f873313682a1",
+                        "installed_by": ["modules"]
+                    },
                     "gnu/sort": {
                         "branch": "master",
                         "git_sha": "a3cc42943548378b726610f45bb5a79ab3f0b633",

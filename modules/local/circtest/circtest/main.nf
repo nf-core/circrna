@@ -7,9 +7,8 @@ process CIRCTEST_CIRCTEST {
         'biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
 
     input:
-    tuple val(meta) , path(circ_counts)
-    tuple val(meta2), path(gene_counts)
-    tuple val(meta3), path(phenotype)
+    tuple val(meta) , path(gene_counts), path(circ_counts)
+    tuple val(meta2), path(phenotype)
 
     output:
     tuple val(meta), path("${prefix}_summary.txt"), emit: summary

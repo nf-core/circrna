@@ -29,7 +29,7 @@ include { validateInputSamplesheet         } from '../../subworkflows/local/util
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
-include { ANNOTATION                       } from '../../subworkflows/local/annotation'
+include { COMBINE_TRANSCRIPTOMES           } from '../../subworkflows/local/combine_transcriptomes'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
 include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
@@ -154,19 +154,31 @@ workflow CIRCRNA {
     ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
     ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
+    COMBINE_TRANSCRIPTOMES(
+        ch_fasta,
+        ch_gtf,
+        BSJ_DETECTION.out.gtf
+    )
+
+    ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
+
     //
     // 3. circRNA quantification
     //
 
     QUANTIFICATION(
+        FASTQC_TRIMGALORE.out.reads,
         ch_gtf,
         ch_fasta,
-        FASTQC_TRIMGALORE.out.reads,
+        COMBINE_TRANSCRIPTOMES.out.fasta,
+        COMBINE_TRANSCRIPTOMES.out.gtf,
         BSJ_DETECTION.out.bed12,
         BSJ_DETECTION.out.gtf,
         params.bootstrap_samples,
         ch_phenotype,
-        PREPARE_GENOME.out.faidx
+        PREPARE_GENOME.out.faidx,
+        PREPARE_GENOME.out.bwa,
+        PREPARE_GENOME.out.hisat2
     )
 
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
@@ -177,11 +189,11 @@ workflow CIRCRNA {
 
     if (params.mature) {
         MIRNA_PREDICTION(
-            QUANTIFICATION.out.transcriptome,
+            COMBINE_TRANSCRIPTOMES.out.fasta,
             BSJ_DETECTION.out.bed12,
             ch_mature,
             ch_mirna,
-            QUANTIFICATION.out.circular_tx_counts,
+            QUANTIFICATION.out.circ,
             QUANTIFICATION.out.rds
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
@@ -192,9 +204,10 @@ workflow CIRCRNA {
     //
 
     STATISTICAL_TESTS(
-        QUANTIFICATION.out.se,
-        QUANTIFICATION.out.gene_counts,
-        QUANTIFICATION.out.circular_tx_counts,
+        QUANTIFICATION.out.gene,
+        QUANTIFICATION.out.circ,
+        QUANTIFICATION.out.ciriquant,
+        QUANTIFICATION.out.stringtie,
         ch_phenotype
     )
 
