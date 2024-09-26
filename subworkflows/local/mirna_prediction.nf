@@ -89,13 +89,14 @@ workflow MIRNA_PREDICTION {
     ch_tx_normalized = TX_NORMALIZATION(tx_counts).normalized
 
     ch_versions = ch_versions.mix(TX_NORMALIZATION.out.versions)
-    
+
     SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_tx_normalized, ch_mirna_filtered)
 
     ch_versions = ch_versions.mix(SPONGE.out.versions)
 
     SPONGE_EFFECTS(SPONGE.out.sponge_data)
-    
+
+    ch_versions = ch_versions.mix(SPONGE_EFFECTS.out.versions)
 
     emit:
     versions = ch_versions
