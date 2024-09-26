@@ -15,8 +15,8 @@ process COMBINE_BEDS {
 
     output:
     tuple val(meta), path("${prefix}.${suffix}"), emit: combined
-    path "*.png"                                , emit: plots
-    path "*.json"                               , emit: multiqc
+    path "*.png"                                , emit: plots, optional: true
+    path "*.json"                               , emit: multiqc, optional: true
     path "versions.yml"                         , emit: versions
 
     script:
