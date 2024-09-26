@@ -165,8 +165,8 @@
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of miRNA bindingsite prediction tools to use. Supported tools: miranda, targetscan.",
                     "help_text": "Select one or a combination of miRNA bindingsite prediction tools for the pipeline e.g:\n--mirna_tools 'miranda,targetscan'",
-                    "default": "miranda,targetscan,tarpmir",
-                    "pattern": "^((miranda|targetscan|tarpmir)?,?)*[^,]+$"
+                    "default": "miranda,targetscan,tarpmir,pita",
+                    "pattern": "^((miranda|targetscan|tarpmir,pita)?,?)*[^,]+$"
                 },
                 "mirna_tool_filter": {
                     "type": "integer",
