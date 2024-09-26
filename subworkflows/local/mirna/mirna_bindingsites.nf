@@ -1,5 +1,4 @@
 include { BIOAWK as ADD_BACKSPLICE        } from '../../../modules/nf-core/bioawk'
-include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../modules/nf-core/cat/cat'
 include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
@@ -30,8 +29,7 @@ workflow MIRNA_BINDINGSITES {
         .splitFasta(by: 100, file: true)
         .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-    //
-    // MIRNA PREDICTION TOOLS:
+    // // MIRNA PREDICTION TOOLS:
     //
     tools_selected = params.mirna_tools.split(',').collect{it.trim().toLowerCase()}
 
@@ -76,17 +74,29 @@ workflow MIRNA_BINDINGSITES {
         ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
     }
 
+    if (tools_selected.contains('pita')) {
+        //
+        // TARPMIR WORKFLOW:
+        //
+
+        PITA( ch_transcriptome_batches, mirna_fasta.collect() )
+        // UNIFY_TARPMIR( TARPMIR.out.bindings, [] )
+
+        ch_versions = ch_versions.mix(PITA.out.versions)
+        // ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
+        // ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
+    }
+
     //
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
     // TODO: This is an artifact and should be removed if we have a replacement
 
-    // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
-    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
+    // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
 
-    MIRNA_TARGETS( consolidate_targets )
+    // MIRNA_TARGETS( consolidate_targets )
 
-    ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
+    // ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
 
     //
     // MAJORITY VOTING:
