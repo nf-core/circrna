@@ -19,7 +19,7 @@ process MAJORITY_VOTE {
     task.ext.when == null || task.ext.when
 
     script:
-    min_tools = params.mirna_tool_filter
+    min_tools = params.mirna_min_tools
     template 'majority.py'
 
     stub:

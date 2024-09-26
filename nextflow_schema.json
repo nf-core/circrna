@@ -66,7 +66,7 @@
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
                     "pattern": "^(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl)(,(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl))*$",
-                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --tool_filter",
+                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --min_tools",
                     "default": "circexplorer2"
                 },
                 "bsj_reads": {
@@ -77,14 +77,29 @@
                     "default": 1,
                     "minimum": 1
                 },
-                "tool_filter": {
+                "max_shift": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-file-plus-minus",
+                    "description": "If both start and end of a pair of BSJs are within max_shift bp, they are considered as the same BSJ.",
+                    "default": 1,
+                    "minimum": 0
+                },
+                "min_tools": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
                     "description": "Specify the minimum number of tools circRNAs must be called by to be output by the workflow.",
-                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--tool_filter` to 1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--tool_filter` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
+                    "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--min_tools` to 1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--min_tools` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
                     "default": 1,
                     "minimum": 1,
                     "maximum": 7
+                },
+                "min_samples": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-intersection",
+                    "description": "Minimum number of samples a circRNA must be detected in to be output by the workflow.",
+                    "help_text": "Filter circRNAs by removing circRNAs detected in fewer samples than the specified value. To disable, set the value to 1 (default).",
+                    "default": 1,
+                    "minimum": 1
                 },
                 "exon_boundary": {
                     "type": "integer",
@@ -99,6 +114,11 @@
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--quantification_tools 'ciriquant,psirc'",
                     "default": "ciriquant,psirc",
                     "pattern": "^((ciriquant|psirc)(,(ciriquant|psirc))*)+$"
+                },
+                "bootstrap_samples": {
+                    "type": "integer",
+                    "description": "Number of bootstrap samples to use during psirc quantification.",
+                    "default": 30
                 }
             }
         },
@@ -149,11 +169,11 @@
                     "default": "miranda,targetscan",
                     "pattern": "^((miranda|targetscan)?,?)*[^,]+$"
                 },
-                "mirna_tool_filter": {
+                "mirna_min_tools": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",
                     "description": "Specify the number of votes required for a miRNA to be further considered in downstream analysis.'",
-                    "help_text": "Controls the number of votes required for a binding site prediction to be considered valid. If a miRNA binding site was predicted by two different tools (e.g., miRanda and TargetScan), it receives two votes. By specifying additional tools for miRNA binding site prediction (using the 'mirna_tool_filter' parameter), you can adjust the number of votes required for a binding site to be considered valid.",
+                    "help_text": "Controls the number of votes required for a binding site prediction to be considered valid. If a miRNA binding site was predicted by two different tools (e.g., miRanda and TargetScan), it receives two votes. By specifying additional tools for miRNA binding site prediction (using the 'mirna_min_tools' parameter), you can adjust the number of votes required for a binding site to be considered valid.",
                     "default": 1,
                     "minimum": 1,
                     "maximum": 4
@@ -221,11 +241,6 @@
                     "type": "string",
                     "description": "Sequencing center information to be added to read group of BAM files.",
                     "fa_icon": "fas fa-synagogue"
-                },
-                "bootstrap_samples": {
-                    "type": "integer",
-                    "description": "Number of bootstrap samples to generate during quantification.",
-                    "default": 30
                 },
                 "save_unaligned": {
                     "type": "boolean",
