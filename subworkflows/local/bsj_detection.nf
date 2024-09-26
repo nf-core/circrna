@@ -144,7 +144,7 @@ workflow BSJ_DETECTION {
     )
     ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined
-        .filter{ meta, bed -> !bed.empty }
+        .filter{ meta, bed -> !bed.isEmpty() }
 
     COMBINE_SAMPLES(
         ch_bsj_bed_per_sample_tool_meta.map{ meta, bed -> [[id: "all"], bed] }.groupTuple(),
@@ -153,7 +153,9 @@ workflow BSJ_DETECTION {
         params.min_samples
     )
     ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
-    ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined.collect()
+    ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined
+        .filter{ meta, bed -> !bed.isEmpty() }
+        .collect()
 
     //
     // ANNOTATION
