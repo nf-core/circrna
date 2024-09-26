@@ -14,6 +14,8 @@ except:
 import urllib
 import subprocess
 import pickle
+import sklearn
+import platform
 import uuid
 import pymysql
 import ssl
@@ -655,8 +657,8 @@ def main():
     mir_path="${mature}"
     mrna_path="${fasta}"
     mode_path="${moduleDir}/Human_sklearn_0.22.pkl"
-    pb_cut=float(0.8) # TODO MALTE
-    n_threads_input=10 # TODO MALTE
+    pb_cut=float(0.8) # TODO: make param in nextflow.config
+    n_threads_input=12
     output_file="${meta.id}.bindings.tsv"
 
     global sessionID
@@ -748,6 +750,7 @@ if __name__=='__main__':
             "RNAplfold": rnaplfold_version,
             "RNAduplex": rnaduplex_version,
             "miranda": miranda_version,
+            "sklearn": sklearn.__version__,
         }
     }
 
