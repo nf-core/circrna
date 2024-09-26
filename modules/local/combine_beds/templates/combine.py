@@ -54,16 +54,26 @@ df = (df.group_by(["chr", "start_group", "end_group"])
                   score=pl.lit("."),
                   strand=pl.lit(".")))
 
+df_aggregated = df.collect().to_pandas()
+n_bsjs = len(df_aggregated)
+
+df_filtered = df_aggregated[(df_aggregated["n_tools"] >= min_tools) & (df_aggregated["n_samples"] >= min_samples)]
+df_filtered = df_filtered[["chr", "start", "end", "name", "score", "strand"]]
+
+df_filtered.to_csv("${prefix}.${suffix}", sep="\\t", header=False, index=False)
+
 for col in ["samples", "tools"]:
-    series = pl.Series(df.select(col).collect())
-    if series.explode().n_unique() == 1:
+    series = df_aggregated[col]
+    if series.explode().nunique() == 1:
         continue
     memberships = series.to_list()
     dataset = upsetplot.from_memberships(memberships)
     upsetplot.plot(dataset,
                    orientation='horizontal',
                    show_counts=True,
-                   subset_size="count")
+                   subset_size="count",
+                   min_degree=2,
+                   min_subset_size=min(50, int(n_bsjs * 0.02)))
     plot_file = f"{prefix}_{col}.upset.png"
     plt.savefig(plot_file)
 
@@ -83,12 +93,6 @@ for col in ["samples", "tools"]:
 
     with open(f"{prefix}_{col}.upset_mqc.json", "w") as f:
         f.write(json.dumps(multiqc, indent=4))
-
-
-df = (df.filter((pl.col("n_tools") >= min_tools) & (pl.col("n_samples") >= min_samples))
-        .select(["chr", "start", "end", "name", "score", "strand"]))
-
-df.collect().write_csv("${prefix}.${suffix}", separator="\\t", include_header=False)
 
 # Versions
 
