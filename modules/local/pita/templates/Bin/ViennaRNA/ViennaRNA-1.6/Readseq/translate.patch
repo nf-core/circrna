@@ -1,0 +1,126 @@
+
+## 
+## Patch to readseq to allow input sequence symbols to be translated
+## to different output sequence symbols.  This has not been tested,
+## as of 22 Dec 94.  D.Gilbert
+##
+
+diff -bwrc old/Makefile rtrans/Makefile
+*** old/Makefile	Thu Dec 22 08:58:41 1994
+--- rtrans/Makefile	Thu Dec 22 08:58:31 1994
+***************
+*** 13,21 ****
+  CFLAGS=
+  #CFLAGS= -DSMALLCHECKSUM  # if you prefer to use a GCG-standard 13 bit checksum
+  #    instead of a full 32 bit checksum. This may enhance compatibility w/ GCG software
+  
+  SOURCES= readseq.c ureadseq.c ureadseq.h ureadasn.c
+! DOCS= Readme Readseq.help Formats Stdfiles Makefile Make.com add.gdemenu *.std
+  
+  
+  # NCBI toolkit support for ASN.1 reader
+--- 13,23 ----
+  CFLAGS=  
+  #CFLAGS= -DSMALLCHECKSUM  # if you prefer to use a GCG-standard 13 bit checksum 
+  #    instead of a full 32 bit checksum. This may enhance compatibility w/ GCG software
++ #CFLAGS= -DTRANSLATE # if you want option to translate certain input sequence symbols
++ #    to a different output sequence symbols
+  
+  SOURCES= readseq.c ureadseq.c ureadseq.h ureadasn.c
+! DOCS= Readme readseq.help Formats Stdfiles Makefile Make.com add.gdemenu *.std
+  
+  
+  # NCBI toolkit support for ASN.1 reader
+
+
+diff -bwrc old/readseq.c rtrans/readseq.c
+*** old/readseq.c	Thu Dec 22 08:58:41 1994
+--- rtrans/readseq.c	Thu Dec 22 09:01:05 1994
+***************
+*** 338,343 ****
+--- 338,347 ----
+    fprintf(stderr, "    -o[utput=]out.seq  redirect Output\n");
+    fprintf(stderr, "    -p[ipe]        Pipe (command line, <stdin, >stdout)\n");
+    fprintf(stderr, "    -r[everse]     change to Reverse-complement\n");
++ #ifdef TRANSLATE
++   fprintf(stderr, "    -t[ranslate=]io translate input symbol [i] to output symbol [o] \n");
++   fprintf(stderr, "                    use several -tio to translate several symbols \n");
++ #endif
+    fprintf(stderr, "    -v[erbose]     Verbose progress\n");
+    fprintf(stderr, "    -f[ormat=]#    Format number for output,  or\n");
+    fprintf(stderr, "    -f[ormat=]Name Format name for output:\n");
+***************
+*** 474,479 ****
+--- 478,486 ----
+    foo = NULL;
+  
+    gPrettyInit(gPretty);
++ #ifdef TRANSLATE
++   gTranslateInit();
++ #endif
+  }
+  
+  
+***************
+*** 590,595 ****
+--- 597,615 ----
+        outform = parseformat( sparam);
+        return kOptOkay;
+        }
++ 
++ #ifdef TRANSLATE
++     if (checkopt( false, sopt, "-translate", 3)) {/* -translate=io */
++       if (*sparam==0) { for (sparam= sopt+3; isalpha(*sparam); sparam++) ; }
++ 			if (*sparam) gTranslate[*sparam]= sparam[1];
++       return kOptOkay;
++       }
++     if (checkopt( false, sopt, "-t", 2)) {  /* shorthand is -tio */
++       if (*sparam==0) sparam= sopt+2;
++ 			if (*sparam) gTranslate[*sparam]= sparam[1];
++       return kOptOkay;
++       }
++ #endif
+  
+      if (checkopt( false, sopt, "-output", 3)) {/* -output=myseq */
+        if (*sparam==0) { for (sparam= sopt+3; isalpha(*sparam); sparam++) ; }
+
+
+diff -bwrc old/ureadseq.c rtrans/ureadseq.c
+*** old/ureadseq.c	Thu Dec 22 08:58:41 1994
+--- rtrans/ureadseq.c	Thu Dec 22 09:01:43 1994
+***************
+*** 162,168 ****
+--- 162,172 ----
+            }
+          else V->seq = ptr;
+          }
++ #ifdef TRANSLATE
++       V->seq[(V->seqlen)++] = gTranslate[*s];
++ #else
+        V->seq[(V->seqlen)++] = *s;
++ #endif
+        }
+      s++;
+      }
+
+
+diff -bwrc old/ureadseq.h rtrans/ureadseq.h
+*** old/ureadseq.h	Thu Dec 22 08:58:41 1994
+--- rtrans/ureadseq.h	Thu Dec 22 08:58:28 1994
+***************
+*** 113,118 ****
+--- 113,126 ----
+  extern  prettyopts  gPretty;
+  #endif
+  
++ #ifdef TRANSLATE
++ #ifdef UREADSEQ_G
++ char  gTranslate[256];
++ #else
++ extern char  gTranslate[256];
++ #endif
++ #define gTranslateInit() { short c; for(c=0; c<256; c++) gTranslate[c]= c; }
++ #endif
+  
+  #ifdef __cplusplus
+  extern "C" {

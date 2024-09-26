@@ -1,0 +1,1 @@
+dist_vars.o dist_vars.o: dist_vars.c

@@ -1,0 +1,5 @@
+energy_par.o energy_par.o: energy_par.c ../H/energy_const.h intloops.h
+
+../H/energy_const.h:
+
+intloops.h:
