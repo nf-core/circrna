@@ -5,8 +5,6 @@ include { GAWK as FILTER_BSJS                        } from '../../modules/nf-co
 include { GAWK as BED_ADD_SAMPLE_TOOL                } from '../../modules/nf-core/gawk'
 include { COMBINE_BEDS as COMBINE_TOOLS_PER_SAMPLE   } from '../../modules/local/combine_beds'
 include { COMBINE_BEDS as COMBINE_SAMPLES            } from '../../modules/local/combine_beds'
-include { UPSET as UPSET_SAMPLES                     } from '../../modules/local/upset'
-include { UPSET as UPSET_ALL                         } from '../../modules/local/upset'
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED        } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE      } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL } from '../../modules/nf-core/bedtools/getfasta'
@@ -152,28 +150,6 @@ workflow BSJ_DETECTION {
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined.collect()
 
     //
-    // UPSET PLOTS
-    //
-
-    if (tools_selected.size() > 1) {
-
-        UPSET_SAMPLES( ch_bsj_bed_per_sample_tool_filtered
-            .map{ meta, bed -> [meta.id, meta.tool, bed]}
-            .groupTuple()
-            .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-        ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
-        ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
-
-        UPSET_ALL( ch_bsj_bed_per_sample_tool_filtered
-            .map{ meta, bed -> ["all", meta.tool, bed] }
-            .groupTuple()
-            .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-        ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
-        ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
-
-    }
-
-    //
     // ANNOTATION
     //
 
@@ -219,7 +195,6 @@ workflow BSJ_DETECTION {
             .mix(ch_bsj_fasta_combined)
             .mix(ch_bsj_fasta_per_sample)
             .mix(ch_bsj_fasta_per_sample_tool)
-            .mix(UPSET_SAMPLES.out.plot)
             .map{ meta, f -> f }
             .collect()
     )
