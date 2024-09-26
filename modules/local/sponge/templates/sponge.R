@@ -21,7 +21,6 @@ bindingsites_matrix <- as.matrix(bindingsites)
 
 # load gene expression
 genes <- read.csv("${gene_expr}", sep = "\\t", row.names = "tx")
-genes <- subset(genes, select = -gene_id)
 gene_expr <- t(as.matrix(genes))
 
 
