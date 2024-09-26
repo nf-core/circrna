@@ -31,7 +31,7 @@ process MIRNA_TARGETS {
     bedtools intersect -a targetscan.bed -b miranda.bed | awk '{print \$6}' > mirna_type
 
     ## remove duplicate miRNA entries at MRE sites.
-    ## strategy: sory by circs, sort by start position, sort by site type - the goal is to take the best site type (i.e rank site type found at MRE site).
+    ## strategy: sort by circs, sort by start position, sort by site type - the goal is to take the best site type (i.e rank site type found at MRE site).
     paste ${prefix}.mirnas.tmp mirna_type | sort -k3n -k2n -k7r | awk -v OFS="\\t" '{print \$4,\$1,\$2,\$3,\$5,\$6,\$7}' | awk -F "\\t" '{if (!seen[\$1,\$2,\$3,\$4,\$5,\$6]++)print}' | sort -k1,1 -k3n > ${prefix}.mirna_targets.tmp
     echo -e "circRNA\\tmiRNA\\tStart\\tEnd\\tScore\\tEnergy_KcalMol\\tSite_type" | cat - ${prefix}.mirna_targets.tmp > ${prefix}.mirna_targets.txt
 
