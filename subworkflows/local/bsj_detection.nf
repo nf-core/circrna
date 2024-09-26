@@ -137,14 +137,20 @@ workflow BSJ_DETECTION {
     COMBINE_TOOLS_PER_SAMPLE(
         ch_bsj_bed_per_sample_tool_meta
             .map{ meta, bed -> [ [id: meta.id], bed ] }
-            .groupTuple()
+            .groupTuple(),
+        params.max_shift,
+        params.min_tools,
+        1
     )
     ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined
         .filter{ meta, bed -> !bed.empty }
 
     COMBINE_SAMPLES(
-        ch_bsj_bed_per_sample_tool_meta.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
+        ch_bsj_bed_per_sample_tool_meta.map{ meta, bed -> [[id: "all"], bed] }.groupTuple(),
+        params.max_shift,
+        params.min_tools,
+        params.min_samples
     )
     ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined.collect()
