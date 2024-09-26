@@ -1,13 +1,14 @@
 include { BIOAWK as ADD_BACKSPLICE        } from '../../../modules/nf-core/bioawk'
-include { MIRANDA                         } from '../../../modules/nf-core/miranda'
-include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
-include { TARGETSCAN                      } from '../../../modules/local/targetscan/predict'
-include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
-include { TARPMIR                         } from '../../../modules/local/tarpmir'
-include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
-include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_targets'
 include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../modules/nf-core/cat/cat'
+include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
+include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
+include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
 include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
+include { MIRANDA                         } from '../../../modules/nf-core/miranda'
+include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_targets'
+include { PITA                            } from '../../../modules/local/pita'
+include { TARGETSCAN                      } from '../../../modules/local/targetscan/predict'
+include { TARPMIR                         } from '../../../modules/local/tarpmir'
 
 workflow MIRNA_BINDINGSITES {
     take:
