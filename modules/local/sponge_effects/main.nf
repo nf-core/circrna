@@ -11,8 +11,8 @@ process SPONGE_EFFECTS {
     tuple val(meta), path(sponge_data)
 
     output:
-    // TODO
-    path "versions.yml"                             , emit: versions
+    // TODO: script can't be executed yet
+    path "versions.yml", emit: versions
 
 
     when:
@@ -22,6 +22,7 @@ process SPONGE_EFFECTS {
     template 'sponge_effects.R'
 
     stub:
+    // TODO
     """
     touch "test.txt"
 
