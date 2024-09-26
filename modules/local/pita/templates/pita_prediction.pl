@@ -13,9 +13,9 @@ my \$upstream_fn = get_arg("upstream", "", \\%args);
 my \$mir_fn = '${mature}';
 my \$flank_up = get_arg("flank_up", "", \\%args);
 my \$flank_down = get_arg("flank_down", "", \\%args);
-my \$lengths = '6-8';
-my \$gu = '6;0,7;1,8;1';
-my \$mismatches = '6;0,7;0.8;1';
+my \$lengths = '${params.pita_lengths}'
+my \$gu = '${params.pita_wobbles}'
+my \$mismatches = '${params.pita_mismatches}'
 my \$loop = get_arg("loop", "", \\%args);
 my \$gxp = get_arg("gxp", "", \\%args);
 

@@ -177,6 +177,30 @@
                     "minimum": 1,
                     "maximum": 4
                 },
+                "pita_lengths": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "A parameter for PITA which controls the range of seed lengths for microRNA interactions.",
+                    "help_text": "Search for seed lengths of num1,...,num2 to the MicroRNA (default: 6-8), where the values represent the minimum and maximum number of nucleotides in the seed sequence.",
+                    "default": "6-8",
+                    "pattern": "^(\\d*-\\d*)"
+                },
+                "pita_wobbles": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "A parameter for PITA that defines the seed lengths where G:U wobbles (mismatched pairs) are allowed.",
+                    "help_text": "Lengths for which G:U wobbles are allowed and number of allowed wobbles. Format of nums: <length;num G:U>,<length;num G:U>,... (default: 6;0,7;1,8;1)",
+                    "default": "6;0,7;1,8;1",
+                    "pattern": "^((\\d*;\\d*),)?(\\d*;\\d*)"
+                },
+                "pita_mismatches": {
+                    "type": "string",
+                    "fa_icon": "fas fa-wrench",
+                    "description": "A parameter for PITA that defines the seed lengths where mismatches are allowed and the number of permitted mismatches.",
+                    "help_text": "Lengths for which mismatches are allowed and number of allowed mismatches. Format of nums: <length;num mismatches>,<length;num mismatches>,... (default: 6;0,7;0,8;1)",
+                    "default": "6;0,7;0,8;1",
+                    "pattern": "^((\\d*;\\d*),)?(\\d*;\\d*)"
+                },
                 "sponge_fdr": {
                     "type": "number",
                     "fa_icon": "fas fa-circle-notch",
