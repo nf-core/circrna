@@ -177,6 +177,20 @@
                     "minimum": 1,
                     "maximum": 4
                 },
+                "tarpmir_cut": {
+                    "type": "number",
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Probability cut, which defines a true miRNA-mRNA binding site. (e.g. 0.5, means that it's a true binding site if the prediction proability >0.5)",
+                    "help_text": "A float number which defines the cutoff for a true miRNA-mRNA binding site.",
+                    "default": 0.8
+                },
+                "tarpmir_threads": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-intersection",
+                    "description": "Defines the number of threads used by tarpmir to parallelize the processing of mRNA sequences for miRNA target prediction.",
+                    "help_text": "Set the number of threads to be used for parallel processing. A higher number of threads will increase the speed but may consume more system resources. (default: 12)",
+                    "default": 12
+                },
                 "pita_lengths": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",

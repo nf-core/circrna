@@ -657,8 +657,8 @@ def main():
     mir_path="${mature}"
     mrna_path="${fasta}"
     mode_path="${moduleDir}/Human_sklearn_0.22.pkl"
-    pb_cut=float(0.8) # TODO: make param in nextflow.config
-    n_threads_input=12
+    pb_cut=float(${params.tarpmir_cut})
+    n_threads_input=${params.tarpmir_threads}
     output_file="${meta.id}.bindings.tsv"
 
     global sessionID
