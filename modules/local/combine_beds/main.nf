@@ -15,9 +15,10 @@ process COMBINE_BEDS {
     path "versions.yml"                         , emit: versions
 
     script:
-    prefix = task.ext.prefix ?: "${meta.id}"
-    suffix = task.ext.suffix ?: "bed"
-    max_shift = task.ext.max_shift ?: 1
-    min_files = task.ext.min_files ?: 1
+    prefix      = task.ext.prefix      ?: "${meta.id}"
+    suffix      = task.ext.suffix      ?: "bed"
+    max_shift   = task.ext.max_shift   ?: 1
+    min_tools   = task.ext.min_tools   ?: 1
+    min_samples = task.ext.min_samples ?: 1
     template "combine.py"
 }

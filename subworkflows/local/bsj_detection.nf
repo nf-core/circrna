@@ -2,6 +2,7 @@
 include { GAWK as EXTRACT_COUNTS                     } from '../../modules/nf-core/gawk'
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL      } from '../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                        } from '../../modules/nf-core/gawk'
+include { GAWK as BED_ADD_SAMPLE_TOOL                } from '../../modules/nf-core/gawk'
 include { COMBINE_BEDS as COMBINE_TOOLS_PER_SAMPLE   } from '../../modules/local/combine_beds'
 include { COMBINE_BEDS as COMBINE_SAMPLES            } from '../../modules/local/combine_beds'
 include { UPSET as UPSET_SAMPLES                     } from '../../modules/local/upset'
@@ -127,22 +128,25 @@ workflow BSJ_DETECTION {
     ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS( ch_bsj_bed_per_sample_tool, [] ).output
     ch_versions                         = ch_versions.mix(FILTER_BSJS.out.versions)
 
-
     //
     // MERGE BED FILES
     //
 
-    COMBINE_TOOLS_PER_SAMPLE( 
-        ch_bsj_bed_per_sample_tool_filtered
+    BED_ADD_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool_filtered, [] )
+    ch_versions = ch_versions.mix(BED_ADD_SAMPLE_TOOL.out.versions)
+    ch_bsj_bed_per_sample_tool_meta = BED_ADD_SAMPLE_TOOL.out.output
+
+    COMBINE_TOOLS_PER_SAMPLE(
+        ch_bsj_bed_per_sample_tool_meta
             .map{ meta, bed -> [ [id: meta.id], bed ] }
-            .groupTuple() 
+            .groupTuple()
     )
     ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined
         .filter{ meta, bed -> !bed.empty }
 
     COMBINE_SAMPLES(
-        ch_bsj_bed_per_sample.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
+        ch_bsj_bed_per_sample_tool_meta.map{ meta, bed -> [[id: "all"], bed] }.groupTuple()
     )
     ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined.collect()
@@ -151,19 +155,23 @@ workflow BSJ_DETECTION {
     // UPSET PLOTS
     //
 
-    UPSET_SAMPLES( ch_bsj_bed_per_sample_tool
-        .map{ meta, bed -> [meta.id, meta.tool, bed]}
-        .groupTuple()
-        .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-    ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
-    ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
+    if (tools_selected.size() > 1) {
 
-    UPSET_ALL( ch_bsj_bed_per_sample_tool
-        .map{ meta, bed -> ["all", meta.tool, bed] }
-        .groupTuple()
-        .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
-    ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
-    ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
+        UPSET_SAMPLES( ch_bsj_bed_per_sample_tool_filtered
+            .map{ meta, bed -> [meta.id, meta.tool, bed]}
+            .groupTuple()
+            .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
+        ch_multiqc_files = ch_multiqc_files.mix(UPSET_SAMPLES.out.multiqc)
+        ch_versions = ch_versions.mix(UPSET_SAMPLES.out.versions)
+
+        UPSET_ALL( ch_bsj_bed_per_sample_tool_filtered
+            .map{ meta, bed -> ["all", meta.tool, bed] }
+            .groupTuple()
+            .map{ sample, tools, beds -> [[id: sample], tools, beds]} )
+        ch_multiqc_files = ch_multiqc_files.mix(UPSET_ALL.out.multiqc)
+        ch_versions = ch_versions.mix(UPSET_ALL.out.versions)
+
+    }
 
     //
     // ANNOTATION

@@ -24,13 +24,13 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     return yaml_str
 
 max_shift = int("${max_shift}")
-min_files = int("${min_files}")
+min_tools = int("${min_tools}")
+min_samples = int("${min_samples}")
 
 df = pl.scan_csv("*.bed", 
                  separator="\\t",
                  has_header=False,
-                 include_file_paths="file",
-                 new_columns=["chr", "start", "end", "name", "score", "strand"])
+                 new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
 
 for col in ["end", "start"]:
     df = df.sort(["chr", col])
@@ -39,8 +39,9 @@ for col in ["end", "start"]:
 df = (df.group_by(["chr", "start_group", "end_group"])
     .agg(pl.col("start").median().round().cast(int),
          pl.col("end").median().round().cast(int),
-         pl.col("file").n_unique().alias("n_files"))
-    .filter(pl.col("n_files") >= min_files)
+         pl.col("sample").n_unique().alias("n_samples"),
+         pl.col("tool").n_unique().alias("n_tools"))
+    .filter((pl.col("n_tools") >= min_tools) & (pl.col("n_samples") >= min_samples))
     .select(["chr", "start", "end"])
     .with_columns(name=pl.col("chr").cast(str) + ":" + pl.col("start").cast(str) + "-" + pl.col("end").cast(str),
                   score=pl.lit("."),

@@ -140,7 +140,7 @@ The rough workflow for the BSJ detection looks like this:
 2. Bring the tool outputs into a common format.
 3. Apply a threshold (parameter `bsj_reads`) to the BSJ reads to filter out lowly supported BSJs.
 4. Combine all tool-specific BSJ calls per sample into a single file.
-5. Filter out BSJs that are not supported by at least as many tools as specified by`tool_filter`.
+5. Filter out BSJs that are not supported by at least as many tools as specified by`min_tools`.
 6. Merge all samples into a single file. This now represents the "circular transcriptome"
 
 ### Per tool
@@ -323,7 +323,7 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 
 - `bsj_detection/samples/${sample_id}/`
   - `*.grouped.bed`: Grouped BSJ calls in BED format. Score column represents the number of tools that support the BSJ.
-  - `*.filtered.bed`: Based on `*.grouped.bed`, but filtered for BSJs with at least `tool_filter` supporting tools.
+  - `*.filtered.bed`: Based on `*.grouped.bed`, but filtered for BSJs with at least `min_tools` supporting tools.
   - `*.intersect_gtf.bed`: Intersection of `*.filtered.bed` with the reference GTF file. Intermediate file for annotation.
   - `*.intersect_database.bed`: Intersection of `*.filtered.bed` with the database BED file. Intermediate file for annotation.
   - `*.annotated.bed`: Annotated BSJ calls in BED format, based on `*.filtered.bed`.
@@ -333,7 +333,7 @@ STAR in 2-pass mode is used to identify novel splice junctions in RNA-Seq data. 
 
 </details>
 
-nf-core/circrna produces a sample-specific set of BSJ calls. The BSJ calls are filtered for BSJs with at least `tool_filter` supporting tools. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
+nf-core/circrna produces a sample-specific set of BSJ calls. The BSJ calls are filtered for BSJs with at least `min_tools` supporting tools. The filtered BSJ calls are then annotated with the reference GTF file and the database BED file. An upset plot is generated to visualise the overlap of BSJ calls across tools.
 
 ### Combined
 
