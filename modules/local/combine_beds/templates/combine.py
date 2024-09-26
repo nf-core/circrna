@@ -34,7 +34,7 @@ min_samples = int("${min_samples}")
 meta_id = "{meta_id}"
 prefix = "${prefix}"
 
-df = pl.scan_csv("*.bed", 
+df = pl.scan_csv("*.bed",
                  separator="\\t",
                  has_header=False,
                  new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
