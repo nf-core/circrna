@@ -1,5 +1,6 @@
 include { BIOAWK as ADD_BACKSPLICE        } from '../../../modules/nf-core/bioawk'
 include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
+include { GAWK as UNIFY_PITA              } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
 include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
@@ -66,8 +67,8 @@ workflow MIRNA_BINDINGSITES {
         // TARPMIR WORKFLOW:
         //
 
-        TARPMIR( ch_transcriptome_batches, mirna_fasta.collect() )
-        UNIFY_TARPMIR( TARPMIR.out.bindings, [] )
+        TARPMIR(ch_transcriptome_batches, mirna_fasta.collect())
+        UNIFY_TARPMIR(TARPMIR.out.bindings, [])
 
         ch_versions = ch_versions.mix(TARPMIR.out.versions)
         ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
@@ -76,15 +77,15 @@ workflow MIRNA_BINDINGSITES {
 
     if (tools_selected.contains('pita')) {
         //
-        // TARPMIR WORKFLOW:
+        // PITA WORKFLOW:
         //
 
-        PITA( ch_transcriptome_batches, mirna_fasta.collect() )
-        // UNIFY_TARPMIR( TARPMIR.out.bindings, [] )
+        PITA(ch_transcriptome_batches, mirna_fasta.collect())
+        UNIFY_PITA(PITA.out.tsv, [])
 
         ch_versions = ch_versions.mix(PITA.out.versions)
-        // ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
-        // ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
+        ch_versions = ch_versions.mix(UNIFY_PITA.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_PITA.out.output)
     }
 
     //
