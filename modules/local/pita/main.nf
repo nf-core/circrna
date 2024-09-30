@@ -12,8 +12,8 @@ process PITA {
     tuple val(meta2), path(mature)
 
     output:
-    tuple val(meta), path("*_pita_results.tab"), emit: tsv
-    path "versions.yml"                        , emit: versions
+    tuple val(meta), path("*.tab"), emit: tsv
+    path "versions.yml"           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
