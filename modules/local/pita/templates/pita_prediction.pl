@@ -7,7 +7,7 @@ require "${moduleDir}/templates/lib/format_number.pl";
 
 my %args = load_args(\\@ARGV);
 
-my \$prefix = 'circRNA';
+my \$prefix = '${meta.id}.pita';
 my \$utr_fn = '${fasta}';
 my \$upstream_fn = get_arg("upstream", "", \\%args);
 my \$mir_fn = '${mature}';
@@ -96,6 +96,33 @@ sub removeIllegalXMLChars
    
    return \$res_str;
 }
+
+########################
+####### VERSIONS #######
+########################
+
+# TODO: hardcoded for now, waiting for conda container
+my \$viennarna_version = "1.6";
+my \$perl_version = "\$^V";
+
+my \$str = <<END;
+${task.process}:
+    perl: \$perl_version
+    viennarna: \$viennarna_version
+END
+
+my \$filename = 'versions.yml';
+
+open(FH, '>', \$filename) or die \$!;
+
+print FH \$str;
+
+close(FH);
+
+########################
+########################
+########################
+
 
 __DATA__
 syntax: pita_prediction.pl [OPTIONS]
