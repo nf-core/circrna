@@ -36,11 +36,11 @@ bed_paths = "${beds}".split()
 
 columns = ["chr", "start", "end", "name", "score", "strand"]
 
-df_candidates = pl.scan_csv(candidate_path, has_header=False, separator="\t", new_columns=columns)
+df_candidates = pl.scan_csv(candidate_path, has_header=False, separator="\\t", new_columns=columns)
 df_candidates = df_candidates.select(columns)
 df_candidates = df_candidates.with_columns(sample=pl.lit("candidate"), tool=pl.lit("candidate"), score=pl.lit(None))
 
-df = pl.scan_csv(bed_paths, has_header=False, separator="\t", new_columns=columns + ["sample", "tool"])
+df = pl.scan_csv(bed_paths, has_header=False, separator="\\t", new_columns=columns + ["sample", "tool"])
 df_combined = pl.concat([df, df_candidates])
 
 df_combined = df_combined.sort("chr", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
@@ -71,7 +71,7 @@ df = df.sort("chr", "start", "end")
 df = df.select(["id"] + samples)
 df = df.fill_null(0)
 
-df.sink_csv(f"{prefix}.{suffix}", separator="\t", include_header=True)
+df.sink_csv(f"{prefix}.{suffix}", separator="\\t", include_header=True)
 
 # Versions
 
