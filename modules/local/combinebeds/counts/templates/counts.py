@@ -67,6 +67,7 @@ samples = df.select("sample").group_by("sample").len().collect()["sample"].to_li
 df = df.collect().pivot(on="sample", values="score", index=["chr", "start", "end", "start_group", "end_group"], aggregate_function=aggregation).lazy()
 df = df.group_by(["chr", "start_group", "end_group"] + samples).agg(start=pl.col("start").min(), end=pl.col("end").max())
 df = df.with_columns(id=pl.col("chr") + pl.lit(":") + pl.col("start").cast(str) + pl.lit("-") + pl.col("end").cast(str))
+df = df.sort("chr", "start", "end")
 df = df.select(["id"] + samples)
 df = df.fill_null(0)
 
