@@ -1,4 +1,4 @@
-process COMBINE_BEDS {
+process COMBINEBEDS_FILTER {
     tag "$meta.id"
     label "process_low"
 
@@ -22,5 +22,5 @@ process COMBINE_BEDS {
     script:
     prefix      = task.ext.prefix      ?: "${meta.id}"
     suffix      = task.ext.suffix      ?: "bed"
-    template "combine.py"
+    template "filter.py"
 }
