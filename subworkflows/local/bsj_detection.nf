@@ -3,8 +3,8 @@ include { GAWK as EXTRACT_COUNTS                         } from '../../modules/n
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL          } from '../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                            } from '../../modules/nf-core/gawk'
 include { GAWK as BED_ADD_SAMPLE_TOOL                    } from '../../modules/nf-core/gawk'
-include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE } from '../../modules/local/combinebeds_filter'
-include { COMBINEBEDS_FILTER as COMBINE_SAMPLES          } from '../../modules/local/combinebeds_filter'
+include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE } from '../../modules/local/combinebeds/filter'
+include { COMBINEBEDS_FILTER as COMBINE_SAMPLES          } from '../../modules/local/combinebeds/filter'
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED            } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE          } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL     } from '../../modules/nf-core/bedtools/getfasta'
@@ -212,6 +212,8 @@ workflow BSJ_DETECTION {
     bed12         = ch_bsj_bed12_combined
     gtf           = ch_bsj_gtf_combined
     fasta         = ch_bsj_fasta_combined
+
+    bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
 
     multiqc_files = ch_multiqc_files
     versions      = ch_versions

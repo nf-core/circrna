@@ -174,6 +174,7 @@ workflow CIRCRNA {
         COMBINE_TRANSCRIPTOMES.out.gtf,
         BSJ_DETECTION.out.bed12,
         BSJ_DETECTION.out.gtf,
+        BSJ_DETECTION.out.bed_per_sample_tool,
         params.bootstrap_samples,
         ch_phenotype,
         PREPARE_GENOME.out.faidx,

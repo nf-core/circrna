@@ -1,5 +1,6 @@
-include { PSIRC_QUANT } from './quantification_tools/psirc_quant'
-include { CIRIQUANT   } from './quantification_tools/ciriquant'
+include { PSIRC_QUANT                     } from './quantification_tools/psirc_quant'
+include { CIRIQUANT                       } from './quantification_tools/ciriquant'
+include { COMBINEBEDS_COUNTS as AGGREGATE } from '../../modules/local/combinebeds/counts'
 
 workflow QUANTIFICATION {
     take:
@@ -10,6 +11,7 @@ workflow QUANTIFICATION {
     ch_transcriptome_gtf
     circ_annotation_bed
     circ_annotation_gtf
+    ch_bsj_bed_per_sample_tool
     bootstrap_samples
     ch_phenotype
     ch_faidx
@@ -62,6 +64,19 @@ workflow QUANTIFICATION {
         ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
         ch_ciriquant = ch_ciriquant.mix(CIRIQUANT.out.raw)
         ch_stringtie = ch_stringtie.mix(CIRIQUANT.out.stringtie)
+    }
+
+    aggregations = ['sum', 'max']
+    if (tools_selected.intersect(aggregations).size() > 0) {
+        ch_aggregations = Channel.fromList(tools_selected.intersect(aggregations))
+
+        AGGREGATE(
+            ch_aggregations
+                .map{agg -> [[id: agg], agg]}
+                .combine(circ_annotation_bed.map{meta, bed -> bed})
+                .combine(ch_bsj_bed_per_sample_tool.map{meta, bed -> bed}.collect().map{beds -> [beds]}),
+            params.max_shift
+        )
     }
 
     emit:
