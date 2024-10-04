@@ -113,7 +113,7 @@
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, psirc",
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--quantification_tools 'ciriquant,psirc,sum,max'",
                     "default": "ciriquant,psirc,sum,max",
-                    "pattern": "^((ciriquant|psirc,sum,max)(,(ciriquant|psirc,sum,max))*)+$"
+                    "pattern": "^((ciriquant|psirc|sum|max)(,(ciriquant|psirc|sum|max))*)+$"
                 },
                 "bootstrap_samples": {
                     "type": "integer",
