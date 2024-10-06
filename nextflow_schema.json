@@ -160,23 +160,6 @@
                     "default": "pearson",
                     "pattern": "^(pearson|spearman)$"
                 },
-                "mirna_tools": {
-                    "type": "string",
-                    "fa_icon": "fas fa-wrench",
-                    "description": "Comma separated list of miRNA bindingsite prediction tools to use. Supported tools: miranda, targetscan.",
-                    "help_text": "Select one or a combination of miRNA bindingsite prediction tools for the pipeline e.g:\n--mirna_tools 'miranda,targetscan'",
-                    "default": "miranda,targetscan,tarpmir,pita",
-                    "pattern": "^((miranda|targetscan|tarpmir,pita)?,?)*[^,]+$"
-                },
-                "mirna_tool_filter": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-intersection",
-                    "description": "Specify the number of votes required for a miRNA to be further considered in downstream analysis.'",
-                    "help_text": "Controls the number of votes required for a binding site prediction to be considered valid. If a miRNA binding site was predicted by two different tools (e.g., miRanda and TargetScan), it receives two votes. By specifying additional tools for miRNA binding site prediction (using the 'mirna_tool_filter' parameter), you can adjust the number of votes required for a binding site to be considered valid.",
-                    "default": 1,
-                    "minimum": 1,
-                    "maximum": 4
-                },
                 "tarpmir_cut": {
                     "type": "number",
                     "fa_icon": "fas fa-circle-notch",
