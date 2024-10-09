@@ -87,18 +87,14 @@ df = df.groupby(['chr', 'start', 'end', 'strand']).aggregate({
 })
 
 def determine_type(row):
-    gene_indices = [i for i in range(len(row['feature_type'])) if row['feature_type'][i] == "gene"]
-
-    if len(gene_indices) == 0:
-        raise ValueError("No gene feature found in the intersection.\n" + str(row))
-
-    if not any([row['contained'][i] for i in gene_indices]):
+    if not any(row['contained']):
         return "partially_intergenic-circRNA"
 
-    if all(feature_type in row["feature_type"] for feature_type in ["exon", "intron"]):
-        return "EI-circRNA"
     if "exon" in row["feature_type"]:
-        return "circRNA"
+        if "intron" in row["feature_type"]:
+            return "EI-circRNA"
+        else:
+            return "circRNA"
     if "intron" in row["feature_type"]:
         return "ciRNA"
     
@@ -110,7 +106,6 @@ def get_representation(row, column):
         return "."
     return ",".join(values)
 
-df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
 df['type'] = df.apply(lambda row: determine_type(row), axis=1)
 # Use df['name'] if gene or transcript column is empty
 df['gene_id'] = df.apply(lambda row: get_representation(row, 'gene_id'), axis=1)
