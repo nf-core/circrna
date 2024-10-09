@@ -87,22 +87,13 @@ df = df.groupby(['chr', 'start', 'end', 'strand']).aggregate({
 })
 
 def determine_type(row):
-    n_genes = len(set(row['gene_id']))
-
-    if n_genes == 0:
-        return "intergenic-circRNA"
-    if n_genes > 1:
-        return "multigene-circRNA"
-    
     gene_indices = [i for i in range(len(row['feature_type'])) if row['feature_type'][i] == "gene"]
-    if len(gene_indices) != 1:
-        raise ValueError("Multiple gene entries with the same gene_id.")
-    
-    gene_index = gene_indices[0]
-    gene_contained = row['contained'][gene_index]
 
-    if not gene_contained:
-        return "gene-touching-circRNA"
+    if len(gene_indices) == 0:
+        return "intergenic-circRNA"
+
+    if not any([row['contained'][i] for i in gene_indices]):
+        return "partially_intergenic-circRNA"
 
     if all(feature_type in row["feature_type"] for feature_type in ["exon", "intron"]):
         return "EI-circRNA"
@@ -111,8 +102,8 @@ def determine_type(row):
     if "intron" in row["feature_type"]:
         return "ciRNA"
     
-    raise ValueError("Unknown circRNA type.")
-    
+    return "unknown-circRNA"
+
 def get_representation(row, column):
     values = set(row[column])
     if len(values) == 0:
