@@ -90,7 +90,7 @@ def determine_type(row):
     gene_indices = [i for i in range(len(row['feature_type'])) if row['feature_type'][i] == "gene"]
 
     if len(gene_indices) == 0:
-        raise ValueError("No gene feature found in the intersection.")
+        raise ValueError("No gene feature found in the intersection.\n" + str(row))
 
     if not any([row['contained'][i] for i in gene_indices]):
         return "partially_intergenic-circRNA"
