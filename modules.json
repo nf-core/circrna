@@ -5,6 +5,11 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "agat/spaddintrons": {
+                        "branch": "master",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+                        "installed_by": ["modules"]
+                    },
                     "bedtools/getfasta": {
                         "branch": "master",
                         "git_sha": "cdcdd5e3d806f0ff3983c40c69e0b07bb44ec299",

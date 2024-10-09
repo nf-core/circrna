@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import pandas as pd
-import numpy as np
 import platform
 import csv
+
+import pandas as pd
+import numpy as np
 
 def format_yaml_like(data: dict, indent: int = 0) -> str:
     """Formats a dictionary to a YAML-like string.
@@ -32,23 +33,24 @@ columns = {
     3: 'name',
     4: 'score',
     5: 'strand',
-    9: 'tx_start',
-    10: 'tx_end',
+    8: 'feature_type',
+    9: 'feature_start',
+    10: 'feature_end',
     14: 'attributes'
 }
 
 attributes = ['gene_id', 'gene_name', 'transcript_id']
-
-exon_boundary = int("${exon_boundary}")
+feature_types = ['gene', 'exon']
 
 try:
     df = pd.read_csv("${gtf_intersection}", sep="\\t", header=None, usecols=columns.keys())
 except pd.errors.EmptyDataError:
     raise ValueError("Intersection between circRNAs and GTF file is empty.")
 df = df.rename(columns=columns)
+df 
 
 # Extract circRNAs without match
-mask = df['tx_start'] == -1
+mask = df['feature_start'] == -1
 df_intergenic = df[mask]
 df = df[~mask]
 df_intergenic['type'] = 'intergenic-circRNA'
@@ -57,7 +59,7 @@ df_intergenic['gene_name'] = 'intergenic_' + df_intergenic['name']
 df_intergenic['transcript_id'] = 'intergenic_' + df_intergenic['name']
 
 # Convert attributes to a dictionary
-df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split(' ', 1)] for entry in row.split(';') if entry]))
+df['attributes'] = df['attributes'].apply(lambda row: dict([[value.strip(r'"') for value in entry.strip().split('=', 1)] for entry in row.split(';') if entry]))
 # Make sure all attributes are present
 df_incomplete = df['attributes'].apply(lambda row: ", ".join([key for key in attributes if key not in row]))
 df_incomplete = df_incomplete[df_incomplete != ""]
@@ -71,44 +73,60 @@ df['attributes'] = df['attributes'].apply(lambda row: {key: row[key] for key in 
 # Convert attributes to columns
 df = pd.concat([df.drop(['attributes'], axis=1), df['attributes'].apply(pd.Series)], axis=1)
 
-df['any_outside'] = (df['start'] < df['tx_start'] - exon_boundary) | (df['end'] > df['tx_end'] + exon_boundary)
-# Perfect is inverse of any_outside
-df['perfect'] = ~df['any_outside']
-# Drop any_outside
-df = df.drop(['any_outside', 'tx_start', 'tx_end'], axis=1)
+df['contained'] = (df['start'] >= df['feature_start']) & (df['end'] <= df['feature_end'])
+df = df.drop(['feature_start', 'feature_end'], axis=1)
 
 df = df.groupby(['chr', 'start', 'end', 'strand']).aggregate({
-    'name': lambda x: x.iloc[0],
-    'score': lambda x: x.iloc[0],
-    'gene_id': lambda x: list(x),
-    'gene_name': lambda x: list(x),
-    'transcript_id': lambda x: list(x),
-    'perfect': lambda x: list(x)
+    'name': 'first',
+    'score': 'first',
+    'gene_id': list,
+    'gene_name': list,
+    'transcript_id': list,
+    'feature_type': list,
+    'contained': list
 })
 
-def filter_perfect(row, col):
-    if any(row['perfect']):
-        matching_values = [value for value, perfectness in zip(row[col], row['perfect']) if perfectness]
-    else:
-        matching_values = row[col]
-    valid_values = set([value for value in matching_values if type(value) == str])
-    return ",".join(valid_values) if valid_values else "NaN"
-
 def determine_type(row):
-    if row["no_transcript"]:
-        return "ciRNA"
-    if any(row['perfect']):
+    n_genes = len(set(row['gene_id']))
+
+    if n_genes == 0:
+        return "intergenic-circRNA"
+    if n_genes > 1:
+        return "multigene-circRNA"
+    
+    gene_indices = [i for i in range(len(row['feature_type'])) if row['feature_type'][i] == "gene"]
+    if len(gene_indices) != 1:
+        raise ValueError("Multiple gene entries with the same gene_id.")
+    
+    gene_index = gene_indices[0]
+    gene_contained = row['contained'][gene_index]
+
+    if not gene_contained:
+        return "gene-touching-circRNA"
+
+    if all(feature_type in row["feature_type"] for feature_type in ["exon", "intron"]):
+        return "EI-circRNA"
+    if "exon" in row["feature_type"]:
         return "circRNA"
-    else:
-        return 'EI-circRNA'
+    if "intron" in row["feature_type"]:
+        return "ciRNA"
+    
+    raise ValueError("Unknown circRNA type.")
+    
+def get_representation(row, column):
+    values = set(row[column])
+    if len(values) == 0:
+        return row['name']
+    return ",".join(values)
 
 df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
 df['type'] = df.apply(lambda row: determine_type(row), axis=1)
-df['gene_id'] = df.apply(lambda row: filter_perfect(row, 'gene_id'), axis=1)
-df['gene_name'] = df.apply(lambda row: filter_perfect(row, 'gene_name'), axis=1)
-df['transcript_id'] = df.apply(lambda row: filter_perfect(row, 'transcript_id'), axis=1)
-# Drop perfect
-df = df.drop(['perfect'], axis=1)
+# Use df['name'] if gene or transcript column is empty
+df['gene_id'] = df.apply(lambda row: get_representation(row, 'gene_id'), axis=1)
+df['gene_name'] = df.apply(lambda row: get_representation(row, 'gene_name'), axis=1)
+df['transcript_id'] = df.apply(lambda row: get_representation(row, 'transcript_id'), axis=1)
+# Drop contained
+df = df.drop(['contained'], axis=1)
 
 df = df.reset_index()
 df_intergenic = df_intergenic.reset_index()

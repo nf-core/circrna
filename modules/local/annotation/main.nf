@@ -9,7 +9,6 @@ process ANNOTATION {
 
     input:
     tuple val(meta), path(gtf_intersection), path(db_intersections)
-    val(exon_boundary)
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed

@@ -147,8 +147,7 @@ workflow CIRCRNA {
         chromosomes,
         hisat2_index,
         star_index,
-        params.bsj_reads,
-        params.exon_boundary
+        params.bsj_reads
     )
 
     ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)

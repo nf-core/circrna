@@ -37,7 +37,6 @@ workflow BSJ_DETECTION {
     hisat2_index
     star_index
     bsj_reads
-    exon_boundary
 
     main:
     ch_versions                = Channel.empty()
@@ -161,17 +160,17 @@ workflow BSJ_DETECTION {
     // ANNOTATION
     //
 
-    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, exon_boundary, ch_annotation )
+    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, ch_annotation )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
     ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed.collect()
     ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf.collect()
 
-    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_gtf, exon_boundary, ch_annotation )
+    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_gtf, ch_annotation )
     ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
     ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed
     ch_bsj_gtf_per_sample   = ANNOTATE_PER_SAMPLE.out.gtf
 
-    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_gtf, exon_boundary, ch_annotation )
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_gtf, ch_annotation )
     ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed
     ch_bsj_gtf_per_sample_tool   = ANNOTATE_PER_SAMPLE_TOOL.out.gtf

@@ -1,3 +1,5 @@
+include { AGAT_SPADDINTRONS as ADD_INTRONS          } from '../../modules/nf-core/agat/spaddintrons'
+include { GAWK as EXTRACT_EXONS_INTRONS             } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as INTERSECT_GTF       } from '../../modules/nf-core/bedtools/intersect'
 include { GAWK as INGEST_DATABASE_NAMES             } from '../../modules/nf-core/gawk'
 include { GNU_SORT as COMBINE_DATABASES             } from '../../modules/nf-core/gnu/sort'
@@ -8,13 +10,18 @@ workflow ANNOTATION {
     take:
     regions
     ch_gtf
-    exon_boundary
     ch_annotation
 
     main:
     ch_versions = Channel.empty()
 
-    INTERSECT_GTF( regions.combine(ch_gtf.map{meta, gtf -> gtf}), [[], []] )
+    ADD_INTRONS(ch_gtf, [])
+    ch_versions = ch_versions.mix(ADD_INTRONS.out.versions)
+
+    EXTRACT_EXONS_INTRONS( ADD_INTRONS.out.gff, [] )
+    ch_versions = ch_versions.mix(EXTRACT_EXONS_INTRONS.out.versions)
+
+    INTERSECT_GTF( regions.combine(EXTRACT_EXONS_INTRONS.out.output.map{meta, gtf -> gtf}), [[], []] )
     ch_versions = ch_versions.mix(INTERSECT_GTF.out.versions)
 
     INGEST_DATABASE_NAMES( ch_annotation, [] )
@@ -33,8 +40,7 @@ workflow ANNOTATION {
         .join(INTERSECT_DATABASE.out.intersect
             .map{ meta, bed -> [meta.original_meta, bed] }
             .groupTuple(), remainder: true)
-        .map{ meta, gtf_intersection, db_intersections -> [meta, gtf_intersection, db_intersections ?: []]},
-        exon_boundary )
+        .map{ meta, gtf_intersection, db_intersections -> [meta, gtf_intersection, db_intersections ?: []]})
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
 
     emit:
