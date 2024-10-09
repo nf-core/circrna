@@ -5,6 +5,8 @@ include { GAWK as FILTER_BSJS                            } from '../../modules/n
 include { GAWK as BED_ADD_SAMPLE_TOOL                    } from '../../modules/nf-core/gawk'
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_FILTER as COMBINE_SAMPLES          } from '../../modules/local/combinebeds/filter'
+include { AGAT_SPADDINTRONS as ADD_INTRONS          } from '../../modules/nf-core/agat/spaddintrons'
+include { GAWK as EXTRACT_EXONS_INTRONS             } from '../../modules/nf-core/gawk'
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED            } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE          } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL     } from '../../modules/nf-core/bedtools/getfasta'
@@ -160,17 +162,23 @@ workflow BSJ_DETECTION {
     // ANNOTATION
     //
 
-    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_gtf, ch_annotation )
+    ADD_INTRONS(ch_gtf, [])
+    ch_versions = ch_versions.mix(ADD_INTRONS.out.versions)
+
+    EXTRACT_EXONS_INTRONS( ADD_INTRONS.out.gff, [] )
+    ch_versions = ch_versions.mix(EXTRACT_EXONS_INTRONS.out.versions)
+
+    ANNOTATE_COMBINED( ch_bsj_bed_combined, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
     ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed.collect()
     ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf.collect()
 
-    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_gtf, ch_annotation )
+    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
     ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
     ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed
     ch_bsj_gtf_per_sample   = ANNOTATE_PER_SAMPLE.out.gtf
 
-    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_gtf, ch_annotation )
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
     ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed
     ch_bsj_gtf_per_sample_tool   = ANNOTATE_PER_SAMPLE_TOOL.out.gtf
