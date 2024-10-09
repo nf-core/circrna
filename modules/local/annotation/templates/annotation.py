@@ -90,7 +90,7 @@ def determine_type(row):
     gene_indices = [i for i in range(len(row['feature_type'])) if row['feature_type'][i] == "gene"]
 
     if len(gene_indices) == 0:
-        return "intergenic-circRNA"
+        raise ValueError("No gene feature found in the intersection.")
 
     if not any([row['contained'][i] for i in gene_indices]):
         return "partially_intergenic-circRNA"
@@ -107,7 +107,7 @@ def determine_type(row):
 def get_representation(row, column):
     values = set(row[column])
     if len(values) == 0:
-        return row['name']
+        return "."
     return ",".join(values)
 
 df['no_transcript'] = df['transcript_id'].apply(lambda x: all([type(value) != str and np.isnan(value) for value in x]))
