@@ -45,7 +45,8 @@ df = df.group_by("chr", "start", "end", "strand").agg(tools=pl.col("tool").uniqu
 df = df.sort("end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
 df = df.sort("start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
 
-df = df.join(df, on=["chr", "start_group", "end_group"] + (["strand"] if consider_strand else []), how="inner")
+group_cols = ["chr", "start_group", "end_group"] + (["strand"] if consider_strand else [])
+df = df.join(df, on=group_cols, how="inner")
 df = df.filter((pl.col("start") - pl.col("start_right")).abs() <= max_shift)
 df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
 
