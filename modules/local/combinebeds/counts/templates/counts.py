@@ -43,31 +43,31 @@ df_candidates = df_candidates.with_columns(sample=pl.lit("candidate"), tool=pl.l
 df = pl.scan_csv(bed_paths, has_header=False, separator="\\t", new_columns=columns + ["sample", "tool"])
 df_combined = pl.concat([df, df_candidates])
 
-df_combined = df_combined.sort("chr", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
-df_combined = df_combined.sort("chr", "start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
+df_combined = df_combined.sort("chr", "strand", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
+df_combined = df_combined.sort("chr", "strand", "start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
 
 df_candidates = df_combined.filter(pl.col("sample") == "candidate")
 df = df_combined.filter(pl.col("sample") != "candidate")
 
-df = df.join(df_candidates, on=["chr", "start_group", "end_group"], how="inner")
+df = df.join(df_candidates, on=["chr", "strand", "start_group", "end_group"], how="inner")
 df = df.filter((pl.col("start") - pl.col("start_right")).abs() <= max_shift)
 df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
 
-df = df.select(["chr", "start", "end", "start_group", "end_group", "sample", "tool", "score"])
+df = df.select(["chr", "start", "end", "strand", "start_group", "end_group", "sample", "tool", "score"])
 
-group_cols = ["chr", "start_group", "end_group"]
+group_cols = ["chr", "strand", "start_group", "end_group"]
 df = df.group_by(group_cols + ["start", "end"]).len().join(df, on=group_cols, how="inner")
 
 df = df.filter((pl.col("start") - pl.col("start_right")).abs() <= max_shift)
 df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
-df = df.group_by(["chr", "start", "end", "start_group", "end_group", "sample", "tool"]).agg(score=pl.sum("score"))
+df = df.group_by(["chr", "start", "end", "strand", "start_group", "end_group", "sample", "tool"]).agg(score=pl.sum("score"))
 df = df.collect().lazy()
 
 samples = df.select("sample").group_by("sample").len().collect()["sample"].to_list()
-df = df.collect().pivot(on="sample", values="score", index=["chr", "start", "end", "start_group", "end_group"], aggregate_function=aggregation).lazy()
-df = df.group_by(["chr", "start_group", "end_group"] + samples).agg(start=pl.col("start").first(), end=pl.col("end").first())
-df = df.with_columns(id=pl.col("chr") + pl.lit(":") + pl.col("start").cast(str) + pl.lit("-") + pl.col("end").cast(str))
-df = df.sort("chr", "start", "end")
+df = df.collect().pivot(on="sample", values="score", index=["chr", "start", "end", "strand", "start_group", "end_group"], aggregate_function=aggregation).lazy()
+df = df.group_by(["chr", "strand", "start_group", "end_group"] + samples).agg(start=pl.col("start").first(), end=pl.col("end").first())
+df = df.with_columns(id=pl.col("chr") + pl.lit(":") + pl.col("start").cast(str) + pl.lit("-") + pl.col("end").cast(str) + pl.lit(":") + pl.col("strand"))
+df = df.sort("chr", "start", "end", "strand")
 df = df.select(["id"] + samples)
 df = df.fill_null(0)
 

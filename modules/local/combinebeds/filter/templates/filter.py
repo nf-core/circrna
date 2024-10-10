@@ -39,25 +39,24 @@ df = pl.scan_csv("*.bed",
                  has_header=False,
                  new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
 
-df = df.group_by("chr", "start", "end").agg(tools=pl.col("tool").unique(), samples=pl.col("sample").unique())
+df = df.group_by("chr", "start", "end", "strand").agg(tools=pl.col("tool").unique(), samples=pl.col("sample").unique())
 
-df = df.sort("chr", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
-df = df.sort("chr", "start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
+df = df.sort("chr", "strand", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
+df = df.sort("chr", "strand", "start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
 
-df = df.join(df, on=["chr", "start_group", "end_group"], how="inner")
+df = df.join(df, on=["chr", "strand", "start_group", "end_group"], how="inner")
 df = df.filter((pl.col("start") - pl.col("start_right")).abs() <= max_shift)
 df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
 
-df = df.select(["chr", "start", "end", "samples_right", "tools_right"])
-df = df.group_by(["chr", "start", "end"]).agg(**{
+df = df.select(["chr", "start", "end", "strand", "samples_right", "tools_right"])
+df = df.group_by(["chr", "start", "end", "strand"]).agg(**{
     "samples": pl.col("samples_right").flatten().unique(),
     "tools": pl.col("tools_right").flatten().unique()
 }).with_columns(n_samples=pl.col("samples").map_elements(lambda x: len(x), return_dtype=int),
                 n_tools=pl.col("tools").map_elements(lambda x: len(x), return_dtype=int))
 
-df = df.with_columns(name=pl.col("chr").cast(str) + ":" + pl.col("start").cast(str) + "-" + pl.col("end").cast(str),
-                    score=pl.lit("."),
-                    strand=pl.lit("."))
+df = df.with_columns(name=pl.col("chr") + ":" + pl.col("start").cast(str) + "-" + pl.col("end").cast(str) + ":" + pl.col("strand"),
+                    score=pl.lit("."))
 
 df_aggregated = df.collect().to_pandas()
 n_bsjs = len(df_aggregated)
