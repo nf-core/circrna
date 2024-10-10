@@ -84,6 +84,12 @@
                     "default": 0,
                     "minimum": 0
                 },
+                "consider_strand": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-arrows-alt-v",
+                    "description": "Consider strand information when comparing BSJs.",
+                    "default": false
+                },
                 "min_tools": {
                     "type": "integer",
                     "fa_icon": "fas fa-intersection",

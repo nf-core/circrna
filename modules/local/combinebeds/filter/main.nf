@@ -10,6 +10,7 @@ process COMBINEBEDS_FILTER {
     input:
     tuple val(meta), path(beds)
     val(max_shift)
+    val(consider_strand)
     val(min_tools)
     val(min_samples)
 

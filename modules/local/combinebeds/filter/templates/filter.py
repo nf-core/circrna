@@ -29,6 +29,7 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     return yaml_str
 
 max_shift = int("${max_shift}")
+consider_strand = "${consider_strand}" == "true"
 min_tools = int("${min_tools}")
 min_samples = int("${min_samples}")
 meta_id = "${meta.id}"
@@ -41,10 +42,10 @@ df = pl.scan_csv("*.bed",
 
 df = df.group_by("chr", "start", "end", "strand").agg(tools=pl.col("tool").unique(), samples=pl.col("sample").unique())
 
-df = df.sort("chr", "strand", "end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
-df = df.sort("chr", "strand", "start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
+df = df.sort("end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())
+df = df.sort("start").with_columns(start_group=pl.col("start").diff().fill_null(0).gt(max_shift).cum_sum())
 
-df = df.join(df, on=["chr", "strand", "start_group", "end_group"], how="inner")
+df = df.join(df, on=["chr", "start_group", "end_group"] + (["strand"] if consider_strand else []), how="inner")
 df = df.filter((pl.col("start") - pl.col("start_right")).abs() <= max_shift)
 df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
 

@@ -140,6 +140,7 @@ workflow BSJ_DETECTION {
             .map{ meta, bed -> [ [id: meta.id], bed ] }
             .groupTuple(),
         params.max_shift,
+        params.consider_strand,
         params.min_tools,
         1
     )
@@ -150,6 +151,7 @@ workflow BSJ_DETECTION {
     COMBINE_SAMPLES(
         ch_bsj_bed_per_sample_tool_meta.map{ meta, bed -> [[id: "all"], bed] }.groupTuple(),
         params.max_shift,
+        params.consider_strand,
         params.min_tools,
         params.min_samples
     )
