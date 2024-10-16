@@ -22,7 +22,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 */
 
 // SUBWORKFLOWS:
-include { paramsSummaryMap                 } from 'plugin/nf-validation'
+include { paramsSummaryMap                 } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { validateInputSamplesheet         } from '../../subworkflows/local/utils_nfcore_circrna_pipeline'
 
