@@ -9,6 +9,12 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
+- Multiple methods for BSJ detection (CIRIquant, find_circ, segemehl, mapsplice, circexplorer2, circrna_finder, DCC)
+- Multiple methods for circRNA quantification (psirc-quant, CIRIquant, sum and max aggregations)
+- DB and GTF-based circRNA annotation
+- MiRNA target prediction (TargetScan, miRanda) and correlation analysis
+- Basic statistical analyses (CircTest, CIRIquant differential expression)
+
 ### `Fixed`
 
 ### `Dependencies`
