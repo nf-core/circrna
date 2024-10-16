@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
+    "$schema": "https://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/circrna/master/assets/schema_input.json",
     "title": "nf-core/circrna pipeline - params.input schema",
     "description": "Schema for the file provided with params.input",
@@ -11,7 +11,9 @@
                 "type": "string",
                 "pattern": "^\\S+$",
                 "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": ["id"]
+                "meta": [
+                    "id"
+                ]
             },
             "fastq_1": {
                 "type": "string",
@@ -29,12 +31,22 @@
             },
             "strandedness": {
                 "type": "string",
-                "enum": ["unstranded", "forward", "reverse", "auto"],
+                "enum": [
+                    "unstranded",
+                    "forward",
+                    "reverse",
+                    "auto"
+                ],
                 "default": "auto",
                 "errorMessage": "Strandedness must be one of 'unstranded', 'forward', 'reverse' or 'auto'",
-                "meta": ["strandedness"]
+                "meta": [
+                    "strandedness"
+                ]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": [
+            "sample",
+            "fastq_1"
+        ]
     }
 }

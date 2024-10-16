@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
+    "$schema": "https://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/circrna/master/assets/schema_phenotype.json",
     "title": "nf-core/circrna pipeline - params.phenotype schema",
     "description": "Schema for the file provided with params.phenotype",
@@ -18,6 +18,9 @@
                 "errorMessage": "Condition name must be provided and cannot contain spaces"
             }
         },
-        "required": ["sample", "condition"]
+        "required": [
+            "sample",
+            "condition"
+        ]
     }
 }
