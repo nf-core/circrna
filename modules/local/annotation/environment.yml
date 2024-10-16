@@ -1,0 +1,5 @@
+name: annotation
+channels:
+  - conda-forge
+dependencies:
+  - pandas=1.5.2

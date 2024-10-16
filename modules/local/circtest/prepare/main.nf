@@ -1,32 +1,21 @@
-process PREPARE_CLR_TEST {
-    label 'process_medium'
+process CIRCTEST_PREPARE {
+    label 'process_low'
 
-    conda (params.enable_conda ? "r-base r-aod r-ggplot2 r-plyr" : null)
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' :
-        'quay.io/biocontainers/mulled-v2-c79b00aa4647c739dbe7e8480789d3ba67988f2e:0' }"
+    conda "${moduleDir}/environment.yml"
+    container "biocontainers/r-base:4.2.1"
 
     input:
-    path(gene_matrix)
-    path(circrna_matrix)
-    path(circ_host_map)
-    path(gtf)
+    tuple val(meta), path(gene_counts), path(circ_counts)
 
     output:
-    path "circ.csv"    , emit: circular
-    path "linear.csv"  , emit: linear
-    path "versions.yml", emit: versions
+    tuple val(meta), path('*_genes.tsv'), path('*_circs.tsv'), emit: counts, optional: true
+
+    path "versions.yml"                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    """
-    prepare_circ_test.R
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
-    END_VERSIONS
-    """
+    prefix = task.ext.prefix ?: meta.id
+    template 'prepare.R'
 }
