@@ -18,9 +18,6 @@
                 "errorMessage": "Condition name must be provided and cannot contain spaces"
             }
         },
-        "required": [
-            "sample",
-            "condition"
-        ]
+        "required": ["sample", "condition"]
     }
 }
