@@ -1,18 +1,30 @@
 process TARGETSCAN_DATABASE {
-    tag "$mature"
+    tag "$meta.id"
     label 'process_low'
 
+    conda "conda-forge::sed=4.7"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
+        'nf-core/ubuntu:20.04' }"
+
     input:
-    path(mature)
+    tuple val(meta), path(mature)
 
     output:
-    path("mature.txt"), emit: mature_txt
+    tuple val(meta), path("mature.txt")  , emit: mature_txt
+    path "versions.yml" , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    def VERSION = '1.3.4'
     """
-    bash ${workflow.projectDir}/bin/targetscan_format.sh $mature
+    targetscan_format.sh $mature
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mawk: $VERSION
+    END_VERSIONS
     """
 }

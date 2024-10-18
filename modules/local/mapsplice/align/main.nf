@@ -2,15 +2,15 @@ process MAPSPLICE_ALIGN {
     tag "$meta.id"
     label 'process_high'
 
-    conda (params.enable_conda ? "bioconda::mapsplice=2.2.1" : null)
+    conda "bioconda::mapsplice=2.2.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mapsplice:2.2.1--py27h07887db_0':
-        'quay.io/biocontainers/mapsplice:2.2.1--py27h07887db_0' }"
+        'biocontainers/mapsplice:2.2.1--py27h07887db_0' }"
 
     input:
     tuple val(meta), path(reads)
     path bowtie_index
-    path chromosomes
+    tuple val(meta2), path(chromosomes, stageAs: 'chromosomes/*')
     path gtf
 
     output:
@@ -26,13 +26,13 @@ process MAPSPLICE_ALIGN {
     def VERSION = 'v2.2.1'
     def gtf_prefix = gtf.toString() - ~/.gtf/
     if(meta.single_end){
-        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
-        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
+        def handleGzip_R1 = reads[0].getExtension() == 'gz' ? "gzip -d -f ${reads[0]}" : ''
+        def read1 = reads[0].getExtension() == 'gz' ? reads[0].toString() - ~/.gz/ : reads[0]
         """
         $handleGzip_R1
 
         mapsplice.py \\
-            -c $chromosomes \\
+            -c chromosomes \\
             -x $gtf_prefix \\
             -1 ${read1} \\
             -p ${task.cpus} \\
@@ -46,17 +46,17 @@ process MAPSPLICE_ALIGN {
             mapsplice: $VERSION
         END_VERSIONS
         """
-    }else{
-        def handleGzip_R1 = reads[0].toString().endsWith('.gz') ? "gzip -d -f ${reads[0]}" : ''
-        def handleGzip_R2 = reads[1].toString().endsWith('.gz') ? "gzip -d -f ${reads[1]}" : ''
-        def read1 = reads[0].toString().endsWith('.gz') ? reads[0].toString() - ~/.gz/ : reads[0]
-        def read2 = reads[1].toString().endsWith('.gz') ? reads[1].toString() - ~/.gz/ : reads[1]
+    } else {
+        def handleGzip_R1 = reads[0].getExtension() == 'gz' ? "gzip -d -f ${reads[0]}" : ''
+        def handleGzip_R2 = reads[1].getExtension() == 'gz' ? "gzip -d -f ${reads[1]}" : ''
+        def read1 = reads[0].getExtension() == 'gz' ? reads[0].toString() - ~/.gz/ : reads[0]
+        def read2 = reads[1].getExtension() == 'gz' ? reads[1].toString() - ~/.gz/ : reads[1]
         """
         $handleGzip_R1
         $handleGzip_R2
 
         mapsplice.py \\
-            -c $chromosomes \\
+            -c chromosomes \\
             -x $gtf_prefix \\
             -1 ${read1} \\
             -2 ${read2} \\

@@ -2,10 +2,10 @@ process FIND_CIRC {
     tag "$meta.id"
     label "process_high"
 
-    conda (params.enable_conda ? "find_circ=1.2 bowtie2" : null)
+    conda "bioconda::find_circ=1.2 bioconda::bowtie2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' :
-        'quay.io/biocontainers/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' }"
+        'biocontainers/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' }"
 
     input:
     tuple val(meta), path(anchors)
@@ -23,6 +23,9 @@ process FIND_CIRC {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
+    args = task.ext.args ?: ""
+    args2 = task.ext.args2 ?: ""
+    def strand_arg = meta.strandedness && (meta.strandedness == 'forward' || meta.strandedness == 'reverse') ? "--stranded" : ""
     def VERSION = '1.2'
     """
     INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/.rev.1.bt2//"`
@@ -37,8 +40,9 @@ process FIND_CIRC {
         --score-min=C,-15,0 \\
         -q \\
         -x \$INDEX \\
+        $args \\
         -U $anchors | \\
-        find_circ.py  --genome=$fasta --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
+        find_circ.py --genome=$fasta $strand_arg $args2 --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
