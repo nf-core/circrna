@@ -9,8 +9,6 @@
 ----------------------------------------------------------------------------------------
 */
 
-nextflow.enable.dsl = 2
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
@@ -20,7 +18,6 @@ nextflow.enable.dsl = 2
 include { CIRCRNA  } from './workflows/circrna'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_circrna_pipeline'
-
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 
 /*
@@ -47,6 +44,9 @@ params.mature     = getGenomeAttribute('mature')
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_CIRCRNA {
+    take:
+    ch_samplesheet
+
     main:
 
     ch_versions = Channel.empty()
@@ -54,7 +54,6 @@ workflow NFCORE_CIRCRNA {
     //
     // WORKFLOW: Run nf-core/circrna workflow
     //
-    ch_samplesheet = Channel.fromSamplesheet("input")
     ch_fasta       = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists:true)])
     ch_gtf         = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists:true)])
     ch_mature      = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists:true)]) : Channel.empty()
@@ -72,10 +71,8 @@ workflow NFCORE_CIRCRNA {
         ch_versions,
         ch_mirna
     )
-
     emit:
     multiqc_report = CIRCRNA.out.multiqc_report // channel: /path/to/multiqc_report.html
-
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,13 +83,11 @@ workflow NFCORE_CIRCRNA {
 workflow {
 
     main:
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
         params.version,
-        params.help,
         params.validate_params,
         params.monochrome_logs,
         args,
@@ -103,8 +98,9 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_CIRCRNA ()
-
+    NFCORE_CIRCRNA (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
     //
     // SUBWORKFLOW: Run completion tasks
     //
