@@ -3,27 +3,110 @@ include { BEDTOOLS_MERGE            } from '../../modules/nf-core/bedtools/merge
 include { BEDTOOLS_INTERSECT        } from '../../modules/nf-core/bedtools/intersect'
 include { BEDTOOLS_JACCARD          } from '../../modules/nf-core/bedtools/jaccard'
 include { BEDTOOLS_GENOMECOV        } from '../../modules/nf-core/bedtools/genomecov'
-include { BENCHMARKING_MULTIQC as JACCARD_MULTIQC } from '../../modules/local/benchmarking/multiqc'
+include { BENCHMARKING_MULTIQC as JACCARD_MULTIQC     } from '../../modules/local/benchmarking/multiqc'
 include { BENCHMARKING_MULTIQC as CORRELATION_MULTIQC } from '../../modules/local/benchmarking/multiqc'
 include { PNG_JSON as LOCATION_JSON } from '../../modules/local/benchmarking/png_json'
 include { PNG_JSON as OVERLAP_JSON  } from '../../modules/local/benchmarking/png_json'
 include { LOCATION_PLOT             } from '../../modules/local/benchmarking/location_plots'
 include { OVERLAP_PLOT              } from '../../modules/local/benchmarking/overlap_plot'
 include { SEQ_DEPTH_CORRELLATION    } from '../../modules/local/benchmarking/seq_depth_plot'
-include { AVERAGE_TSV              } from '../../modules/local/benchmarking/average_tsv'
+include { AVERAGE_TSV               } from '../../modules/local/benchmarking/average_tsv'
+include { POLYATAILOR as POLYATAILOR_REAL     } from '../../modules/local/benchmarking/polyatailor'
+include { POLYATAILOR as POLYATAILOR_BENCHMARK} from '../../modules/local/benchmarking/polyatailor'
+include { PLOT_POLYATAILS           } from '../../modules/local/benchmarking/plot_polyatails'
+include { SUBREAD_FEATURECOUNTS as FEATURECOUNTS_TOTAL       } from '../../modules/nf-core/subread/featurecounts'
+include { SUBREAD_FEATURECOUNTS as FEATURECOUNTS_BENCHMARKING} from '../../modules/nf-core/subread/featurecounts'
+include { STAR2PASS as STAR2PASS_REAL            } from './detection_tools/star2pass'
+include { STAR2PASS as STAR2PASS_BENCHMARKING    } from './detection_tools/star2pass'
+include { STAR_GENOMEGENERATE       } from '../../modules/nf-core/star/genomegenerate'
+include { DECOMPRESS_READS as DECOMPRESS_REAL        } from '../../modules/local/benchmarking/decompress_reads'
+include { DECOMPRESS_READS as DECOMPRESS_BENCHMARKING} from '../../modules/local/benchmarking/decompress_reads'
+include { RRNA_CORRELATION          } from '../../modules/local/benchmarking/rRNA_correlation'
 
 
 
 workflow BENCHMARKING {
 
     take:
+    ch_reads_real
+    ch_reads_benchmarking
     ch_real_bed
     ch_benchmarking_bed
     ch_real_bam
     ch_benchmarking_bam
     ch_trim_report
+    ch_fasta
+    bsj_reads
 
     main:
+
+    //quality score estimation
+    /*ch_reads_benchmarking.view {"rb: $it"}
+    ch_reads_real.view {"rr: $it"}
+    ch_polya_real = POLYATAILOR_REAL(ch_reads_real, ch_real_bam.map { it[1] })
+    ch_polya_benchmarking = POLYATAILOR_BENCHMARK(ch_reads_benchmarking, ch_benchmarking_bam.map { it[1] })
+
+    ch_polya_real.tails.collect().view {"pr: $it"}
+    ch_polya_benchmarking.tails.collect().view {"pb: $it"}
+
+    ch_polya_plots = PLOT_POLYATAILS(ch_polya_real.tails.collect(), ch_polya_benchmarking.tails.collect())
+    ch_polya_plots.average_tails.view {"$it"}*/
+
+
+    // Use only the paths in each tuple of ch_reads_real and ch_reads_benchmarking, assuming the metadata is already present
+    // Define parameters
+    ch_benchmark_gtf = "/nfs/data3/CIRCEST/runs/test_benchmarking/gencode.v47.primary_assembly.annotation.gtf"
+    ch_benchmarking_fasta = "/nfs/data3/CIRCEST/runs/test_benchmarking/gencode.v47.rRNARNA_transcripts.fa"
+    ch_filter_gtf = "/nfs/data3/CIRCEST/runs/test_benchmarking/ensembl_rRNA.gtf"
+
+    STAR_GENOMEGENERATE(ch_fasta,  tuple([id: "benchmarking_gtf"], file(ch_benchmark_gtf)))
+    star_index          = params.star     ? Channel.value([[id: "star"], file(params.star, checkIfExists: true)])       : STAR_GENOMEGENERATE.out.index.collect()
+    star_ignore_sjdbgtf = true
+    seq_center = params.seq_center ?: ''
+    seq_platform = ''
+
+
+    ch_reads_real_restructured = ch_reads_real.map { meta, fastq_gz_list ->
+    tuple(meta, fastq_gz_list[0], fastq_gz_list[1])
+    }
+    ch_reads_benchmarking_restructured = ch_reads_benchmarking.map { meta, fastq_gz_list ->
+    tuple(meta, fastq_gz_list[0], fastq_gz_list[1])
+    }
+    ch_uncompressed_reads_real = DECOMPRESS_REAL(ch_reads_real_restructured)
+    ch_uncompressed_reads_benchmarking = DECOMPRESS_BENCHMARKING(ch_reads_benchmarking_restructured)
+    
+    ch_rRNA_real_bam = STAR2PASS_REAL(ch_uncompressed_reads_real, star_index, tuple([id: "Benchmarking_gtf"], file(ch_benchmark_gtf)), bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform).bam
+
+    ch_rRNA_benchmarking_bam = STAR2PASS_BENCHMARKING(ch_uncompressed_reads_benchmarking, star_index, tuple([id: "Benchmarking_gtf"], file(ch_benchmark_gtf)), bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform).bam
+
+
+
+    ch_rRNA_real_input = ch_real_bam.map { meta, path ->
+    tuple(meta, path, file(ch_filter_gtf))
+    }
+    ch_rRNA_benchmarking_input = ch_benchmarking_bam.map { meta, path ->
+    tuple(meta, path, file(ch_filter_gtf))
+    }
+    
+    ch_rRNA_real = FEATURECOUNTS_TOTAL(ch_rRNA_real_input).summary
+    ch_rRNA_benchmarking = FEATURECOUNTS_BENCHMARKING(ch_rRNA_benchmarking_input).summary
+
+
+    ch_collected_real_bed = ch_real_bed.collect()
+    ch_collected_benchmarking_bed = ch_benchmarking_bed.collect()
+    ch_collected_rRNA_real = ch_rRNA_real.collect()
+    ch_collected_rRNA_benchmarking = ch_rRNA_benchmarking.collect()
+
+    RRNA_CORRELATION(
+        ch_collected_real_bed,
+        ch_collected_benchmarking_bed,
+        ch_collected_rRNA_real,
+        ch_collected_rRNA_benchmarking
+    )
+
+
+    //ch_rRNA_benchmarking.view { "bench: $it" }
+
 
     //data preparation
     ch_versions = Channel.empty()

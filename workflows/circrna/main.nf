@@ -182,11 +182,15 @@ workflow CIRCRNA {
         )
 
         BENCHMARKING(
+            ch_reads.real,
+            ch_reads.benchmarking,
             BSJ_DETECTION.out.bed_per_sample_tool,
             BSJ_DETECTION_BENCHMARKING.out.bed_per_sample_tool,
             BSJ_DETECTION.out.star_bam,
             BSJ_DETECTION_BENCHMARKING.out.star_bam,
-            FASTQC_TRIMGALORE.out.trim_log
+            FASTQC_TRIMGALORE.out.trim_log,
+            ch_fasta,
+            params.bsj_reads
         )
 
         ch_multiqc_files = ch_multiqc_files.mix(BENCHMARKING.out.reports)

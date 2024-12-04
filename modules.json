@@ -216,6 +216,11 @@
                         "git_sha": "b1b959609bda44341120aed1766329909f54b8d0",
                         "installed_by": ["modules"]
                     },
+                    "subread/featurecounts": {
+                        "branch": "master",
+                        "git_sha": "49f4e50534fe4b64101e62ea41d5dc43b1324358",
+                        "installed_by": ["modules"]
+                    },
                     "trimgalore": {
                         "branch": "master",
                         "git_sha": "a98418419ae6c9df3cf6cf108d1e1aba71037d5a",
