@@ -109,6 +109,9 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(MAPSPLICE.out.bed)
     }
 
+    ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool
+        .filter{ meta, bed -> !bed.isEmpty() }
+
     //
     // QUANTIFY BSJs PER TOOL
     //

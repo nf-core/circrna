@@ -47,7 +47,6 @@ try:
 except pd.errors.EmptyDataError:
     raise ValueError("Intersection between circRNAs and GTF file is empty.")
 df = df.rename(columns=columns)
-df 
 
 # Extract circRNAs without match
 mask = df['feature_start'] == -1
@@ -97,7 +96,7 @@ def determine_type(row):
             return "circRNA"
     if "intron" in row["feature_type"]:
         return "ciRNA"
-    
+
     return "unknown-circRNA"
 
 def get_representation(row, column):
