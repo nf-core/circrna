@@ -4,8 +4,8 @@ process SPONGE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:086ecad7b1034ff0' :
-        'community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:e79cb4c59aecf7ba' }"
+        'oras://community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:b65c26ac28f443f5' :
+        'community.wave.seqera.io/library/bioconductor-sponge_r-doparallel_r-foreach_r-visnetwork:44865af735ff0e33' }"
 
     input:
     tuple val(meta), path(binding_sites)

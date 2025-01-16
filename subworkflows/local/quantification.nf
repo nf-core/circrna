@@ -86,6 +86,7 @@ workflow QUANTIFICATION {
     ciriquant = ch_ciriquant
     stringtie = ch_stringtie
     rds       = ch_rds
+    tx        = PSIRC_QUANT.out.tx_counts
 
     versions = ch_versions
 }

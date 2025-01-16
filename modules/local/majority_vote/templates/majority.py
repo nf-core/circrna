@@ -3,7 +3,18 @@ import platform
 import polars as pl
 import yaml
 
-paths = "${bindingsites}".split(" ")
+# paths = "${bindingsites}".split(" ")
+paths = []
+bindingsites = "${bindingsites}"
+
+j = 0
+for i in range(len(bindingsites)):
+    if bindingsites[i] == " " or i == len(bindingsites) - 1:
+        paths.append(bindingsites[j : i + 1])
+        j = i + 1
+
+print(paths[1:3])
+print(len(paths))
 
 df = pl.scan_csv(paths,
                  separator="\\t",
@@ -14,7 +25,7 @@ df = df.select(["mirna", "target", "tool"])
 
 df = df.group_by(['mirna', 'target']).agg(pl.col("tool").n_unique())
 
-df = df.filter(pl.col("tool") > int("${min_tools}")) \
+df = df.filter(pl.col("tool") >= int("${min_tools}")) \
     .select(["mirna", "target"])
 
 df = df.collect()
@@ -37,3 +48,4 @@ versions = {
 
 with open("versions.yml", "w") as f:
     f.write(yaml.dump(versions))
+

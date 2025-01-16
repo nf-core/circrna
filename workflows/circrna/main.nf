@@ -176,7 +176,7 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.bed12,
             ch_mature,
             ch_mirna,
-            QUANTIFICATION.out.tx_counts,
+            QUANTIFICATION.out.tx,
             QUANTIFICATION.out.rds
         )
         ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)

@@ -1,7 +1,7 @@
 // MODULES
 include { BIOAWK as ADD_BACKSPLICE                } from '../../modules/nf-core/bioawk'
 include { MIRNA_NORMALIZATION                     } from '../../modules/local/deseq2/mirna_normalization'
-include { TX_NORMALIZATION                        } from '../../modules/local/deseq2/tx_normalization'
+include { GENE_NORMALIZATION                      } from '../../modules/local/deseq2/gene_normalization'
 include { MIRNA_FILTERING                         } from '../../modules/local/mirna_filtering'
 include { COMPUTE_CORRELATIONS                    } from '../../modules/local/compute_correlations'
 include { SPONGE                                  } from '../../modules/local/sponge'
@@ -17,8 +17,8 @@ workflow MIRNA_PREDICTION {
     circrna_annotation
     ch_mature
     ch_mirna
-    quantification_rds
     tx_counts
+    quantification_rds
 
     main:
     ch_versions = Channel.empty()
@@ -69,34 +69,35 @@ workflow MIRNA_PREDICTION {
         //
         // COMPUTE CORRELATION:
         //
-        ch_binding_site_batches = MIRNA_BINDINGSITES.out.targets
-            .splitText(by: 100, file: true)
-            .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+        // TODO: uncomment
+        // ch_binding_site_batches = MIRNA_BINDINGSITES.out.targets
+        //     .splitText(by: 100, file: true)
+        //     .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
+        // COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
 
-        ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
-            .map{meta, results -> results}
-            .flatten().collect()
-            .map{results -> [[id: 'correlation'], results]}
+        // ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
+        //     .map{meta, results -> results}
+        //     .flatten().collect()
+        //     .map{results -> [[id: 'correlation'], results]}
 
-        ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+        // ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     }
 
     // if (params.sponge)
 
 
-    ch_tx_normalized = TX_NORMALIZATION(tx_counts).normalized
+    ch_gene_normalized = GENE_NORMALIZATION(tx_counts).normalized
 
-    ch_versions = ch_versions.mix(TX_NORMALIZATION.out.versions)
+    ch_versions = ch_versions.mix(GENE_NORMALIZATION.out.versions)
 
-    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_tx_normalized, ch_mirna_filtered)
+    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_gene_normalized, ch_mirna_filtered)
 
     ch_versions = ch_versions.mix(SPONGE.out.versions)
 
-    SPONGE_EFFECTS(SPONGE.out.sponge_data)
+    // SPONGE_EFFECTS(SPONGE.out.sponge_data)
 
-    ch_versions = ch_versions.mix(SPONGE_EFFECTS.out.versions)
+    // ch_versions = ch_versions.mix(SPONGE_EFFECTS.out.versions)
 
     emit:
     versions = ch_versions

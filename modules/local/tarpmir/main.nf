@@ -12,14 +12,13 @@ process TARPMIR {
     tuple val(meta2), path(mature)
 
     output:
-    tuple val(meta), path("${prefix}.bindings.bp"), emit: bindings
-    path "versions.yml"                           , emit: versions
+    tuple val(meta), path("*.bindings.bp"), emit: bindings
+    path "versions.yml"                   , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    prefix = task.ext.prefix ?: "${meta.id}"
     template 'TarPmiR_threading.py'
     
     stub:

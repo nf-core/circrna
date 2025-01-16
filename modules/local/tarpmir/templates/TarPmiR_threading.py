@@ -659,7 +659,7 @@ def main():
     mode_path="${moduleDir}/Human_sklearn_0.22.pkl"
     pb_cut=float(${params.tarpmir_cut})
     n_threads_input=${params.tarpmir_threads}
-    output_file="${meta.id}.bindings.tsv"
+    output_file="${meta.id}.bindings.bp"
 
     global sessionID
     sessionID= 'fn_'+str(uuid.uuid1())

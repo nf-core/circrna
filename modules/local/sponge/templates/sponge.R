@@ -13,11 +13,9 @@ circ_mRNA_subnetwork <- function(interactions, pattern) {
 }
 
 # load binding sites matrix
-bindingsites <- read.table("${binding_sites}", sep = "\\t", header = TRUE, check.names = FALSE)
-rownames(bindingsites) <- bindingsites[, 1]
-bindingsites <- bindingsites[, -1]
-bindingsites_matrix <- as.matrix(bindingsites)
-
+bindingsites <- read.table("${binding_sites}", sep = "\t", header = FALSE, col.names = c("mirna", "gene"))
+bindingsites_matrix <- table(bindingsites[, 2], bindingsites[, 1])
+bindingsites_matrix[bindingsites_matrix > 0] <- 1
 
 # load gene expression
 genes <- read.csv("${gene_expr}", sep = "\\t", row.names = "tx")
@@ -52,15 +50,8 @@ gene_expriRNA_candidates <- SPONGE::sponge_gene_miRNA_interaction_filter(
     gene_expr = gene_expr,
     mir_expr = mir_expr,
     mir_predicted_targets = bindingsites_matrix,
-    F.test = FALSE,
-    coefficient.threshold = -0.01,
-    coefficient.direction = NULL
+    coefficient.threshold = -0.001
 )
-
-
-    # F.test.p.adj.threshold = ${params.sponge_f_test_pval},
-    # coefficient.threshold = ${params.sponge_coeff_threshold},
-    # elastic.net = ("${params.sponge_elastic_net}" == "true")
 
 ######################################
 #                B                   #

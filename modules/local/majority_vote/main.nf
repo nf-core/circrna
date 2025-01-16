@@ -1,6 +1,6 @@
 process MAJORITY_VOTE {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -13,7 +13,6 @@ process MAJORITY_VOTE {
     output:
     tuple val(meta), path("${meta.id}.majority.tsv")      , emit: tsv
     tuple val(meta), path("${meta.id}.targets.tsv")       , emit: targets
-    tuple val(meta), path("${meta.id}.binding_sites.tsv") , emit: binding_sites 
     path "versions.yml"                                   , emit: versions
 
     when:
@@ -26,6 +25,7 @@ process MAJORITY_VOTE {
     stub:
     """
     touch ${meta.id}.majority.tsv
+    touch ${meta.id}.targets.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

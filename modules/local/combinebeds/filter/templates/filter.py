@@ -74,6 +74,7 @@ for col in ["samples", "tools"]:
         continue
     memberships = series.to_list()
     dataset = upsetplot.from_memberships(memberships)
+    # TODO: Make this more robust for large datasets
     upsetplot.plot(dataset,
                    orientation='horizontal',
                    show_counts=True,

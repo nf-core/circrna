@@ -1,4 +1,4 @@
-process TX_NORMALIZATION {
+process GENE_NORMALIZATION {
     tag "$meta.id"
     label 'process_single'
 
@@ -18,7 +18,7 @@ process TX_NORMALIZATION {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'tx_deseq_normalization.R'
+    template 'gene_deseq_normalization.R'
 
     stub:
     """
