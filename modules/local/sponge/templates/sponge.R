@@ -67,9 +67,12 @@ ceRNA_interactions <- SPONGE::sponge(
 #                C                   #
 ######################################
 
+n_samples <- nrow(gene_expr)
+
 mscor_null_model <- SPONGE::sponge_build_null_model(
     number_of_datasets = 100,
-    number_of_samples = nrow(gene_expr)
+    number_of_samples = n_samples,
+    m_max = min(8, n_samples - 4) # Reconstructed based on https://github.com/daisybio/SPONGE/blob/d2592800cd2b72b92fe59aba2183f1dffcac3465/R/fn_significance.R#L253
 )
 
 sim_plot <- SPONGE::sponge_plot_simulation_results(mscor_null_model)
