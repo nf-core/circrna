@@ -38,76 +38,72 @@ workflow MIRNA_BINDINGSITES {
         error 'No tools selected for miRNA discovery.'
     }
 
-    // TODO: uncomment next time
-    // if (tools_selected.contains('targetscan')) {
-    //     //
-    //     // TARGETSCAN WORKFLOW:
-    //     //
-    //     TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
-    //     UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
+    if (tools_selected.contains('targetscan')) {
+        //
+        // TARGETSCAN WORKFLOW:
+        //
+        TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
+        UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
 
-    //     ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
-    //     ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
-    //     ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
-    // }
+        ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
+    }
 
-    // if (tools_selected.contains('miranda')) {
-    //     //
-    //     // MIRANDA WORKFLOW:
-    //     //
-    //     MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature}.collect() )
-    //     UNIFY_MIRANDA( MIRANDA.out.txt, [] )
+    if (tools_selected.contains('miranda')) {
+        //
+        // MIRANDA WORKFLOW:
+        //
+        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature}.collect() )
+        UNIFY_MIRANDA( MIRANDA.out.txt, [] )
 
-    //     ch_versions = ch_versions.mix(MIRANDA.out.versions)
-    //     ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
-    //     ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
-    // }
+        ch_versions = ch_versions.mix(MIRANDA.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
+    }
 
-    // if (tools_selected.contains('tarpmir')) {
-    //     //
-    //     // TARPMIR WORKFLOW:
-    //     //
+    if (tools_selected.contains('tarpmir')) {
+        //
+        // TARPMIR WORKFLOW:
+        //
 
-    //     TARPMIR(ch_transcriptome_batches, mirna_fasta.collect())
-    //     UNIFY_TARPMIR(TARPMIR.out.bindings, [])
+        TARPMIR(ch_transcriptome_batches, mirna_fasta.collect())
+        UNIFY_TARPMIR(TARPMIR.out.bindings, [])
 
-    //     ch_versions = ch_versions.mix(TARPMIR.out.versions)
-    //     ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
-    //     ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
-    // }
+        ch_versions = ch_versions.mix(TARPMIR.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_TARPMIR.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_TARPMIR.out.output)
+    }
 
-    // if (tools_selected.contains('pita')) {
-    //     //
-    //     // PITA WORKFLOW:
-    //     //
+    if (tools_selected.contains('pita')) {
+        //
+        // PITA WORKFLOW:
+        //
 
-    //     PITA(ch_transcriptome_batches, mirna_fasta.collect())
-    //     UNIFY_PITA(PITA.out.tsv, [])
+        PITA(ch_transcriptome_batches, mirna_fasta.collect())
+        UNIFY_PITA(PITA.out.tsv, [])
 
-    //     ch_versions = ch_versions.mix(PITA.out.versions)
-    //     ch_versions = ch_versions.mix(UNIFY_PITA.out.versions)
-    //     ch_predictions = ch_predictions.mix(UNIFY_PITA.out.output)
-    // }
+        ch_versions = ch_versions.mix(PITA.out.versions)
+        ch_versions = ch_versions.mix(UNIFY_PITA.out.versions)
+        ch_predictions = ch_predictions.mix(UNIFY_PITA.out.output)
+    }
 
     //
     // CONSOLIDATE PREDICTIONS WORKFLOW:
     //
     // TODO: This is an artifact and should be removed if we have a replacement
 
-    // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
+    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
 
-    // MIRNA_TARGETS( consolidate_targets )
+    MIRNA_TARGETS( consolidate_targets )
 
-    // ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
+    ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
 
     //
     // MAJORITY VOTING:
     //
 
-    // TODO: uncomment next time
-    // ch_combined_predictions = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}.collect()
-
-    ch_combined_predictions = Channel.fromPath('/nfs/home/students/mweyrich/tool.paths').splitText().collectFile().flatMap { it.text.split(/\s+/) }.collect().map{[[id: "mirna"], it]}.collect()
+    ch_combined_predictions = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}.collect()
 
     MAJORITY_VOTE(ch_combined_predictions)
     ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
