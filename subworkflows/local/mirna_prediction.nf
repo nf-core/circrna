@@ -24,7 +24,7 @@ workflow MIRNA_PREDICTION {
     ch_versions = Channel.empty()
 
     //
-    // MIRNA NORMALIZATION WORKFLOW:
+    // MIRNA NORMALIZATION WORKFLOW
     //
 
     if (params.mirna_expression) {
@@ -41,7 +41,7 @@ workflow MIRNA_PREDICTION {
         ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
 
         //
-        // MIRNA BINDING SITES:
+        // MIRNA BINDING SITES
         //
 
         // Filtering miRNAs from ch_mature if they are not in ch_mirna_filtered.
@@ -66,38 +66,35 @@ workflow MIRNA_PREDICTION {
     ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
 
     if (params.mirna_expression) {
+
         //
-        // COMPUTE CORRELATION:
+        // COMPUTE CORRELATION
         //
-        // TODO: uncomment
-        // ch_binding_site_batches = MIRNA_BINDINGSITES.out.targets
-        //     .splitText(by: 100, file: true)
-        //     .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+        ch_binding_site_batches = MIRNA_BINDINGSITES.out.targets
+            .splitText(by: 100, file: true)
+            .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-        // COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
+        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
 
-        // ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
-        //     .map{meta, results -> results}
-        //     .flatten().collect()
-        //     .map{results -> [[id: 'correlation'], results]}
+        ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
+            .map{meta, results -> results}
+            .flatten().collect()
+            .map{results -> [[id: 'correlation'], results]}
 
-        // ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+        ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+
+        //
+        // SPONGE
+        //
+        ch_gene_normalized = GENE_NORMALIZATION(tx_counts).normalized
+        ch_versions = ch_versions.mix(GENE_NORMALIZATION.out.versions)
+
+        SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_gene_normalized, ch_mirna_filtered)
+        ch_versions = ch_versions.mix(SPONGE.out.versions)
+
+        SPONGE_EFFECTS(SPONGE.out.sponge_data)
+        ch_versions = ch_versions.mix(SPONGE_EFFECTS.out.versions)
     }
-
-    // if (params.sponge)
-
-
-    ch_gene_normalized = GENE_NORMALIZATION(tx_counts).normalized
-
-    ch_versions = ch_versions.mix(GENE_NORMALIZATION.out.versions)
-
-    SPONGE(MIRNA_BINDINGSITES.out.binding_sites, ch_gene_normalized, ch_mirna_filtered)
-
-    ch_versions = ch_versions.mix(SPONGE.out.versions)
-
-    // SPONGE_EFFECTS(SPONGE.out.sponge_data)
-
-    // ch_versions = ch_versions.mix(SPONGE_EFFECTS.out.versions)
 
     emit:
     versions = ch_versions
