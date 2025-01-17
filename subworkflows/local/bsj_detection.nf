@@ -11,7 +11,6 @@ include { GAWK as EXTRACT_EXONS_INTRONS                  } from '../../modules/n
 include { BEDTOOLS_GETFASTA as FASTA_COMBINED            } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE          } from '../../modules/nf-core/bedtools/getfasta'
 include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL     } from '../../modules/nf-core/bedtools/getfasta'
-include { FAIL_ON_EMPTY                                  } from '../../modules/local/fail_on_empty'
 
 // SUBWORKFLOWS
 include { SEGEMEHL                               } from './detection_tools/segemehl'
@@ -214,19 +213,29 @@ workflow BSJ_DETECTION {
     ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
-    FAIL_ON_EMPTY(
-        ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
-        // Make sure to wait for per-sample results
-        Channel.empty()
-            .mix(ch_bsj_bed12_combined)
-            .mix(ch_bsj_bed12_per_sample)
-            .mix(ch_bsj_bed12_per_sample_tool)
-            .mix(ch_bsj_fasta_combined)
-            .mix(ch_bsj_fasta_per_sample)
-            .mix(ch_bsj_fasta_per_sample_tool)
-            .map{ meta, f -> f }
-            .collect()
-    )
+    Channel.empty()
+        // First, make sure that all detection processes are finished
+        // So that even if all hits are filtered out, we will still get the intermediate files
+        .mix(ch_bsj_bed12_combined)
+        .mix(ch_bsj_bed12_per_sample)
+        .mix(ch_bsj_bed12_per_sample_tool)
+        .mix(ch_bsj_fasta_combined)
+        .mix(ch_bsj_fasta_per_sample)
+        .mix(ch_bsj_fasta_per_sample_tool)
+        // Then, check if any circular RNAs were found
+        .map{ meta, f -> false }
+        .mix( ch_bsj_bed_combined.map{ meta, f -> true } )
+        // If no circular RNAs were found, stop the pipeline
+        .filter{ it }
+        .view()
+        .ifEmpty{
+            error (
+                "No circular RNAs were found by at least ${params.min_tools} tools and in at least ${params.min_samples} samples.\n" +
+                "These thresholds can be adjusted using the parameters 'min_tools' and 'min_samples'.\n" +
+                "Feel free to check the preliminary results in '${params.outdir}'\n" +
+                (params.save_intermediates ? "" :
+                "You can enable saving intermediate files by setting the parameter 'save_intermediates' to 'true'."))
+        }
 
     emit:
     bed           = ch_bsj_bed_combined
