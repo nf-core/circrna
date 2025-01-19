@@ -38,6 +38,7 @@ workflow BSJ_DETECTION {
     chromosomes
     hisat2_index
     star_index
+    circexplorer2_index
     bsj_reads
 
     main:
@@ -70,7 +71,7 @@ workflow BSJ_DETECTION {
     }
 
     if (tools_selected.contains('circexplorer2')) {
-        CIRCEXPLORER2( gtf, fasta, STAR2PASS.out.junction )
+        CIRCEXPLORER2( fasta, STAR2PASS.out.junction, circexplorer2_index )
         ch_versions                = ch_versions.mix(CIRCEXPLORER2.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCEXPLORER2.out.bed)
     }
@@ -103,7 +104,7 @@ workflow BSJ_DETECTION {
 
     if (tools_selected.contains('mapsplice')) {
         MAPSPLICE( reads, gtf, fasta, bowtie_index, chromosomes,
-            STAR2PASS.out.junction )
+            STAR2PASS.out.junction, circexplorer2_index )
         ch_versions                = ch_versions.mix(MAPSPLICE.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(MAPSPLICE.out.bed)
     }

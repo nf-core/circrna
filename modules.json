@@ -220,6 +220,11 @@
                         "branch": "master",
                         "git_sha": "5d095e8413da1f4c72b7d07ce87f75c09482486f",
                         "installed_by": ["modules"]
+                    },
+                    "ucsc/gtftogenepred": {
+                        "branch": "master",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+                        "installed_by": ["modules"]
                     }
                 }
             },

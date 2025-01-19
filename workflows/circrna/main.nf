@@ -96,14 +96,15 @@ workflow CIRCRNA {
         ch_gtf
     )
 
-    ch_gtf         = PREPARE_GENOME.out.gtf
-    bowtie_index   = PREPARE_GENOME.out.bowtie
-    bowtie2_index  = PREPARE_GENOME.out.bowtie2
-    bwa_index      = PREPARE_GENOME.out.bwa
-    chromosomes    = PREPARE_GENOME.out.chromosomes
-    hisat2_index   = PREPARE_GENOME.out.hisat2
-    star_index     = PREPARE_GENOME.out.star
-    ch_versions    = ch_versions.mix(PREPARE_GENOME.out.versions)
+    ch_gtf              = PREPARE_GENOME.out.gtf
+    bowtie_index        = PREPARE_GENOME.out.bowtie
+    bowtie2_index       = PREPARE_GENOME.out.bowtie2
+    bwa_index           = PREPARE_GENOME.out.bwa
+    chromosomes         = PREPARE_GENOME.out.chromosomes
+    hisat2_index        = PREPARE_GENOME.out.hisat2
+    circexplorer2_index = PREPARE_GENOME.out.circexplorer2
+    star_index          = PREPARE_GENOME.out.star
+    ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
     FASTQC_TRIMGALORE (
@@ -130,6 +131,7 @@ workflow CIRCRNA {
         chromosomes,
         hisat2_index,
         star_index,
+        circexplorer2_index,
         params.bsj_reads
     )
 
