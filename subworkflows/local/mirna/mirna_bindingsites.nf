@@ -3,9 +3,9 @@ include { GAWK as UNIFY_MIRANDA           } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_PITA              } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARGETSCAN        } from '../../../modules/nf-core/gawk'
 include { GAWK as UNIFY_TARPMIR           } from '../../../modules/nf-core/gawk'
-include { MAJORITY_VOTE                   } from '../../../modules/local/majority_vote'
+include { MIRNA_MAJORITYVOTE              } from '../../../modules/local/mirna/majorityvote'
 include { MIRANDA                         } from '../../../modules/nf-core/miranda'
-include { MIRNA_TARGETS                   } from '../../../modules/local/mirna_targets'
+include { MIRNA_TARGETS                   } from '../../../modules/local/mirna/targets'
 include { PITA                            } from '../../../modules/local/pita'
 include { TARGETSCAN                      } from '../../../modules/local/targetscan/predict'
 include { TARPMIR                         } from '../../../modules/local/tarpmir'
@@ -105,12 +105,12 @@ workflow MIRNA_BINDINGSITES {
 
     ch_combined_predictions = ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]}.collect()
 
-    MAJORITY_VOTE(ch_combined_predictions)
-    ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
+    MIRNA_MAJORITYVOTE(ch_combined_predictions)
+    ch_versions = ch_versions.mix(MIRNA_MAJORITYVOTE.out.versions)
 
     emit:
-    targets       = MAJORITY_VOTE.out.targets
-    binding_sites = MAJORITY_VOTE.out.tsv
+    targets       = MIRNA_MAJORITYVOTE.out.targets
+    binding_sites = MIRNA_MAJORITYVOTE.out.tsv
 
     versions = ch_versions
 }

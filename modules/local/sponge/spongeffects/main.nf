@@ -1,4 +1,4 @@
-process SPONGE_EFFECTS {
+process SPONGE_SPONGEFFECTS {
     tag "$meta.id"
     label 'process_high'
 

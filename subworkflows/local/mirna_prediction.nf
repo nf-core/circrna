@@ -2,10 +2,10 @@
 include { BIOAWK as ADD_BACKSPLICE                } from '../../modules/nf-core/bioawk'
 include { MIRNA_NORMALIZATION                     } from '../../modules/local/deseq2/mirna_normalization'
 include { GENE_NORMALIZATION                      } from '../../modules/local/deseq2/gene_normalization'
-include { MIRNA_FILTERING                         } from '../../modules/local/mirna_filtering'
-include { COMPUTE_CORRELATIONS                    } from '../../modules/local/compute_correlations'
-include { SPONGE                                  } from '../../modules/local/sponge'
-include { SPONGE_EFFECTS                          } from '../../modules/local/sponge_effects'
+include { MIRNA_FILTERING                         } from '../../modules/local/mirna/filtering'
+include { MIRNA_COMPUTECORRELATIONS               } from '../../modules/local/mirna/computecorrelations'
+include { SPONGE_SPONGE                           } from '../../modules/local/sponge/sponge'
+include { SPONGE_SPONGEFFECTS                     } from '../../modules/local/sponge/spongeffects'
 
 // SUBWORKFLOWS
 include { MIRNA_BINDINGSITES } from './mirna/mirna_bindingsites'
@@ -74,14 +74,14 @@ workflow MIRNA_PREDICTION {
             .splitText(by: 100, file: true)
             .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
+        MIRNA_COMPUTECORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
 
-        ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
+        ch_correlation_results = MIRNA_COMPUTECORRELATIONS.out.correlations
             .map{meta, results -> results}
             .flatten().collect()
             .map{results -> [[id: 'correlation'], results]}
 
-        ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
+        ch_versions = ch_versions.mix(MIRNA_COMPUTECORRELATIONS.out.versions)
 
         //
         // SPONGE

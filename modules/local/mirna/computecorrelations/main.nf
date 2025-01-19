@@ -1,4 +1,4 @@
-process COMPUTE_CORRELATIONS {
+process MIRNA_COMPUTECORRELATIONS {
     tag "$meta.id"
     label 'process_single'
 

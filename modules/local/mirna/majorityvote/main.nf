@@ -1,4 +1,4 @@
-process MAJORITY_VOTE {
+process MIRNA_MAJORITYVOTE {
     tag "$meta.id"
     label 'process_high'
 
