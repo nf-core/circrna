@@ -8,8 +8,8 @@ process CIRIQUANT_DE {
     tuple val(meta), path(library), path(expression), path(gene)
 
     output:
-    tuple val(meta), path("${circ_path}"), emit: circ
-    tuple val(meta), path("${gene_path}"), emit: gene
+    tuple val(meta), path("${circ_path}"), emit: circ, optional: true
+    tuple val(meta), path("${gene_path}"), emit: gene, optional: true
     path "versions.yml", emit: versions
 
     when:
