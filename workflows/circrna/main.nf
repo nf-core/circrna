@@ -75,9 +75,9 @@ workflow CIRCRNA {
         .branch {
             meta, fastqs ->
                 single  : fastqs.size() == 1
-                    return [ meta, fastqs ]
+                    return [ meta, fastqs.flatten() ]
                 multiple: fastqs.size() > 1
-                    return [ meta, fastqs ]
+                    return [ meta, fastqs.flatten() ]
         }
         .set { ch_fastq }
 
@@ -85,7 +85,9 @@ workflow CIRCRNA {
     // Concatenate FastQ files from same sample if required
     CAT_FASTQ (ch_fastq.multiple)
         .reads
-        .mix(ch_fastq.single)
+        .mix(
+            ch_fastq.single
+        )
         .set { ch_cat_fastq }
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
 

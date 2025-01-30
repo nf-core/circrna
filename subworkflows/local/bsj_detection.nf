@@ -228,7 +228,6 @@ workflow BSJ_DETECTION {
         .mix( ch_bsj_bed_combined.map{ meta, f -> true } )
         // If no circular RNAs were found, stop the pipeline
         .filter{ it }
-        .view()
         .ifEmpty{
             error (
                 "No circular RNAs were found by at least ${params.min_tools} tools and in at least ${params.min_samples} samples.\n" +
