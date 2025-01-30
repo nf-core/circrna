@@ -4,7 +4,7 @@ process PYGTFTK_TABULATE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'depot.galaxyproject.org/singularity/pygtftk:1.6.2--py39h4e691d4_2' :
+        'https://depot.galaxyproject.org/singularity/pygtftk:1.6.2--py39h4e691d4_2' :
         'biocontainers/pygtftk:1.6.2--py39h4e691d4_2' }"
 
     input:
