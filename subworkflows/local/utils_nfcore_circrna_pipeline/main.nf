@@ -86,10 +86,6 @@ workflow PIPELINE_INITIALISATION {
         .map { samplesheet ->
             validateInputSamplesheet(samplesheet)
         }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
         .set { ch_samplesheet }
 
     emit:
@@ -167,6 +163,12 @@ def validateInputSamplesheet(input) {
     def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
     if (!endedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+    }
+
+    // Check that multiple runs of the same sample are of the same strandedness i.e. auto / unstranded / forward / reverse
+    def strandedness_ok = metas.collect{ it.strandedness }.unique().size == 1
+    if (!strandedness_ok) {
+        error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
     }
 
     return [ metas[0], fastqs ]
@@ -261,4 +263,3 @@ def methodsDescriptionText(mqc_methods_yaml) {
 
     return description_html.toString()
 }
-

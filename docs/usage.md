@@ -1,16 +1,16 @@
 # nf-core/circrna: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/circrna/usage](https://nf-co.re/circrna/usage)
+## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/rnaseq/usage](https://nf-co.re/rnaseq/usage)
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
+## Pipeline parameters
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration except for parameters; see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 4 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -18,47 +18,132 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Multiple runs of the same sample
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes. If you set the strandedness value to `auto` the pipeline will use the tool-defaults throughout the pipeline.
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+sample,fastq_1,fastq_2,strandedness
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,auto
+CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz,auto
+CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz,auto
 ```
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 4 columns to match those defined in the table below.
 
 A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,fastq_1,fastq_2,strandedness
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,forward
+CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz,forward
+CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz,forward
+TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,,reverse
+TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,,reverse
+TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,,reverse
+TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,,reverse
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| Column         | Description                                                                                                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample`       | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
+| `fastq_1`      | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| `fastq_2`      | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| `strandedness` | Sample strand-specificity. Must be one of `unstranded`, `forward`, `reverse` or `auto`.                                                                                                |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+
+## BSJ detection
+
+This part of the pipeline is responsible for the detection of back-splice junctions (BSJs) in the input data. The following tools are currently supported:
+
+- `CIRCexplorer2`
+- `circRNA finder`
+- `CIRIquant`
+- `DCC`
+- `find circ`
+- `MapSplice`
+- `Segemehl`
+
+The tools to be used can be specified using the `tools` parameter.
+Each of the tools also quantifies how many reads support each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter.
+Additionally, the parameter `min_tools` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
+
+For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/output#bsj-detection).
+
+## Annotation
+
+The annotation is generally based on the reference GTF file. It can also utilize BED files that are provided by the various circRNA databases.
+The GTF-based annotation allows setting the parameter `exon_boundary` to specify a window around exons. If the BSJ is within this window, it will be annotated as a circRNA - otherwise, it will be annotated as an exon-intron circRNA (EI-circRNA). The default value is `0`.
+
+For the database-based annotation, an additional sample sheet is required:
+
+```csv title="annotation.csv"
+name,file,min_overlap
+db1,db1.bed,0.9
+db2,db2.bed,0.8
+```
+
+| Column        | Description                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| `name`        | Name of the database. This will be used as a prefix for the region names in the output files. |
+| `file`        | Path to the BED file. The file has to be a valid BED6 file.                                   |
+| `min_overlap` | Minimum bidirectional overlap required between the BSJ and the region in the BED file.        |
+
+The output of the annotation step will be bundled with the outputs of the BSJ detection step.
+
+## miRNA prediction
+
+This section allows looking for miRNA binding sites in the circRNAs.
+The following tools are currently supported:
+
+- `miRanda`
+- `TargetScan`
+
+This section will only be executed if the `mature` parameter is provided.
+The parameter `mature` should point to a FASTA file containing mature miRNA sequences.
+By providing a TSV file containing the miRNA expression of all samples via `mirna_expression`, this
+sub-workflow will perform additional normalization and filtering of `mirna_expression` and `mature` before
+executing the miRNA binding size prediction.
+
+To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
+
+## Statistical tests
+
+Currently, only [CircTest](https://github.com/dieterich-lab/CircTest) is supported for the statistical analysis of the circRNA expression data. The `phenotype` parameter is required for this step.
+
+A valid example of a `phenotype.csv` file (matching the "Full samplesheet") is shown here:
+
+```csv title="phenotype.csv"
+sample,condition
+CONTROL_REP1,control
+CONTROL_REP2,control
+CONTROL_REP3,control
+TREATMENT_REP1,treatment
+TREATMENT_REP2,treatment
+TREATMENT_REP3,treatment
+```
+
+Note that `TREATMENT_REP3` only has one entry in the `phenotype.csv` file, even though it has two entries in the `samplesheet.csv` file.
+If the `phenotype` parameter is provided, the phenotype information will also be added to the `SummarizedExperiment` object, that results from the "Quantification" step.
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/circrna --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run \
+    nf-core/circrna \
+    --input <SAMPLESHEET> \
+    --outdir <OUTDIR> \
+    --gtf <GENOME GTF> \
+    --fasta <GENOME FASTA> \
+    --igenomes_ignore \
+    --genome null \
+    -profile docker
 ```
+
+> **NB:** Loading iGenomes configuration remains the default for reasons of consistency with other workflows, but should be disabled when not using iGenomes, applying the recommended usage above.
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
 
@@ -103,6 +188,8 @@ When you run the above command, Nextflow automatically pulls the pipeline code f
 nextflow pull nf-core/circrna
 ```
 
+When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since.
+
 ### Reproducibility
 
 It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
@@ -142,14 +229,19 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - Includes links to test data so needs no other parameters
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
+  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `singularity`
   - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
+  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `podman`
   - A generic configuration profile to be used with [Podman](https://podman.io/)
+  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `shifter`
   - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
+  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `charliecloud`
   - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`
@@ -159,7 +251,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 
 ### `-resume`
 
-Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well. For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).
+Specify this when restarting a pipeline. Nextflow will used cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously.
 
 You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
 

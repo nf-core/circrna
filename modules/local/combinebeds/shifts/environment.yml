@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::polars=1.8.2
+  - conda-forge::altair=5.5.0
+  - conda-forge::vl-convert-python==1.7.0

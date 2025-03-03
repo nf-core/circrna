@@ -1,0 +1,24 @@
+Changes in module 'nf-core/bioawk'
+--- modules/nf-core/bioawk/main.nf
++++ modules/nf-core/bioawk/main.nf
+@@ -20,15 +20,15 @@
+     script:
+     def args  = task.ext.args ?: '' // args is used for the main arguments of the tool
+     prefix = task.ext.prefix ?: "${meta.id}"
++    suffix = task.ext.suffix ?: input.extension
++    file_name = "${prefix}.${suffix}"
+ 
+     def VERSION = '1.0' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
+     """
+     bioawk \\
+         $args \\
+         $input \\
+-        > ${prefix}
+-
+-    gzip ${prefix}
++        > ${file_name}
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+
+************************************************************
