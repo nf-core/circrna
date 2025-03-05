@@ -20,7 +20,7 @@ process PYGTFTK_TABULATE {
     script:
     def args          = task.ext.args   ?: ''
     def prefix        = task.ext.prefix ?: "${meta.id}"
-    def suffix        = task.ext.suffix ?: gff.extension
+    def suffix        = task.ext.suffix ?: gtf.extension
     outfile           = "${prefix}.${suffix}"
     """
     gtftk tabulate \\

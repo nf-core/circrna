@@ -13,18 +13,18 @@ workflow ANNOTATION {
     main:
     ch_versions = Channel.empty()
 
-    INTERSECT_GTF( regions.combine(ch_gtf.map{meta, gtf -> gtf}), [[], []] )
+    INTERSECT_GTF( regions.combine(ch_gtf.map{_meta, gtf -> gtf}), [[], []] )
     ch_versions = ch_versions.mix(INTERSECT_GTF.out.versions)
 
     INGEST_DATABASE_NAMES( ch_annotation, [] )
     ch_versions = ch_versions.mix(INGEST_DATABASE_NAMES.out.versions)
 
     INTERSECT_DATABASE( regions.combine(INGEST_DATABASE_NAMES.out.output)
-        .map{ meta1, regions, meta2, database ->
+        .map{ meta1, _regions, meta2, database ->
             [[id: "${meta1.id}-${meta2.id}",
                 tool: meta1.tool,
                 original_meta: meta1,
-                min_overlap: meta2.min_overlap], regions, database] },
+                min_overlap: meta2.min_overlap], _regions, database] },
         [[], []])
     ch_versions = ch_versions.mix(INTERSECT_DATABASE.out.versions)
 
