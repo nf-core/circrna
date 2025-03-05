@@ -22,7 +22,7 @@ process CIRCRNA_FINDER {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = 'v1.2'
     """
-    postProcessStarAlignment.pl --starDir input/ --outDir ./
+    postProcessStarAlignment.pl ${args} --starDir input/ --outDir ./
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
