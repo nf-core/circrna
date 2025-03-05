@@ -17,7 +17,7 @@ workflow STAR2PASS {
     ch_versions = Channel.empty()
 
     PASS_1( reads, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center)
-    sjdb = PASS_1.out.tab.map{ meta, tab -> return tab }.collect().map{[[id: "star_sjdb"], it]}
+    sjdb = PASS_1.out.tab.map{ _meta, tab -> return tab }.collect().map{[[id: "star_sjdb"], it]}
     SJDB( sjdb, bsj_reads )
     PASS_2( reads, star_index, SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
 

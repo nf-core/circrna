@@ -18,9 +18,9 @@ workflow FIND_CIRC {
     SAMTOOLS_INDEX( ALIGN.out.bam )
     SAMTOOLS_VIEW( ALIGN.out.bam.join( SAMTOOLS_INDEX.out.bai ), ch_fasta, [] )
     ANCHORS( SAMTOOLS_VIEW.out.bam )
-    MAIN( ANCHORS.out.anchors, bowtie2_index, ch_fasta.map{ meta, fasta -> fasta } )
+    MAIN( ANCHORS.out.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta } )
     UNIFY( MAIN.out.bed.map{ meta, bed ->
-        [ meta + [tool: "find_circ"], bed ] }, [] )
+        [ meta + [tool: "find_circ"], bed ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)

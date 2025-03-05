@@ -25,7 +25,7 @@ workflow STATISTICAL_TESTS {
     ch_versions = ch_versions.mix(CIRCTEST_CIRCTEST.out.versions)
 
     ch_phenotype_annotations = ch_phenotype
-        .map{ meta, table -> table.text }
+        .map{ _meta, table -> table.text }
         .splitCsv( header: true )
 
     ch_condition_samples = ch_phenotype_annotations
@@ -43,7 +43,7 @@ workflow STATISTICAL_TESTS {
 
     ch_condition_pairs = ch_condition_samples
         .combine(ch_condition_samples)
-        .filter{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment
+        .filter{ c_control, _s_control, _f_ciri_control, _f_stringtie_control, c_treatment, _s_treatment, _f_ciri_treatment, _f_stringtie_treatment
             -> c_control > c_treatment }
         .map{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment ->
             [   [id: "${c_control}_${c_treatment}"],
@@ -54,12 +54,12 @@ workflow STATISTICAL_TESTS {
             ]}
 
     CIRIQUANT_PREPDE(ch_condition_pairs
-        .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, ciri, conditions]}
+        .map{meta, samples, ciri, _stringtie, conditions -> [meta, samples, ciri, conditions]}
     )
     ch_versions = ch_versions.mix(CIRIQUANT_PREPDE.out.versions)
 
     STRINGTIE_PREPDE(ch_condition_pairs
-        .map{meta, samples, ciri, stringtie, conditions -> [meta, samples, stringtie]}
+        .map{meta, samples, _ciri, stringtie, _conditions -> [meta, samples, stringtie]}
     )
     ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
 

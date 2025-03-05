@@ -73,8 +73,8 @@ workflow QUANTIFICATION {
         AGGREGATE(
             ch_aggregations
                 .map{agg -> [[id: agg], agg]}
-                .combine(circ_annotation_bed.map{meta, bed -> bed})
-                .combine(ch_bsj_bed_per_sample_tool.map{meta, bed -> bed}.collect().map{beds -> [beds]}),
+                .combine(circ_annotation_bed.map{_meta, bed -> bed})
+                .combine(ch_bsj_bed_per_sample_tool.map{_meta, bed -> bed}.collect().map{beds -> [beds]}),
             params.max_shift,
             params.consider_strand
         )

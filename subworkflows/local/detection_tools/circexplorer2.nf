@@ -18,7 +18,7 @@ workflow CIRCEXPLORER2 {
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
 
     UNIFY( ANNOTATE.out.txt
-        .map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt ] }, [] )
+        .map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt ] }, [], false )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:

@@ -42,17 +42,15 @@ workflow MIRNA_PREDICTION {
         //
 
         // Filtering miRNAs from ch_mature if they are not in ch_mirna_filtered.
-        ch_uniq_mirnas = ch_mirna_filtered.map{ meta, path -> path }.splitCsv( sep: '\t' ).map{ it[0] }.unique().collect()
+        ch_uniq_mirnas = ch_mirna_filtered.map{ _meta, path -> path }.splitCsv( sep: '\t' ).map{ it[0] }.unique().collect()
 
         ch_mature = ch_mature
-            .map{ meta, path ->
-                path
-            }
+            .map{ _meta, path -> path }
             .splitFasta( record: [id:true, seqString:true] )
             .combine(ch_uniq_mirnas.map{ it -> [it]}) // Not sure why this mapping is necessary but I think it is
-            .filter{ record, mirnas ->
+            .filter{ record, _mirnas ->
                 ch_uniq_mirnas.contains(record.id).value
-            }.map{ record, mirnas ->
+            }.map{ record, _mirnas ->
                 ">${record.id}\n${record.seqString}"
             }
             .collectFile( name: 'mature_filtered.fa', newLine: true)
@@ -68,12 +66,12 @@ workflow MIRNA_PREDICTION {
         //
         ch_binding_site_batches = MIRNA_BINDINGSITES.out.binding_sites
             .splitText(by: 100, file: true)
-            .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+            .map{ _meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
         COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
 
         ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
-            .map{meta, results -> results}
+            .map{_meta, results -> results}
             .flatten().collect()
             .map{results -> [[id: 'correlation'], results]}
 

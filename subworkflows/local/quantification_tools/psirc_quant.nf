@@ -26,7 +26,7 @@ workflow PSIRC_QUANT {
     main:
     ch_versions = Channel.empty()
 
-    MARK_CIRCULAR(ch_transcriptome_fasta, [])
+    MARK_CIRCULAR(ch_transcriptome_fasta, [], false)
     ch_versions = ch_versions.mix(MARK_CIRCULAR.out.versions)
 
     PSIRC_INDEX(MARK_CIRCULAR.out.output)
@@ -34,7 +34,7 @@ workflow PSIRC_QUANT {
 
     CUSTOM_TX2GENE(
         ch_transcriptome_gtf,
-        RUN_PSIRC_QUANT.out.directory.map{meta, quant -> quant}.collect().map{[[id: "quant"], it]},
+        RUN_PSIRC_QUANT.out.directory.map{_meta, quant -> quant}.collect().map{[[id: "quant"], it]},
         "kallisto",
         "gene_id",
         "gene_name"
@@ -60,19 +60,19 @@ workflow PSIRC_QUANT {
     )
 
     JOIN_GENE_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_gene.map{meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
+        TXIMETA_TXIMPORT.out.counts_gene.map{_meta, counts -> counts}.collect().map{[[id: "gene_counts"], it]}
     )
 
     JOIN_GENE_TPM(
-        TXIMETA_TXIMPORT.out.tpm_gene.map{meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
+        TXIMETA_TXIMPORT.out.tpm_gene.map{_meta, tpm -> tpm}.collect().map{[[id: "gene_tpm"], it]}
     )
 
     JOIN_TX_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_transcript.map{meta, counts -> counts}.collect().map{[[id: "tx_counts"], it]}
+        TXIMETA_TXIMPORT.out.counts_transcript.map{_meta, counts -> counts}.collect().map{[[id: "tx_counts"], it]}
     )
 
     JOIN_TX_TPM(
-        TXIMETA_TXIMPORT.out.tpm_transcript.map{meta, tpm -> tpm}.collect().map{[[id: "tx_tpm"], it]}
+        TXIMETA_TXIMPORT.out.tpm_transcript.map{_meta, tpm -> tpm}.collect().map{[[id: "tx_tpm"], it]}
     )
 
     SPLIT_TYPES_COUNTS(
@@ -85,7 +85,7 @@ workflow PSIRC_QUANT {
 
 
     MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.map{meta, se -> se}.collect().map{[[id: "experiments"], it]},
+        TXIMETA_TXIMETA.out.se.map{_meta, se -> se}.collect().map{[[id: "experiments"], it]},
         ch_phenotype.ifEmpty([[], []]),
         ch_transcriptome_gtf,
         JOIN_TX_TPM.out.csv

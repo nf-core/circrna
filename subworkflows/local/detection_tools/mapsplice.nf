@@ -20,7 +20,7 @@ workflow MAPSPLICE {
     PARSE( ALIGN.out.raw_fusions )
     ANNOTATE( PARSE.out.junction, fasta, circexplorer2_index )
     UNIFY( ANNOTATE.out.txt.map{ meta, txt ->
-        [ meta + [tool: "mapsplice"], txt ] }, [] )
+        [ meta + [tool: "mapsplice"], txt ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
     ch_versions = ch_versions.mix(PARSE.out.versions)

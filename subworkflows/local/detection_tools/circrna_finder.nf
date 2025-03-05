@@ -16,7 +16,7 @@ workflow CIRCRNA_FINDER {
             [ meta + [tool: "circrna_finder"], [sam, junction, tab] ] }
 
     MAIN( ch_joined )
-    UNIFY( MAIN.out.results, [] )
+    UNIFY( MAIN.out.results, [], false )
 
     ch_versions = ch_versions.mix(MAIN.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)

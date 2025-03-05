@@ -25,7 +25,7 @@ workflow MIRNA_BINDINGSITES {
 
     ch_transcriptome_batches = ADD_BACKSPLICE.out.output
         .splitFasta(by: 100, file: true)
-        .map{ meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
+        .map{ _meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
     //
     // MIRNA PREDICTION TOOLS:
@@ -41,7 +41,7 @@ workflow MIRNA_BINDINGSITES {
         // TARGETSCAN WORKFLOW:
         //
         TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
-        UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [] )
+        UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [], false )
 
         ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
         ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
@@ -52,8 +52,8 @@ workflow MIRNA_BINDINGSITES {
         //
         // MIRANDA WORKFLOW:
         //
-        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{meta, mature -> mature}.collect() )
-        UNIFY_MIRANDA( MIRANDA.out.txt, [] )
+        MIRANDA( ch_transcriptome_batches, mirna_fasta.map{_meta, mature -> mature}.collect() )
+        UNIFY_MIRANDA( MIRANDA.out.txt, [], false )
 
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
         ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
@@ -75,7 +75,7 @@ workflow MIRNA_BINDINGSITES {
     //
     // MAJORITY VOTING:
     //
-    MAJORITY_VOTE( ch_predictions.map{meta, file -> file}.collect().map{[[id: "mirna"], it]} )
+    MAJORITY_VOTE( ch_predictions.map{_meta, file -> file}.collect().map{[[id: "mirna"], it]} )
     ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
 
     emit:
@@ -99,7 +99,7 @@ workflow MIRNA_BINDINGSITES {
 def formatMiRNAForTargetScan(ch_mature) {
 
     def ch_targetscan_meta_formatted = ch_mature
-        .map { meta, mature -> mature }
+        .map { _meta, mature -> mature }
         .splitFasta(record: [id: true, seqString: true])
         .map { record ->
             return "${record.id}\t${record.seqString[1..7]}\t0000\n"

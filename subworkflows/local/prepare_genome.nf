@@ -25,7 +25,7 @@ workflow PREPARE_GENOME {
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
     if( detection_tools.contains('mapsplice') ) {
-        CLEAN_FASTA(ch_fasta, [])
+        CLEAN_FASTA(ch_fasta, [], false)
         ch_fasta = CLEAN_FASTA.out.output
 
         ch_versions = ch_versions.mix(CLEAN_FASTA.out.versions)
@@ -41,7 +41,7 @@ workflow PREPARE_GENOME {
     SEQKIT_SPLIT(ch_fasta)
     ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions)
 
-    BOWTIE_BUILD(ch_fasta.map{ meta, fasta -> fasta })
+    BOWTIE_BUILD(ch_fasta.map{ _meta, fasta -> fasta })
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
 
     BOWTIE2_BUILD(ch_fasta)
@@ -64,8 +64,8 @@ workflow PREPARE_GENOME {
 
     ch_circexplorer2_reference = Channel.empty()
     if (detection_tools.intersect(['circexplorer2', 'mapsplice']).size() > 0) {
-        CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [])
-        ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map{ meta, file -> file }.collect()
+        CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [], false)
+        ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map{ _meta, file -> file }.collect()
         ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
     }
 

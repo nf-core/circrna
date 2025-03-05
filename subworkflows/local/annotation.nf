@@ -16,7 +16,7 @@ workflow ANNOTATION {
     INTERSECT_GTF( regions.combine(ch_gtf.map{_meta, gtf -> gtf}), [[], []] )
     ch_versions = ch_versions.mix(INTERSECT_GTF.out.versions)
 
-    INGEST_DATABASE_NAMES( ch_annotation, [] )
+    INGEST_DATABASE_NAMES( ch_annotation, [], false )
     ch_versions = ch_versions.mix(INGEST_DATABASE_NAMES.out.versions)
 
     INTERSECT_DATABASE( regions.combine(INGEST_DATABASE_NAMES.out.output)
