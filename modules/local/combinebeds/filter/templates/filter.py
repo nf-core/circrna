@@ -57,10 +57,11 @@ df = df.group_by(["chr", "start", "end", "strand"]).agg(**{
 }).with_columns(n_samples=pl.col("samples").map_elements(lambda x: len(x), return_dtype=int),
                 n_tools=pl.col("tools").map_elements(lambda x: len(x), return_dtype=int))
 
-df = df.with_columns(name=pl.col("chr") + ":" + pl.col("start").cast(str) + "-" + pl.col("end").cast(str) + ":" + pl.col("strand"),
+df = df.collect()
+df = df.with_columns(name=pl.lit("FUSIONJUNC_") + pl.arange(0, len(df)).cast(str) + pl.lit("/0"),
                     score=pl.lit("."))
 
-df_aggregated = df.collect().to_pandas()
+df_aggregated = df.to_pandas()
 n_bsjs = len(df_aggregated)
 
 df_filtered = df_aggregated[(df_aggregated["n_tools"] >= min_tools) & (df_aggregated["n_samples"] >= min_samples)]
