@@ -41,7 +41,7 @@ workflow PREPARE_GENOME {
     SEQKIT_SPLIT(ch_fasta)
     ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions)
 
-    BOWTIE_BUILD(ch_fasta.map{ _meta, fasta -> fasta })
+    BOWTIE_BUILD(ch_fasta)
     ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
 
     BOWTIE2_BUILD(ch_fasta)
