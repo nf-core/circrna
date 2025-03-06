@@ -37,14 +37,6 @@ df = df.with_columns(
     attributes = pl.lit('gene_id "') + pl.col('gene') + pl.lit('"; transcript_id "') + pl.col('name') + pl.lit('";'),
     source = pl.lit('nf-core/circrna')
 )
-df_transcipts = df.clone()
-df_transcipts = df_transcipts.with_columns(
-    type = pl.lit('transcript'),
-    phase = pl.lit('.')
-)
-df_transcipts = df_transcipts.select(
-    'chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'
-)
 
 if exons_only:
     df_exons = df.with_columns(
@@ -67,10 +59,13 @@ if exons_only:
         phase = pl.lit('.')
     )
 else:
-    df_exons = df_transcipts.clone()
+    df_exons = df.clone()
     df_exons = df_exons.with_columns(
         type = pl.lit('exon'),
         phase = pl.lit('.')
+    )
+    df_exons = df_exons.select(
+        'chr', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'
     )
     df_cds = df_exons.clone()
     df_cds = df_cds.with_columns(
@@ -78,10 +73,10 @@ else:
         phase = pl.lit('.')
     )
 
-df_combined = pl.concat([df_transcipts, df_exons, df_cds])
+df_combined = pl.concat([df_exons, df_cds])
 df_combined = df_combined.sort('chr', 'start', 'end')
 
-df_combined.collect().write_csv('${prefix}.${suffix}', separator='\\t', include_header=False)
+df_combined.collect().write_csv('${prefix}.${suffix}', separator='\\t', include_header=False, quote_style="never")
 
 # Versions
 
