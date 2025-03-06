@@ -193,15 +193,15 @@ workflow BSJ_DETECTION {
     // FASTA WORKFLOW:
     //
 
-    FASTA_COMBINED( ch_bsj_bed_combined, fasta )
+    FASTA_COMBINED( ch_bsj_bed12_combined, fasta )
     ch_versions = ch_versions.mix(FASTA_COMBINED.out.versions)
     ch_bsj_fasta_combined = FASTA_COMBINED.out.fasta
 
-    FASTA_PER_SAMPLE( ch_bsj_bed_per_sample, fasta )
+    FASTA_PER_SAMPLE( ch_bsj_bed12_per_sample, fasta )
     ch_versions = ch_versions.mix(FASTA_PER_SAMPLE.out.versions)
     ch_bsj_fasta_per_sample = FASTA_PER_SAMPLE.out.fasta
 
-    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta )
+    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed12_per_sample_tool, fasta )
     ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
 
