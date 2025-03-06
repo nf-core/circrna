@@ -125,7 +125,7 @@ workflow CIRCRNA {
     COMBINE_TRANSCRIPTOMES(
         ch_fasta,
         ch_gtf,
-        BSJ_DETECTION.out.gtf
+        BSJ_DETECTION.out.gff
     )
 
     ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
@@ -141,7 +141,7 @@ workflow CIRCRNA {
         COMBINE_TRANSCRIPTOMES.out.fasta,
         COMBINE_TRANSCRIPTOMES.out.gtf,
         BSJ_DETECTION.out.bed12,
-        BSJ_DETECTION.out.gtf,
+        BSJ_DETECTION.out.gff,
         BSJ_DETECTION.out.bed_per_sample_tool,
         params.bootstrap_samples,
         ch_phenotype,

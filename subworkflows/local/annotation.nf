@@ -4,6 +4,7 @@ include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE } from '../../modules/nf-core
 include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../modules/nf-core/circexplorer2/annotate'
 include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../modules/nf-core/bedtools/getfasta'
 include { GAWK as RENAME                           } from '../../modules/nf-core/gawk'
+include { GAWK as CUT_BED12                        } from '../../modules/nf-core/gawk'
 include { AGAT_CONVERTBED2GFF as BED2GFF           } from '../../modules/nf-core/agat/convertbed2gff'
 
 workflow ANNOTATION {
@@ -42,7 +43,10 @@ workflow ANNOTATION {
     RENAME(ANNOTATE.out.txt, [], false)
     ch_versions = ch_versions.mix(RENAME.out.versions)
 
-    BED2GFF(RENAME.out.output)
+    CUT_BED12(RENAME.out.output, [], false)
+    ch_versions = ch_versions.mix(CUT_BED12.out.versions)
+
+    BED2GFF(CUT_BED12.out.output)
     ch_versions = ch_versions.mix(BED2GFF.out.versions)
 
     GET_FASTA(RENAME.out.output, fasta)

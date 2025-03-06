@@ -174,6 +174,7 @@ workflow BSJ_DETECTION {
     ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_annotation, fasta, circexplorer2_index )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
     ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed12.collect()
+    ch_bsj_gff_combined   = ANNOTATE_COMBINED.out.gff
     ch_bsj_fasta_combined = ANNOTATE_COMBINED.out.fasta
 
     ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_annotation, fasta, circexplorer2_index )
@@ -213,7 +214,7 @@ workflow BSJ_DETECTION {
     emit:
     bed           = ch_bsj_bed_combined
     bed12         = ch_bsj_bed12_combined
-    gtf           = Channel.empty()
+    gff           = ch_bsj_gff_combined
     fasta         = ch_bsj_fasta_combined
 
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
