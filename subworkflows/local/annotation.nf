@@ -5,8 +5,7 @@ include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../modules/nf-core
 include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../modules/nf-core/bedtools/getfasta'
 include { GAWK as RENAME                           } from '../../modules/nf-core/gawk'
 include { GAWK as CUT_BED12                        } from '../../modules/nf-core/gawk'
-include { AGAT_CONVERTBED2GFF as BED2GFF           } from '../../modules/nf-core/agat/convertbed2gff'
-
+include { ANNOTATION_BED2GTF as BED2GTF            } from '../../modules/local/annotation/bed2gtf'
 workflow ANNOTATION {
     take:
     regions
@@ -43,18 +42,18 @@ workflow ANNOTATION {
     RENAME(ANNOTATE.out.txt, [], false)
     ch_versions = ch_versions.mix(RENAME.out.versions)
 
+    BED2GTF(RENAME.out.output.map{meta, bed12 -> [meta, bed12, []]}, params.exons_only)
+    ch_versions = ch_versions.mix(BED2GTF.out.versions)
+
     CUT_BED12(RENAME.out.output, [], false)
     ch_versions = ch_versions.mix(CUT_BED12.out.versions)
-
-    BED2GFF(CUT_BED12.out.output)
-    ch_versions = ch_versions.mix(BED2GFF.out.versions)
 
     GET_FASTA(RENAME.out.output, fasta)
     ch_versions = ch_versions.mix(GET_FASTA.out.versions)
 
     emit:
     bed12    = RENAME.out.output
-    gff      = BED2GFF.out.gff
+    gtf      = BED2GTF.out.gtf
     fasta    = GET_FASTA.out.fasta
     versions = ch_versions
 }
