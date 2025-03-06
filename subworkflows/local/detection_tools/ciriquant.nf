@@ -14,7 +14,7 @@ workflow CIRIQUANT {
 
     MAIN( reads, [[], []], ch_gtf, ch_fasta, bwa_index, hisat2_index )
     UNIFY( MAIN.out.gtf.map{ meta, gtf ->
-        [ meta + [tool: "ciriquant"], gtf ] }, [] )
+        [ meta + [tool: "ciriquant"], gtf ] }, [], false )
 
     ch_versions = ch_versions.mix(MAIN.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)

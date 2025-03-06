@@ -26,9 +26,9 @@ workflow QUANTIFICATION {
     ch_stringtie = Channel.empty()
     ch_rds = Channel.empty()
 
-    tools_selected = params.quantification_tools.split(',').collect{it.trim().toLowerCase()}
+    tools_selected = params.quantification_tools.split(',').collect { it.trim().toLowerCase() }
     if (tools_selected.size() == 0) {
-        error 'No tools selected for circRNA quantification.'
+        error('No tools selected for circRNA quantification.')
     }
 
     if (tools_selected.contains('psirc')) {
@@ -36,16 +36,12 @@ workflow QUANTIFICATION {
             reads,
             ch_transcriptome_fasta,
             ch_transcriptome_gtf,
-            circ_annotation_bed,
-            circ_annotation_gtf,
             bootstrap_samples,
             ch_phenotype,
-            ch_faidx
+            ch_faidx,
         )
-        ch_gene_counts = ch_gene_counts
-            .mix(PSIRC_QUANT.out.gene_counts.map{meta, counts -> [meta + [quantification: 'psirc'], counts]})
-        ch_circ_counts = ch_circ_counts
-            .mix(PSIRC_QUANT.out.circular_tx_counts.map{meta, counts -> [meta + [quantification: 'psirc'], counts]})
+        ch_gene_counts = ch_gene_counts.mix(PSIRC_QUANT.out.gene_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
+        ch_circ_counts = ch_circ_counts.mix(PSIRC_QUANT.out.circular_tx_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
         ch_versions = ch_versions.mix(PSIRC_QUANT.out.versions)
         ch_rds = ch_rds.mix(PSIRC_QUANT.out.rds)
     }
@@ -57,7 +53,7 @@ workflow QUANTIFICATION {
             ch_gtf,
             ch_fasta,
             bwa_index,
-            hisat2_index
+            hisat2_index,
         )
         ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
         ch_gene_counts = ch_gene_counts.mix(CIRIQUANT.out.gene_tpm)
@@ -71,12 +67,9 @@ workflow QUANTIFICATION {
         ch_aggregations = Channel.fromList(tools_selected.intersect(aggregations))
 
         AGGREGATE(
-            ch_aggregations
-                .map{agg -> [[id: agg], agg]}
-                .combine(circ_annotation_bed.map{meta, bed -> bed})
-                .combine(ch_bsj_bed_per_sample_tool.map{meta, bed -> bed}.collect().map{beds -> [beds]}),
+            ch_aggregations.map { agg -> [[id: agg], agg] }.combine(circ_annotation_bed.map { _meta, bed -> bed }).combine(ch_bsj_bed_per_sample_tool.map { _meta, bed -> bed }.collect().map { beds -> [beds] }),
             params.max_shift,
-            params.consider_strand
+            params.consider_strand,
         )
     }
 
@@ -86,6 +79,5 @@ workflow QUANTIFICATION {
     ciriquant = ch_ciriquant
     stringtie = ch_stringtie
     rds       = ch_rds
-
-    versions = ch_versions
+    versions  = ch_versions
 }

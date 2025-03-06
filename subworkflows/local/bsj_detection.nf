@@ -1,16 +1,11 @@
 // MODULES
-include { GAWK as EXTRACT_COUNTS                         } from '../../modules/nf-core/gawk'
-include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL          } from '../../modules/nf-core/csvtk/join'
-include { GAWK as FILTER_BSJS                            } from '../../modules/nf-core/gawk'
-include { GAWK as BED_ADD_SAMPLE_TOOL                    } from '../../modules/nf-core/gawk'
-include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE } from '../../modules/local/combinebeds/filter'
-include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS       } from '../../modules/local/combinebeds/shifts'
-include { COMBINEBEDS_FILTER as COMBINE_SAMPLES          } from '../../modules/local/combinebeds/filter'
-include { AGAT_SPADDINTRONS as ADD_INTRONS               } from '../../modules/nf-core/agat/spaddintrons'
-include { GAWK as EXTRACT_EXONS_INTRONS                  } from '../../modules/nf-core/gawk'
-include { BEDTOOLS_GETFASTA as FASTA_COMBINED            } from '../../modules/nf-core/bedtools/getfasta'
-include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE          } from '../../modules/nf-core/bedtools/getfasta'
-include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL     } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as EXTRACT_COUNTS                             } from '../../modules/nf-core/gawk'
+include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL              } from '../../modules/nf-core/csvtk/join'
+include { GAWK as FILTER_BSJS                                } from '../../modules/nf-core/gawk'
+include { GAWK as BED_ADD_SAMPLE_TOOL                        } from '../../modules/nf-core/gawk'
+include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
+include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
+include { COMBINEBEDS_FILTER as COMBINE_SAMPLES              } from '../../modules/local/combinebeds/filter'
 
 // SUBWORKFLOWS
 include { SEGEMEHL                               } from './detection_tools/segemehl'
@@ -45,8 +40,8 @@ workflow BSJ_DETECTION {
     ch_versions                = Channel.empty()
     ch_bsj_bed_per_sample_tool = Channel.empty()
     ch_multiqc_files           = Channel.empty()
-    fasta                      = ch_fasta.map{meta, fasta -> fasta}
-    gtf                        = ch_gtf.map{meta, gtf -> gtf}
+    fasta                      = ch_fasta.map{_meta, fasta -> fasta}
+    gtf                        = ch_gtf.map{_meta, gtf -> gtf}
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
@@ -110,13 +105,13 @@ workflow BSJ_DETECTION {
     }
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool
-        .filter{ meta, bed -> !bed.isEmpty() }
+        .filter{ _meta, bed -> !bed.isEmpty() }
 
     //
     // QUANTIFY BSJs PER TOOL
     //
 
-    EXTRACT_COUNTS( ch_bsj_bed_per_sample_tool, [] )
+    EXTRACT_COUNTS( ch_bsj_bed_per_sample_tool, [], false )
     ch_versions = ch_versions.mix(EXTRACT_COUNTS.out.versions)
 
     COMBINE_COUNTS_PER_TOOL( EXTRACT_COUNTS.out.output
@@ -128,14 +123,14 @@ workflow BSJ_DETECTION {
     // APPLY bsj_reads FILTER
     //
 
-    ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS( ch_bsj_bed_per_sample_tool, [] ).output
+    ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS( ch_bsj_bed_per_sample_tool, [], false ).output
     ch_versions                         = ch_versions.mix(FILTER_BSJS.out.versions)
 
     //
     // MERGE BED FILES
     //
 
-    BED_ADD_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool_filtered, [] )
+    BED_ADD_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool_filtered, [], false )
     ch_versions = ch_versions.mix(BED_ADD_SAMPLE_TOOL.out.versions)
     ch_bsj_bed_per_sample_tool_meta = BED_ADD_SAMPLE_TOOL.out.output
 
@@ -150,10 +145,10 @@ workflow BSJ_DETECTION {
     )
     ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined
-        .filter{ meta, bed -> !bed.isEmpty() }
+        .filter{ _meta, bed -> !bed.isEmpty() }
 
     ch_all_samples = ch_bsj_bed_per_sample_tool_meta
-        .map{ meta, bed -> [[id: "all"], bed] }
+        .map{ _meta, bed -> [[id: "all"], bed] }
         .groupTuple()
 
     COMBINE_SAMPLES(
@@ -165,7 +160,7 @@ workflow BSJ_DETECTION {
     )
     ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined
-        .filter{ meta, bed -> !bed.isEmpty() }
+        .filter{ _meta, bed -> !bed.isEmpty() }
         .collect()
 
     INVESTIGATE_SHIFTS(ch_all_samples)
@@ -176,42 +171,21 @@ workflow BSJ_DETECTION {
     // ANNOTATION
     //
 
-    ADD_INTRONS(ch_gtf, [])
-    ch_versions = ch_versions.mix(ADD_INTRONS.out.versions)
-
-    EXTRACT_EXONS_INTRONS( ADD_INTRONS.out.gff, [] )
-    ch_versions = ch_versions.mix(EXTRACT_EXONS_INTRONS.out.versions)
-
-    ANNOTATE_COMBINED( ch_bsj_bed_combined, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
+    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_annotation, fasta, circexplorer2_index )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
-    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed.collect()
-    ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf.collect()
+    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed12.collect()
+    ch_bsj_gtf_combined   = ANNOTATE_COMBINED.out.gtf
+    ch_bsj_fasta_combined = ANNOTATE_COMBINED.out.fasta
 
-    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
+    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_annotation, fasta, circexplorer2_index )
     ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
-    ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed
-    ch_bsj_gtf_per_sample   = ANNOTATE_PER_SAMPLE.out.gtf
+    ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed12
+    ch_bsj_fasta_per_sample = ANNOTATE_PER_SAMPLE.out.fasta
 
-    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, EXTRACT_EXONS_INTRONS.out.output, ch_annotation )
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_annotation, fasta, circexplorer2_index )
     ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
-    ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed
-    ch_bsj_gtf_per_sample_tool   = ANNOTATE_PER_SAMPLE_TOOL.out.gtf
-
-    //
-    // FASTA WORKFLOW:
-    //
-
-    FASTA_COMBINED( ch_bsj_bed_combined, fasta )
-    ch_versions = ch_versions.mix(FASTA_COMBINED.out.versions)
-    ch_bsj_fasta_combined = FASTA_COMBINED.out.fasta
-
-    FASTA_PER_SAMPLE( ch_bsj_bed_per_sample, fasta )
-    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE.out.versions)
-    ch_bsj_fasta_per_sample = FASTA_PER_SAMPLE.out.fasta
-
-    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta )
-    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
-    ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
+    ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
+    ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     Channel.empty()
@@ -224,8 +198,8 @@ workflow BSJ_DETECTION {
         .mix(ch_bsj_fasta_per_sample)
         .mix(ch_bsj_fasta_per_sample_tool)
         // Then, check if any circular RNAs were found
-        .map{ meta, f -> false }
-        .mix( ch_bsj_bed_combined.map{ meta, f -> true } )
+        .map{ _meta, _f -> false }
+        .mix( ch_bsj_bed_combined.map{ _meta, _f -> true } )
         // If no circular RNAs were found, stop the pipeline
         .filter{ it }
         .ifEmpty{

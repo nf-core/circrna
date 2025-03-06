@@ -131,6 +131,12 @@
                     "type": "integer",
                     "description": "Number of bootstrap samples to use during psirc quantification.",
                     "default": 30
+                },
+                "exons_only": {
+                    "type": "boolean",
+                    "description": "Only consider exons for circRNA sequence extraction.",
+                    "help_text": "With single-end reads, we cannot determine the actual full-length isoform (FLI) sequence. Thus, we can either use the entire sequence between the BSJ boundaries or only the exons.",
+                    "default": true
                 }
             }
         },

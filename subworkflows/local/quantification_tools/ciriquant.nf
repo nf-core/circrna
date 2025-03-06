@@ -22,7 +22,7 @@ workflow CIRIQUANT {
     EXTRACT_CIRC( MAIN.out.gtf )
     ch_versions = ch_versions.mix(EXTRACT_CIRC.out.versions)
 
-    EXTRACT_GENES( MAIN.out.gene_list, [] )
+    EXTRACT_GENES( MAIN.out.gene_list, [], false )
     ch_versions = ch_versions.mix(EXTRACT_GENES.out.versions)
 
     JOIN_GENE(

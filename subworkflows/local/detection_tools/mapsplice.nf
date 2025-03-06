@@ -1,6 +1,5 @@
 include { MAPSPLICE_ALIGN as ALIGN             } from '../../../modules/local/mapsplice/align'
 include { CIRCEXPLORER2_PARSE as PARSE         } from '../../../modules/nf-core/circexplorer2/parse'
-include { CIRCEXPLORER2_ANNOTATE as ANNOTATE   } from '../../../modules/nf-core/circexplorer2/annotate'
 include { GAWK as UNIFY                        } from '../../../modules/nf-core/gawk'
 
 workflow MAPSPLICE {
@@ -16,15 +15,13 @@ workflow MAPSPLICE {
     main:
     ch_versions = Channel.empty()
 
-    ALIGN( reads, bowtie_index, chromosomes, gtf )
+    ALIGN( reads, bowtie_index.map{ _meta, index -> index}, chromosomes, gtf )
     PARSE( ALIGN.out.raw_fusions )
-    ANNOTATE( PARSE.out.junction, fasta, circexplorer2_index )
-    UNIFY( ANNOTATE.out.txt.map{ meta, txt ->
-        [ meta + [tool: "mapsplice"], txt ] }, [] )
+    UNIFY( PARSE.out.junction.map{ meta, bed ->
+        [ meta + [tool: "mapsplice"], bed ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
     ch_versions = ch_versions.mix(PARSE.out.versions)
-    ch_versions = ch_versions.mix(ANNOTATE.out.versions)
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:

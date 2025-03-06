@@ -18,11 +18,11 @@ workflow SEGEMEHL {
 
     ALIGN( reads, fasta, index )
     EXTRACT( ALIGN.out.single_bed
-        .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed ] }, [] )
+        .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed ] }, [], false )
 
     SORT( EXTRACT.out.output )
     GROUP( SORT.out.sorted, 5 )
-    UNIFY( GROUP.out.bed, [] )
+    UNIFY( GROUP.out.bed, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
     ch_versions = ch_versions.mix(EXTRACT.out.versions)
