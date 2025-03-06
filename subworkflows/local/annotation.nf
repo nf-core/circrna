@@ -1,43 +1,48 @@
-include { BEDTOOLS_INTERSECT as INTERSECT_GTF       } from '../../modules/nf-core/bedtools/intersect'
-include { GAWK as INGEST_DATABASE_NAMES             } from '../../modules/nf-core/gawk'
-include { GNU_SORT as COMBINE_DATABASES             } from '../../modules/nf-core/gnu/sort'
-include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE  } from '../../modules/nf-core/bedtools/intersect'
-include { ANNOTATION as ANNOTATE                    } from '../../modules/local/annotation'
+include { GAWK as INGEST_DATABASE_NAMES            } from '../../modules/nf-core/gawk'
+include { GNU_SORT as COMBINE_DATABASES            } from '../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE } from '../../modules/nf-core/bedtools/intersect'
+include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../modules/nf-core/circexplorer2/annotate'
+include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../modules/nf-core/bedtools/getfasta'
 
 workflow ANNOTATION {
     take:
     regions
-    ch_gtf
     ch_annotation
+    fasta
+    circexplorer2_index
 
     main:
     ch_versions = Channel.empty()
 
-    INTERSECT_GTF( regions.combine(ch_gtf.map{_meta, gtf -> gtf}), [[], []] )
-    ch_versions = ch_versions.mix(INTERSECT_GTF.out.versions)
-
-    INGEST_DATABASE_NAMES( ch_annotation, [], false )
+    INGEST_DATABASE_NAMES(ch_annotation, [], false)
     ch_versions = ch_versions.mix(INGEST_DATABASE_NAMES.out.versions)
 
-    INTERSECT_DATABASE( regions.combine(INGEST_DATABASE_NAMES.out.output)
-        .map{ meta1, _regions, meta2, database ->
-            [[id: "${meta1.id}-${meta2.id}",
-                tool: meta1.tool,
-                original_meta: meta1,
-                min_overlap: meta2.min_overlap], _regions, database] },
-        [[], []])
+    INTERSECT_DATABASE(
+        regions.combine(INGEST_DATABASE_NAMES.out.output).map { meta1, _regions, meta2, database ->
+            [
+                [
+                    id: "${meta1.id}-${meta2.id}",
+                    tool: meta1.tool,
+                    original_meta: meta1,
+                    min_overlap: meta2.min_overlap,
+                ],
+                _regions,
+                database,
+            ]
+        },
+        [[], []],
+    )
     ch_versions = ch_versions.mix(INTERSECT_DATABASE.out.versions)
 
-    ANNOTATE( INTERSECT_GTF.out.intersect
-        .join(INTERSECT_DATABASE.out.intersect
-            .map{ meta, bed -> [meta.original_meta, bed] }
-            .groupTuple(), remainder: true)
-        .map{ meta, gtf_intersection, db_intersections -> [meta, gtf_intersection, db_intersections ?: []]})
+
+    ANNOTATE(regions, fasta, circexplorer2_index)
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
 
-    emit:
-    bed = ANNOTATE.out.bed
-    gtf = ANNOTATE.out.gtf
+    GET_FASTA(ANNOTATE.out.txt, fasta)
+    ch_versions = ch_versions.mix(GET_FASTA.out.versions)
 
+    emit:
+    bed12    = ANNOTATE.out.txt
+    fasta    = GET_FASTA.out.fasta
     versions = ch_versions
 }

@@ -6,15 +6,6 @@ include { GAWK as BED_ADD_SAMPLE_TOOL                        } from '../../modul
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
 include { COMBINEBEDS_FILTER as COMBINE_SAMPLES              } from '../../modules/local/combinebeds/filter'
-include { AGAT_SPADDINTRONS as ADD_INTRONS                   } from '../../modules/nf-core/agat/spaddintrons'
-include { GAWK as EXTRACT_EXONS_INTRONS                      } from '../../modules/nf-core/gawk'
-include { CIRCEXPLORER2_ANNOTATE as ANNOTATE_COMBINED        } from '../../modules/nf-core/circexplorer2/annotate'
-include { CIRCEXPLORER2_ANNOTATE as ANNOTATE_PER_SAMPLE      } from '../../modules/nf-core/circexplorer2/annotate'
-include { CIRCEXPLORER2_ANNOTATE as ANNOTATE_PER_SAMPLE_TOOL } from '../../modules/nf-core/circexplorer2/annotate'
-include { BEDTOOLS_GETFASTA as FASTA_COMBINED                } from '../../modules/nf-core/bedtools/getfasta'
-include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE              } from '../../modules/nf-core/bedtools/getfasta'
-include { BEDTOOLS_GETFASTA as FASTA_PER_SAMPLE_TOOL         } from '../../modules/nf-core/bedtools/getfasta'
-
 
 // SUBWORKFLOWS
 include { SEGEMEHL                               } from './detection_tools/segemehl'
@@ -25,6 +16,9 @@ include { FIND_CIRC                              } from './detection_tools/find_
 include { CIRIQUANT                              } from './detection_tools/ciriquant'
 include { DCC                                    } from './detection_tools/dcc'
 include { MAPSPLICE                              } from './detection_tools/mapsplice'
+include { ANNOTATION as ANNOTATE_COMBINED        } from './annotation'
+include { ANNOTATION as ANNOTATE_PER_SAMPLE      } from './annotation'
+include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL } from './annotation'
 
 workflow BSJ_DETECTION {
 
@@ -177,33 +171,20 @@ workflow BSJ_DETECTION {
     // ANNOTATION
     //
 
-    ANNOTATE_COMBINED( ch_bsj_bed_combined, fasta, circexplorer2_index )
+    ANNOTATE_COMBINED( ch_bsj_bed_combined, ch_annotation, fasta, circexplorer2_index )
     ch_versions           = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
-    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.txt.collect()
+    ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed12.collect()
+    ch_bsj_fasta_combined = ANNOTATE_COMBINED.out.fasta
 
-    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, fasta, circexplorer2_index )
+    ANNOTATE_PER_SAMPLE( ch_bsj_bed_per_sample, ch_annotation, fasta, circexplorer2_index )
     ch_versions             = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
-    ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.txt
+    ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed12
+    ch_bsj_fasta_per_sample = ANNOTATE_PER_SAMPLE.out.fasta
 
-    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, fasta, circexplorer2_index )
+    ANNOTATE_PER_SAMPLE_TOOL( ch_bsj_bed_per_sample_tool, ch_annotation, fasta, circexplorer2_index )
     ch_versions                  = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
-    ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.txt
-
-    //
-    // FASTA WORKFLOW:
-    //
-
-    FASTA_COMBINED( ch_bsj_bed12_combined, fasta )
-    ch_versions = ch_versions.mix(FASTA_COMBINED.out.versions)
-    ch_bsj_fasta_combined = FASTA_COMBINED.out.fasta
-
-    FASTA_PER_SAMPLE( ch_bsj_bed12_per_sample, fasta )
-    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE.out.versions)
-    ch_bsj_fasta_per_sample = FASTA_PER_SAMPLE.out.fasta
-
-    FASTA_PER_SAMPLE_TOOL( ch_bsj_bed12_per_sample_tool, fasta )
-    ch_versions = ch_versions.mix(FASTA_PER_SAMPLE_TOOL.out.versions)
-    ch_bsj_fasta_per_sample_tool = FASTA_PER_SAMPLE_TOOL.out.fasta
+    ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
+    ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     Channel.empty()
