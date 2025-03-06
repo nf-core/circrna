@@ -3,6 +3,7 @@ include { GNU_SORT as COMBINE_DATABASES            } from '../../modules/nf-core
 include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE } from '../../modules/nf-core/bedtools/intersect'
 include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../modules/nf-core/circexplorer2/annotate'
 include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../modules/nf-core/bedtools/getfasta'
+include { GAWK as RENAME                           } from '../../modules/nf-core/gawk'
 
 workflow ANNOTATION {
     take:
@@ -34,15 +35,17 @@ workflow ANNOTATION {
     )
     ch_versions = ch_versions.mix(INTERSECT_DATABASE.out.versions)
 
-
     ANNOTATE(regions, fasta, circexplorer2_index)
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
 
-    GET_FASTA(ANNOTATE.out.txt, fasta)
+    RENAME(ANNOTATE.out.txt, [], false)
+    ch_versions = ch_versions.mix(RENAME.out.versions)
+
+    GET_FASTA(RENAME.out.output, fasta)
     ch_versions = ch_versions.mix(GET_FASTA.out.versions)
 
     emit:
-    bed12    = ANNOTATE.out.txt
+    bed12    = RENAME.out.output
     fasta    = GET_FASTA.out.fasta
     versions = ch_versions
 }
