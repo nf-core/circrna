@@ -13,9 +13,9 @@ process DCC {
     tuple val(meta3), path(gtf)
 
     output:
-    tuple val(meta), path("_tmp_circtools/tmp_paired.junctions.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]"), emit: reads
-    tuple val(meta), path("CircCoordinates"), emit: coordinates
-    tuple val(meta), path("CircRNACount"), emit: counts
+    tuple val(meta), path("${prefix}_reads.junctions"), emit: reads
+    tuple val(meta), path("${prefix}_coordinates.tsv"), emit: coordinates
+    tuple val(meta), path("${prefix}_counts.tsv")     , emit: counts
 
     path "versions.yml", emit: versions
 
@@ -38,6 +38,10 @@ process DCC {
     ${matefile_commands}
 
     circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -k -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
+
+    mv _tmp_circtools/tmp_paired.junctions.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z] ${prefix}_reads.junctions
+    mv CircCoordinates ${prefix}_coordinates.tsv
+    mv CircRNACount ${prefix}_counts.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
