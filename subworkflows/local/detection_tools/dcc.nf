@@ -1,7 +1,7 @@
 include { STAR2PASS as MATE1_STAR2PASS } from './star2pass'
 include { STAR2PASS as MATE2_STAR2PASS } from './star2pass'
-include { DCC as MAIN                  } from '../../../modules/local/dcc'
-include { GAWK as UNIFY                } from '../../../modules/nf-core/gawk'
+include { DCC as MAIN                  } from '../../../modules/local/dcc/dcc'
+include { UNIFY                        } from '../../../modules/local/dcc/unify'
 
 workflow DCC {
     take:
@@ -76,6 +76,11 @@ workflow DCC {
 
     MAIN(ch_combined_junctions, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(MAIN.out.versions)
+
+    UNIFY(MAIN.out.reads
+        .join(MAIN.out.coordinates)
+        .join(MAIN.out.counts))
+    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed      = Channel.empty()
