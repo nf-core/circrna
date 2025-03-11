@@ -11,11 +11,12 @@ process UNIFY {
     tuple val(meta), path(reads), path(coordinates), path(counts)
 
     output:
-    path("${meta.id}_unified.bed")
+    path("${prefix}.${suffix}")
 
     path "versions.yml", emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
+    suffix = task.ext.suffix ?: "bed"
     template 'unify.py'
 }

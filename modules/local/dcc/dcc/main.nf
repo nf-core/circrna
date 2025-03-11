@@ -39,7 +39,7 @@ process DCC {
 
     circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -k -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
 
-    mv _tmp_circtools/tmp_paired.junctions.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z] ${prefix}_reads.junctions
+    mv _tmp_circtools/tmp_printcirclines.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z] ${prefix}_reads.junctions
     mv CircCoordinates ${prefix}_coordinates.tsv
     mv CircRNACount ${prefix}_counts.tsv
 
