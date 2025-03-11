@@ -1,11 +1,7 @@
-include { STAR_ALIGN as MATE1_1ST_PASS } from '../../../modules/nf-core/star/align'
-include { STAR_ALIGN as MATE1_2ND_PASS } from '../../../modules/nf-core/star/align'
-include { SJDB       as MATE1_SJDB     } from '../../../modules/local/star/sjdb'
-include { STAR_ALIGN as MATE2_1ST_PASS } from '../../../modules/nf-core/star/align'
-include { STAR_ALIGN as MATE2_2ND_PASS } from '../../../modules/nf-core/star/align'
-include { SJDB       as MATE2_SJDB     } from '../../../modules/local/star/sjdb'
-include { DCC        as MAIN           } from '../../../modules/local/dcc'
-include { GAWK       as UNIFY          } from '../../../modules/nf-core/gawk'
+include { STAR2PASS as MATE1_STAR2PASS } from './star2pass'
+include { STAR2PASS as MATE2_STAR2PASS } from './star2pass'
+include { DCC as MAIN                  } from '../../../modules/local/dcc'
+include { GAWK as UNIFY                } from '../../../modules/nf-core/gawk'
 
 workflow DCC {
     take:
@@ -22,47 +18,66 @@ workflow DCC {
     main:
     ch_versions = Channel.empty()
 
-    ch_mate1 = reads.filter{ meta, _reads -> !meta.single_end }
-        .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[0] ] }
-    MATE1_1ST_PASS( ch_mate1, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
-    ch_versions = ch_versions.mix(MATE1_1ST_PASS.out.versions)
+    // Process mate 1
+    ch_mate1 = reads
+        .filter { meta, _reads -> !meta.single_end }
+        .map { meta, _reads ->
+            return [[id: meta.id, single_end: true], _reads[0]]
+        }
 
-    MATE1_SJDB( MATE1_1ST_PASS.out.tab
-        .map{ _meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
-    ch_versions = ch_versions.mix(MATE1_SJDB.out.versions)
+    MATE1_STAR2PASS(
+        ch_mate1,
+        star_index,
+        ch_gtf,
+        bsj_reads,
+        ignore_sjdbgtf,
+        seq_center,
+        seq_platform,
+    )
+    ch_versions = ch_versions.mix(MATE1_STAR2PASS.out.versions)
 
-    MATE1_2ND_PASS( ch_mate1, star_index, MATE1_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
-    ch_versions = ch_versions.mix(MATE1_2ND_PASS.out.versions)
+    // Process mate 2
+    ch_mate2 = reads
+        .filter { meta, _reads -> !meta.single_end }
+        .map { meta, _reads ->
+            return [[id: meta.id, single_end: true], _reads[1]]
+        }
 
+    MATE2_STAR2PASS(
+        ch_mate2,
+        star_index,
+        ch_gtf,
+        bsj_reads,
+        ignore_sjdbgtf,
+        seq_center,
+        seq_platform,
+    )
+    ch_versions = ch_versions.mix(MATE2_STAR2PASS.out.versions)
 
-    ch_mate2 = reads.filter{ meta, _reads -> !meta.single_end }
-        .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[1] ] }
-    MATE2_1ST_PASS( ch_mate2, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
-    ch_versions = ch_versions.mix(MATE2_1ST_PASS.out.versions)
-
-    MATE2_SJDB( MATE2_1ST_PASS.out.tab
-        .map{ _meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
-    ch_versions = ch_versions.mix(MATE2_SJDB.out.versions)
-
-    MATE2_2ND_PASS( ch_mate2, star_index, MATE2_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
-    ch_versions = ch_versions.mix(MATE2_2ND_PASS.out.versions)
-
-    dcc = star_junction.map{ meta, junction -> return [ meta.id, meta, junction]}
+    ch_combined_junctions = star_junction
+        .map { meta, junction ->
+            return [meta.id, meta, junction]
+        }
         .join(
-            MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
+            MATE1_STAR2PASS.out.junction.map { meta, junction ->
+                return [meta.id, junction]
+            },
             remainder: true
         )
         .join(
-            MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
+            MATE2_STAR2PASS.out.junction.map { meta, junction ->
+                return [meta.id, junction]
+            },
             remainder: true
         )
-        .map{ _id, meta, paired, mate1, mate2 -> return [ meta, paired, mate1 ?: [], mate2 ?: [] ]}
+        .map { _id, meta, paired, mate1, mate2 ->
+            return [meta, paired, mate1 ?: [], mate2 ?: []]
+        }
 
-    MAIN( dcc, ch_fasta.map{ _meta, fasta -> fasta }, ch_gtf.map{ _meta, gtf -> gtf } )
+    MAIN(ch_combined_junctions, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(MAIN.out.versions)
 
     emit:
-    bed = Channel.empty()
-
+    bed      = Channel.empty()
     versions = ch_versions
 }

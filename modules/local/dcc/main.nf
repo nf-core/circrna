@@ -8,12 +8,12 @@ process DCC {
         : 'biocontainers/circtools:2.0--pyhdfd78af_0'}"
 
     input:
-    tuple val(meta), path(paired), path(mate1), path(mate2)
-    path fasta
-    path gtf
+    tuple val(meta), path(paired, stageAs: 'paired.junctions'), path(mate1, stageAs: 'mate1.junctions'), path(mate2, stageAs: 'mate2.junctions')
+    tuple val(meta2), path(fasta)
+    tuple val(meta3), path(gtf)
 
     output:
-    tuple val(meta), path("_tmp_circtools/tmp_${prefix}.Chimeric.out.junction.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]"), emit: reads
+    tuple val(meta), path("_tmp_circtools/tmp_paired.junctions.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]"), emit: reads
     tuple val(meta), path("CircCoordinates"), emit: coordinates
     tuple val(meta), path("CircRNACount"), emit: counts
 
