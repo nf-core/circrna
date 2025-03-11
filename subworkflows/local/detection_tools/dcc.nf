@@ -22,21 +22,21 @@ workflow DCC {
     main:
     ch_versions = Channel.empty()
 
-    mate1 = reads.filter{ meta, _reads -> !meta.single_end }
+    ch_mate1 = reads.filter{ meta, _reads -> !meta.single_end }
         .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[0] ] }
-    MATE1_1ST_PASS( mate1, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
+    MATE1_1ST_PASS( ch_mate1, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
     MATE1_SJDB( MATE1_1ST_PASS.out.tab
         .map{ _meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
-    MATE1_2ND_PASS( mate1, star_index, MATE1_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
+    MATE1_2ND_PASS( ch_mate1, star_index, MATE1_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
 
-    mate2 = reads.filter{ meta, _reads -> !meta.single_end }
+    ch_mate2 = reads.filter{ meta, _reads -> !meta.single_end }
         .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[1] ] }
-    MATE2_1ST_PASS( mate2, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
+    MATE2_1ST_PASS( ch_mate2, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
     MATE2_SJDB( MATE2_1ST_PASS.out.tab
         .map{ _meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
-    MATE2_2ND_PASS( mate2, star_index, MATE2_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
+    MATE2_2ND_PASS( ch_mate2, star_index, MATE2_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
 
-    dcc_stage = star_junction.map{ meta, junction -> return [ meta.id, meta, junction]}
+    dcc = star_junction.map{ meta, junction -> return [ meta.id, meta, junction]}
         .join(
             MATE1_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
@@ -45,9 +45,8 @@ workflow DCC {
             MATE2_2ND_PASS.out.junction.map{ meta, junction -> return [ meta.id, junction] },
             remainder: true
         )
-        .map{ _id, meta, junction, _mate1, _mate2 -> return [ meta, junction, _mate1, _mate2 ]}
+        .map{ _id, meta, paired, mate1, mate2 -> return [ meta, paired, mate1 ?: [], mate2 ?: [] ]}
 
-    dcc = dcc_stage.map{ it ->  [ it[0], it[1], it[2] ?: [], it[3] ?: [] ] }
     MAIN( dcc, ch_fasta.map{ _meta, fasta -> fasta }, ch_gtf.map{ _meta, gtf -> gtf } )
     UNIFY( MAIN.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, [], false )
 

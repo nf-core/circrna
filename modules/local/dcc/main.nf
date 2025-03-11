@@ -8,7 +8,7 @@ process DCC {
         : 'biocontainers/circtools:2.0--pyhdfd78af_0'}"
 
     input:
-    tuple val(meta), path(pairs), path(mate1), path(mate2)
+    tuple val(meta), path(paired), path(mate1), path(mate2)
     path fasta
     path gtf
 
@@ -25,18 +25,13 @@ process DCC {
     def strandedness = meta.strandedness ?: 'auto'
     def strand_args = strandedness == 'auto' || strandedness == 'unstranded' ? '-N' : strandedness == 'forward' ? '' : '-ss'
 
-    // Define variables based on meta.single_end
-    def matefile_commands = meta.single_end
-        ? ''
-        : """
-        mkdir ${prefix}_mate1 && mv ${prefix}_mate1.Chimeric.out.junction ${prefix}_mate1 && printf "${prefix}_mate1/${prefix}_mate1.Chimeric.out.junction" > mate1file
-        mkdir ${prefix}_mate2 && mv ${prefix}_mate2.Chimeric.out.junction ${prefix}_mate2 && printf "${prefix}_mate2/${prefix}_mate2.Chimeric.out.junction" > mate2file
-        """
+    def matefile_commands = meta.single_end ? '' :
+        "printf ${mate1} > mate1file && printf ${mate2} > mate2file"
 
     def mate_args = meta.single_end ? '' : '-mt1 @mate1file -mt2 @mate2file -Pi'
 
     """
-    mkdir ${prefix} && mv ${prefix}.Chimeric.out.junction ${prefix} && printf "${prefix}/${prefix}.Chimeric.out.junction" > samplesheet
+    printf "${paired}" > samplesheet
     ${matefile_commands}
 
     circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
