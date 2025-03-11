@@ -4,6 +4,8 @@ include { SAMTOOLS_INDEX               } from '../../../modules/nf-core/samtools
 include { FIND_CIRC_ANCHORS as ANCHORS } from '../../../modules/local/find_circ/anchors'
 include { FIND_CIRC as MAIN            } from '../../../modules/local/find_circ/find_circ'
 include { BIOAWK as EXTRACT_READS      } from '../../../modules/nf-core/bioawk'
+include { CSVTK_SUMMARY as GROUP_READS } from '../../../modules/local/csvtk/summary'
+include { CSVTK_JOIN as JOIN_READS     } from '../../../modules/nf-core/csvtk/join'
 include { GAWK as UNIFY                } from '../../../modules/nf-core/gawk'
 
 workflow FIND_CIRC {
@@ -33,7 +35,15 @@ workflow FIND_CIRC {
     EXTRACT_READS( MAIN.out.reads )
     ch_versions = ch_versions.mix(EXTRACT_READS.out.versions)
 
-    UNIFY( MAIN.out.bed.map{ meta, bed ->
+    GROUP_READS( EXTRACT_READS.out.output )
+    ch_versions = ch_versions.mix(GROUP_READS.out.versions)
+
+    JOIN_READS( MAIN.out.bed.join(GROUP_READS.out.csv)
+        .map{ meta, bed, _reads -> [ meta, [bed, _reads]] }
+    )
+    ch_versions = ch_versions.mix(JOIN_READS.out.versions)
+
+    UNIFY( JOIN_READS.out.csv.map{ meta, bed ->
         [ meta + [tool: "find_circ"], bed ] }, [], false )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
