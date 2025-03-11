@@ -13,10 +13,10 @@ process FIND_CIRC {
     path fasta
 
     output:
-    tuple val(meta), path("${prefix}.sites.bed"), emit: bed
-    path("${prefix}.sites.reads")               , emit: reads
-    path("${prefix}.sites.log")                 , emit: log
-    path  "versions.yml"                        , emit: versions
+    tuple val(meta), path("${prefix}.sites.bed")  , emit: bed
+    tuple val(meta), path("${prefix}.sites.reads"), emit: reads
+    tuple val(meta), path("${prefix}.sites.log")  , emit: log
+    path  "versions.yml"                          , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
