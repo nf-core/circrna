@@ -25,16 +25,27 @@ workflow DCC {
     ch_mate1 = reads.filter{ meta, _reads -> !meta.single_end }
         .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[0] ] }
     MATE1_1ST_PASS( ch_mate1, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
+    ch_versions = ch_versions.mix(MATE1_1ST_PASS.out.versions)
+
     MATE1_SJDB( MATE1_1ST_PASS.out.tab
         .map{ _meta, tab -> return tab }.collect().map{[[id: "mate1_sjdb"], it]}, bsj_reads )
+    ch_versions = ch_versions.mix(MATE1_SJDB.out.versions)
+
     MATE1_2ND_PASS( ch_mate1, star_index, MATE1_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
+    ch_versions = ch_versions.mix(MATE1_2ND_PASS.out.versions)
+
 
     ch_mate2 = reads.filter{ meta, _reads -> !meta.single_end }
         .map{ meta, _reads -> return [ [id: meta.id, single_end: true], _reads[1] ] }
     MATE2_1ST_PASS( ch_mate2, star_index, ch_gtf, ignore_sjdbgtf, seq_platform, seq_center )
+    ch_versions = ch_versions.mix(MATE2_1ST_PASS.out.versions)
+
     MATE2_SJDB( MATE2_1ST_PASS.out.tab
         .map{ _meta, tab -> return tab }.collect().map{[[id: "mate2_sjdb"], it]}, bsj_reads )
+    ch_versions = ch_versions.mix(MATE2_SJDB.out.versions)
+
     MATE2_2ND_PASS( ch_mate2, star_index, MATE2_SJDB.out.sjtab, ignore_sjdbgtf, seq_platform, seq_center )
+    ch_versions = ch_versions.mix(MATE2_2ND_PASS.out.versions)
 
     dcc = star_junction.map{ meta, junction -> return [ meta.id, meta, junction]}
         .join(
@@ -48,19 +59,10 @@ workflow DCC {
         .map{ _id, meta, paired, mate1, mate2 -> return [ meta, paired, mate1 ?: [], mate2 ?: [] ]}
 
     MAIN( dcc, ch_fasta.map{ _meta, fasta -> fasta }, ch_gtf.map{ _meta, gtf -> gtf } )
-    UNIFY( MAIN.out.txt.map{ meta, txt -> [ meta + [tool: "dcc"], txt ] }, [], false )
-
-    ch_versions = ch_versions.mix(MATE1_1ST_PASS.out.versions)
-    ch_versions = ch_versions.mix(MATE1_SJDB.out.versions)
-    ch_versions = ch_versions.mix(MATE1_2ND_PASS.out.versions)
-    ch_versions = ch_versions.mix(MATE2_1ST_PASS.out.versions)
-    ch_versions = ch_versions.mix(MATE2_SJDB.out.versions)
-    ch_versions = ch_versions.mix(MATE2_2ND_PASS.out.versions)
     ch_versions = ch_versions.mix(MAIN.out.versions)
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    bed = UNIFY.out.output
+    bed = Channel.empty()
 
     versions = ch_versions
 }

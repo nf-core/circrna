@@ -13,7 +13,10 @@ process DCC {
     path gtf
 
     output:
-    tuple val(meta), path("${prefix}.txt"), emit: txt
+    tuple val(meta), path("_tmp_circtools/tmp_${prefix}.Chimeric.out.junction.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]"), emit: reads
+    tuple val(meta), path("CircCoordinates"), emit: coordinates
+    tuple val(meta), path("CircRNACount"), emit: counts
+
     path "versions.yml", emit: versions
 
     when:
@@ -25,19 +28,16 @@ process DCC {
     def strandedness = meta.strandedness ?: 'auto'
     def strand_args = strandedness == 'auto' || strandedness == 'unstranded' ? '-N' : strandedness == 'forward' ? '' : '-ss'
 
-    def matefile_commands = meta.single_end ? '' :
-        "printf ${mate1} > mate1file && printf ${mate2} > mate2file"
+    def matefile_commands = meta.single_end
+        ? ''
+        : "printf ${mate1} > mate1file && printf ${mate2} > mate2file"
 
     def mate_args = meta.single_end ? '' : '-mt1 @mate1file -mt2 @mate2file -Pi'
-
     """
     printf "${paired}" > samplesheet
     ${matefile_commands}
 
-    circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
-
-    awk '{print \$6}' CircCoordinates >> strand
-    paste CircRNACount strand | tail -n +2 | awk -v OFS="\\t" '{print \$1,\$2,\$3,\$5,\$4}' >> ${prefix}.txt
+    circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -k -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
