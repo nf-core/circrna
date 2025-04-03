@@ -11,9 +11,8 @@ process UNIFY {
     tuple val(meta), path(reads), path(coordinates), path(counts)
 
     output:
-    path("${prefix}.${suffix}")
-
-    path "versions.yml", emit: versions
+    tuple val(meta), path("${prefix}.${suffix}"), emit: bed
+    path "versions.yml"        , emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"

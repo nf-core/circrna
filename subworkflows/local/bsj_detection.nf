@@ -108,6 +108,16 @@ workflow BSJ_DETECTION {
         .filter{ _meta, bed -> !bed.isEmpty() }
 
     //
+    // Analyze read-level agreement
+    //
+
+    tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    ch_bsj_bed_per_sample_tool.filter{ _meta, bed -> tools_with_reads.contains(_meta.tool) }
+        .map{ _meta, bed -> [[id: _meta.id], bed] }
+        .groupTuple()
+        .view()
+
+    //
     // QUANTIFY BSJs PER TOOL
     //
 

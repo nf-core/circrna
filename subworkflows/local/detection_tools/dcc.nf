@@ -79,10 +79,11 @@ workflow DCC {
 
     UNIFY(MAIN.out.reads
         .join(MAIN.out.coordinates)
-        .join(MAIN.out.counts))
+        .join(MAIN.out.counts)
+    )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    bed      = Channel.empty()
+    bed      = UNIFY.out.bed.map{ meta, bed -> [meta + [tool: "dcc"], bed] }
     versions = ch_versions
 }
