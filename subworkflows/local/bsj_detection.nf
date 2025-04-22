@@ -47,17 +47,21 @@ workflow BSJ_DETECTION {
     fasta                      = ch_fasta.map{_meta, fasta -> fasta}
     gtf                        = ch_gtf.map{_meta, gtf -> gtf}
 
+    tools_selected = params.tools.split(',').collect{it.trim().toLowerCase()}
+
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
     seq_center = params.seq_center ?: ''
     seq_platform = ''
-    STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
-    ch_versions = ch_versions.mix(STAR2PASS.out.versions)
+
+    if (tools_selected.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
+        STAR2PASS( reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform )
+        ch_versions = ch_versions.mix(STAR2PASS.out.versions)
+    }
 
     //
     // DISCOVERY TOOLS:
     //
-    tools_selected = params.tools.split(',').collect{it.trim().toLowerCase()}
 
     if (tools_selected.size() == 0) {
         error 'No tools selected for circRNA discovery.'
