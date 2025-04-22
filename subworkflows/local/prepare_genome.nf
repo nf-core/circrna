@@ -40,32 +40,69 @@ workflow PREPARE_GENOME {
     SEQKIT_SPLIT(ch_fasta)
     ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions)
 
-    if (!params.bowtie && detection_tools.contains('mapsplice')) {
+    if (params.bowtie) {
+        ch_bowtie = Channel.value([[id: "bowtie"], file(params.bowtie, checkIfExists: true)])
+    }
+    else if (detection_tools.contains('mapsplice')) {
         BOWTIE_BUILD(ch_fasta)
         ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
+        ch_bowtie = BOWTIE_BUILD.out.index
+    }
+    else {
+        ch_bowtie = Channel.empty()
     }
 
-    if (!params.bowtie2 && detection_tools.contains('find_circ')) {
+    if (params.bowtie2) {
+        ch_bowtie2 = Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)])
+    }
+    else if (detection_tools.contains('find_circ')) {
         BOWTIE2_BUILD(ch_fasta)
         ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
+        ch_bowtie2 = BOWTIE2_BUILD.out.index
+    }
+    else {
+        ch_bowtie2 = Channel.empty()
     }
 
-    if (!params.bwa && detection_tools.contains('ciriquant')) {
+    if (params.bwa) {
+        ch_bwa = Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])
+    }
+    else if (detection_tools.contains('ciriquant')) {
         BWA_INDEX(ch_fasta)
         ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
+        ch_bwa = BWA_INDEX.out.index
+    }
+    else {
+        ch_bwa = Channel.empty()
     }
 
-    if (!params.hisat2 && detection_tools.contains('ciriquant')) {
+    ch_hisat2_splice_sites = Channel.empty()
+    if (params.hisat2) {
+        ch_hisat2 = Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])
+    }
+    else if (detection_tools.contains('ciriquant')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
+        ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
 
         HISAT2_BUILD(ch_fasta, ch_gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
         ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
+        ch_hisat2 = HISAT2_BUILD.out.index
+    }
+    else {
+        ch_hisat2 = Channel.empty()
     }
 
-    if (!params.star && detection_tools.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
+    if (params.star) {
+        ch_star = Channel.value([[id: "star"], file(params.star, checkIfExists: true)])
+    }
+    else if (detection_tools.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
         STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
+        ch_star = STAR_GENOMEGENERATE.out.index
+    }
+    else {
+        ch_star = Channel.empty()
     }
 
     SAMTOOLS_FAIDX(ch_fasta, [[], []])
@@ -81,13 +118,13 @@ workflow PREPARE_GENOME {
     emit:
     gtf           = ch_gtf
     faidx         = SAMTOOLS_FAIDX.out.fai
-    bowtie        = params.bowtie ?: BOWTIE_BUILD.out.index
-    bowtie2       = params.bowtie2 ? Channel.value([[id: "bowtie2"], file(params.bowtie2, checkIfExists: true)]) : BOWTIE2_BUILD.out.index.collect()
-    bwa           = params.bwa ? Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)]) : BWA_INDEX.out.index.collect()
-    hisat2        = params.hisat2 ? Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)]) : HISAT2_BUILD.out.index.collect()
-    star          = params.star ? Channel.value([[id: "star"], file(params.star, checkIfExists: true)]) : STAR_GENOMEGENERATE.out.index.collect()
+    bowtie        = ch_bowtie
+    bowtie2       = ch_bowtie2
+    bwa           = ch_bwa
+    hisat2        = ch_hisat2
+    star          = ch_star
     circexplorer2 = ch_circexplorer2_reference
     chromosomes   = SEQKIT_SPLIT.out.split
-    splice_sites  = HISAT2_EXTRACTSPLICESITES.out.txt.collect()
+    splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions
 }
