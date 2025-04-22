@@ -319,6 +319,16 @@
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. Needs to contain the following attributes: `gene_id`, `transcript_id` and `gene_name`.",
                     "pattern": "\\.gtf$"
                 },
+                "blacklist": {
+                    "type": "string",
+                    "fa_icon": "fas fa-ban",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.bed$",
+                    "description": "Path to blacklist bed file.",
+                    "default": null
+                },
                 "mature": {
                     "type": "string",
                     "description": "Path to FASTA file with mature miRNAs. This parameter needs to be specified to perform miRNA interaction analyses.",
