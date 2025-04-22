@@ -39,6 +39,7 @@ workflow CIRCRNA {
     ch_phenotype
     ch_fasta
     ch_gtf
+    ch_blacklist
     ch_mature
     ch_annotation
     ch_versions
@@ -108,6 +109,7 @@ workflow CIRCRNA {
         FASTQC_TRIMGALORE.out.reads,
         ch_fasta,
         ch_gtf,
+        ch_blacklist,
         ch_annotation,
         bowtie_index,
         bowtie2_index,

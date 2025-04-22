@@ -3,6 +3,7 @@ include { GAWK as EXTRACT_COUNTS                             } from '../../modul
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL              } from '../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                                } from '../../modules/nf-core/gawk'
 include { GAWK as BED_ADD_SAMPLE_TOOL                        } from '../../modules/nf-core/gawk'
+include { BEDTOOLS_INTERSECT as BLACKLIST                    } from '../../modules/nf-core/bedtools/intersect'
 include { COMBINEBEDS_READS                                  } from '../../modules/local/combinebeds/reads'
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
@@ -28,6 +29,7 @@ workflow BSJ_DETECTION {
     reads
     ch_fasta
     ch_gtf
+    ch_blacklist
     ch_annotation
     bowtie_index
     bowtie2_index
@@ -108,6 +110,12 @@ workflow BSJ_DETECTION {
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool
         .filter{ _meta, bed -> !bed.isEmpty() }
+
+    if (params.blacklist) {
+        BLACKLIST( ch_bsj_bed_per_sample_tool.combine(ch_blacklist), [[], []] )
+        ch_versions = ch_versions.mix(BLACKLIST.out.versions)
+        ch_bsj_bed_per_sample_tool = BLACKLIST.out.intersect
+    }
 
     //
     // Analyze read-level agreement

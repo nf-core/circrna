@@ -27,13 +27,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta   = getGenomeAttribute('fasta')
-params.gtf     = getGenomeAttribute('gtf')
-params.bwa     = getGenomeAttribute('bwa')
-params.star    = getGenomeAttribute('star')
-params.bowtie  = getGenomeAttribute('bowtie')
-params.bowtie2 = getGenomeAttribute('bowtie2')
-params.mature  = getGenomeAttribute('mature')
+params.fasta     = getGenomeAttribute('fasta')
+params.gtf       = getGenomeAttribute('gtf')
+params.bwa       = getGenomeAttribute('bwa')
+params.star      = getGenomeAttribute('star')
+params.bowtie    = getGenomeAttribute('bowtie')
+params.bowtie2   = getGenomeAttribute('bowtie2')
+params.mature    = getGenomeAttribute('mature')
+params.blacklist = getGenomeAttribute('blacklist')
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -95,6 +96,7 @@ workflow NFCORE_CIRCRNA {
     //
     ch_fasta = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
     ch_gtf = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
+    ch_blacklist = params.blacklist ? Channel.value(file(params.blacklist, checkIfExists: true)) : Channel.empty()
     ch_mature = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : Channel.empty()
     ch_phenotype = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : Channel.empty()
     ch_annotation = params.annotation
@@ -109,6 +111,7 @@ workflow NFCORE_CIRCRNA {
         ch_phenotype,
         ch_fasta,
         ch_gtf,
+        ch_blacklist,
         ch_mature,
         ch_annotation,
         ch_versions,
