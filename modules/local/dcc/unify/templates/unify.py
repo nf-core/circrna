@@ -64,7 +64,7 @@ df_counts = df_counts.group_by(["Chr", "Start", "End", "Count", "Strand"]).agg(
     Reads=pl.col("read_id").unique().str.join(",")
 )
 df_counts = df_counts.with_columns(
-    Start=pl.col("Start")-1
+    Start=pl.col("Start")
 )
 
 df_counts = df_counts.collect()
