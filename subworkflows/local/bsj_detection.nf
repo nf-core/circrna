@@ -3,6 +3,7 @@ include { GAWK as EXTRACT_COUNTS                             } from '../../modul
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL              } from '../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                                } from '../../modules/nf-core/gawk'
 include { GAWK as BED_ADD_SAMPLE_TOOL                        } from '../../modules/nf-core/gawk'
+include { COMBINEBEDS_READS                                  } from '../../modules/local/combinebeds/reads'
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
 include { COMBINEBEDS_FILTER as COMBINE_SAMPLES              } from '../../modules/local/combinebeds/filter'
@@ -112,10 +113,11 @@ workflow BSJ_DETECTION {
     //
 
     tools_with_reads = ["find_circ", "segemehl", "dcc"]
-    ch_bsj_bed_per_sample_tool.filter{ _meta, bed -> tools_with_reads.contains(_meta.tool) }
-        .map{ _meta, bed -> [[id: _meta.id], bed] }
-        .groupTuple()
-        .view()
+    COMBINEBEDS_READS(
+        ch_bsj_bed_per_sample_tool.filter{ _meta, _bed -> tools_with_reads.contains(_meta.tool) }
+            .map{ meta, bed -> [[id: meta.id], meta.tool, bed] }
+            .groupTuple()
+    )
 
     //
     // QUANTIFY BSJs PER TOOL
