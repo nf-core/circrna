@@ -182,7 +182,6 @@ workflow CIRCRNA {
 
     ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
 
-
     //
     // Collate and save software versions
     //

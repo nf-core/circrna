@@ -11,7 +11,9 @@ process COMBINEBEDS_READS {
     tuple val(meta), val(tools), path(beds)
 
     output:
-    tuple val(meta), path("${prefix}.bed"), emit: combined, optional: true
+    tuple val(meta), path("${prefix}.bed"), emit: combined
+    path "*.png"                          , emit: plots
+    path "*.json"                         , emit: multiqc
     path "versions.yml"                   , emit: versions
 
     script:

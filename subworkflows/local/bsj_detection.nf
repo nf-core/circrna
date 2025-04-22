@@ -118,6 +118,8 @@ workflow BSJ_DETECTION {
             .map{ meta, bed -> [[id: meta.id], meta.tool, bed] }
             .groupTuple()
     )
+    ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
 
     //
     // QUANTIFY BSJs PER TOOL
@@ -177,7 +179,7 @@ workflow BSJ_DETECTION {
 
     INVESTIGATE_SHIFTS(ch_all_samples)
     ch_versions = ch_versions.mix(INVESTIGATE_SHIFTS.out.versions)
-    ch_multiqc_files = INVESTIGATE_SHIFTS.out.multiqc
+    ch_multiqc_files = ch_multiqc_files.mix(INVESTIGATE_SHIFTS.out.multiqc)
 
     //
     // ANNOTATION

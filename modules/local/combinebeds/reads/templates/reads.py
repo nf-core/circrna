@@ -16,6 +16,7 @@ tools = "${tools.join(" ")}".split()
 bed_files = "${beds}".split()
 consider_strand = "${consider_strand}" == "true"
 min_tools = int("${min_tools}")
+meta_id = "${meta.id}"
 dfs = []
 
 for path, tool in zip(bed_files, tools):
@@ -32,27 +33,36 @@ df = df.with_columns(
 
 df = df.explode("reads")
 
-# Investigate read-level agreement
-df_read_groups = df.group_by("reads").agg(pl.col("tool").unique()).collect()
-
-# Plot read-level agreement
-read_upset_data = from_memberships(df_read_groups["tool"].to_list())
-read_upset = UpSet(read_upset_data, show_counts=True, subset_size="count")
-read_upset.plot()
-plt.savefig("${prefix}:read_agreement.png")
-plt.close()
-
 bsj_columns = ["chr", "start", "end"] + (["strand"] if consider_strand else [])
 
-# Investigate BSJ-level agreement
+# Investigate read-level agreement
 df_bsj_groups = df.group_by(*bsj_columns, "reads").agg(pl.col("tool").unique()).collect()
 
-# Plot BSJ-level agreement
+# Plot read-level agreement
 bsj_upset_data = from_memberships(df_bsj_groups["tool"].to_list())
 bsj_upset = UpSet(bsj_upset_data, show_counts=True, subset_size="count")
 bsj_upset.plot()
-plt.savefig("${prefix}:bsj_agreement.png")
+plot_file = "${prefix}:read_agreement.png"
+plt.savefig(plot_file)
 plt.close()
+
+# MultiQC
+image_string = base64.b64encode(open(plot_file, "rb").read()).decode("utf-8")
+image_html = f'<div class="mqc-custom-content-image"><img src="data:image/png;base64,{image_string}" /></div>'
+
+multiqc = {
+    'id': f"{meta_id}_read_agreement",
+    'parent_id': "read_agreement",
+    'parent_name': 'Read agreement',
+    'parent_description': 'While different tools may agree on the presence of a BSJ, they may disagree on the reads that support it. These plots show the read-level agreement between tools for each BSJ.',
+    'section_name': meta_id,
+    'description': f'UpSet plot showing the read-level agreement between tools for each BSJ in {meta_id}',
+    'plot_type': 'image',
+    'data': image_html
+}
+
+with open(f"{meta_id}_read_agreement_mqc.json", "w") as f:
+    f.write(json.dumps(multiqc, indent=4))
 
 df_bsj_groups = df_bsj_groups.with_columns(
     tool_count = pl.col("tool").list.len()
