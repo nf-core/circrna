@@ -28,12 +28,30 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
             yaml_str += f"{spaces}{key}: {value}\\n"
     return yaml_str
 
+# Versions
+
+versions = {
+    "${task.process}": {
+        "python": platform.python_version(),
+        "polars": pl.__version__,
+        "upsetplot": upsetplot.__version__,
+        "matplotlib": matplotlib.__version__
+    }
+}
+
+with open("versions.yml", "w") as f:
+    f.write(format_yaml_like(versions))
+
+# Parameters
+
 max_shift = int("${max_shift}")
 consider_strand = "${consider_strand}" == "true"
 min_tools = int("${min_tools}")
 min_samples = int("${min_samples}")
 meta_id = "${meta.id}"
 prefix = "${prefix}"
+
+# Logic
 
 df = pl.scan_csv("*.bed",
                  separator="\\t",
@@ -67,7 +85,12 @@ n_bsjs = len(df_aggregated)
 df_filtered = df_aggregated[(df_aggregated["n_tools"] >= min_tools) & (df_aggregated["n_samples"] >= min_samples)]
 df_filtered = df_filtered[["chr", "start", "end", "name", "score", "strand"]]
 
+if len(df_filtered) == 0:
+    exit(0)
+
 df_filtered.to_csv("${prefix}.${suffix}", sep="\\t", header=False, index=False)
+
+# Plots
 
 for col in ["samples", "tools"]:
     series = df_aggregated[col]
@@ -100,17 +123,3 @@ for col in ["samples", "tools"]:
 
     with open(f"{prefix}_{col}.upset_mqc.json", "w") as f:
         f.write(json.dumps(multiqc, indent=4))
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "upsetplot": upsetplot.__version__,
-        "matplotlib": matplotlib.__version__
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(format_yaml_like(versions))
