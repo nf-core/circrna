@@ -3,7 +3,7 @@ process FAIL_ON_EMPTY {
 
     input:
     tuple val(meta), path(bed)
-    path(waitFor, stageAs: 'waitFor/*')
+    path(waitFor, stageAs: 'waitFor/*.txt')
 
     exec:
     if (!bed) {
