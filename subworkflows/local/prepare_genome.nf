@@ -55,7 +55,7 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
     }
 
-    if (detection_tools.contains('ciriquant')) {
+    if (!params.hisat2 && detection_tools.contains('ciriquant')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
 
@@ -63,7 +63,7 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
     }
 
-    if (!params.star && (detection_tools.contains('circexplorer2') || detection_tools.contains('dcc') || detection_tools.contains('circrna_finder'))) {
+    if (!params.star && detection_tools.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
         STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
     }
