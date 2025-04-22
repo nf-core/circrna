@@ -7,6 +7,7 @@ include { COMBINEBEDS_READS                                  } from '../../modul
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
 include { COMBINEBEDS_FILTER as COMBINE_SAMPLES              } from '../../modules/local/combinebeds/filter'
+include { FAIL_ON_EMPTY                                      } from '../../modules/local/fail_on_empty'
 
 // SUBWORKFLOWS
 include { SEGEMEHL                               } from './detection_tools/segemehl'
@@ -202,28 +203,20 @@ workflow BSJ_DETECTION {
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
-    Channel.empty()
-        // First, make sure that all detection processes are finished
-        // So that even if all hits are filtered out, we will still get the intermediate files
-        .mix(ch_bsj_bed12_combined)
-        .mix(ch_bsj_bed12_per_sample)
-        .mix(ch_bsj_bed12_per_sample_tool)
-        .mix(ch_bsj_fasta_combined)
-        .mix(ch_bsj_fasta_per_sample)
-        .mix(ch_bsj_fasta_per_sample_tool)
-        // Then, check if any circular RNAs were found
-        .map{ _meta, _f -> false }
-        .mix( ch_bsj_bed_combined.map{ _meta, _f -> true } )
-        // If no circular RNAs were found, stop the pipeline
-        .filter{ it }
-        .ifEmpty{
-            error (
-                "No circular RNAs were found by at least ${params.min_tools} tools and in at least ${params.min_samples} samples.\n" +
-                "These thresholds can be adjusted using the parameters 'min_tools' and 'min_samples'.\n" +
-                "Feel free to check the preliminary results in '${params.outdir}'\n" +
-                (params.save_intermediates ? "" :
-                "You can enable saving intermediate files by setting the parameter 'save_intermediates' to 'true'."))
-        }
+    FAIL_ON_EMPTY(
+        ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
+        Channel.empty()
+            // First, make sure that all detection processes are finished
+            // So that even if all hits are filtered out, we will still get the intermediate files
+            .mix(ch_bsj_bed12_combined)
+            .mix(ch_bsj_bed12_per_sample)
+            .mix(ch_bsj_bed12_per_sample_tool)
+            .mix(ch_bsj_fasta_combined)
+            .mix(ch_bsj_fasta_per_sample)
+            .mix(ch_bsj_fasta_per_sample_tool)
+            .map{ _meta, f -> f }
+            .collect()
+    )
 
     emit:
     bed           = ch_bsj_bed_combined
