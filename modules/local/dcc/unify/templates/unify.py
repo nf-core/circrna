@@ -63,6 +63,9 @@ df_counts = df_counts.join(df_reads, on=["Chr", "Start", "End"], how="left")
 df_counts = df_counts.group_by(["Chr", "Start", "End", "Count", "Strand"]).agg(
     Reads=pl.col("read_id").unique().str.join(",")
 )
+df_counts = df_counts.with_columns(
+    Start=pl.col("Start")-1
+)
 
 df_counts = df_counts.collect()
 df_counts = df_counts.with_columns(
