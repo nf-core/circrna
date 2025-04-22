@@ -3,6 +3,7 @@ include { GAWK as EXTRACT_COUNTS                             } from '../../modul
 include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL              } from '../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                                } from '../../modules/nf-core/gawk'
 include { GAWK as BED_ADD_SAMPLE_TOOL                        } from '../../modules/nf-core/gawk'
+include { COMBINEBEDS_READS                                  } from '../../modules/local/combinebeds/reads'
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE     } from '../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS           } from '../../modules/local/combinebeds/shifts'
 include { COMBINEBEDS_FILTER as COMBINE_SAMPLES              } from '../../modules/local/combinebeds/filter'
@@ -108,6 +109,19 @@ workflow BSJ_DETECTION {
         .filter{ _meta, bed -> !bed.isEmpty() }
 
     //
+    // Analyze read-level agreement
+    //
+
+    tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    COMBINEBEDS_READS(
+        ch_bsj_bed_per_sample_tool.filter{ _meta, _bed -> tools_with_reads.contains(_meta.tool) }
+            .map{ meta, bed -> [[id: meta.id], meta.tool, bed] }
+            .groupTuple()
+    )
+    ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
+
+    //
     // QUANTIFY BSJs PER TOOL
     //
 
@@ -165,7 +179,7 @@ workflow BSJ_DETECTION {
 
     INVESTIGATE_SHIFTS(ch_all_samples)
     ch_versions = ch_versions.mix(INVESTIGATE_SHIFTS.out.versions)
-    ch_multiqc_files = INVESTIGATE_SHIFTS.out.multiqc
+    ch_multiqc_files = ch_multiqc_files.mix(INVESTIGATE_SHIFTS.out.multiqc)
 
     //
     // ANNOTATION
