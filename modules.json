@@ -116,7 +116,17 @@
                         "git_sha": "49f4e50534fe4b64101e62ea41d5dc43b1324358",
                         "installed_by": ["modules"]
                     },
+                    "fastp": {
+                        "branch": "master",
+                        "git_sha": "d082103d7976a2804f21225446cc110cbd822f4c",
+                        "installed_by": ["modules"]
+                    },
                     "fastqc": {
+                        "branch": "master",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
+                        "installed_by": ["modules"]
+                    },
+                    "filtlong": {
                         "branch": "master",
                         "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
@@ -204,6 +214,11 @@
                     "segemehl/index": {
                         "branch": "master",
                         "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
+                        "installed_by": ["modules"]
+                    },
+                    "seqkit/stats": {
+                        "branch": "master",
+                        "git_sha": "9fe7867a4f012db581d7bd560228ded1074eb0e5",
                         "installed_by": ["modules"]
                     },
                     "star/align": {
