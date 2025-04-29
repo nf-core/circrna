@@ -90,6 +90,7 @@ workflow CIRCRNA {
     hisat2_index        = PREPARE_GENOME.out.hisat2
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
     star_index          = PREPARE_GENOME.out.star
+    psirc_index         = PREPARE_GENOME.out.psirc
     ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
 
     // MODULE: Run FastQC, trimgalore!
@@ -119,6 +120,7 @@ workflow CIRCRNA {
         hisat2_index,
         star_index,
         circexplorer2_index,
+        psirc_index,
         params.bsj_reads
     )
 

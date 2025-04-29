@@ -11,7 +11,9 @@ include { SAMTOOLS_FAIDX                  } from '../../modules/nf-core/samtools
 include { UCSC_GTFTOGENEPRED              } from '../../modules/nf-core/ucsc/gtftogenepred'
 include { GAWK as CIRCEXPLORER2_REFERENCE } from '../../modules/nf-core/gawk'
 include { GFFREAD                         } from '../../modules/nf-core/gffread'
+include { PSIRC_TRANSCRIPTOME             } from '../../modules/local/psirc/transcriptome'
 include { PSIRC_INDEX                     } from '../../modules/local/psirc/index'
+
 workflow PREPARE_GENOME {
     take:
     ch_fasta
@@ -118,12 +120,14 @@ workflow PREPARE_GENOME {
 
     ch_psirc_index = Channel.empty()
     if (detection_tools.contains('psirc')) {
-        GFFREAD(ch_gtf, ch_fasta.map { _meta, file -> file })
-        ch_versions = ch_versions.mix(GFFREAD.out.versions)
+        PSIRC_TRANSCRIPTOME(ch_gtf, ch_fasta)
+        ch_versions = ch_versions.mix(PSIRC_TRANSCRIPTOME.out.versions)
 
-        PSIRC_INDEX(GFFREAD.out.gffread_fasta)
+        PSIRC_INDEX(PSIRC_TRANSCRIPTOME.out.transcriptome)
         ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
-        ch_psirc_index = PSIRC_INDEX.out.index
+        ch_psirc_index = PSIRC_TRANSCRIPTOME.out.transcriptome.join(
+            PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]]}
+        )
     }
 
     emit:

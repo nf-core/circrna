@@ -1,4 +1,4 @@
-process PSIRC_QUANT {
+process PSIRCQUANT_QUANT {
     tag "${meta.id}"
     label 'process_high'
 
