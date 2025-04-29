@@ -10,7 +10,8 @@ include { GAWK as CLEAN_FASTA             } from '../../modules/nf-core/gawk'
 include { SAMTOOLS_FAIDX                  } from '../../modules/nf-core/samtools/faidx'
 include { UCSC_GTFTOGENEPRED              } from '../../modules/nf-core/ucsc/gtftogenepred'
 include { GAWK as CIRCEXPLORER2_REFERENCE } from '../../modules/nf-core/gawk'
-
+include { GFFREAD                         } from '../../modules/nf-core/gffread'
+include { PSIRC_INDEX                     } from '../../modules/local/psirc/index'
 workflow PREPARE_GENOME {
     take:
     ch_fasta
@@ -115,6 +116,16 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
     }
 
+    ch_psirc_index = Channel.empty()
+    if (detection_tools.contains('psirc')) {
+        GFFREAD(ch_gtf, ch_fasta.map { _meta, file -> file })
+        ch_versions = ch_versions.mix(GFFREAD.out.versions)
+
+        PSIRC_INDEX(GFFREAD.out.gffread_fasta)
+        ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
+        ch_psirc_index = PSIRC_INDEX.out.index
+    }
+
     emit:
     gtf           = ch_gtf
     faidx         = SAMTOOLS_FAIDX.out.fai
@@ -124,6 +135,7 @@ workflow PREPARE_GENOME {
     hisat2        = ch_hisat2
     star          = ch_star
     circexplorer2 = ch_circexplorer2_reference
+    psirc         = ch_psirc_index
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions

@@ -235,6 +235,7 @@ workflow BSJ_DETECTION {
     bed12         = ch_bsj_bed12_combined
     gtf           = ch_bsj_gtf_combined
     fasta         = ch_bsj_fasta_combined
+    bed_reads     = COMBINEBEDS_READS.out.combined
 
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
 
