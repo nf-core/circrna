@@ -70,7 +70,7 @@ workflow PREPARE_GENOME {
     if (params.bwa) {
         ch_bwa = Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])
     }
-    else if (detection_tools.contains('ciriquant')) {
+    else if (detection_tools.contains('ciri')) {
         BWA_INDEX(ch_fasta)
         ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
         ch_bwa = BWA_INDEX.out.index

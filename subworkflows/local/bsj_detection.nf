@@ -16,7 +16,7 @@ include { STAR2PASS                                      } from './detection_too
 include { CIRCEXPLORER2                                  } from './detection_tools/circexplorer2'
 include { CIRCRNA_FINDER                                 } from './detection_tools/circrna_finder'
 include { FIND_CIRC                                      } from './detection_tools/find_circ'
-include { CIRIQUANT                                      } from './detection_tools/ciriquant'
+include { CIRI                                           } from './detection_tools/ciri'
 include { DCC                                            } from './detection_tools/dcc'
 include { MAPSPLICE                                      } from './detection_tools/mapsplice'
 include { PSIRC                                          } from './detection_tools/psirc'
@@ -97,10 +97,10 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(FIND_CIRC.out.bed)
     }
 
-    if (tools_selected.contains('ciriquant')) {
-        CIRIQUANT(reads, ch_gtf, ch_fasta, bwa_index, hisat2_index)
-        ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
-        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRIQUANT.out.bed)
+    if (tools_selected.contains('ciri')) {
+        CIRI(reads, ch_fasta, ch_gtf, bwa_index)
+        ch_versions = ch_versions.mix(CIRI.out.versions)
+        // ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRIQUANT.out.bed)
     }
 
     if (tools_selected.contains('dcc')) {
