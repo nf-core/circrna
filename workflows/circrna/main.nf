@@ -10,7 +10,6 @@ include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/ut
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
-include { FLI_DETECTION                    } from '../../subworkflows/local/fli_detection'
 include { COMBINE_TRANSCRIPTOMES           } from '../../subworkflows/local/combine_transcriptomes'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
@@ -126,14 +125,6 @@ workflow CIRCRNA {
 
     ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
     ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
-
-    if (params.detect_fli) {
-        FLI_DETECTION(
-            BSJ_DETECTION.out.bed_reads,
-            ch_fasta,
-            ch_gtf
-        )
-    }
 
     COMBINE_TRANSCRIPTOMES(
         ch_fasta,

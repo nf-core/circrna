@@ -127,7 +127,7 @@ workflow PREPARE_GENOME {
         ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
         ch_psirc_index = PSIRC_TRANSCRIPTOME.out.transcriptome.join(
             PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]]}
-        )
+        ).collect()
     }
 
     emit:

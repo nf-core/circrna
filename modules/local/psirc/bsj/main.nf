@@ -9,6 +9,7 @@ process PSIRC_BSJ {
     tuple val(meta2), path(transcriptome), path(index)
 
     output:
+    tuple val(meta), path("output"), emit: output
     tuple val(meta), path("output/candidate_circ_junctions.bed"), emit: bed
     path "versions.yml", emit: versions
 
@@ -16,7 +17,7 @@ process PSIRC_BSJ {
     VERSION = "1.0.0"
     """
     mkdir -p output
-    psirc -o output ${transcriptome} ${reads}
+    psirc -o output -t ${task.cpus} ${transcriptome} ${reads}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
