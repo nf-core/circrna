@@ -1,4 +1,3 @@
-include { BWA_MEM                       } from '../../../modules/nf-core/bwa/mem'
 include { CIRI_CIRI2 as CIRI2           } from '../../../modules/local/ciri/ciri2'
 include { CIRI_CIRIAS as CIRIAS         } from '../../../modules/local/ciri/cirias'
 
@@ -7,6 +6,9 @@ include { SEQKIT_FX2TAB                 } from '../../../modules/nf-core/seqkit/
 include { CIRI_READLENGTH as READLENGTH } from '../../../modules/local/ciri/readlength'
 include { FASTP                         } from '../../../modules/nf-core/fastp'
 include { CIRIFULL_RO1                  } from '../../../modules/local/cirifull/ro1'
+include { BWA_MEM                       } from '../../../modules/nf-core/bwa/mem'
+include { SAMTOOLS_VIEW as BAM_TO_SAM   } from '../../../modules/nf-core/samtools/view'
+include { CIRIFULL_RO2                  } from '../../../modules/local/cirifull/ro2'
 
 workflow CIRI {
     take:
@@ -17,9 +19,6 @@ workflow CIRI {
 
     main:
     ch_versions = Channel.empty()
-
-    // BWA_MEM(ch_reads, ch_bwa_index, ch_fasta, true)
-    // ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     // CIRI2(BWA_MEM.out.bam, ch_fasta, ch_gtf)
     // CIRIAS(BWA_MEM.out.bam, ch_fasta, ch_gtf)
@@ -51,6 +50,18 @@ workflow CIRI {
     ch_versions = ch_versions.mix(FASTP.out.versions)
 
     CIRIFULL_RO1(FASTP.out.reads)
+    ch_versions = ch_versions.mix(CIRIFULL_RO1.out.versions)
+
+    BWA_MEM(CIRIFULL_RO1.out.fastq, ch_bwa_index, ch_fasta, true)
+    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
+
+    BAM_TO_SAM(BWA_MEM.out.bam.map{ meta, bam -> [meta, bam, []]}, ch_fasta,  [])
+    ch_versions = ch_versions.mix(BAM_TO_SAM.out.versions)
+
+    // RO2 has issues with reading the SAM file
+
+    // CIRIFULL_RO2(BAM_TO_SAM.out.sam.map{ meta, bam -> [meta, bam, meta.target_length]}, ch_fasta)
+    // ch_versions = ch_versions.mix(CIRIFULL_RO2.out.versions)
 
     emit:
     versions = ch_versions

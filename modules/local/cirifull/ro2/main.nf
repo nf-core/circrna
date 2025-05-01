@@ -1,4 +1,4 @@
-process CIRIFULL_RO1 {
+process CIRIFULL_RO2 {
     tag "${meta.id}"
     label 'process_high'
 
@@ -8,12 +8,22 @@ process CIRIFULL_RO1 {
         'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f' }"
 
     input:
-    tuple val(meta), path(reads)
+    tuple val(meta), path(sam), val(length)
+    tuple val(meta2), path(fasta)
+
+    output:
+    path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "2.1.2"
     """
-    CIRI-full RO2 -1 ${reads[0]} -2 ${reads[1]} -o ${prefix} $args
+    CIRI-full RO2 -r ${fasta} -s ${sam} -l ${length} -o ${prefix} $args
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        cirifull: ${VERSION}
+    END_VERSIONS
     """
 }
