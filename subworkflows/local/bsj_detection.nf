@@ -20,6 +20,7 @@ include { CIRI                                           } from './detection_too
 include { DCC                                            } from './detection_tools/dcc'
 include { MAPSPLICE                                      } from './detection_tools/mapsplice'
 include { PSIRC                                          } from './detection_tools/psirc'
+include { JCCIRC                                         } from './detection_tools/jccirc'
 include { ANNOTATION as ANNOTATE_COMBINED                } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE              } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL         } from './annotation'
@@ -137,6 +138,9 @@ workflow BSJ_DETECTION {
         PSIRC(reads, psirc_index)
         ch_versions = ch_versions.mix(PSIRC.out.versions)
     }
+
+    JCCIRC(reads)
+    ch_versions = ch_versions.mix(JCCIRC.out.versions)
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
 
