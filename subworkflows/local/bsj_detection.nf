@@ -139,7 +139,7 @@ workflow BSJ_DETECTION {
         ch_versions = ch_versions.mix(PSIRC.out.versions)
     }
 
-    JCCIRC(reads)
+    JCCIRC(reads, ch_bsj_reads, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(JCCIRC.out.versions)
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
