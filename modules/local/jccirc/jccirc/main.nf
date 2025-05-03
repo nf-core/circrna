@@ -13,20 +13,22 @@ process JCCIRC_JCCIRC {
     tuple val(meta3), path(gtf)
 
     output:
-    tuple val(meta), path("${prefix}_ro1_align.txt"), emit: align
-    tuple val(meta), path("${prefix}_ro1.fq.gz"), emit: fastq
     path "versions.yml", emit: versions
 
     script:
-    def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "2.1.2"
+    VERSION = "1.0.0"
     """
-    JCcirc -C ${bsjs} -G ${fasta} -F ${gtf} -P ${task.cpus} --contig ${denovo} -O ${prefix} --read1 ${reads[0]} --read2 ${reads[1]}
+    n_bsj=\$(wc -l ${bsjs} | awk '{print \$1}')
+    max_allowed_cpus=${task.cpus}
+    max_sensible_cpus=\$((n_bsj / 4))
+    cpus=\$((max_sensible_cpus > max_allowed_cpus ? max_allowed_cpus : max_sensible_cpus))
+
+    JCcirc -C ${bsjs} -G ${fasta} -F ${gtf} -P \$cpus --contig ${denovo} -O ${prefix} --read1 ${reads[0]} --read2 ${reads[1]} || test \$? -eq 25
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cirifull: ${VERSION}
+        jccirc: ${VERSION}
     END_VERSIONS
     """
 }

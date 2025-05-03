@@ -35,6 +35,7 @@ workflow JCCIRC {
         ch_fasta,
         ch_gtf
     )
+    ch_versions = ch_versions.mix(MAIN.out.versions)
 
     emit:
     versions = ch_versions
