@@ -151,12 +151,21 @@ workflow BSJ_DETECTION {
     // Analyze read-level agreement
     //
 
-    tools_with_reads = ["find_circ", "segemehl", "dcc"]
-    COMBINEBEDS_READS(
-        ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> tools_with_reads.contains(_meta.tool) }.map { meta, bed -> [[id: meta.id], meta.tool, bed] }.groupTuple()
-    )
-    ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
-    ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
+    def tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    def enabled_tools_with_reads = tools_selected.intersect(tools_with_reads)
+
+    ch_bsj_bed_per_sample_tool_reads = ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> tools_with_reads.contains(_meta.tool) }
+
+    if (enabled_tools_with_reads.size() > 1) {
+        COMBINEBEDS_READS(
+            ch_bsj_bed_per_sample_tool_reads.map { meta, bed -> [[id: meta.id], meta.tool, bed] }.groupTuple()
+        )
+        ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
+        ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
+        ch_bsj_reads = COMBINEBEDS_READS.out.combined
+    } else {
+        ch_bsj_reads = ch_bsj_bed_per_sample_tool_reads
+    }
 
     //
     // QUANTIFY BSJs PER TOOL
@@ -235,15 +244,16 @@ workflow BSJ_DETECTION {
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
-    JCCIRC(
-        reads,
-        ch_bsj_bed12_per_sample,
-        COMBINEBEDS_READS.out.combined,
-        ch_fasta,
-        ch_gtf
-    )
-    ch_versions = ch_versions.mix(JCCIRC.out.versions)
-
+    if (params.detect_fli) {
+        JCCIRC(
+            reads,
+            ch_bsj_bed12_per_sample,
+            COMBINEBEDS_READS.out.combined,
+            ch_fasta,
+            ch_gtf
+        )
+        ch_versions = ch_versions.mix(JCCIRC.out.versions)
+    }
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     FAIL_ON_EMPTY(
@@ -256,7 +266,7 @@ workflow BSJ_DETECTION {
     bed12               = ch_bsj_bed12_combined
     gtf                 = ch_bsj_gtf_combined
     fasta               = ch_bsj_fasta_combined
-    bed_reads           = COMBINEBEDS_READS.out.combined
+    bed_reads           = ch_bsj_reads
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
     multiqc_files       = ch_multiqc_files
     versions            = ch_versions

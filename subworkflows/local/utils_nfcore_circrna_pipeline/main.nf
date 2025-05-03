@@ -151,6 +151,27 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     genomeExistsError()
+
+    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+    def bsj_tools = params.tools.split(',').collect { it.trim().toLowerCase() }
+
+    if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
+        error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
+    }
+
+    if (fli_tools.contains('cirifull') && !bsj_tools.contains('ciri')) {
+        error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI must also be selected for BSJ detection.")
+    }
+
+    def tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    def enabled_bsj_tools_with_reads = bsj_tools.intersect(tools_with_reads)
+    if (fli_tools.contains('jccirc') && enabled_bsj_tools_with_reads.size() == 0) {
+        error("Please check input parameters -> If jccirc is selected for FLI detection, at least one BSJ detection tool that supports read-level detection (${tools_with_reads.join(', ')}) must also be selected.")
+    }
+
+    if (params.min_tools > bsj_tools.size()) {
+        error("Please check input parameters -> The minimum number of tools required for BSJ detection (${params.min_tools}) must be less than or equal to the number of BSJ detection tools selected (${bsj_tools.size()}).")
+    }
 }
 
 //
@@ -170,6 +191,18 @@ def validateInputSamplesheet(input) {
     if (!strandedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
     }
+
+    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+
+    // If detect_fli is true, check that all samples are paired-end
+    if (fli_tools.size() > 0) {
+        def all_paired_end = metas.every{ meta -> meta.single_end == false }
+        if (!all_paired_end) {
+            error("Please check input samplesheet -> All samples must be paired-end when detect_fli is true.")
+        }
+    }
+
+
 
     return [ metas[0], fastqs ]
 }
