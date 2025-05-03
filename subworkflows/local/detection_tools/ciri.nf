@@ -1,7 +1,7 @@
 include { BWA_MEM as BWA_MEM_1          } from '../../../modules/nf-core/bwa/mem'
 include { CIRI_CIRI2 as CIRI2           } from '../../../modules/local/ciri/ciri2'
+include { GAWK as UNIFY                 } from '../../../modules/nf-core/gawk'
 include { CIRI_CIRIAS as CIRIAS         } from '../../../modules/local/ciri/cirias'
-
 include { SEQKIT_FX2TAB                 } from '../../../modules/nf-core/seqkit/fx2tab'
 include { CIRI_READLENGTH as READLENGTH } from '../../../modules/local/ciri/readlength'
 include { FASTP                         } from '../../../modules/nf-core/fastp'
@@ -25,9 +25,15 @@ workflow CIRI {
     ch_versions = ch_versions.mix(BWA_MEM_1.out.versions)
 
     CIRI2(BWA_MEM_1.out.bam, ch_fasta, ch_gtf)
+    ch_versions = ch_versions.mix(CIRI2.out.versions)
+
+    UNIFY( CIRI2.out.txt.map{ meta, txt ->
+        [ meta + [tool: "ciri"], txt ] }, [], false )
+    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     if (detect_fli) {
         CIRIAS(BWA_MEM_1.out.bam, ch_fasta, ch_gtf)
+        ch_versions = ch_versions.mix(CIRIAS.out.versions)
 
         ch_read1 = ch_reads.map { meta, reads -> [[id: meta.id + '_r1', old_meta: meta, r: 1], reads[0]] }
         ch_read2 = ch_reads.map { meta, reads -> [[id: meta.id + '_r2', old_meta: meta, r: 2], reads[1]] }
