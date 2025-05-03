@@ -26,8 +26,9 @@ workflow JCCIRC {
     ch_versions = ch_versions.mix(PREP.out.versions)
 
     MAIN(
-        reads
-            .join(PREP.out.merged)
+        reads.map{ meta, r -> [meta.id, meta, r]}
+            .join(PREP.out.merged.map{ meta, f -> [meta.id, f]})
+            .map{ _id, meta, r, f -> [meta, r, f] }
             .combine(TRINITY.out.transcript_fasta
                 .map{ _meta, fasta -> fasta}
             ),
