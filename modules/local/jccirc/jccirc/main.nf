@@ -1,4 +1,4 @@
-process JCCIRC {
+process JCCIRC_JCCIRC {
     tag "${meta.id}"
     label 'process_high'
 

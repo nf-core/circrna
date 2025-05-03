@@ -139,9 +139,6 @@ workflow BSJ_DETECTION {
         ch_versions = ch_versions.mix(PSIRC.out.versions)
     }
 
-    JCCIRC(reads, ch_bsj_reads, ch_fasta, ch_gtf)
-    ch_versions = ch_versions.mix(JCCIRC.out.versions)
-
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
 
     if (params.blacklist) {
@@ -237,6 +234,16 @@ workflow BSJ_DETECTION {
     ch_versions = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
+
+    JCCIRC(
+        reads,
+        ch_bsj_bed12_per_sample,
+        COMBINEBEDS_READS.out.combined,
+        ch_fasta,
+        ch_gtf
+    )
+    ch_versions = ch_versions.mix(JCCIRC.out.versions)
+
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     FAIL_ON_EMPTY(
