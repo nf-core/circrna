@@ -49,7 +49,8 @@ workflow BSJ_DETECTION {
     fasta = ch_fasta.map { _meta, fasta -> fasta }
     gtf = ch_gtf.map { _meta, gtf -> gtf }
 
-    tools_selected = params.tools.split(',').collect { it.trim().toLowerCase() }
+    def tools_selected = params.tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools_selected = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
@@ -99,7 +100,7 @@ workflow BSJ_DETECTION {
     }
 
     if (tools_selected.contains('ciri')) {
-        CIRI(reads, ch_fasta, ch_gtf, bwa_index)
+        CIRI(reads, ch_fasta, ch_gtf, bwa_index, fli_tools_selected.contains('cirifull'))
         ch_versions = ch_versions.mix(CIRI.out.versions)
         // ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRIQUANT.out.bed)
     }
@@ -135,7 +136,7 @@ workflow BSJ_DETECTION {
     }
 
     if (tools_selected.contains('psirc')) {
-        PSIRC(reads, psirc_index)
+        PSIRC(reads, psirc_index, fli_tools_selected.contains('psirc'))
         ch_versions = ch_versions.mix(PSIRC.out.versions)
     }
 
@@ -244,7 +245,7 @@ workflow BSJ_DETECTION {
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
-    if (params.detect_fli) {
+    if (fli_tools_selected.contains('jccirc')) {
         JCCIRC(
             reads,
             ch_bsj_bed12_per_sample,

@@ -194,15 +194,12 @@ def validateInputSamplesheet(input) {
 
     def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
 
-    // If detect_fli is true, check that all samples are paired-end
     if (fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }
         if (!all_paired_end) {
-            error("Please check input samplesheet -> All samples must be paired-end when detect_fli is true.")
+            error("Please check input samplesheet -> All samples must be paired-end when fli_tools is not empty.")
         }
     }
-
-
 
     return [ metas[0], fastqs ]
 }
