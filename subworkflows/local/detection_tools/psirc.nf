@@ -1,5 +1,6 @@
 include { PSIRC_BSJ as BSJ } from '../../../modules/local/psirc/bsj'
 include { PSIRC_FLI as FLI } from '../../../modules/local/psirc/fli'
+include { GAWK as UNIFY    } from '../../../modules/nf-core/gawk'
 
 workflow PSIRC {
     take:
@@ -13,6 +14,9 @@ workflow PSIRC {
     BSJ(ch_reads, ch_index)
     ch_versions = ch_versions.mix(BSJ.out.versions)
 
+    UNIFY(BSJ.out.bed, [], false)
+    ch_versions = ch_versions.mix(UNIFY.out.versions)
+
     if (detect_fli) {
         FLI(
             ch_reads.join(BSJ.out.output),
@@ -22,6 +26,6 @@ workflow PSIRC {
     }
 
     emit:
-    bed = BSJ.out.bed
+    bed = UNIFY.out.output.map{ meta, bed -> [meta + [tool: "psirc"], bed] }
     versions = ch_versions
 }

@@ -138,6 +138,7 @@ workflow BSJ_DETECTION {
     if (tools_selected.contains('psirc')) {
         PSIRC(reads, psirc_index, fli_tools_selected.contains('psirc'))
         ch_versions = ch_versions.mix(PSIRC.out.versions)
+        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
     }
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
