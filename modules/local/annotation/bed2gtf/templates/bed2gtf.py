@@ -25,9 +25,11 @@ columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
             'readNumber', 'circType', 'gene', 'transcript',
             'index', 'flankIntron'
             ]
-df = pl.read_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns)
 
-if len(df) == 0:
+try:
+    df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns)
+except pl.exceptions.NoDataError:
+    print("No data in bed12 file")
     # Save empty file
     open('${prefix}.${suffix}', 'w').close()
     exit()
@@ -75,4 +77,4 @@ else:
 df_combined = pl.concat([df_exons, df_cds])
 df_combined = df_combined.sort('chr', 'start', 'end')
 
-df_combined.write_csv('${prefix}.${suffix}', separator='\\t', include_header=False, quote_style="never")
+df_combined.collect().write_csv('${prefix}.${suffix}', separator='\\t', include_header=False, quote_style="never")
