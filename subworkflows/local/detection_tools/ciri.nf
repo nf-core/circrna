@@ -31,7 +31,9 @@ workflow CIRI {
         [ meta + [tool: "ciri"], txt ] }, [], false )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
-    if (detect_fli) {
+    fli_tools_selected = params.fli_tools.split(',').collect { it.trim() }
+
+    if (detect_fli && fli_tools_selected.contains('cirifull')) {
         CIRIAS(BWA_MEM_1.out.bam, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRIAS.out.versions)
 
