@@ -84,7 +84,6 @@ workflow BSJ_DETECTION {
 
     if (tools_selected.contains('circrna_finder')) {
         CIRCRNA_FINDER(
-            fasta,
             STAR2PASS.out.sam,
             STAR2PASS.out.junction,
             STAR2PASS.out.tab,
