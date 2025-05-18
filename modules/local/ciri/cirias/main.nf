@@ -14,7 +14,8 @@ process CIRI_CIRIAS {
 
     output:
     tuple val(meta), path("${prefix}_jav.list"), emit: list
-    path "versions.yml"                        , emit: versions
+    tuple val(meta), path("${prefix}_library_length.list"), emit: library_length
+    path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''

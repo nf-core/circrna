@@ -11,6 +11,7 @@ include { BWA_MEM as BWA_MEM_2          } from '../../../modules/nf-core/bwa/mem
 include { SAMTOOLS_VIEW as BAM_TO_SAM   } from '../../../modules/nf-core/samtools/view'
 include { CIRIFULL_RO2                  } from '../../../modules/local/cirifull/ro2'
 include { CIRIFULL_MERGE                } from '../../../modules/local/cirifull/merge'
+include { CIRI_CIRIVIS as CIRI_VIS      } from '../../../modules/local/ciri/cirivis'
 
 workflow CIRI {
     take:
@@ -88,6 +89,9 @@ workflow CIRI {
 
         CIRIFULL_MERGE(ch_merge, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRIFULL_MERGE.out.versions)
+
+        CIRI_VIS(CIRIFULL_MERGE.out.anno.join(CIRIAS.out.library_length), ch_fasta)
+        ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
     }
 
     emit:
