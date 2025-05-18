@@ -9,14 +9,17 @@ process PSIRC_FLI {
     tuple val(meta2), path(transcriptome)
 
     output:
-    //tuple val(meta), path("output/candidate_circ_junctions.bed"), emit: bed
+    tuple val(meta), path("${prefix}/full_length_isoforms.fa"), emit: fasta
+    tuple val(meta), path("${prefix}/full_length_isoforms_alt_fsj_supporting_reads.sam"), emit: sam
+    tuple val(meta), path("${prefix}/full_length_isoforms.tsv"), emit: tsv
     path "versions.yml", emit: versions
 
     script:
     VERSION = "1.0.0"
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
-    cp -rL ${bsj} output
-    psirc -s -t ${task.cpus} ${transcriptome} output ${reads}
+    cp -rL ${bsj} ${prefix}
+    psirc -s -t ${task.cpus} ${transcriptome} ${prefix} ${reads}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

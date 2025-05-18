@@ -96,6 +96,7 @@ workflow CIRI {
 
     emit:
     bed = UNIFY.out.output
+    fasta = CIRI_VIS.out.fasta
 
     versions = ch_versions
 }

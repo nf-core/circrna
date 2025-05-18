@@ -14,18 +14,24 @@ workflow PSIRC {
     BSJ(ch_reads, ch_index)
     ch_versions = ch_versions.mix(BSJ.out.versions)
 
-    UNIFY(BSJ.out.bed, [], false)
+    UNIFY(
+        BSJ.out.bed.map { meta, bed -> [meta + [tool: "psirc"], bed] },
+        [],
+        false,
+    )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     if (detect_fli) {
         FLI(
             ch_reads.join(BSJ.out.output),
-            ch_index.map{ meta, transcriptome, _index -> [meta, transcriptome] }
+            ch_index.map { meta, transcriptome, _index -> [meta, transcriptome] },
         )
         ch_versions = ch_versions.mix(FLI.out.versions)
     }
 
     emit:
-    bed = UNIFY.out.output.map{ meta, bed -> [meta + [tool: "psirc"], bed] }
+    bed      = UNIFY.out.output
+    fasta    = FLI.out.fasta
+
     versions = ch_versions
 }
