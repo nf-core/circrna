@@ -101,7 +101,7 @@ workflow BSJ_DETECTION {
     if (tools_selected.contains('ciri')) {
         CIRI(reads, ch_fasta, ch_gtf, bwa_index, fli_tools_selected.contains('cirifull'))
         ch_versions = ch_versions.mix(CIRI.out.versions)
-        // ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRIQUANT.out.bed)
+        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI.out.bed)
     }
 
     if (tools_selected.contains('dcc')) {
@@ -152,7 +152,7 @@ workflow BSJ_DETECTION {
     // Analyze read-level agreement
     //
 
-    def tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    def tools_with_reads = ["find_circ", "segemehl", "dcc", "ciri"]
     def enabled_tools_with_reads = tools_selected.intersect(tools_with_reads)
 
     ch_bsj_bed_per_sample_tool_reads = ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> tools_with_reads.contains(_meta.tool) }

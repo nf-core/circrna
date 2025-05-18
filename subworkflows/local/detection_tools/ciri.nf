@@ -77,5 +77,7 @@ workflow CIRI {
     }
 
     emit:
+    bed = UNIFY.out.output
+
     versions = ch_versions
 }

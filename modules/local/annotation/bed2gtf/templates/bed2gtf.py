@@ -41,8 +41,8 @@ df = df.with_columns(
 
 if exons_only:
     df_exons = df.with_columns(
-        exonSizes = pl.col('exonSizes').str.split(','),
-        exonStarts = pl.col('exonStarts').str.split(',')
+        exonSizes = pl.col('exonSizes').cast(pl.Utf8).str.split(','),
+        exonStarts = pl.col('exonStarts').cast(pl.Utf8).str.split(',')
     ).explode('exonSizes', 'exonStarts')
     df_exons = df_exons.with_columns(
         type = pl.lit('exon'),
