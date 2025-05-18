@@ -8,19 +8,20 @@ process CIRI_CIRIAS {
         : 'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f'}"
 
     input:
-    tuple val(meta), path(sam)
+    tuple val(meta), path(ciri), path(sam)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
 
     output:
-    path "versions.yml", emit: versions
+    tuple val(meta), path("${prefix}_jav.list"), emit: list
+    path "versions.yml"                        , emit: versions
 
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "1.0.0"
     """
-    CIRI-AS -S ${sam} -C ${prefix}.ciri -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
+    CIRI-AS -S ${sam} -C ${ciri} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

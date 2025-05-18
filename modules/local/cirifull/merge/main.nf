@@ -1,4 +1,4 @@
-process CIRIFULL_RO2 {
+process CIRIFULL_MERGE {
     tag "${meta.id}"
     label 'process_high'
 
@@ -8,19 +8,18 @@ process CIRIFULL_RO2 {
         'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f' }"
 
     input:
-    tuple val(meta), path(sam), val(length)
+    tuple val(meta), path(ciri), path(ciri_as), path(ro2)
     tuple val(meta2), path(fasta)
+    tuple val(meta3), path(gtf)
 
     output:
-    tuple val(meta), path("${prefix}_ro2_info.list"), emit: list
-    path "versions.yml"                             , emit: versions
+    path "versions.yml", emit: versions
 
     script:
-    def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "2.1.2"
     """
-    CIRI-full RO2 -r ${fasta} -s ${sam} -l ${length} -o ${prefix} $args
+    CIRI-full Merge -a $gtf -r $fasta -c $ciri -as $ciri_as -ro $ro2 -o $prefix
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
