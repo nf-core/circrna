@@ -1,4 +1,5 @@
 include { BWA_MEM as BWA_MEM_1          } from '../../../modules/nf-core/bwa/mem'
+include { CIRIQUANT                     } from '../../../modules/local/ciriquant/ciriquant'
 include { CIRI_CIRI2 as CIRI2           } from '../../../modules/local/ciri/ciri2'
 include { GAWK as UNIFY                 } from '../../../modules/nf-core/gawk'
 include { CIRI_CIRIAS as CIRIAS         } from '../../../modules/local/ciri/cirias'
@@ -24,7 +25,7 @@ workflow CIRI {
     BWA_MEM_1(ch_reads, ch_bwa_index, ch_fasta, true)
     ch_versions = ch_versions.mix(BWA_MEM_1.out.versions)
 
-    CIRI2(BWA_MEM_1.out.bam, ch_fasta, ch_gtf)
+    CIRI2(BWA_MEM_1.out.sam, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRI2.out.versions)
 
     UNIFY( CIRI2.out.txt.map{ meta, txt ->
@@ -34,7 +35,7 @@ workflow CIRI {
     fli_tools_selected = params.fli_tools.split(',').collect { it.trim() }
 
     if (detect_fli && fli_tools_selected.contains('cirifull')) {
-        CIRIAS(BWA_MEM_1.out.bam, ch_fasta, ch_gtf)
+        CIRIAS(BWA_MEM_1.out.sam, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRIAS.out.versions)
 
         ch_read1 = ch_reads.map { meta, reads -> [[id: meta.id + '_r1', old_meta: meta, r: 1], reads[0]] }
@@ -69,13 +70,10 @@ workflow CIRI {
         BWA_MEM_2(CIRIFULL_RO1.out.fastq, ch_bwa_index, ch_fasta, true)
         ch_versions = ch_versions.mix(BWA_MEM_2.out.versions)
 
-        BAM_TO_SAM(BWA_MEM_2.out.bam.map{ meta, bam -> [meta, bam, []]}, ch_fasta,  [])
-        ch_versions = ch_versions.mix(BAM_TO_SAM.out.versions)
-
         // RO2 has issues with reading the SAM file
 
-        // CIRIFULL_RO2(BAM_TO_SAM.out.sam.map{ meta, bam -> [meta, bam, meta.target_length]}, ch_fasta)
-        // ch_versions = ch_versions.mix(CIRIFULL_RO2.out.versions)
+        CIRIFULL_RO2(BWA_MEM_2.out.sam.map{ meta, bam -> [meta, bam, meta.target_length]}, ch_fasta)
+        ch_versions = ch_versions.mix(CIRIFULL_RO2.out.versions)
     }
 
     emit:

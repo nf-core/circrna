@@ -83,7 +83,7 @@ workflow PREPARE_GENOME {
     if (params.hisat2) {
         ch_hisat2 = Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])
     }
-    else if (detection_tools.contains('ciriquant')) {
+    else if (detection_tools.contains('ciri')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
         ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
