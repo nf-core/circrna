@@ -12,7 +12,7 @@ process CIRI_CIRIVIS {
     tuple val(meta2), path(fasta)
 
     output:
-    tuple val(meta), path("${prefix}/${prefix}.list_circle.fa"), emit: fasta
+    tuple val(meta), path("${prefix}/${prefix}.list_circle.fa"), emit: fasta, optional: true
     tuple val(meta), path("${prefix}/${prefix}.list"), emit: list
     path "${prefix}/*.pdf", emit: pdf
     path "versions.yml", emit: versions

@@ -22,7 +22,7 @@ workflow FLI_DETECTION {
     def fli_tools = params.fli_tools.split(',').collect { it.trim() }
 
     if (fli_tools.contains('cirifull')) {
-        CIRIFULL(ch_reads_fixed_length, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam)
+        CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam)
         ch_versions = ch_versions.mix(CIRIFULL.out.versions)
     }
 

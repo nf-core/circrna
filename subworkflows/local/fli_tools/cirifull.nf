@@ -3,11 +3,13 @@ include { CIRIFULL_RO1 as RO1      } from '../../../modules/local/cirifull/ro1'
 include { BWA_MEM                  } from '../../../modules/nf-core/bwa/mem'
 include { CIRIFULL_RO2 as RO2      } from '../../../modules/local/cirifull/ro2'
 include { CIRIFULL_MERGE as MERGE  } from '../../../modules/local/cirifull/merge'
+include { BUILD_LIST               } from '../../../modules/local/ciri/build_list'
 include { CIRI_CIRIVIS as CIRI_VIS } from '../../../modules/local/ciri/cirivis'
 
 workflow CIRIFULL {
     take:
     ch_reads
+    ch_bsj_annotation
     ch_fasta
     ch_gtf
     ch_bwa_index
@@ -33,14 +35,22 @@ workflow CIRIFULL {
     MERGE(ch_merge, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(MERGE.out.versions)
 
+    BUILD_LIST(
+        MERGE.out.anno
+            .map { _meta, anno -> [[id: 'cirifull'], anno] }
+            .groupTuple()
+            .combine(ch_bsj_annotation.map { _meta, anno -> anno })
+    )
+    ch_versions = ch_versions.mix(BUILD_LIST.out.versions)
+
     ch_grouped = MERGE.out.anno
         .join(CIRIAS.out.library_length)
         .map { _meta, anno, library_length -> [[id: 'cirifull'], anno, library_length] }
         .groupTuple()
-        .map { meta, anno, library_length -> [meta, anno, library_length, []] }
+        .combine(BUILD_LIST.out.list.map { _meta, list -> list })
 
-    // CIRI_VIS(ch_grouped, ch_fasta)
-    // ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
+    CIRI_VIS(ch_grouped, ch_fasta)
+    ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
 
     emit:
     versions = ch_versions
