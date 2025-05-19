@@ -10,6 +10,7 @@ include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/ut
 include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
 include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
 include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
+include { FLI_DETECTION                    } from '../../subworkflows/local/fli_detection'
 include { COMBINE_TRANSCRIPTOMES           } from '../../subworkflows/local/combine_transcriptomes'
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
@@ -116,7 +117,6 @@ workflow CIRCRNA {
         bowtie2_index,
         bwa_index,
         chromosomes,
-        hisat2_index,
         star_index,
         circexplorer2_index,
         psirc_index,
@@ -125,6 +125,25 @@ workflow CIRCRNA {
 
     ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
     ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
+
+    //
+    // 3. FLI Detection
+    //
+
+    FLI_DETECTION(
+        FASTQC_TRIMGALORE.out.reads,
+        BSJ_DETECTION.out.reads_fixed_length,
+        ch_fasta,
+        ch_gtf,
+        bwa_index,
+        BSJ_DETECTION.out.ciri_txt,
+        BSJ_DETECTION.out.ciri_sam,
+        BSJ_DETECTION.out.bed12,
+        BSJ_DETECTION.out.bed_reads,
+        psirc_index,
+        BSJ_DETECTION.out.psirc_bsj
+    )
+    ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
     COMBINE_TRANSCRIPTOMES(
         ch_fasta,
@@ -135,7 +154,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
 
     //
-    // 3. circRNA quantification
+    // 4. circRNA quantification
     //
 
     QUANTIFICATION(
@@ -157,7 +176,7 @@ workflow CIRCRNA {
     ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
     //
-    // 4. miRNA prediction
+    // 5. miRNA prediction
     //
 
     if (params.mature) {
@@ -173,7 +192,7 @@ workflow CIRCRNA {
     }
 
     //
-    // 5. Statistical tests
+    // 6. Statistical tests
     //
 
     STATISTICAL_TESTS(

@@ -20,7 +20,6 @@ include { CIRI                                           } from './detection_too
 include { DCC                                            } from './detection_tools/dcc'
 include { MAPSPLICE                                      } from './detection_tools/mapsplice'
 include { PSIRC                                          } from './detection_tools/psirc'
-include { JCCIRC                                         } from './detection_tools/jccirc'
 include { ANNOTATION as ANNOTATE_COMBINED                } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE              } from './annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL         } from './annotation'
@@ -36,7 +35,6 @@ workflow BSJ_DETECTION {
     bowtie2_index
     bwa_index
     chromosomes
-    hisat2_index
     star_index
     circexplorer2_index
     psirc_index
@@ -50,7 +48,6 @@ workflow BSJ_DETECTION {
     gtf = ch_gtf.map { _meta, gtf -> gtf }
 
     def tools_selected = params.tools.split(',').collect { it.trim().toLowerCase() }
-    def fli_tools_selected = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
@@ -99,9 +96,16 @@ workflow BSJ_DETECTION {
     }
 
     if (tools_selected.contains('ciri')) {
-        CIRI(reads, ch_fasta, ch_gtf, bwa_index, fli_tools_selected.contains('cirifull'))
+        CIRI(reads, ch_fasta, ch_gtf, bwa_index)
         ch_versions = ch_versions.mix(CIRI.out.versions)
+        ch_ciri_txt = CIRI.out.ciri_txt
+        ch_ciri_sam = CIRI.out.ciri_sam
+        ch_reads_fixed_length = CIRI.out.reads_fixed_length
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI.out.bed)
+    } else {
+        ch_reads_fixed_length = Channel.empty()
+        ch_ciri_txt = Channel.empty()
+        ch_ciri_sam = Channel.empty()
     }
 
     if (tools_selected.contains('dcc')) {
@@ -135,9 +139,12 @@ workflow BSJ_DETECTION {
     }
 
     if (tools_selected.contains('psirc')) {
-        PSIRC(reads, psirc_index, fli_tools_selected.contains('psirc'))
+        PSIRC(reads, psirc_index)
         ch_versions = ch_versions.mix(PSIRC.out.versions)
+        ch_psirc_bsj = PSIRC.out.output
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
+    } else {
+        ch_psirc_bsj = Channel.empty()
     }
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
@@ -245,17 +252,6 @@ workflow BSJ_DETECTION {
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
-    if (fli_tools_selected.contains('jccirc')) {
-        JCCIRC(
-            reads,
-            ch_bsj_bed12_per_sample,
-            COMBINEBEDS_READS.out.combined,
-            ch_fasta,
-            ch_gtf
-        )
-        ch_versions = ch_versions.mix(JCCIRC.out.versions)
-    }
-
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     FAIL_ON_EMPTY(
         ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
@@ -269,6 +265,15 @@ workflow BSJ_DETECTION {
     fasta               = ch_bsj_fasta_combined
     bed_reads           = ch_bsj_reads
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
+
+    // For CIRIfull FLI detection
+    ciri_txt            = ch_ciri_txt
+    ciri_sam            = ch_ciri_sam
+    reads_fixed_length  = ch_reads_fixed_length
+
+    // For PSIRC FLI detection
+    psirc_bsj = ch_psirc_bsj
+
     multiqc_files       = ch_multiqc_files
     versions            = ch_versions
 }

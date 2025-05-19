@@ -1,17 +1,10 @@
-include { BWA_MEM as BWA_MEM_1          } from '../../../modules/nf-core/bwa/mem'
+include { BWA_MEM                       } from '../../../modules/nf-core/bwa/mem'
 include { CIRIQUANT                     } from '../../../modules/local/ciriquant/ciriquant'
 include { CIRI_CIRI2 as CIRI2           } from '../../../modules/local/ciri/ciri2'
 include { GAWK as UNIFY                 } from '../../../modules/nf-core/gawk'
-include { CIRI_CIRIAS as CIRIAS         } from '../../../modules/local/ciri/cirias'
 include { SEQKIT_FX2TAB                 } from '../../../modules/nf-core/seqkit/fx2tab'
 include { CIRI_READLENGTH as READLENGTH } from '../../../modules/local/ciri/readlength'
 include { FASTP                         } from '../../../modules/nf-core/fastp'
-include { CIRIFULL_RO1                  } from '../../../modules/local/cirifull/ro1'
-include { BWA_MEM as BWA_MEM_2          } from '../../../modules/nf-core/bwa/mem'
-include { SAMTOOLS_VIEW as BAM_TO_SAM   } from '../../../modules/nf-core/samtools/view'
-include { CIRIFULL_RO2                  } from '../../../modules/local/cirifull/ro2'
-include { CIRIFULL_MERGE                } from '../../../modules/local/cirifull/merge'
-include { CIRI_CIRIVIS as CIRI_VIS      } from '../../../modules/local/ciri/cirivis'
 
 workflow CIRI {
     take:
@@ -19,14 +12,13 @@ workflow CIRI {
     ch_fasta
     ch_gtf
     ch_bwa_index
-    detect_fli
 
     main:
     ch_versions = Channel.empty()
 
-    def perform_fli_detection = detect_fli && params.fli_tools.split(',').collect { it.trim() }.contains('cirifull')
+    def cirifull_enabled = params.fli_tools.split(',').collect { it.trim() }.contains('cirifull')
 
-    if (perform_fli_detection) {
+    if (cirifull_enabled) {
         // CIRI-full requires all reads to have the same length
 
         ch_read1 = ch_reads.map { meta, reads -> [[id: meta.id + '_r1', old_meta: meta, r: 1], reads[0]] }
@@ -51,7 +43,8 @@ workflow CIRI {
         READLENGTH(ch_reads_len)
         ch_versions = ch_versions.mix(READLENGTH.out.versions)
 
-        ch_fastp = ch_reads.join(READLENGTH.out.length)
+        ch_fastp = ch_reads
+            .join(READLENGTH.out.length)
             .map { meta, reads, length -> [meta + [target_length: length.text.toInteger()], reads] }
 
         // Trim the reads to the 5th percentile length
@@ -62,46 +55,25 @@ workflow CIRI {
         ch_reads = FASTP.out.reads
     }
 
-    BWA_MEM_1(ch_reads, ch_bwa_index, ch_fasta, true)
-    ch_versions = ch_versions.mix(BWA_MEM_1.out.versions)
+    BWA_MEM(ch_reads, ch_bwa_index, ch_fasta, true)
+    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
-    CIRI2(BWA_MEM_1.out.sam, ch_fasta, ch_gtf)
+    CIRI2(BWA_MEM.out.sam, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRI2.out.versions)
 
-    UNIFY( CIRI2.out.txt.map{ meta, txt ->
-        [ meta + [tool: "ciri"], txt ] }, [], false )
+    UNIFY(
+        CIRI2.out.txt.map { meta, txt ->
+            [meta + [tool: "ciri"], txt]
+        },
+        [],
+        false,
+    )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
-    if (perform_fli_detection) {
-        CIRIAS(CIRI2.out.txt.join(BWA_MEM_1.out.sam), ch_fasta, ch_gtf)
-        ch_versions = ch_versions.mix(CIRIAS.out.versions)
-
-        CIRIFULL_RO1(FASTP.out.reads)
-        ch_versions = ch_versions.mix(CIRIFULL_RO1.out.versions)
-
-        BWA_MEM_2(CIRIFULL_RO1.out.fastq, ch_bwa_index, ch_fasta, true)
-        ch_versions = ch_versions.mix(BWA_MEM_2.out.versions)
-
-        CIRIFULL_RO2(BWA_MEM_2.out.sam.map{ meta, bam -> [meta, bam, meta.target_length]}, ch_fasta)
-        ch_versions = ch_versions.mix(CIRIFULL_RO2.out.versions)
-
-        ch_merge = CIRI2.out.txt.join(CIRIAS.out.list).join(CIRIFULL_RO2.out.list)
-
-        CIRIFULL_MERGE(ch_merge, ch_fasta, ch_gtf)
-        ch_versions = ch_versions.mix(CIRIFULL_MERGE.out.versions)
-
-        ch_grouped = CIRIFULL_MERGE.out.anno.join(CIRIAS.out.library_length)
-            .map { meta, anno, library_length -> [[id: 'cirifull'], anno, library_length] }
-            .groupTuple()
-            .map { meta, anno, library_length -> [meta, anno, library_length, []] }
-
-        CIRI_VIS(ch_grouped, ch_fasta)
-        ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
-    }
-
     emit:
-    bed = UNIFY.out.output
-    fasta = CIRI_VIS.out.fasta
-
-    versions = ch_versions
+    bed                = UNIFY.out.output
+    ciri_txt           = CIRI2.out.txt
+    ciri_sam           = BWA_MEM.out.sam
+    reads_fixed_length = cirifull_enabled ? FASTP.out.reads : Channel.empty()
+    versions           = ch_versions
 }
