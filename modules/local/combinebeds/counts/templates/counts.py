@@ -41,7 +41,7 @@ df_candidates = pl.scan_csv(candidate_path, has_header=False, separator="\\t", n
 df_candidates = df_candidates.select(columns)
 df_candidates = df_candidates.with_columns(sample=pl.lit("candidate"), tool=pl.lit("candidate"), score=pl.lit(None))
 
-df = pl.scan_csv(bed_paths, has_header=False, separator="\\t", new_columns=columns + ["sample", "tool"])
+df = pl.scan_csv(bed_paths, has_header=False, separator="\\t", new_columns=columns + ["sample", "tool"], raise_if_empty=False)
 df_combined = pl.concat([df, df_candidates])
 
 df_combined = df_combined.sort("end"  ).with_columns(end_group  =pl.col("end"  ).diff().fill_null(0).gt(max_shift).cum_sum())

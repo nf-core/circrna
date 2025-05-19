@@ -32,7 +32,8 @@ meta_id = "${meta.id}"
 df = pl.scan_csv("${beds}".split(" "),
                     separator="\\t",
                     has_header=False,
-                    new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
+                    new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"],
+                    raise_if_empty=False)
 
 df = df.group_by("chr", "start", "end", "strand").agg(tools=pl.col("tool").unique(), samples=pl.col("sample").unique())
 
