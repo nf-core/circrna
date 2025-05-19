@@ -8,7 +8,7 @@ process CIRI_CIRIVIS {
         : 'community.wave.seqera.io/library/openjdk:23.0.2--2fd1f5d679ee38ac'}"
 
     input:
-    tuple val(meta), path(anno), path(library_length)
+    tuple val(meta), path(anno), path(library_length), path(list)
     tuple val(meta2), path(fasta)
 
     output:
@@ -21,8 +21,20 @@ process CIRI_CIRIVIS {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "1.4.2"
+    def has_list = list ? true : false
     """
-    java -jar ${moduleDir}/CIRI_vis_v${VERSION}.jar -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} ${args}
+    if [ ${has_list} == false ]; then
+        list=\$(for file in ${anno}; do
+            tail -n +2 \$file | cut -f1 | sort -u
+        done)
+
+        LIST_FILE="circle_ids.list"
+        printf "%s\\n" \$list > \$LIST_FILE
+    else
+        LIST_FILE=${list}
+    fi
+
+    java -jar ${moduleDir}/CIRI_vis_v${VERSION}.jar -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} -list \$LIST_FILE ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

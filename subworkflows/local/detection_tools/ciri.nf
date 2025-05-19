@@ -90,7 +90,12 @@ workflow CIRI {
         CIRIFULL_MERGE(ch_merge, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRIFULL_MERGE.out.versions)
 
-        CIRI_VIS(CIRIFULL_MERGE.out.anno.join(CIRIAS.out.library_length), ch_fasta)
+        ch_grouped = CIRIFULL_MERGE.out.anno.join(CIRIAS.out.library_length)
+            .map { meta, anno, library_length -> [[id: 'cirifull'], anno, library_length] }
+            .groupTuple()
+            .map { meta, anno, library_length -> [meta, anno, library_length, []] }
+
+        CIRI_VIS(ch_grouped, ch_fasta)
         ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
     }
 
