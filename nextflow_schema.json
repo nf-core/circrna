@@ -122,7 +122,7 @@
                 "exons_only": {
                     "type": "boolean",
                     "description": "Only consider exons for circRNA sequence extraction.",
-                    "help_text": "With single-end reads, we cannot determine the actual full-length isoform (FLI) sequence. Thus, we can either use the entire sequence between the BSJ boundaries or only the exons.",
+                    "help_text": "With single-end reads, we cannot determine the actual full-length isoform (FLI) sequence. Thus, we can either use the entire sequence between the BSJ boundaries or only the exons when creating the FASTA files.",
                     "default": true
                 }
             }
@@ -137,7 +137,7 @@
                 "fli_tools": {
                     "type": "string",
                     "description": "Comma separated list of FLI detection tools to use. Supported tools: psirc, jccirc, cirifull",
-                    "pattern": "^(psirc|jccirc|cirifull)(,(psirc|jccirc|cirifull))*$",
+                    "pattern": "^(psirc|cirifull)(,(psirc|cirifull))*$",
                     "default": ""
                 }
             }
