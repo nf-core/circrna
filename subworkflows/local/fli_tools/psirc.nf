@@ -16,5 +16,7 @@ workflow PSIRC {
     ch_versions = ch_versions.mix(FLI.out.versions)
 
     emit:
+    fasta = FLI.out.fasta
+
     versions = ch_versions
 }

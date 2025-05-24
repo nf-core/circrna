@@ -46,13 +46,13 @@ workflow CIRIFULL {
 
     ch_grouped = MERGE.out.anno
         .join(CIRIAS.out.library_length)
-        .map { _meta, anno, library_length -> [[id: 'cirifull'], anno, library_length] }
-        .groupTuple()
-        .combine(BUILD_LIST.out.list.map { _meta, list -> list })
+        .map { meta, anno, library_length -> [meta, anno, library_length, []] }
 
     CIRI_VIS(ch_grouped, ch_fasta)
     ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
 
     emit:
+    fasta = CIRI_VIS.out.fasta
+
     versions = ch_versions
 }

@@ -24,9 +24,9 @@ process CIRI_CIRIAS {
     """
     CIRI-AS -S ${sam} -C ${ciri} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
 
-    if ( ! \$(cat ${prefix}_library_length.list | grep -q "^library_length") ); then
-        rm -f ${prefix}_library_length.list
-    fi
+    # if ( ! \$(cat ${prefix}_library_length.list | grep -q "^library_length") ); then
+    #     rm -f ${prefix}_library_length.list
+    # fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
