@@ -272,12 +272,14 @@ workflow BSJ_DETECTION {
     gtf                 = ch_bsj_gtf_combined
     fasta               = ch_bsj_fasta_combined
     bed_reads           = ch_bsj_reads
+    bed_per_sample      = ch_bsj_bed_per_sample
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
     ciri_txt            = ch_ciri_txt
     ciri_sam            = ch_ciri_sam
     reads_fixed_length  = ch_reads_fixed_length
     psirc_bsj           = ch_psirc_bsj
     star_bam            = ch_star_bam
+    star_junction       = STAR2PASS.out.junction
     multiqc_files       = ch_multiqc_files
     versions            = ch_versions
 }

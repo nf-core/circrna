@@ -8,7 +8,7 @@ process CIRCTOOLS_RECONSTRUCT {
         : 'community.wave.seqera.io/library/circtools:2.0--f5bc60d7f93fefae'}"
 
     input:
-    tuple val(meta), path(reads), path(bam)
+    tuple val(meta), path(bed), path(bam), path(bai), path(junction)
     tuple val(meta2), path(annotation)
 
     output:
@@ -21,7 +21,8 @@ process CIRCTOOLS_RECONSTRUCT {
         --bamfile ${bam} \
         --annotation ${annotation} \
         --sampleName ${meta.id} \
-        -C ${reads} \
+        -D ${bed} \
+        -J ${junction} \
         -T ./temp \
         -O ${prefix} \
         -P ${task.cpus}

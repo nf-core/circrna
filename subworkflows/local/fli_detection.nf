@@ -17,6 +17,8 @@ workflow FLI_DETECTION {
     ch_psirc_index
     ch_psirc_bsj
     ch_star_bam
+    ch_star_junction
+    ch_bsj_bed_per_sample
 
     main:
     ch_versions = Channel.empty()
@@ -39,7 +41,7 @@ workflow FLI_DETECTION {
     }
 
     if (fli_tools.contains('circtools')) {
-        CIRCTOOLS(ch_bsj_reads, ch_star_bam, ch_gtf)
+        CIRCTOOLS(ch_bsj_bed_per_sample, ch_star_bam, ch_star_junction, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
     }
 
