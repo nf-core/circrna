@@ -141,7 +141,8 @@ workflow CIRCRNA {
         BSJ_DETECTION.out.bed12,
         BSJ_DETECTION.out.bed_reads,
         psirc_index,
-        BSJ_DETECTION.out.psirc_bsj
+        BSJ_DETECTION.out.psirc_bsj,
+        BSJ_DETECTION.out.star_bam
     )
     ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 

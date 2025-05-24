@@ -1,6 +1,7 @@
 include { CIRIFULL } from './fli_tools/cirifull'
 include { PSIRC    } from './fli_tools/psirc'
 include { JCCIRC   } from './fli_tools/jccirc'
+include { CIRCTOOLS } from './fli_tools/circtools'
 
 workflow FLI_DETECTION {
     take:
@@ -15,6 +16,7 @@ workflow FLI_DETECTION {
     ch_bsj_reads
     ch_psirc_index
     ch_psirc_bsj
+    ch_star_bam
 
     main:
     ch_versions = Channel.empty()
@@ -34,6 +36,11 @@ workflow FLI_DETECTION {
     if (fli_tools.contains('jccirc')) {
         JCCIRC(ch_reads, ch_bsj_annotation, ch_bsj_reads, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(JCCIRC.out.versions)
+    }
+
+    if (fli_tools.contains('circtools')) {
+        CIRCTOOLS(ch_bsj_reads, ch_star_bam, ch_gtf)
+        ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
     }
 
     emit:

@@ -1,0 +1,6 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::gtfparse=2.5.0
+- conda-forge::pyyaml=6.0.2

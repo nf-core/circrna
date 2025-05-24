@@ -1,8 +1,8 @@
-process DCC {
+process CIRCTOOLS_DETECT {
     tag "${meta.id}"
     label 'process_high'
 
-    conda "bioconda::circtools=2.0"
+    conda "environment.yml"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
         ? 'https://depot.galaxyproject.org/singularity/circtools:2.0--pyhdfd78af_0'
         : 'biocontainers/circtools:2.0--pyhdfd78af_0'}"
@@ -18,9 +18,6 @@ process DCC {
     tuple val(meta), path("${prefix}_counts.tsv")     , emit: counts
 
     path "versions.yml", emit: versions
-
-    when:
-    task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''

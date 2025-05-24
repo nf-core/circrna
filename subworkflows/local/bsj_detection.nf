@@ -17,7 +17,7 @@ include { CIRCEXPLORER2                                  } from './detection_too
 include { CIRCRNA_FINDER                                 } from './detection_tools/circrna_finder'
 include { FIND_CIRC                                      } from './detection_tools/find_circ'
 include { CIRI                                           } from './detection_tools/ciri'
-include { DCC                                            } from './detection_tools/dcc'
+include { CIRCTOOLS                                      } from './detection_tools/circtools'
 include { MAPSPLICE                                      } from './detection_tools/mapsplice'
 include { PSIRC                                          } from './detection_tools/psirc'
 include { ANNOTATION as ANNOTATE_COMBINED                } from './annotation'
@@ -48,15 +48,20 @@ workflow BSJ_DETECTION {
     gtf = ch_gtf.map { _meta, gtf -> gtf }
 
     def tools_selected = params.tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools_selected = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
     seq_center = params.seq_center ?: ''
     seq_platform = ''
 
-    if (tools_selected.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
+    if ((tools_selected.intersect(['circexplorer2', 'circrna_finder', 'circtools', 'mapsplice']).size() > 0) || (fli_tools_selected.intersect(['circtools']).size() > 0)) {
         STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform)
         ch_versions = ch_versions.mix(STAR2PASS.out.versions)
+        ch_star_bam = STAR2PASS.out.bam
+    }
+    else {
+        ch_star_bam = Channel.empty()
     }
 
     //
@@ -102,14 +107,15 @@ workflow BSJ_DETECTION {
         ch_ciri_sam = CIRI.out.ciri_sam
         ch_reads_fixed_length = CIRI.out.reads_fixed_length
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI.out.bed)
-    } else {
+    }
+    else {
         ch_reads_fixed_length = Channel.empty()
         ch_ciri_txt = Channel.empty()
         ch_ciri_sam = Channel.empty()
     }
 
-    if (tools_selected.contains('dcc')) {
-        DCC(
+    if (tools_selected.contains('circtools')) {
+        CIRCTOOLS(
             reads,
             ch_fasta,
             ch_gtf,
@@ -120,8 +126,8 @@ workflow BSJ_DETECTION {
             seq_center,
             bsj_reads,
         )
-        ch_versions = ch_versions.mix(DCC.out.versions)
-        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(DCC.out.bed)
+        ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
+        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCTOOLS.out.bed)
     }
 
     if (tools_selected.contains('mapsplice')) {
@@ -143,7 +149,8 @@ workflow BSJ_DETECTION {
         ch_versions = ch_versions.mix(PSIRC.out.versions)
         ch_psirc_bsj = PSIRC.out.output
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
-    } else {
+    }
+    else {
         ch_psirc_bsj = Channel.empty()
     }
 
@@ -159,7 +166,7 @@ workflow BSJ_DETECTION {
     // Analyze read-level agreement
     //
 
-    def tools_with_reads = ["find_circ", "segemehl", "dcc", "ciri"]
+    def tools_with_reads = ["find_circ", "segemehl", "circtools", "ciri"]
     def enabled_tools_with_reads = tools_selected.intersect(tools_with_reads)
 
     ch_bsj_bed_per_sample_tool_reads = ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> tools_with_reads.contains(_meta.tool) }
@@ -171,7 +178,8 @@ workflow BSJ_DETECTION {
         ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
         ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
         ch_bsj_reads = COMBINEBEDS_READS.out.combined
-    } else {
+    }
+    else {
         ch_bsj_reads = ch_bsj_bed_per_sample_tool_reads
     }
 
@@ -265,15 +273,11 @@ workflow BSJ_DETECTION {
     fasta               = ch_bsj_fasta_combined
     bed_reads           = ch_bsj_reads
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
-
-    // For CIRIfull FLI detection
     ciri_txt            = ch_ciri_txt
     ciri_sam            = ch_ciri_sam
     reads_fixed_length  = ch_reads_fixed_length
-
-    // For PSIRC FLI detection
-    psirc_bsj = ch_psirc_bsj
-
+    psirc_bsj           = ch_psirc_bsj
+    star_bam            = ch_star_bam
     multiqc_files       = ch_multiqc_files
     versions            = ch_versions
 }

@@ -1,9 +1,9 @@
 include { STAR2PASS as MATE1_STAR2PASS } from './star2pass'
 include { STAR2PASS as MATE2_STAR2PASS } from './star2pass'
-include { DCC as MAIN                  } from '../../../modules/local/dcc/dcc'
-include { UNIFY                        } from '../../../modules/local/dcc/unify'
+include { CIRCTOOLS_DETECT as DETECT   } from '../../../modules/local/circtools/detect'
+include { UNIFY                        } from '../../../modules/local/circtools/unify'
 
-workflow DCC {
+workflow CIRCTOOLS {
     take:
     reads
     ch_fasta
@@ -74,16 +74,16 @@ workflow DCC {
             return [meta, paired, mate1 ?: [], mate2 ?: []]
         }
 
-    MAIN(ch_combined_junctions, ch_fasta, ch_gtf)
-    ch_versions = ch_versions.mix(MAIN.out.versions)
+    DETECT(ch_combined_junctions, ch_fasta, ch_gtf)
+    ch_versions = ch_versions.mix(DETECT.out.versions)
 
-    UNIFY(MAIN.out.reads
-        .join(MAIN.out.coordinates)
-        .join(MAIN.out.counts)
+    UNIFY(DETECT.out.reads
+        .join(DETECT.out.coordinates)
+        .join(DETECT.out.counts)
     )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    bed      = UNIFY.out.bed.map{ meta, bed -> [meta + [tool: "dcc"], bed] }
+    bed      = UNIFY.out.bed.map{ meta, bed -> [meta + [tool: "circtools"], bed] }
     versions = ch_versions
 }
