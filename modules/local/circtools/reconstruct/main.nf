@@ -18,11 +18,11 @@ process CIRCTOOLS_RECONSTRUCT {
     tuple val(meta), path("${prefix}.mate_status.txt"), emit: mate_status
     tuple val(meta), path("${prefix}.skipped_exons.bed"), emit: skipped_exons_bed
     tuple val(meta), path("${prefix}.skipped_exons.txt"), emit: skipped_exons_txt
-    tuple val(meta), path("${prefix}/*.bam"), emit: bam
-    tuple val(meta), path("${prefix}.coverage_pictures/*.pdf"), emit: coverage_pictures
-    tuple val(meta), path("${prefix}.coverage_profiles/*.txt"), emit: coverage_profiles_txt
-    tuple val(meta), path("${prefix}.coverage_profiles/*.pdf"), emit: coverage_profiles_pdf
-    tuple val(meta), path("${prefix}.coverage_profiles/*.tsv"), emit: coverage_profiles_tsv
+    tuple val(meta), path("${prefix}/*.bam"), emit: bam, optional: true
+    tuple val(meta), path("${prefix}.coverage_pictures/*.pdf"), emit: coverage_pictures, optional: true
+    tuple val(meta), path("${prefix}.coverage_profiles/*.txt"), emit: coverage_profiles_txt, optional: true
+    tuple val(meta), path("${prefix}.coverage_profiles/*.pdf"), emit: coverage_profiles_pdf, optional: true
+    tuple val(meta), path("${prefix}.coverage_profiles/*.tsv"), emit: coverage_profiles_tsv, optional: true
     path "versions.yml", emit: versions
 
     script:

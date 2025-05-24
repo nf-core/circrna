@@ -37,5 +37,7 @@ workflow CIRCTOOLS {
     ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
 
     emit:
+    fasta = BEDTOOLS_GETFASTA.out.fasta
+
     versions = ch_versions
 }
