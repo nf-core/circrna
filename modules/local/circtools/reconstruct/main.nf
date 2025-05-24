@@ -12,6 +12,17 @@ process CIRCTOOLS_RECONSTRUCT {
     tuple val(meta2), path(annotation)
 
     output:
+    tuple val(meta), path("${prefix}.alternative_splicing.txt"), emit: alternative_splicing
+    tuple val(meta), path("${prefix}.exon_counts.bed"), emit: exon_counts_bed
+    tuple val(meta), path("${prefix}.exon_counts.txt"), emit: exon_counts_txt
+    tuple val(meta), path("${prefix}.mate_status.txt"), emit: mate_status
+    tuple val(meta), path("${prefix}.skipped_exons.bed"), emit: skipped_exons_bed
+    tuple val(meta), path("${prefix}.skipped_exons.txt"), emit: skipped_exons_txt
+    tuple val(meta), path("${prefix}/*.bam"), emit: bam
+    tuple val(meta), path("${prefix}.coverage_pictures/*.pdf"), emit: coverage_pictures
+    tuple val(meta), path("${prefix}.coverage_profiles/*.txt"), emit: coverage_profiles_txt
+    tuple val(meta), path("${prefix}.coverage_profiles/*.pdf"), emit: coverage_profiles_pdf
+    tuple val(meta), path("${prefix}.coverage_profiles/*.tsv"), emit: coverage_profiles_tsv
     path "versions.yml", emit: versions
 
     script:
@@ -24,7 +35,7 @@ process CIRCTOOLS_RECONSTRUCT {
         -D ${bed} \
         -J ${junction} \
         -T ./temp \
-        -O ${prefix} \
+        -O . \
         -P ${task.cpus}
 
     cat <<-END_VERSIONS > versions.yml
