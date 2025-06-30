@@ -188,37 +188,38 @@ workflow CIRCRNA {
 
         ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
-    }
+        //
+        // 5. miRNA prediction
+        //
 
-    //
-    // 5. miRNA prediction
-    //
+        if (params.mature) {
+            MIRNA_PREDICTION(
+                COMBINE_TRANSCRIPTOMES.out.fasta,
+                BSJ_DETECTION.out.bed12,
+                ch_mature,
+                ch_mirna,
+                QUANTIFICATION.out.circ,
+                QUANTIFICATION.out.rds
+            )
+            ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
+        }
 
-    if (params.mature) {
-        MIRNA_PREDICTION(
-            COMBINE_TRANSCRIPTOMES.out.fasta,
-            BSJ_DETECTION.out.bed12,
-            ch_mature,
-            ch_mirna,
+        //
+        // 6. Statistical tests
+        //
+
+        STATISTICAL_TESTS(
+            QUANTIFICATION.out.gene,
             QUANTIFICATION.out.circ,
-            QUANTIFICATION.out.rds
+            QUANTIFICATION.out.ciriquant,
+            QUANTIFICATION.out.stringtie,
+            ch_phenotype
         )
-        ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
+        ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
+
     }
 
-    //
-    // 6. Statistical tests
-    //
 
-    // STATISTICAL_TESTS(
-    //     QUANTIFICATION.out.gene,
-    //     QUANTIFICATION.out.circ,
-    //     QUANTIFICATION.out.ciriquant,
-    //     QUANTIFICATION.out.stringtie,
-    //     ch_phenotype
-    // )
-// 
-    // ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
 
     //
     // Collate and save software versions
