@@ -11,7 +11,7 @@ process PSIRC_UNIFY {
     tuple val(meta), path(isoforms_tsv)
 
     output:
-    path "${prefix}.bed", emit: bed
+    tuple val(meta), path("${prefix}.bed"), emit: bed
     path "versions.yml", emit: versions
 
     script:
