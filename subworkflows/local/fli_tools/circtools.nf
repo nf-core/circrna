@@ -37,7 +37,8 @@ workflow CIRCTOOLS {
     ch_versions = ch_versions.mix(BEDTOOLS_GETFASTA.out.versions)
 
     emit:
-    fasta = BEDTOOLS_GETFASTA.out.fasta
+    fasta = BEDTOOLS_GETFASTA.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'circtools'], fasta] }
+    bed12 = RECONSTRUCT.out.exon_counts_bed.map{ meta, bed -> [meta + [fli_tool: 'circtools'], bed] }
 
     versions = ch_versions
 }

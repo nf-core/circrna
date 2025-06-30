@@ -54,9 +54,11 @@ workflow CIRIFULL {
     ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
 
     CIRIVIS_UNIFY(CIRI_VIS.out.list)
+    ch_versions = ch_versions.mix(CIRIVIS_UNIFY.out.versions)
 
     emit:
-    fasta = CIRI_VIS.out.fasta
+    fasta = CIRI_VIS.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'cirifull'], fasta] }
+    bed12 = CIRIVIS_UNIFY.out.bed.map{ meta, bed -> [meta + [fli_tool: 'cirifull'], bed] }
 
     versions = ch_versions
 }

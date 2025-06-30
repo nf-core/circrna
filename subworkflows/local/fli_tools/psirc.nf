@@ -20,7 +20,8 @@ workflow PSIRC {
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    fasta = FLI.out.fasta
+    fasta = FLI.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'psirc'], fasta] }
+    bed12 = UNIFY.out.bed.map{ meta, bed -> [meta + [fli_tool: 'psirc'], bed] }
 
     versions = ch_versions
 }
