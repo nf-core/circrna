@@ -5,6 +5,7 @@ include { CIRIFULL_RO2 as RO2      } from '../../../modules/local/cirifull/ro2'
 include { CIRIFULL_MERGE as MERGE  } from '../../../modules/local/cirifull/merge'
 include { BUILD_LIST               } from '../../../modules/local/ciri/build_list'
 include { CIRI_CIRIVIS as CIRI_VIS } from '../../../modules/local/ciri/cirivis'
+include { CIRIVIS_UNIFY            } from '../../../modules/local/ciri/cirivis_unify'
 
 workflow CIRIFULL {
     take:
@@ -51,6 +52,8 @@ workflow CIRIFULL {
 
     CIRI_VIS(ch_grouped, ch_fasta)
     ch_versions = ch_versions.mix(CIRI_VIS.out.versions)
+
+    CIRIVIS_UNIFY(CIRI_VIS.out.list)
 
     emit:
     fasta = CIRI_VIS.out.fasta
