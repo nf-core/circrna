@@ -22,18 +22,19 @@ def psirc_to_bed12(df):
         except:
             continue  # Skip malformed entries
         
-        # Handle score - use back_splice_junction_read_count if available, otherwise 0
+        # Handle score - use back_splice_junction_read_count if available and numeric, otherwise skip row
         score = 0
-        if (not pd.isna(row['back_splice_junction_read_count']) and 
-            row['back_splice_junction_read_count'] != '.'):
-            try:
-                score = int(float(row['back_splice_junction_read_count']))
-            except:
-                score = 0
-        
+        bsj = row['back_splice_junction_read_count']
+        if pd.isna(bsj) or bsj == '.':
+            continue
+        try:
+            score = int(float(bsj))
+        except (ValueError, TypeError):
+            continue  # Skip this row if not numeric
+
         # PSI-RC doesn't have detailed exon structure, so create single block
         block_size = end - start
-        
+
         # Create BED12 row
         bed12_data.append([
             chr_part,                    # chrom
