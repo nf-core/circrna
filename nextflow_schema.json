@@ -63,6 +63,12 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "longread": {
+                    "type": "boolean",
+                    "description": "Whether to use long read data.",
+                    "default": false,
+                    "fa_icon": "fas fa-long-read"
                 }
             }
         },

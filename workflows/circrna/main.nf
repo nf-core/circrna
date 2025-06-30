@@ -15,6 +15,7 @@ include { COMBINE_TRANSCRIPTOMES           } from '../../subworkflows/local/comb
 include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
 include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
 include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
+include { LONGREAD                         } from '../../subworkflows/local/longread'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,90 +94,101 @@ workflow CIRCRNA {
     psirc_index         = PREPARE_GENOME.out.psirc
     ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
 
-    // MODULE: Run FastQC, trimgalore!
-    FASTQC_TRIMGALORE (
-        ch_cat_fastq,
-        params.skip_fastqc,
-        params.skip_trimming
-    )
-    ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
 
-    //
-    // 2. BSJ Discovery
-    //
 
-    BSJ_DETECTION(
-        FASTQC_TRIMGALORE.out.reads,
-        ch_fasta,
-        ch_gtf,
-        ch_blacklist,
-        ch_annotation,
-        bowtie_index,
-        bowtie2_index,
-        bwa_index,
-        chromosomes,
-        star_index,
-        circexplorer2_index,
-        psirc_index,
-        params.bsj_reads
-    )
+    if (params.longread) {
+        LONGREAD(
+            ch_cat_fastq,
+            "hg38"
+        )
+        ch_versions = ch_versions.mix(LONGREAD.out.versions)
+    } else {
+        // MODULE: Run FastQC, trimgalore!
+        FASTQC_TRIMGALORE (
+            ch_cat_fastq,
+            params.skip_fastqc,
+            params.skip_trimming
+        )
+        ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
 
-    ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
-    ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
+        //
+        // 2. BSJ Discovery
+        //
 
-    //
-    // 3. FLI Detection
-    //
+        BSJ_DETECTION(
+            FASTQC_TRIMGALORE.out.reads,
+            ch_fasta,
+            ch_gtf,
+            ch_blacklist,
+            ch_annotation,
+            bowtie_index,
+            bowtie2_index,
+            bwa_index,
+            chromosomes,
+            star_index,
+            circexplorer2_index,
+            psirc_index,
+            params.bsj_reads
+        )
 
-    FLI_DETECTION(
-        FASTQC_TRIMGALORE.out.reads,
-        BSJ_DETECTION.out.reads_fixed_length,
-        ch_fasta,
-        ch_gtf,
-        bwa_index,
-        BSJ_DETECTION.out.ciri_txt,
-        BSJ_DETECTION.out.ciri_sam,
-        BSJ_DETECTION.out.bed12,
-        BSJ_DETECTION.out.bed_reads,
-        psirc_index,
-        BSJ_DETECTION.out.psirc_bsj,
-        BSJ_DETECTION.out.star_bam,
-        BSJ_DETECTION.out.star_junction,
-        BSJ_DETECTION.out.bed_per_sample
-    )
-    ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
+        ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
+        ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
-    COMBINE_TRANSCRIPTOMES(
-        ch_fasta,
-        ch_gtf,
-        BSJ_DETECTION.out.gtf
-    )
+        //
+        // 3. FLI Detection
+        //
 
-    ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
+        FLI_DETECTION(
+            FASTQC_TRIMGALORE.out.reads,
+            BSJ_DETECTION.out.reads_fixed_length,
+            ch_fasta,
+            ch_gtf,
+            bwa_index,
+            BSJ_DETECTION.out.ciri_txt,
+            BSJ_DETECTION.out.ciri_sam,
+            BSJ_DETECTION.out.bed12,
+            BSJ_DETECTION.out.bed_reads,
+            psirc_index,
+            BSJ_DETECTION.out.psirc_bsj,
+            BSJ_DETECTION.out.star_bam,
+            BSJ_DETECTION.out.star_junction,
+            BSJ_DETECTION.out.bed_per_sample
+        )
+        ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
-    //
-    // 4. circRNA quantification
-    //
+        COMBINE_TRANSCRIPTOMES(
+            ch_fasta,
+            ch_gtf,
+            BSJ_DETECTION.out.gtf
+        )
 
-    QUANTIFICATION(
-        FASTQC_TRIMGALORE.out.reads,
-        ch_gtf,
-        ch_fasta,
-        COMBINE_TRANSCRIPTOMES.out.fasta,
-        COMBINE_TRANSCRIPTOMES.out.gtf,
-        BSJ_DETECTION.out.bed12,
-        BSJ_DETECTION.out.gtf,
-        BSJ_DETECTION.out.bed_per_sample_tool,
-        params.bootstrap_samples,
-        ch_phenotype,
-        PREPARE_GENOME.out.faidx,
-        PREPARE_GENOME.out.bwa,
-        PREPARE_GENOME.out.hisat2
-    )
+        ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
 
-    ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
+        //
+        // 4. circRNA quantification
+        //
+
+        QUANTIFICATION(
+            FASTQC_TRIMGALORE.out.reads,
+            ch_gtf,
+            ch_fasta,
+            COMBINE_TRANSCRIPTOMES.out.fasta,
+            COMBINE_TRANSCRIPTOMES.out.gtf,
+            BSJ_DETECTION.out.bed12,
+            BSJ_DETECTION.out.gtf,
+            BSJ_DETECTION.out.bed_per_sample_tool,
+            params.bootstrap_samples,
+            ch_phenotype,
+            PREPARE_GENOME.out.faidx,
+            PREPARE_GENOME.out.bwa,
+            PREPARE_GENOME.out.hisat2
+        )
+
+        ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
+
+    }
 
     //
     // 5. miRNA prediction
@@ -198,15 +210,15 @@ workflow CIRCRNA {
     // 6. Statistical tests
     //
 
-    STATISTICAL_TESTS(
-        QUANTIFICATION.out.gene,
-        QUANTIFICATION.out.circ,
-        QUANTIFICATION.out.ciriquant,
-        QUANTIFICATION.out.stringtie,
-        ch_phenotype
-    )
-
-    ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
+    // STATISTICAL_TESTS(
+    //     QUANTIFICATION.out.gene,
+    //     QUANTIFICATION.out.circ,
+    //     QUANTIFICATION.out.ciriquant,
+    //     QUANTIFICATION.out.stringtie,
+    //     ch_phenotype
+    // )
+// 
+    // ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
 
     //
     // Collate and save software versions

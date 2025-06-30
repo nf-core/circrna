@@ -194,10 +194,17 @@ def validateInputSamplesheet(input) {
 
     def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
 
-    if (fli_tools.size() > 0) {
+    if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }
         if (!all_paired_end) {
             error("Please check input samplesheet -> All samples must be paired-end when fli_tools is not empty.")
+        }
+    }
+
+    if (params.longread) {
+        def all_single_end = metas.every{ meta -> meta.single_end == true }
+        if (!all_single_end) {
+            error("Please check input samplesheet -> All samples must be single-end when longread is true.")
         }
     }
 
