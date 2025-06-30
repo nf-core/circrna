@@ -1,4 +1,5 @@
-include { PSIRC_FLI as FLI } from '../../../modules/local/psirc/fli'
+include { PSIRC_FLI as FLI     } from '../../../modules/local/psirc/fli'
+include { PSIRC_UNIFY as UNIFY } from '../../../modules/local/psirc/unify'
 
 workflow PSIRC {
     take:
@@ -14,6 +15,9 @@ workflow PSIRC {
         ch_psirc_index.map { meta, transcriptome, _index -> [meta, transcriptome] },
     )
     ch_versions = ch_versions.mix(FLI.out.versions)
+
+    UNIFY(FLI.out.tsv)
+    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     fasta = FLI.out.fasta
