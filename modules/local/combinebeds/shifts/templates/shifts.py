@@ -4,35 +4,36 @@ import platform
 import base64
 import json
 from itertools import product
+import yaml
 
 import polars as pl
 import altair as alt
 
-def format_yaml_like(data: dict, indent: int = 0) -> str:
-    """Formats a dictionary to a YAML-like string.
+# Versions
 
-    Args:
-        data (dict): The dictionary to format.
-        indent (int): The current indentation level.
+versions = {
+    "${task.process}": {
+        "python": platform.python_version(),
+        "polars": pl.__version__,
+        "altair": alt.__version__
+    }
+}
 
-    Returns:
-        str: A string formatted as YAML.
-    """
-    yaml_str = ""
-    for key, value in data.items():
-        spaces = "  " * indent
-        if isinstance(value, dict):
-            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
-        else:
-            yaml_str += f"{spaces}{key}: {value}\\n"
-    return yaml_str
+with open("versions.yml", "w") as f:
+    f.write(yaml.dump(versions))
+
+# Main
 
 meta_id = "${meta.id}"
 
-df = pl.scan_csv("${beds}".split(" "),
-                    separator="\\t",
-                    has_header=False,
-                    new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
+try:
+    df = pl.scan_csv("${beds}".split(" "),
+                        separator="\\t",
+                        has_header=False,
+                        raise_if_empty=True,
+                        new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
+except pl.exceptions.NoDataError:
+    exit(0)
 
 df = df.group_by("chr", "start", "end", "strand").agg(tools=pl.col("tool").unique(), samples=pl.col("sample").unique())
 
@@ -105,16 +106,3 @@ for metric, title in metrics.items():
 
     with open(f"{metric}.shifts_mqc.json", "w") as f:
         f.write(json.dumps(multiqc, indent=4))
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "altair": alt.__version__
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(format_yaml_like(versions))

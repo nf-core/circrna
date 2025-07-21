@@ -1,27 +1,23 @@
 #!/usr/bin/env python
 
 import platform
+import yaml
 
 import polars as pl
 
-def format_yaml_like(data: dict, indent: int = 0) -> str:
-    """Formats a dictionary to a YAML-like string.
+# Versions
 
-    Args:
-        data (dict): The dictionary to format.
-        indent (int): The current indentation level.
+versions = {
+    "${task.process}": {
+        "python": platform.python_version(),
+        "polars": pl.__version__,
+    }
+}
 
-    Returns:
-        str: A string formatted as YAML.
-    """
-    yaml_str = ""
-    for key, value in data.items():
-        spaces = "  " * indent
-        if isinstance(value, dict):
-            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
-        else:
-            yaml_str += f"{spaces}{key}: {value}\\n"
-    return yaml_str
+with open("versions.yml", "w") as f:
+    f.write(yaml.dump(versions))
+
+# Main
 
 exons_only = bool("${exons_only}")
 
@@ -31,7 +27,12 @@ columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
             'readNumber', 'circType', 'gene', 'transcript',
             'index', 'flankIntron'
             ]
-df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns)
+try:
+    df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns, raise_if_empty=True)
+except pl.exceptions.NoDataError:
+    with open('${prefix}.${suffix}', 'w') as f:
+        f.write('')
+    exit(0)
 
 df = df.with_columns(
     attributes = pl.lit('gene_id "') + pl.col('gene') + pl.lit('"; transcript_id "') + pl.col('name') + pl.lit('";'),
@@ -77,15 +78,3 @@ df_combined = pl.concat([df_exons, df_cds])
 df_combined = df_combined.sort('chr', 'start', 'end')
 
 df_combined.collect().write_csv('${prefix}.${suffix}', separator='\\t', include_header=False, quote_style="never")
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(format_yaml_like(versions))

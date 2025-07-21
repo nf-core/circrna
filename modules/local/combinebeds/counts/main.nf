@@ -4,8 +4,8 @@ process COMBINEBEDS_COUNTS {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/pandas_polars_pyarrow_upsetplot:8840b96e156438fc' :
-        'community.wave.seqera.io/library/pandas_polars_pyarrow_upsetplot:6982d93f61d3e2ff' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/78/785e4d9624ef7fb24cfee74f815d3e69540e99e0ae299cbd333e047e08706f7e/data' :
+        'community.wave.seqera.io/library/polars_pyyaml:e53e9c9a38a99374' }"
 
     input:
     tuple val(meta), val(aggregation), path(candidates), path(beds)
