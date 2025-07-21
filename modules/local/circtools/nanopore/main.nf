@@ -18,10 +18,8 @@ process CIRCTOOLS_NANOPORE {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p ${prefix}
-
     mkdir -p temp
-    export TMPDIR=./temp
+    export TMPDIR="\$(pwd)/temp"
 
     circtools nanopore \
         -r \
