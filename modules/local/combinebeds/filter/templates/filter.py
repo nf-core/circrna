@@ -98,14 +98,20 @@ for col in ["samples", "tools"]:
         continue
     memberships = series.to_list()
     dataset = upsetplot.from_memberships(memberships)
+
+    n_combinations = 50
+
+    # Limit to top n_combinations largest combinations if there are more than n_combinations
+    if len(dataset) > n_combinations:
+        dataset = dataset.nlargest(n_combinations)
+
     upsetplot.plot(dataset,
                    orientation='horizontal',
                    show_counts=True,
-                   subset_size="count",
-                   min_degree=2,
-                   min_subset_size=min(50, int(n_bsjs * 0.02)))
+                   subset_size="count")
     plot_file = f"{prefix}_{col}.upset.png"
     plt.savefig(plot_file)
+    plt.close()
 
     image_string = base64.b64encode(open(plot_file, "rb").read()).decode("utf-8")
     image_html = f'<div class="mqc-custom-content-image"><img src="data:image/png;base64,{image_string}" /></div>'
