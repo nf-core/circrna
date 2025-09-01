@@ -138,13 +138,11 @@
             "type": "object",
             "fa_icon": "fas fa-circle-notch",
             "description": "Parameters for full-length isoform detection. This can only be used with paired-end reads.",
-            "required": ["fli_tools"],
             "properties": {
                 "fli_tools": {
                     "type": "string",
                     "description": "Comma separated list of FLI detection tools to use. Supported tools: psirc, circtools, cirifull",
-                    "pattern": "^$|^(psirc|circtools|cirifull)(,(psirc|circtools|cirifull))*$",
-                    "default": ""
+                    "pattern": "^(psirc|circtools|cirifull)(,(psirc|circtools|cirifull))*$",
                 }
             }
         },
