@@ -1,5 +1,5 @@
 channels:
-- conda-forge
-- bioconda
+  - conda-forge
+  - bioconda
 dependencies:
-- bioconda::jccirc=1.0.0
+  - bioconda::jccirc=1.0.0
