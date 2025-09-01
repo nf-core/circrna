@@ -4,8 +4,8 @@ process ANNOTATION_BED2GTF {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/polars_pyyaml:153427379c542734' :
-        'community.wave.seqera.io/library/polars_pyyaml:57e6c66da323f22b' }"
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/78/785e4d9624ef7fb24cfee74f815d3e69540e99e0ae299cbd333e047e08706f7e/data' :
+        'community.wave.seqera.io/library/polars_pyyaml:e53e9c9a38a99374' }"
 
     input:
     tuple val(meta), path(bed12), path(db_intersections)

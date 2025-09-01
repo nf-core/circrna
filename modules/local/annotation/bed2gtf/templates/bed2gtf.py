@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import platform
+import yaml
 
 import polars as pl
 import yaml
@@ -25,14 +26,12 @@ columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
             'readNumber', 'circType', 'gene', 'transcript',
             'index', 'flankIntron'
             ]
-
 try:
-    df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns)
+    df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns, raise_if_empty=True)
 except pl.exceptions.NoDataError:
-    print("No data in bed12 file")
-    # Save empty file
-    open('${prefix}.${suffix}', 'w').close()
-    exit()
+    with open('${prefix}.${suffix}', 'w') as f:
+        f.write('')
+    exit(0)
 
 df = df.with_columns(
     attributes = pl.lit('gene_id "') + pl.col('gene') + pl.lit('"; transcript_id "') + pl.col('name') + pl.lit('";'),

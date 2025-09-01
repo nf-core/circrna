@@ -111,12 +111,10 @@ workflow PREPARE_GENOME {
     SAMTOOLS_FAIDX(ch_fasta, [[], []])
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
 
-    ch_circexplorer2_reference = Channel.empty()
-    if (detection_tools.intersect(['circexplorer2', 'mapsplice']).size() > 0) {
-        CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [], false)
-        ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, file -> file }.collect()
-        ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
-    }
+    // Circexplorer2 reference is needed for annotation
+    CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [], false)
+    ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, file -> file }.collect()
+    ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
 
     ch_psirc_index = Channel.empty()
     if (detection_tools.contains('psirc')) {
