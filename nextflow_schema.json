@@ -63,6 +63,12 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "longread": {
+                    "type": "boolean",
+                    "description": "Whether to use long read data.",
+                    "default": false,
+                    "fa_icon": "fas fa-long-read"
                 }
             }
         },
@@ -76,8 +82,8 @@
                 "tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
-                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, circexplorer2, find_circ, circrna_finder, mapsplice, dcc, segemehl",
-                    "pattern": "^(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl)(,(ciriquant|circexplorer2|find_circ|circrna_finder|mapsplice|dcc|segemehl))*$",
+                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciri, circexplorer2, find_circ, circrna_finder, mapsplice, circtools, segemehl",
+                    "pattern": "^(ciri|circexplorer2|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri|circexplorer2|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
                     "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --min_tools",
                     "default": "circexplorer2"
                 },
@@ -122,13 +128,22 @@
                 "exons_only": {
                     "type": "boolean",
                     "description": "Only consider exons for circRNA sequence extraction.",
-                    "help_text": "With single-end reads, we cannot determine the actual full-length isoform (FLI) sequence. Thus, we can either use the entire sequence between the BSJ boundaries or only the exons.",
+                    "help_text": "With single-end reads, we cannot determine the actual full-length isoform (FLI) sequence. Thus, we can either use the entire sequence between the BSJ boundaries or only the exons when creating the FASTA files.",
                     "default": true
-                },
-                "detect_fli": {
-                    "type": "boolean",
-                    "description": "Enable the detection of full-length isoforms (FLI). This requires paired-end reads.",
-                    "default": true
+                }
+            }
+        },
+        "fli_detection_options": {
+            "title": "FLI Detection Options",
+            "type": "object",
+            "fa_icon": "fas fa-circle-notch",
+            "description": "Parameters for full-length isoform detection. This can only be used with paired-end reads.",
+            "properties": {
+                "fli_tools": {
+                    "type": "string",
+                    "description": "Comma separated list of FLI detection tools to use. Supported tools: psirc, circtools, cirifull",
+                    "pattern": "^(psirc|circtools|cirifull)?(,(psirc|circtools|cirifull))*$",
+                    "default": ""
                 }
             }
         },
@@ -618,6 +633,9 @@
         },
         {
             "$ref": "#/$defs/bsj_detection_options"
+        },
+        {
+            "$ref": "#/$defs/fli_detection_options"
         },
         {
             "$ref": "#/$defs/quantification_options"

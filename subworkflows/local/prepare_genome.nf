@@ -10,6 +10,9 @@ include { GAWK as CLEAN_FASTA             } from '../../modules/nf-core/gawk'
 include { SAMTOOLS_FAIDX                  } from '../../modules/nf-core/samtools/faidx'
 include { UCSC_GTFTOGENEPRED              } from '../../modules/nf-core/ucsc/gtftogenepred'
 include { GAWK as CIRCEXPLORER2_REFERENCE } from '../../modules/nf-core/gawk'
+include { GFFREAD                         } from '../../modules/nf-core/gffread'
+include { PSIRC_TRANSCRIPTOME             } from '../../modules/local/psirc/transcriptome'
+include { PSIRC_INDEX                     } from '../../modules/local/psirc/index'
 
 workflow PREPARE_GENOME {
     take:
@@ -67,7 +70,7 @@ workflow PREPARE_GENOME {
     if (params.bwa) {
         ch_bwa = Channel.value([[id: "bwa"], file(params.bwa, checkIfExists: true)])
     }
-    else if (detection_tools.contains('ciriquant')) {
+    else if (detection_tools.contains('ciri')) {
         BWA_INDEX(ch_fasta)
         ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
         ch_bwa = BWA_INDEX.out.index
@@ -80,7 +83,7 @@ workflow PREPARE_GENOME {
     if (params.hisat2) {
         ch_hisat2 = Channel.value([[id: "hisat2"], file(params.hisat2, checkIfExists: true)])
     }
-    else if (detection_tools.contains('ciriquant')) {
+    else if (detection_tools.contains('ciri')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
         ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
@@ -113,6 +116,18 @@ workflow PREPARE_GENOME {
     ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, file -> file }.collect()
     ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
 
+    ch_psirc_index = Channel.empty()
+    if (detection_tools.contains('psirc')) {
+        PSIRC_TRANSCRIPTOME(ch_gtf, ch_fasta)
+        ch_versions = ch_versions.mix(PSIRC_TRANSCRIPTOME.out.versions)
+
+        PSIRC_INDEX(PSIRC_TRANSCRIPTOME.out.transcriptome)
+        ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
+        ch_psirc_index = PSIRC_TRANSCRIPTOME.out.transcriptome.join(
+            PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]]}
+        ).collect()
+    }
+
     emit:
     gtf           = ch_gtf
     faidx         = SAMTOOLS_FAIDX.out.fai
@@ -122,6 +137,7 @@ workflow PREPARE_GENOME {
     hisat2        = ch_hisat2
     star          = ch_star
     circexplorer2 = ch_circexplorer2_reference
+    psirc         = ch_psirc_index
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions

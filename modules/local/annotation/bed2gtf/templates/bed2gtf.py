@@ -4,6 +4,7 @@ import platform
 import yaml
 
 import polars as pl
+import yaml
 
 # Versions
 
@@ -16,8 +17,6 @@ versions = {
 
 with open("versions.yml", "w") as f:
     f.write(yaml.dump(versions))
-
-# Main
 
 exons_only = bool("${exons_only}")
 
@@ -41,8 +40,8 @@ df = df.with_columns(
 
 if exons_only:
     df_exons = df.with_columns(
-        exonSizes = pl.col('exonSizes').str.split(','),
-        exonStarts = pl.col('exonStarts').str.split(',')
+        exonSizes = pl.col('exonSizes').cast(pl.Utf8).str.split(','),
+        exonStarts = pl.col('exonStarts').cast(pl.Utf8).str.split(',')
     ).explode('exonSizes', 'exonStarts')
     df_exons = df_exons.with_columns(
         type = pl.lit('exon'),

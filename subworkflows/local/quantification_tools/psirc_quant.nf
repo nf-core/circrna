@@ -1,6 +1,6 @@
 include { GAWK as MARK_CIRCULAR             } from '../../../modules/nf-core/gawk'
-include { PSIRC_INDEX                       } from '../../../modules/local/psirc/index'
-include { PSIRC_QUANT as RUN_PSIRC_QUANT    } from '../../../modules/local/psirc/quant'
+include { PSIRCQUANT_INDEX as INDEX         } from '../../../modules/local/psircquant/index'
+include { PSIRCQUANT_QUANT as QUANT         } from '../../../modules/local/psircquant/quant'
 include { CUSTOM_TX2GENE                    } from '../../../modules/nf-core/custom/tx2gene'
 include { TXIMETA_TXIMPORT                  } from '../../../modules/nf-core/tximeta/tximport'
 include { TXIMETA_TXIMETA                   } from '../../../modules/local/tximeta/tximeta'
@@ -27,15 +27,15 @@ workflow PSIRC_QUANT {
     MARK_CIRCULAR(ch_transcriptome_fasta, [], false)
     ch_versions = ch_versions.mix(MARK_CIRCULAR.out.versions)
 
-    PSIRC_INDEX(MARK_CIRCULAR.out.output)
-    ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
+    INDEX(MARK_CIRCULAR.out.output)
+    ch_versions = ch_versions.mix(INDEX.out.versions)
 
-    RUN_PSIRC_QUANT(reads, PSIRC_INDEX.out.index.collect(), MARK_CIRCULAR.out.output, ch_faidx, bootstrap_samples)
-    ch_versions = ch_versions.mix(RUN_PSIRC_QUANT.out.versions)
+    QUANT(reads, INDEX.out.index.collect(), MARK_CIRCULAR.out.output, ch_faidx, bootstrap_samples)
+    ch_versions = ch_versions.mix(QUANT.out.versions)
 
     CUSTOM_TX2GENE(
         ch_transcriptome_gtf,
-        RUN_PSIRC_QUANT.out.directory.map { _meta, quant -> quant }.collect().map { [[id: "quant"], it] },
+        QUANT.out.directory.map { _meta, quant -> quant }.collect().map { [[id: "quant"], it] },
         "kallisto",
         "gene_id",
         "gene_name",
@@ -43,13 +43,13 @@ workflow PSIRC_QUANT {
     ch_versions = ch_versions.mix(CUSTOM_TX2GENE.out.versions)
 
     TXIMETA_TXIMETA(
-        RUN_PSIRC_QUANT.out.directory,
+        QUANT.out.directory,
         "kallisto",
     )
     ch_versions = ch_versions.mix(TXIMETA_TXIMETA.out.versions)
 
     TXIMETA_TXIMPORT(
-        RUN_PSIRC_QUANT.out.directory,
+        QUANT.out.directory,
         CUSTOM_TX2GENE.out.tx2gene,
         "kallisto",
     )
