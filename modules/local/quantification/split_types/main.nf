@@ -13,7 +13,7 @@ process SPLIT_TYPES {
     output:
     tuple val(meta), path("linear.tsv")  , emit: linear
     tuple val(meta), path("circular.tsv"), emit: circular
-    path "versions.yml"                   , emit: versions
+    path "versions.yml"                  , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,7 +22,7 @@ process SPLIT_TYPES {
     """
     awk -F'\\t' \\
         'NR==1 {print > "circular.tsv"; print > "linear.tsv"} \\
-        NR>1 {if (\$1 ~ /^circ_/) print > "circular.tsv"; else print > "linear.tsv"}' ${input}
+        NR>1 {if (\$1 ~ /^.+:[0-9]+-[0-9]+(:[+-])?/) print > "circular.tsv"; else print > "linear.tsv"}' ${input}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
