@@ -115,10 +115,6 @@ workflow PIPELINE_INITIALISATION {
         .map { samplesheet ->
             validateInputSamplesheet(samplesheet)
         }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
         .set { ch_samplesheet }
 
     emit:
@@ -184,6 +180,27 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     genomeExistsError()
+
+    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+    def bsj_tools = params.tools.split(',').collect { it.trim().toLowerCase() }
+
+    if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
+        error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
+    }
+
+    if (fli_tools.contains('cirifull') && !bsj_tools.contains('ciri')) {
+        error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI must also be selected for BSJ detection.")
+    }
+
+    def tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    def enabled_bsj_tools_with_reads = bsj_tools.intersect(tools_with_reads)
+    if (fli_tools.contains('jccirc') && enabled_bsj_tools_with_reads.size() == 0) {
+        error("Please check input parameters -> If jccirc is selected for FLI detection, at least one BSJ detection tool that supports read-level detection (${tools_with_reads.join(', ')}) must also be selected.")
+    }
+
+    if (params.min_tools > bsj_tools.size()) {
+        error("Please check input parameters -> The minimum number of tools required for BSJ detection (${params.min_tools}) must be less than or equal to the number of BSJ detection tools selected (${bsj_tools.size()}).")
+    }
 }
 
 //
@@ -196,6 +213,28 @@ def validateInputSamplesheet(input) {
     def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
     if (!endedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+    }
+
+    // Check that multiple runs of the same sample are of the same strandedness i.e. auto / unstranded / forward / reverse
+    def strandedness_ok = metas.collect{ it.strandedness }.unique().size == 1
+    if (!strandedness_ok) {
+        error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
+    }
+
+    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+
+    if (!params.longread && fli_tools.size() > 0) {
+        def all_paired_end = metas.every{ meta -> meta.single_end == false }
+        if (!all_paired_end) {
+            error("Please check input samplesheet -> All samples must be paired-end when fli_tools is not empty.")
+        }
+    }
+
+    if (params.longread) {
+        def all_single_end = metas.every{ meta -> meta.single_end == true }
+        if (!all_single_end) {
+            error("Please check input samplesheet -> All samples must be single-end when longread is true.")
+        }
     }
 
     return [ metas[0], fastqs ]

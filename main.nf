@@ -15,7 +15,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CIRCRNA  } from './workflows/circrna'
+include { samplesheetToList       } from 'plugin/nf-schema'
+include { CIRCRNA                 } from './workflows/circrna'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circrna_pipeline'
@@ -26,10 +27,14 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+params.fasta     = getGenomeAttribute('fasta')
+params.gtf       = getGenomeAttribute('gtf')
+params.bwa       = getGenomeAttribute('bwa')
+params.star      = getGenomeAttribute('star')
+params.bowtie    = getGenomeAttribute('bowtie')
+params.bowtie2   = getGenomeAttribute('bowtie2')
+params.mature    = getGenomeAttribute('mature')
+params.blacklist = getGenomeAttribute('blacklist')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,21 +46,44 @@ params.fasta = getGenomeAttribute('fasta')
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_CIRCRNA {
-
     take:
-    samplesheet // channel: samplesheet read in from --input
+    ch_samplesheet
 
     main:
 
+    ch_versions = Channel.empty()
+
     //
-    // WORKFLOW: Run pipeline
+    // WORKFLOW: Run nf-core/circrna workflow
     //
-    CIRCRNA (
-        samplesheet
+    ch_fasta = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
+    ch_gtf = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
+    ch_blacklist = params.blacklist ? Channel.value(file(params.blacklist, checkIfExists: true)) : Channel.empty()
+    ch_mature = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : Channel.empty()
+    ch_phenotype = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : Channel.empty()
+    ch_annotation = params.annotation
+        ? Channel.fromList(
+            samplesheetToList(params.annotation, "${projectDir}/assets/schema_annotation.json")
+        )
+        : Channel.empty()
+    ch_mirna = params.mature && params.mirna_expression ? Channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : Channel.empty()
+
+    CIRCRNA(
+        ch_samplesheet,
+        ch_phenotype,
+        ch_fasta,
+        ch_gtf,
+        ch_blacklist,
+        ch_mature,
+        ch_annotation,
+        ch_versions,
+        ch_mirna,
     )
+
     emit:
     multiqc_report = CIRCRNA.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW

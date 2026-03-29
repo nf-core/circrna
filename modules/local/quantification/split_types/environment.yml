@@ -1,0 +1,6 @@
+name: split_types
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - gawk=5.1.0
