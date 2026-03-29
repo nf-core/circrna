@@ -30,7 +30,7 @@ workflow CIRCRNA {
     FASTQC (
         ch_samplesheet
     )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{ _meta, zip -> zip })
 
     //
     // Collate and save software versions

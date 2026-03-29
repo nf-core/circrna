@@ -10,7 +10,7 @@ workflow QUANTIFICATION {
     ch_transcriptome_fasta
     ch_transcriptome_gtf
     circ_annotation_bed
-    circ_annotation_gtf
+    _circ_annotation_gtf
     ch_bsj_bed_per_sample_tool
     bootstrap_samples
     ch_phenotype
@@ -26,7 +26,7 @@ workflow QUANTIFICATION {
     ch_stringtie = channel.empty()
     ch_rds = channel.empty()
 
-    tools_selected = params.quantification_tools.split(',').collect { it.trim().toLowerCase() }
+    tools_selected = params.quantification_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
     if (tools_selected.size() == 0) {
         error('No tools selected for circRNA quantification.')
     }

@@ -88,7 +88,6 @@ workflow CIRCRNA {
     bowtie2_index       = PREPARE_GENOME.out.bowtie2
     bwa_index           = PREPARE_GENOME.out.bwa
     chromosomes         = PREPARE_GENOME.out.chromosomes
-    hisat2_index        = PREPARE_GENOME.out.hisat2
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
     star_index          = PREPARE_GENOME.out.star
     psirc_index         = PREPARE_GENOME.out.psirc
@@ -110,8 +109,8 @@ workflow CIRCRNA {
             params.skip_trimming
         )
         ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
 
         //
         // 2. BSJ Discovery
@@ -238,16 +237,17 @@ workflow CIRCRNA {
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 
     MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+        ch_multiqc_files.collect()
+            .combine(ch_multiqc_config.toList())
+            .combine(ch_multiqc_custom_config.toList())
+            .combine(ch_multiqc_logo.toList())
+            .map { files, config, custom_config, logo ->
+                [ [id: "multiqc"], files, config + custom_config, logo, [], [] ]
+            }
     )
 
     emit:
-    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 

@@ -28,10 +28,10 @@ workflow PIPELINE_INITIALISATION {
     take:
     version           // boolean: Display version and exit
     validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
-    monochrome_logs   // boolean: Do not use coloured log outputs
+    _monochrome_logs  // boolean: Do not use coloured log outputs
     nextflow_cli_args //   array: List of positional nextflow CLI args
     outdir            //  string: The output directory where the results will be saved
-    input             //  string: Path to input samplesheet
+    _input            //  string: Path to input samplesheet
     help              // boolean: Display help message and exit
     help_full         // boolean: Show the full help message
     show_hidden       // boolean: Show hidden parameters in the help message
@@ -135,7 +135,7 @@ workflow PIPELINE_COMPLETION {
     plaintext_email // boolean: Send plain-text email instead of HTML
     outdir          //    path: Path to output directory where results will be published
     monochrome_logs // boolean: Disable ANSI colour codes in log output
-    hook_url        //  string: hook URL for notifications
+    _hook_url       //  string: hook URL for notifications (currently unused)
     multiqc_report  //  string: Path to MultiQC report
 
     main:
@@ -177,8 +177,8 @@ workflow PIPELINE_COMPLETION {
 def validateInputParameters() {
     genomeExistsError()
 
-    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
-    def bsj_tools = params.tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
+    def bsj_tools = params.tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
         error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
@@ -212,12 +212,12 @@ def validateInputSamplesheet(input) {
     }
 
     // Check that multiple runs of the same sample are of the same strandedness i.e. auto / unstranded / forward / reverse
-    def strandedness_ok = metas.collect{ it.strandedness }.unique().size == 1
+    def strandedness_ok = metas.collect{ meta -> meta.strandedness }.unique().size == 1
     if (!strandedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
     }
 
-    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }

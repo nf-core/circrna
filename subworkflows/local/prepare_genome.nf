@@ -22,7 +22,7 @@ workflow PREPARE_GENOME {
     main:
     ch_versions = channel.empty()
 
-    detection_tools = params.tools.split(',').collect { it.trim().toLowerCase() }
+    detection_tools = params.tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file

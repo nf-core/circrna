@@ -16,7 +16,7 @@ workflow CIRI {
     main:
     ch_versions = channel.empty()
 
-    def cirifull_enabled = params.fli_tools.split(',').collect { it.trim() }.contains('cirifull')
+    def cirifull_enabled = params.fli_tools.split(',').collect { tool -> tool.trim() }.contains('cirifull')
 
     if (cirifull_enabled) {
         // CIRI-full requires all reads to have the same length

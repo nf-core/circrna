@@ -47,8 +47,8 @@ workflow BSJ_DETECTION {
     fasta = ch_fasta.map { _meta, fasta -> fasta }
     gtf = ch_gtf.map { _meta, gtf -> gtf }
 
-    def tools_selected = params.tools.split(',').collect { it.trim().toLowerCase() }
-    def fli_tools_selected = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+    def tools_selected = params.tools.split(',').collect { tool -> tool.trim().toLowerCase() }
+    def fli_tools_selected = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true

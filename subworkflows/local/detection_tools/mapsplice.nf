@@ -6,11 +6,11 @@ workflow MAPSPLICE {
     take:
     reads
     gtf
-    fasta
+    _fasta
     bowtie_index
     chromosomes
-    star_junctions
-    circexplorer2_index
+    _star_junctions
+    _circexplorer2_index
 
     main:
     ch_versions = channel.empty()

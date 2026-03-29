@@ -10,7 +10,7 @@ include { MAJORITY_VOTE                   } from '../../../modules/local/majorit
 workflow MIRNA_BINDINGSITES {
     take:
     transcriptome_fasta
-    circrna_bed12
+    _circrna_bed12
     mirna_fasta
 
     main:
@@ -20,7 +20,7 @@ workflow MIRNA_BINDINGSITES {
     // miRNAs can potentially bind to circRNAs right at the backsplice site
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA
     // To account for this, the first 25bp of the circRNA are added to the end of the circRNA sequence
-    ADD_BACKSPLICE( transcriptome_fasta )
+    ADD_BACKSPLICE( transcriptome_fasta, "fa" )
     ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     ch_transcriptome_batches = ADD_BACKSPLICE.out.output
@@ -30,7 +30,7 @@ workflow MIRNA_BINDINGSITES {
     //
     // MIRNA PREDICTION TOOLS:
     //
-    tools_selected = params.mirna_tools.split(',').collect{it.trim().toLowerCase()}
+    tools_selected = params.mirna_tools.split(',').collect{ tool -> tool.trim().toLowerCase() }
 
     if (tools_selected.size() == 0) {
         error 'No tools selected for miRNA discovery.'
@@ -75,7 +75,7 @@ workflow MIRNA_BINDINGSITES {
     //
     // MAJORITY VOTING:
     //
-    MAJORITY_VOTE( ch_predictions.map{_meta, file -> file}.collect().map{[[id: "mirna"], it]} )
+    MAJORITY_VOTE( ch_predictions.map{ _meta, file -> file }.collect().map{ files -> [[id: "mirna"], files] } )
     ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
 
     emit:
@@ -106,6 +106,6 @@ def formatMiRNAForTargetScan(ch_mature) {
         }
         .collectFile(name: 'mature.txt')
 
-    ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { [[id: "mature_targetscan"], it] }
+    ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { entry -> [[id: "mature_targetscan"], entry] }
     return ch_targetscan_meta_formatted
 }

@@ -35,7 +35,7 @@ workflow PSIRC_QUANT {
 
     CUSTOM_TX2GENE(
         ch_transcriptome_gtf,
-        QUANT.out.directory.map { _meta, quant -> quant }.collect().map { [[id: "quant"], it] },
+        QUANT.out.directory.map { _meta, quant -> quant }.collect().map { quants -> [[id: "quant"], quants] },
         "kallisto",
         "gene_id",
         "gene_name",
@@ -56,22 +56,22 @@ workflow PSIRC_QUANT {
     ch_versions = ch_versions.mix(TXIMETA_TXIMPORT.out.versions)
 
     JOIN_GENE_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_gene.map { _meta, counts -> counts }.collect().map { [[id: "gene_counts"], it] }
+        TXIMETA_TXIMPORT.out.counts_gene.map { _meta, counts -> counts }.collect().map { counts -> [[id: "gene_counts"], counts] }
     )
     ch_versions = ch_versions.mix(JOIN_GENE_COUNTS.out.versions)
 
     JOIN_GENE_TPM(
-        TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, tpm -> tpm }.collect().map { [[id: "gene_tpm"], it] }
+        TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "gene_tpm"], tpms] }
     )
     ch_versions = ch_versions.mix(JOIN_GENE_TPM.out.versions)
 
     JOIN_TX_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_transcript.map { _meta, counts -> counts }.collect().map { [[id: "tx_counts"], it] }
+        TXIMETA_TXIMPORT.out.counts_transcript.map { _meta, counts -> counts }.collect().map { counts -> [[id: "tx_counts"], counts] }
     )
     ch_versions = ch_versions.mix(JOIN_TX_COUNTS.out.versions)
 
     JOIN_TX_TPM(
-        TXIMETA_TXIMPORT.out.tpm_transcript.map { _meta, tpm -> tpm }.collect().map { [[id: "tx_tpm"], it] }
+        TXIMETA_TXIMPORT.out.tpm_transcript.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "tx_tpm"], tpms] }
     )
     ch_versions = ch_versions.mix(JOIN_TX_TPM.out.versions)
 
@@ -86,7 +86,7 @@ workflow PSIRC_QUANT {
     ch_versions = ch_versions.mix(SPLIT_TYPES_TPM.out.versions)
 
     MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect().map { [[id: "experiments"], it] },
+        TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect().map { ses -> [[id: "experiments"], ses] },
         ch_phenotype.ifEmpty([[], []]),
         ch_transcriptome_gtf,
         JOIN_TX_TPM.out.csv,

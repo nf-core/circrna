@@ -3,9 +3,9 @@ include { GAWK as UNIFY                        } from '../../../modules/nf-core/
 
 workflow CIRCEXPLORER2 {
     take:
-    fasta
+    _fasta
     star_junctions
-    circexplorer2_index
+    _circexplorer2_index
 
     main:
     ch_versions = channel.empty()
