@@ -25,7 +25,6 @@ workflow PSIRC_QUANT {
     ch_versions = channel.empty()
 
     MARK_CIRCULAR(ch_transcriptome_fasta, [], false)
-    ch_versions = ch_versions.mix(MARK_CIRCULAR.out.versions)
 
     INDEX(MARK_CIRCULAR.out.output)
     ch_versions = ch_versions.mix(INDEX.out.versions)
@@ -40,7 +39,6 @@ workflow PSIRC_QUANT {
         "gene_id",
         "gene_name",
     )
-    ch_versions = ch_versions.mix(CUSTOM_TX2GENE.out.versions)
 
     TXIMETA_TXIMETA(
         QUANT.out.directory,
@@ -53,27 +51,22 @@ workflow PSIRC_QUANT {
         CUSTOM_TX2GENE.out.tx2gene,
         "kallisto",
     )
-    ch_versions = ch_versions.mix(TXIMETA_TXIMPORT.out.versions)
 
     JOIN_GENE_COUNTS(
         TXIMETA_TXIMPORT.out.counts_gene.map { _meta, counts -> counts }.collect().map { counts -> [[id: "gene_counts"], counts] }
     )
-    ch_versions = ch_versions.mix(JOIN_GENE_COUNTS.out.versions)
 
     JOIN_GENE_TPM(
         TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "gene_tpm"], tpms] }
     )
-    ch_versions = ch_versions.mix(JOIN_GENE_TPM.out.versions)
 
     JOIN_TX_COUNTS(
         TXIMETA_TXIMPORT.out.counts_transcript.map { _meta, counts -> counts }.collect().map { counts -> [[id: "tx_counts"], counts] }
     )
-    ch_versions = ch_versions.mix(JOIN_TX_COUNTS.out.versions)
 
     JOIN_TX_TPM(
         TXIMETA_TXIMPORT.out.tpm_transcript.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "tx_tpm"], tpms] }
     )
-    ch_versions = ch_versions.mix(JOIN_TX_TPM.out.versions)
 
     SPLIT_TYPES_COUNTS(
         JOIN_TX_COUNTS.out.csv

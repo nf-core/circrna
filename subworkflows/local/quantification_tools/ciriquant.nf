@@ -23,7 +23,6 @@ workflow CIRIQUANT {
     ch_versions = ch_versions.mix(EXTRACT_CIRC.out.versions)
 
     EXTRACT_GENES( MAIN.out.gene_list, [], false )
-    ch_versions = ch_versions.mix(EXTRACT_GENES.out.versions)
 
     JOIN_GENE(
         EXTRACT_GENES.out.output.map{meta, table -> [[id: 'gene'], meta.id, table]}.groupTuple()

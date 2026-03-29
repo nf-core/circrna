@@ -17,7 +17,6 @@ workflow PSIRC {
         [],
         false,
     )
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed      = UNIFY.out.output

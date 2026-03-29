@@ -21,7 +21,6 @@ workflow MIRNA_BINDINGSITES {
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA
     // To account for this, the first 25bp of the circRNA are added to the end of the circRNA sequence
     ADD_BACKSPLICE( transcriptome_fasta, "fa" )
-    ch_versions = ch_versions.mix(ADD_BACKSPLICE.out.versions)
 
     ch_transcriptome_batches = ADD_BACKSPLICE.out.output
         .splitFasta(by: 100, file: true)
@@ -44,7 +43,6 @@ workflow MIRNA_BINDINGSITES {
         UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [], false )
 
         ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
-        ch_versions = ch_versions.mix(UNIFY_TARGETSCAN.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
     }
 
@@ -56,7 +54,6 @@ workflow MIRNA_BINDINGSITES {
         UNIFY_MIRANDA( MIRANDA.out.txt, [], false )
 
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
-        ch_versions = ch_versions.mix(UNIFY_MIRANDA.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
     }
 

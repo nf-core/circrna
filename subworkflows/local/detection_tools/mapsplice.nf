@@ -21,8 +21,6 @@ workflow MAPSPLICE {
         [ meta + [tool: "mapsplice"], bed ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
-    ch_versions = ch_versions.mix(PARSE.out.versions)
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed = UNIFY.out.output

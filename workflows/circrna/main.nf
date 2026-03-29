@@ -74,7 +74,6 @@ workflow CIRCRNA {
             ch_fastq.single
         )
         .set { ch_cat_fastq }
-    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
 
     // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.
@@ -236,13 +235,23 @@ workflow CIRCRNA {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 
+    ch_multiqc_config_files = ch_multiqc_config
+        .mix(ch_multiqc_custom_config)
+        .collect()
+        .map { configs -> [configs] }   // double-wrap so combine appends [configs] as one element
+
+    ch_multiqc_logo_files = ch_multiqc_logo
+        .collect()
+        .map { logos -> [logos] }       // double-wrap so combine appends [logos] as one element
+
     MULTIQC (
-        ch_multiqc_files.collect()
-            .combine(ch_multiqc_config.toList())
-            .combine(ch_multiqc_custom_config.toList())
-            .combine(ch_multiqc_logo.toList())
-            .map { files, config, custom_config, logo ->
-                [ [id: "multiqc"], files, config + custom_config, logo, [], [] ]
+        ch_multiqc_files
+            .collect()
+            .map { files -> [[id: "multiqc"], files] }
+            .combine(ch_multiqc_config_files)
+            .combine(ch_multiqc_logo_files)
+            .map { meta, files, configs, logos ->
+                [meta, files, configs, logos, [], []]
             }
     )
 

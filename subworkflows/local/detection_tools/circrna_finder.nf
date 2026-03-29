@@ -18,7 +18,6 @@ workflow CIRCRNA_FINDER {
     ch_versions = ch_versions.mix(MAIN.out.versions)
 
     UNIFY( MAIN.out.results, [], false )
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed = UNIFY.out.output
