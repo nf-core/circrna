@@ -4,7 +4,7 @@ Changes in component 'nf-core/bwa/mem'
 Changes in 'bwa/mem/main.nf':
 --- modules/nf-core/bwa/mem/main.nf
 +++ modules/nf-core/bwa/mem/main.nf
-@@ -15,6 +15,7 @@
+@@ -16,6 +16,7 @@
  
      output:
      tuple val(meta), path("*.bam")  , emit: bam,    optional: true
@@ -12,17 +12,23 @@ Changes in 'bwa/mem/main.nf':
      tuple val(meta), path("*.cram") , emit: cram,   optional: true
      tuple val(meta), path("*.csi")  , emit: csi,    optional: true
      tuple val(meta), path("*.crai") , emit: crai,   optional: true
-@@ -42,8 +43,7 @@
+@@ -44,7 +45,7 @@
          $args \\
          -t $task.cpus \\
          \$INDEX \\
 -        $reads \\
 -        | samtools $samtools_command $args2 ${reference} --threads $task.cpus -o ${prefix}.${extension} -
-+        $reads > ${prefix}.sam
++        $reads \\
++        > ${prefix}.sam
+     """
  
-     cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
-
-'modules/nf-core/bwa/mem/tests/main.nf.test.snap' is unchanged
-'modules/nf-core/bwa/mem/tests/main.nf.test' is unchanged
+     stub:
+@@ -55,6 +56,7 @@
+                     "bam"
+     """
+     touch ${prefix}.${extension}
++    touch ${prefix}.sam
+     touch ${prefix}.csi
+     touch ${prefix}.crai
+     """
 ************************************************************

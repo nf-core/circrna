@@ -18,7 +18,6 @@ workflow JCCIRC {
         .groupTuple()
         .map{ meta, r -> [meta, r.flatten()] }
     TRINITY(ch_trinity)
-    ch_versions = ch_versions.mix(TRINITY.out.versions)
 
     PREP(
         ch_bsj_annotation.join(ch_bsj_reads)

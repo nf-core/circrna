@@ -52,11 +52,9 @@ workflow BSJ_DETECTION {
 
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
-    seq_center = params.seq_center ?: ''
-    seq_platform = ''
 
     if ((tools_selected.intersect(['circexplorer2', 'circrna_finder', 'circtools', 'mapsplice']).size() > 0) || (fli_tools_selected.intersect(['circtools']).size() > 0)) {
-        STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf, seq_center, seq_platform)
+        STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf)
         ch_versions = ch_versions.mix(STAR2PASS.out.versions)
         ch_star_bam = STAR2PASS.out.bam
     }
@@ -122,8 +120,6 @@ workflow BSJ_DETECTION {
             star_index,
             STAR2PASS.out.junction,
             star_ignore_sjdbgtf,
-            seq_platform,
-            seq_center,
             bsj_reads,
         )
         ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
@@ -158,7 +154,6 @@ workflow BSJ_DETECTION {
 
     if (params.blacklist) {
         BLACKLIST(ch_bsj_bed_per_sample_tool.combine(ch_blacklist), [[], []])
-        ch_versions = ch_versions.mix(BLACKLIST.out.versions)
         ch_bsj_bed_per_sample_tool = BLACKLIST.out.intersect
     }
 
@@ -188,26 +183,22 @@ workflow BSJ_DETECTION {
     //
 
     EXTRACT_COUNTS(ch_bsj_bed_per_sample_tool, [], false)
-    ch_versions = ch_versions.mix(EXTRACT_COUNTS.out.versions)
 
     COMBINE_COUNTS_PER_TOOL(
         EXTRACT_COUNTS.out.output.map { meta, bed -> [[id: meta.tool], bed] }.groupTuple()
     )
-    ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
 
     //
     // APPLY bsj_reads FILTER
     //
 
     ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS(ch_bsj_bed_per_sample_tool, [], false).output
-    ch_versions = ch_versions.mix(FILTER_BSJS.out.versions)
 
     //
     // MERGE BED FILES
     //
 
     BED_ADD_SAMPLE_TOOL(ch_bsj_bed_per_sample_tool_filtered, [], false)
-    ch_versions = ch_versions.mix(BED_ADD_SAMPLE_TOOL.out.versions)
     ch_bsj_bed_per_sample_tool_meta = BED_ADD_SAMPLE_TOOL.out.output
 
     COMBINE_TOOLS_PER_SAMPLE(

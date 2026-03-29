@@ -31,7 +31,6 @@ workflow CIRCRNA {
         ch_samplesheet
     )
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     //
     // Collate and save software versions
@@ -95,15 +94,16 @@ workflow CIRCRNA {
     )
 
     MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+        ch_multiqc_files.collect()
+            .combine(ch_multiqc_config.toList())
+            .combine(ch_multiqc_custom_config.toList())
+            .combine(ch_multiqc_logo.toList())
+            .map { files, config, custom_config, logo ->
+                [ [id: "multiqc"], files, config + custom_config, logo, [], [] ]
+            }
     )
 
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
 }

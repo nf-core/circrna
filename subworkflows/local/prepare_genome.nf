@@ -29,8 +29,6 @@ workflow PREPARE_GENOME {
     if (detection_tools.contains('mapsplice')) {
         CLEAN_FASTA(ch_fasta, [], false)
         ch_fasta = CLEAN_FASTA.out.output
-
-        ch_versions = ch_versions.mix(CLEAN_FASTA.out.versions)
     }
 
     GTFFILTER(ch_gtf, ch_fasta)
@@ -38,7 +36,6 @@ workflow PREPARE_GENOME {
     ch_versions = ch_versions.mix(GTFFILTER.out.versions)
 
     UCSC_GTFTOGENEPRED(ch_gtf)
-    ch_versions = ch_versions.mix(UCSC_GTFTOGENEPRED.out.versions)
 
     SEQKIT_SPLIT(ch_fasta)
     ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions)
@@ -60,7 +57,6 @@ workflow PREPARE_GENOME {
     }
     else if (detection_tools.contains('find_circ')) {
         BOWTIE2_BUILD(ch_fasta)
-        ch_versions = ch_versions.mix(BOWTIE2_BUILD.out.versions)
         ch_bowtie2 = BOWTIE2_BUILD.out.index
     }
     else {
@@ -72,7 +68,6 @@ workflow PREPARE_GENOME {
     }
     else if (detection_tools.contains('ciri')) {
         BWA_INDEX(ch_fasta)
-        ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
         ch_bwa = BWA_INDEX.out.index
     }
     else {
@@ -85,11 +80,9 @@ workflow PREPARE_GENOME {
     }
     else if (detection_tools.contains('ciri')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
-        ch_versions = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
         ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
 
         HISAT2_BUILD(ch_fasta, ch_gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
-        ch_versions = ch_versions.mix(HISAT2_BUILD.out.versions)
         ch_hisat2 = HISAT2_BUILD.out.index
     }
     else {
@@ -101,20 +94,17 @@ workflow PREPARE_GENOME {
     }
     else if (detection_tools.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
         STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
-        ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
         ch_star = STAR_GENOMEGENERATE.out.index
     }
     else {
         ch_star = channel.empty()
     }
 
-    SAMTOOLS_FAIDX(ch_fasta, [[], []])
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+    SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false)
 
     // Circexplorer2 reference is needed for annotation
     CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [], false)
     ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, file -> file }.collect()
-    ch_versions = ch_versions.mix(CIRCEXPLORER2_REFERENCE.out.versions)
 
     ch_psirc_index = channel.empty()
     if (detection_tools.contains('psirc')) {
