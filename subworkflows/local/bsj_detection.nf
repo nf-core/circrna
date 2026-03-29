@@ -41,9 +41,9 @@ workflow BSJ_DETECTION {
     bsj_reads
 
     main:
-    ch_versions = Channel.empty()
-    ch_bsj_bed_per_sample_tool = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_versions = channel.empty()
+    ch_bsj_bed_per_sample_tool = channel.empty()
+    ch_multiqc_files = channel.empty()
     fasta = ch_fasta.map { _meta, fasta -> fasta }
     gtf = ch_gtf.map { _meta, gtf -> gtf }
 
@@ -61,7 +61,7 @@ workflow BSJ_DETECTION {
         ch_star_bam = STAR2PASS.out.bam
     }
     else {
-        ch_star_bam = Channel.empty()
+        ch_star_bam = channel.empty()
     }
 
     //
@@ -109,9 +109,9 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI.out.bed)
     }
     else {
-        ch_reads_fixed_length = Channel.empty()
-        ch_ciri_txt = Channel.empty()
-        ch_ciri_sam = Channel.empty()
+        ch_reads_fixed_length = channel.empty()
+        ch_ciri_txt = channel.empty()
+        ch_ciri_sam = channel.empty()
     }
 
     if (tools_selected.contains('circtools')) {
@@ -151,7 +151,7 @@ workflow BSJ_DETECTION {
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
     }
     else {
-        ch_psirc_bsj = Channel.empty()
+        ch_psirc_bsj = channel.empty()
     }
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
@@ -263,7 +263,7 @@ workflow BSJ_DETECTION {
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
     FAIL_ON_EMPTY(
         ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
-        Channel.empty().mix(ch_bsj_bed12_combined).mix(ch_bsj_bed12_per_sample).mix(ch_bsj_bed12_per_sample_tool).mix(ch_bsj_fasta_combined).mix(ch_bsj_fasta_per_sample).mix(ch_bsj_fasta_per_sample_tool).map { _meta, f -> f }.collect(),
+        channel.empty().mix(ch_bsj_bed12_combined).mix(ch_bsj_bed12_per_sample).mix(ch_bsj_bed12_per_sample_tool).mix(ch_bsj_fasta_combined).mix(ch_bsj_fasta_per_sample).mix(ch_bsj_fasta_per_sample_tool).map { _meta, f -> f }.collect(),
     )
 
     emit:

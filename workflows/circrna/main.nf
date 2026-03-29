@@ -49,7 +49,7 @@ workflow CIRCRNA {
 
     main:
 
-    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = channel.empty()
 
     //
     // 1. Pre-processing
@@ -229,11 +229,11 @@ workflow CIRCRNA {
         .set { ch_collated_versions }
 
     // MultiQC
-    ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo   ? Channel.fromPath(params.multiqc_logo)   : Channel.empty()
+    ch_multiqc_config          = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config) : channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo   ? channel.fromPath(params.multiqc_logo)   : channel.empty()
     summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary      = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_workflow_summary      = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 

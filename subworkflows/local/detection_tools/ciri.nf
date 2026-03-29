@@ -14,7 +14,7 @@ workflow CIRI {
     ch_bwa_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     def cirifull_enabled = params.fli_tools.split(',').collect { it.trim() }.contains('cirifull')
 
@@ -74,6 +74,6 @@ workflow CIRI {
     bed                = UNIFY.out.output
     ciri_txt           = CIRI2.out.txt
     ciri_sam           = BWA_MEM.out.sam
-    reads_fixed_length = cirifull_enabled ? FASTP.out.reads : Channel.empty()
+    reads_fixed_length = cirifull_enabled ? FASTP.out.reads : channel.empty()
     versions           = ch_versions
 }

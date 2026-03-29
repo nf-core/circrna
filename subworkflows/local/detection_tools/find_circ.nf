@@ -15,7 +15,7 @@ workflow FIND_CIRC {
     ch_fasta
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ALIGN( reads, bowtie2_index, ch_fasta, false, true )
     ch_versions = ch_versions.mix(ALIGN.out.versions)

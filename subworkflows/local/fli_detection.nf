@@ -21,10 +21,10 @@ workflow FLI_DETECTION {
     ch_bsj_bed_per_sample
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
-    ch_bed12 = Channel.empty()
-    ch_fasta = Channel.empty()
+    ch_bed12 = channel.empty()
+    ch_fasta = channel.empty()
 
     def fli_tools = params.fli_tools.split(',').collect { it.trim() }
 

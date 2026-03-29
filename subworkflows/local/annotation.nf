@@ -15,7 +15,7 @@ workflow ANNOTATION {
     circexplorer2_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     INGEST_DATABASE_NAMES(ch_annotation, [], false)
     ch_versions = ch_versions.mix(INGEST_DATABASE_NAMES.out.versions)

@@ -8,7 +8,7 @@ workflow PSIRC {
     ch_psirc_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     FLI(
         ch_reads.join(ch_psirc_bsj),

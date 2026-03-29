@@ -7,7 +7,7 @@ workflow PSIRC {
     ch_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     BSJ(ch_reads, ch_index)
     ch_versions = ch_versions.mix(BSJ.out.versions)

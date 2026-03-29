@@ -13,7 +13,7 @@ workflow STATISTICAL_TESTS {
     ch_phenotype
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ch_counts = ch_gene_counts.join(ch_circ_counts)
 

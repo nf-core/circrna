@@ -14,8 +14,8 @@ workflow MIRNA_BINDINGSITES {
     mirna_fasta
 
     main:
-    ch_versions = Channel.empty()
-    ch_predictions = Channel.empty()
+    ch_versions = channel.empty()
+    ch_predictions = channel.empty()
 
     // miRNAs can potentially bind to circRNAs right at the backsplice site
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA

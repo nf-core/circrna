@@ -8,7 +8,7 @@ workflow CIRCRNA_FINDER {
     star_tab
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ch_joined = star_sam.join(star_junctions).join(star_tab)
         .map{ meta, sam, junction, tab ->

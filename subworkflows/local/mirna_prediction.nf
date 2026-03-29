@@ -18,7 +18,7 @@ workflow MIRNA_PREDICTION {
     quantification_rds
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // MIRNA NORMALIZATION WORKFLOW:

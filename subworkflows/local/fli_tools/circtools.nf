@@ -13,7 +13,7 @@ workflow CIRCTOOLS {
     ch_gtf
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ANNOTATION(ch_gtf)
     ch_versions = ch_versions.mix(ANNOTATION.out.versions)

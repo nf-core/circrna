@@ -11,7 +11,7 @@ workflow JCCIRC {
     ch_gtf
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ch_trinity = reads
         .map{ _meta, r -> [[id: 'all_samples'], r] }

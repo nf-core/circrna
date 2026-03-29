@@ -22,7 +22,7 @@ workflow PSIRC_QUANT {
     ch_faidx
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     MARK_CIRCULAR(ch_transcriptome_fasta, [], false)
     ch_versions = ch_versions.mix(MARK_CIRCULAR.out.versions)

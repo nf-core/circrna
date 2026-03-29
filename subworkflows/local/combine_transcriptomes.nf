@@ -9,7 +9,7 @@ workflow COMBINE_TRANSCRIPTOMES {
     ch_circ_gtf
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     COMBINE_TRANSCRIPTOME_GTFS(
         ch_genome_gtf.mix(ch_circ_gtf).map{_meta, gtf -> gtf}.collect().map{[[id: "transcriptome"], it]},

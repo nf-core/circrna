@@ -7,7 +7,7 @@ workflow CIRCTOOLS_LONGREAD {
     genome
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     CIRCTOOLS_REFERENCE(genome)
     ch_versions = ch_versions.mix(CIRCTOOLS_REFERENCE.out.versions)

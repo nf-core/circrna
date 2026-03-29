@@ -8,7 +8,7 @@ workflow CIRCEXPLORER2 {
     circexplorer2_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     PARSE( star_junctions )
     ch_versions = ch_versions.mix(PARSE.out.versions)

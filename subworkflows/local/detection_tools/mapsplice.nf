@@ -13,7 +13,7 @@ workflow MAPSPLICE {
     circexplorer2_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ALIGN( reads, bowtie_index.map{ _meta, index -> index}, chromosomes, gtf )
     PARSE( ALIGN.out.raw_fusions )

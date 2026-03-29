@@ -16,7 +16,7 @@ workflow CIRCTOOLS {
     bsj_reads
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Process mate 1
     ch_mate1 = reads

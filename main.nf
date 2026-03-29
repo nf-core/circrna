@@ -51,22 +51,22 @@ workflow NFCORE_CIRCRNA {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // WORKFLOW: Run nf-core/circrna workflow
     //
-    ch_fasta = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
-    ch_gtf = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
-    ch_blacklist = params.blacklist ? Channel.value(file(params.blacklist, checkIfExists: true)) : Channel.empty()
-    ch_mature = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : Channel.empty()
-    ch_phenotype = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : Channel.empty()
+    ch_fasta = channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
+    ch_gtf = channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
+    ch_blacklist = params.blacklist ? channel.value(file(params.blacklist, checkIfExists: true)) : channel.empty()
+    ch_mature = params.mature ? channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : channel.empty()
+    ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
     ch_annotation = params.annotation
-        ? Channel.fromList(
+        ? channel.fromList(
             samplesheetToList(params.annotation, "${projectDir}/assets/schema_annotation.json")
         )
-        : Channel.empty()
-    ch_mirna = params.mature && params.mirna_expression ? Channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : Channel.empty()
+        : channel.empty()
+    ch_mirna = params.mature && params.mirna_expression ? channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : channel.empty()
 
     CIRCRNA(
         ch_samplesheet,

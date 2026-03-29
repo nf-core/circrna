@@ -18,7 +18,7 @@ workflow CIRIFULL {
     ch_ciri_sam
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     CIRIAS(ch_ciri_txt.join(ch_ciri_sam), ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRIAS.out.versions)
