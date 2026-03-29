@@ -93,7 +93,6 @@
 - [R](https://www.R-project.org/)
 
   > R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
-
   - [biomaRt](https://doi.org/10.1038/nprot.2009.97)
 
     > Durinck S, Spellman PT, Birney E, Huber W. (2009). Mapping identifiers for the integration of genomic datasets with the R/Bioconductor package biomaRt. Nat Protoc. 4(8):1184-91.
