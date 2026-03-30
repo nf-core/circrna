@@ -9,23 +9,20 @@ workflow COMBINE_TRANSCRIPTOMES {
     ch_circ_gtf
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     COMBINE_TRANSCRIPTOME_GTFS(
-        ch_genome_gtf.mix(ch_circ_gtf).map{_meta, gtf -> gtf}.collect().map{[[id: "transcriptome"], it]},
+        ch_genome_gtf.mix(ch_circ_gtf).map{ _meta, gtf -> gtf }.collect().map{ gtfs -> [[id: "transcriptome"], gtfs]},
     )
-    ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOME_GTFS.out.versions)
 
     EXCLUDE_OVERLONG_TRANSCRIPTS(
         COMBINE_TRANSCRIPTOME_GTFS.out.sorted, [], false
     )
-    ch_versions = ch_versions.mix(EXCLUDE_OVERLONG_TRANSCRIPTS.out.versions)
 
     TRANSCRIPTOME(
         EXCLUDE_OVERLONG_TRANSCRIPTS.out.output,
         ch_genome_fasta.map{_meta, fasta -> fasta}
     )
-    ch_versions = ch_versions.mix(TRANSCRIPTOME.out.versions)
 
     emit:
     fasta = TRANSCRIPTOME.out.gffread_fasta

@@ -21,12 +21,12 @@ workflow FLI_DETECTION {
     ch_bsj_bed_per_sample
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
-    ch_bed12 = Channel.empty()
-    ch_fasta = Channel.empty()
+    ch_bed12 = channel.empty()
+    ch_fasta = channel.empty()
 
-    def fli_tools = params.fli_tools.split(',').collect { it.trim() }
+    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim() }
 
     if (fli_tools.contains('cirifull')) {
         CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam)

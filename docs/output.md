@@ -179,7 +179,6 @@ An exemption of the above is `star`, which is not used as a standalone BSJ detec
 <summary>Output files</summary>
 
 - `bsj_detection/tools/circrna_finder/intermediates/${sample_id}/`
-
   - `*.filteredJunctions.bed`: A bed file with **all** circular junctions found by the pipeline. The score column indicates the number reads spanning each junction.
   - `*.s_filteredJunctions.bed`: A bed file with those junctions in `*.filteredJunctions.bed` that are flanked by GT-AG splice sites. The score column indicates the number reads spanning each junction.
   - `*.s_filteredJunctions_fw.bed`: A bed file with the same circular junctions as in file (b), but here the score column gives the average number of forward spliced reads at both splice sites around each circular junction.

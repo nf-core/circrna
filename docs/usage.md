@@ -240,8 +240,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
   - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
 - `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-  - Pulls software from Docker Hub: [`nfcore/circrna`](https://hub.docker.com/r/nfcore/circrna/)
+  - A generic configuration profile to be used with [Charliecloud](https://charliecloud.io/)
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`

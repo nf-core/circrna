@@ -15,7 +15,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { samplesheetToList       } from 'plugin/nf-schema'
 include { CIRCRNA                 } from './workflows/circrna'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_circrna_pipeline'
@@ -35,44 +34,6 @@ params.bowtie    = getGenomeAttribute('bowtie')
 params.bowtie2   = getGenomeAttribute('bowtie2')
 params.mature    = getGenomeAttribute('mature')
 params.blacklist = getGenomeAttribute('blacklist')
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow {
-    //
-    // SUBWORKFLOW: Run initialisation tasks
-    //
-    PIPELINE_INITIALISATION(
-        params.version,
-        params.validate_params,
-        params.monochrome_logs,
-        args,
-        params.outdir,
-        params.input,
-    )
-
-    //
-    // WORKFLOW: Run main workflow
-    //
-    NFCORE_CIRCRNA(
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
-    //
-    // SUBWORKFLOW: Run completion tasks
-    //
-    PIPELINE_COMPLETION(
-        params.email,
-        params.email_on_fail,
-        params.plaintext_email,
-        params.outdir,
-        params.monochrome_logs,
-        params.hook_url,
-        NFCORE_CIRCRNA.out.multiqc_report,
-    )
-}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,22 +50,20 @@ workflow NFCORE_CIRCRNA {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // WORKFLOW: Run nf-core/circrna workflow
     //
-    ch_fasta = Channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
-    ch_gtf = Channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
-    ch_blacklist = params.blacklist ? Channel.value(file(params.blacklist, checkIfExists: true)) : Channel.empty()
-    ch_mature = params.mature ? Channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : Channel.empty()
-    ch_phenotype = params.phenotype ? Channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : Channel.empty()
-    ch_annotation = params.annotation
-        ? Channel.fromList(
-            samplesheetToList(params.annotation, "${projectDir}/assets/schema_annotation.json")
-        )
-        : Channel.empty()
-    ch_mirna = params.mature && params.mirna_expression ? Channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : Channel.empty()
+    ch_fasta = channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
+    ch_gtf = channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
+    ch_blacklist = params.blacklist ? channel.value(file(params.blacklist, checkIfExists: true)) : channel.empty()
+    ch_mature = params.mature ? channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : channel.empty()
+    ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
+    ch_annotation = (params.annotation && params.annotation instanceof String)
+        ? channel.fromSamplesheet("annotation", parameters_schema: "${projectDir}/nextflow_schema.json")
+        : channel.empty()
+    ch_mirna = params.mature && params.mirna_expression ? channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : channel.empty()
 
     CIRCRNA(
         ch_samplesheet,
@@ -121,3 +80,53 @@ workflow NFCORE_CIRCRNA {
     emit:
     multiqc_report = CIRCRNA.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow {
+
+    main:
+    //
+    // SUBWORKFLOW: Run initialisation tasks
+    //
+    PIPELINE_INITIALISATION (
+        params.version,
+        params.validate_params,
+        params.monochrome_logs,
+        args,
+        params.outdir,
+        params.input,
+        params.help,
+        params.help_full,
+        params.show_hidden
+    )
+
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_CIRCRNA (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+    //
+    // SUBWORKFLOW: Run completion tasks
+    //
+    PIPELINE_COMPLETION (
+        params.email,
+        params.email_on_fail,
+        params.plaintext_email,
+        params.outdir,
+        params.monochrome_logs,
+        params.hook_url,
+        NFCORE_CIRCRNA.out.multiqc_report
+    )
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/

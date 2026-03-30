@@ -6,14 +6,14 @@ workflow MAPSPLICE {
     take:
     reads
     gtf
-    fasta
+    _fasta
     bowtie_index
     chromosomes
-    star_junctions
-    circexplorer2_index
+    _star_junctions
+    _circexplorer2_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ALIGN( reads, bowtie_index.map{ _meta, index -> index}, chromosomes, gtf )
     PARSE( ALIGN.out.raw_fusions )
@@ -21,8 +21,6 @@ workflow MAPSPLICE {
         [ meta + [tool: "mapsplice"], bed ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
-    ch_versions = ch_versions.mix(PARSE.out.versions)
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed = UNIFY.out.output

@@ -18,7 +18,7 @@ workflow CIRIFULL {
     ch_ciri_sam
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     CIRIAS(ch_ciri_txt.join(ch_ciri_sam), ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRIAS.out.versions)
@@ -27,7 +27,6 @@ workflow CIRIFULL {
     ch_versions = ch_versions.mix(RO1.out.versions)
 
     BWA_MEM(RO1.out.fastq, ch_bwa_index, ch_fasta, true)
-    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     RO2(BWA_MEM.out.sam.map { meta, bam -> [meta, bam, meta.target_length] }, ch_fasta)
     ch_versions = ch_versions.mix(RO2.out.versions)

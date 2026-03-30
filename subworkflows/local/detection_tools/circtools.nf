@@ -11,12 +11,10 @@ workflow CIRCTOOLS {
     star_index
     star_junction
     ignore_sjdbgtf
-    seq_platform
-    seq_center
     bsj_reads
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Process mate 1
     ch_mate1 = reads
@@ -31,8 +29,6 @@ workflow CIRCTOOLS {
         ch_gtf,
         bsj_reads,
         ignore_sjdbgtf,
-        seq_center,
-        seq_platform,
     )
     ch_versions = ch_versions.mix(MATE1_STAR2PASS.out.versions)
 
@@ -49,8 +45,6 @@ workflow CIRCTOOLS {
         ch_gtf,
         bsj_reads,
         ignore_sjdbgtf,
-        seq_center,
-        seq_platform,
     )
     ch_versions = ch_versions.mix(MATE2_STAR2PASS.out.versions)
 

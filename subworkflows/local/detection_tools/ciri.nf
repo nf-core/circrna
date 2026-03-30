@@ -14,9 +14,9 @@ workflow CIRI {
     ch_bwa_index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
-    def cirifull_enabled = params.fli_tools.split(',').collect { it.trim() }.contains('cirifull')
+    def cirifull_enabled = params.fli_tools.split(',').collect { tool -> tool.trim() }.contains('cirifull')
 
     if (cirifull_enabled) {
         // CIRI-full requires all reads to have the same length
@@ -26,7 +26,6 @@ workflow CIRI {
 
         // Get the read lengths
         SEQKIT_FX2TAB(ch_read1.mix(ch_read2))
-        ch_versions = ch_versions.mix(SEQKIT_FX2TAB.out.versions)
 
         ch_read1_len = SEQKIT_FX2TAB.out.text
             .filter { meta, _lengths -> meta.r == 1 }
@@ -48,15 +47,13 @@ workflow CIRI {
             .map { meta, reads, length -> [meta + [target_length: length.text.toInteger()], reads] }
 
         // Trim the reads to the 5th percentile length
-        FASTP(ch_fastp, [], false, false, false)
-        ch_versions = ch_versions.mix(FASTP.out.versions)
+        FASTP(ch_fastp.map { meta, reads -> [meta, reads, []] }, false, false, false)
 
         // These are the new reads to use for the rest of the CIRI pipeline
         ch_reads = FASTP.out.reads
     }
 
     BWA_MEM(ch_reads, ch_bwa_index, ch_fasta, true)
-    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     CIRI2(BWA_MEM.out.sam, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRI2.out.versions)
@@ -68,12 +65,11 @@ workflow CIRI {
         [],
         false,
     )
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed                = UNIFY.out.output
     ciri_txt           = CIRI2.out.txt
     ciri_sam           = BWA_MEM.out.sam
-    reads_fixed_length = cirifull_enabled ? FASTP.out.reads : Channel.empty()
+    reads_fixed_length = cirifull_enabled ? FASTP.out.reads : channel.empty()
     versions           = ch_versions
 }

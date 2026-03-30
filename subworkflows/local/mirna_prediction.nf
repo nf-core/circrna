@@ -14,11 +14,11 @@ workflow MIRNA_PREDICTION {
     circrna_annotation
     ch_mature
     ch_mirna
-    transcript_counts
+    _transcript_counts
     quantification_rds
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // MIRNA NORMALIZATION WORKFLOW:
@@ -42,7 +42,7 @@ workflow MIRNA_PREDICTION {
         //
 
         // Filtering miRNAs from ch_mature if they are not in ch_mirna_filtered.
-        ch_uniq_mirnas = ch_mirna_filtered.map{ _meta, path -> path }.splitCsv( sep: '\t' ).map{ it[0] }.unique().collect()
+        ch_uniq_mirnas = ch_mirna_filtered.map{ _meta, path -> path }.splitCsv( sep: '\t' ).map{ row -> row[0] }.unique().collect()
 
         ch_mature = ch_mature
             .map{ _meta, path -> path }
@@ -70,7 +70,7 @@ workflow MIRNA_PREDICTION {
 
         COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
 
-        ch_correlation_results = COMPUTE_CORRELATIONS.out.correlations
+        COMPUTE_CORRELATIONS.out.correlations
             .map{_meta, results -> results}
             .flatten().collect()
             .map{results -> [[id: 'correlation'], results]}

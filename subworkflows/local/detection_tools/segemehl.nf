@@ -12,7 +12,7 @@ workflow SEGEMEHL {
     index
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     index = index ?: INDEX( fasta ).index
 
@@ -25,10 +25,6 @@ workflow SEGEMEHL {
     UNIFY( GROUP.out.bed, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
-    ch_versions = ch_versions.mix(EXTRACT.out.versions)
-    ch_versions = ch_versions.mix(SORT.out.versions)
-    ch_versions = ch_versions.mix(GROUP.out.versions)
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
     bed = UNIFY.out.output

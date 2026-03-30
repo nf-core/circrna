@@ -10,7 +10,7 @@ workflow QUANTIFICATION {
     ch_transcriptome_fasta
     ch_transcriptome_gtf
     circ_annotation_bed
-    circ_annotation_gtf
+    _circ_annotation_gtf
     ch_bsj_bed_per_sample_tool
     bootstrap_samples
     ch_phenotype
@@ -19,14 +19,14 @@ workflow QUANTIFICATION {
     hisat2_index
 
     main:
-    ch_versions = Channel.empty()
-    ch_gene_counts = Channel.empty()
-    ch_circ_counts = Channel.empty()
-    ch_ciriquant = Channel.empty()
-    ch_stringtie = Channel.empty()
-    ch_rds = Channel.empty()
+    ch_versions = channel.empty()
+    ch_gene_counts = channel.empty()
+    ch_circ_counts = channel.empty()
+    ch_ciriquant = channel.empty()
+    ch_stringtie = channel.empty()
+    ch_rds = channel.empty()
 
-    tools_selected = params.quantification_tools.split(',').collect { it.trim().toLowerCase() }
+    tools_selected = params.quantification_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
     if (tools_selected.size() == 0) {
         error('No tools selected for circRNA quantification.')
     }
@@ -64,7 +64,7 @@ workflow QUANTIFICATION {
 
     aggregations = ['sum', 'max']
     if (tools_selected.intersect(aggregations).size() > 0) {
-        ch_aggregations = Channel.fromList(tools_selected.intersect(aggregations))
+        ch_aggregations = channel.fromList(tools_selected.intersect(aggregations))
 
         AGGREGATE(
             ch_aggregations.map { agg -> [[id: agg], agg] }.combine(circ_annotation_bed.map { _meta, bed -> bed }).combine(ch_bsj_bed_per_sample_tool.map { _meta, bed -> bed }.collect().map { beds -> [beds] }),

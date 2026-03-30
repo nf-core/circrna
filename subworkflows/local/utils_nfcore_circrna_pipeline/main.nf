@@ -11,9 +11,9 @@
 include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { samplesheetToList         } from 'plugin/nf-schema'
+include { paramsHelp                } from 'plugin/nf-schema'
 include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
-include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
 
@@ -28,14 +28,17 @@ workflow PIPELINE_INITIALISATION {
     take:
     version           // boolean: Display version and exit
     validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
-    monochrome_logs   // boolean: Do not use coloured log outputs
+    _monochrome_logs  // boolean: Do not use coloured log outputs
     nextflow_cli_args //   array: List of positional nextflow CLI args
     outdir            //  string: The output directory where the results will be saved
-    input             //  string: Path to input samplesheet
+    _input            //  string: Path to input samplesheet
+    help              // boolean: Display help message and exit
+    help_full         // boolean: Show the full help message
+    show_hidden       // boolean: Show hidden parameters in the help message
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
@@ -50,10 +53,35 @@ workflow PIPELINE_INITIALISATION {
     //
     // Validate parameters and generate parameter summary to stdout
     //
+    before_text = """
+-\033[2m----------------------------------------------------\033[0m-
+                                        \033[0;32m,--.\033[0;30m/\033[0;32m,-.\033[0m
+\033[0;34m        ___     __   __   __   ___     \033[0;32m/,-._.--~\'\033[0m
+\033[0;34m  |\\ | |__  __ /  ` /  \\ |__) |__         \033[0;33m}  {\033[0m
+\033[0;34m  | \\| |       \\__, \\__/ |  \\ |___     \033[0;32m\\`-._,-`-,\033[0m
+                                        \033[0;32m`._,._,\'\033[0m
+\033[0;35m  nf-core/circrna ${workflow.manifest.version}\033[0m
+-\033[2m----------------------------------------------------\033[0m-
+"""
+    after_text = """${workflow.manifest.doi ? "\n* The pipeline\n" : ""}${workflow.manifest.doi.tokenize(",").collect { doi -> "    https://doi.org/${doi.trim().replace('https://doi.org/','')}"}.join("\n")}${workflow.manifest.doi ? "\n" : ""}
+* The nf-core framework
+    https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+    https://github.com/nf-core/circrna/blob/master/CITATIONS.md
+"""
+    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
+
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
         validate_params,
-        null
+        null,
+        help,
+        help_full,
+        show_hidden,
+        before_text,
+        after_text,
+        command
     )
 
     //
@@ -72,7 +100,7 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input
     //
 
-    Channel
+    channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
         .map {
             meta, fastq_1, fastq_2 ->
@@ -107,7 +135,7 @@ workflow PIPELINE_COMPLETION {
     plaintext_email // boolean: Send plain-text email instead of HTML
     outdir          //    path: Path to output directory where results will be published
     monochrome_logs // boolean: Disable ANSI colour codes in log output
-    hook_url        //  string: hook URL for notifications
+    _hook_url       //  string: hook URL for notifications (currently unused)
     multiqc_report  //  string: Path to MultiQC report
 
     main:
@@ -131,9 +159,6 @@ workflow PIPELINE_COMPLETION {
         }
 
         completionSummary(monochrome_logs)
-        if (hook_url) {
-            imNotification(summary_params, hook_url)
-        }
     }
 
     workflow.onError {
@@ -152,8 +177,8 @@ workflow PIPELINE_COMPLETION {
 def validateInputParameters() {
     genomeExistsError()
 
-    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
-    def bsj_tools = params.tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
+    def bsj_tools = params.tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
         error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
@@ -187,12 +212,12 @@ def validateInputSamplesheet(input) {
     }
 
     // Check that multiple runs of the same sample are of the same strandedness i.e. auto / unstranded / forward / reverse
-    def strandedness_ok = metas.collect{ it.strandedness }.unique().size == 1
+    def strandedness_ok = metas.collect{ meta -> meta.strandedness }.unique().size == 1
     if (!strandedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
     }
 
-    def fli_tools = params.fli_tools.split(',').collect { it.trim().toLowerCase() }
+    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
 
     if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }

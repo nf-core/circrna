@@ -11,14 +11,13 @@ workflow JCCIRC {
     ch_gtf
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     ch_trinity = reads
         .map{ _meta, r -> [[id: 'all_samples'], r] }
         .groupTuple()
         .map{ meta, r -> [meta, r.flatten()] }
     TRINITY(ch_trinity)
-    ch_versions = ch_versions.mix(TRINITY.out.versions)
 
     PREP(
         ch_bsj_annotation.join(ch_bsj_reads)

@@ -49,7 +49,7 @@ workflow CIRCRNA {
 
     main:
 
-    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = channel.empty()
 
     //
     // 1. Pre-processing
@@ -74,7 +74,6 @@ workflow CIRCRNA {
             ch_fastq.single
         )
         .set { ch_cat_fastq }
-    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
 
     // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.
@@ -88,7 +87,6 @@ workflow CIRCRNA {
     bowtie2_index       = PREPARE_GENOME.out.bowtie2
     bwa_index           = PREPARE_GENOME.out.bwa
     chromosomes         = PREPARE_GENOME.out.chromosomes
-    hisat2_index        = PREPARE_GENOME.out.hisat2
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
     star_index          = PREPARE_GENOME.out.star
     psirc_index         = PREPARE_GENOME.out.psirc
@@ -110,8 +108,8 @@ workflow CIRCRNA {
             params.skip_trimming
         )
         ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{it[1]}.ifEmpty([]))
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
 
         //
         // 2. BSJ Discovery
@@ -229,25 +227,36 @@ workflow CIRCRNA {
         .set { ch_collated_versions }
 
     // MultiQC
-    ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo   ? Channel.fromPath(params.multiqc_logo)   : Channel.empty()
+    ch_multiqc_config          = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config) : channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo   ? channel.fromPath(params.multiqc_logo)   : channel.empty()
     summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary      = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_workflow_summary      = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 
+    ch_multiqc_config_files = ch_multiqc_config
+        .mix(ch_multiqc_custom_config)
+        .collect()
+        .map { configs -> [configs] }   // double-wrap so combine appends [configs] as one element
+
+    ch_multiqc_logo_files = ch_multiqc_logo
+        .collect()
+        .map { logos -> [logos] }       // double-wrap so combine appends [logos] as one element
+
     MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+        ch_multiqc_files
+            .collect()
+            .map { files -> [[id: "multiqc"], files] }
+            .combine(ch_multiqc_config_files)
+            .combine(ch_multiqc_logo_files)
+            .map { meta, files, configs, logos ->
+                [meta, files, configs, logos, [], []]
+            }
     )
 
     emit:
-    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
