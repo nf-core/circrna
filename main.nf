@@ -60,10 +60,8 @@ workflow NFCORE_CIRCRNA {
     ch_blacklist = params.blacklist ? channel.value(file(params.blacklist, checkIfExists: true)) : channel.empty()
     ch_mature = params.mature ? channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : channel.empty()
     ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
-    ch_annotation = params.annotation
-        ? channel.fromList(
-            samplesheetToList(params.annotation, "${projectDir}/assets/schema_annotation.json")
-        )
+    ch_annotation = (params.annotation && params.annotation instanceof String)
+        ? channel.fromSamplesheet("annotation", parameters_schema: "${projectDir}/nextflow_schema.json")
         : channel.empty()
     ch_mirna = params.mature && params.mirna_expression ? channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : channel.empty()
 
