@@ -18,6 +18,8 @@ nextflow_pipeline {
             assertAll(
                 { assert workflow.success},
                 { assert snapshot(
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml"),
                     // All stable path names, with a relative path
                     stable_name
                 ).match() }
