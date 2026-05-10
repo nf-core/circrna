@@ -146,16 +146,30 @@
                 "ngs",
                 "rna-seq"
             ],
-            "license": ["MIT"],
-            "name": ["nf-core/circrna"],
+            "license": [
+                "MIT"
+            ],
+            "maintainer": [
+                {
+                    "@id": "https://orcid.org/0000-0002-8492-6585"
+                }
+            ],
+            "name": [
+                "nf-core/circrna"
+            ],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
             },
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": ["https://github.com/nf-core/circrna", "https://nf-co.re/circrna/dev/"],
-            "version": ["0.0.1dev"]
+            "url": [
+                "https://github.com/nf-core/circrna",
+                "https://nf-co.re/circrna/dev/"
+            ],
+            "version": [
+                "0.0.1dev"
+            ]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",

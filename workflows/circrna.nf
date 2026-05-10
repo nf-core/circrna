@@ -3,13 +3,32 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { FASTQC                 } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                } from '../modules/nf-core/multiqc/main'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_circrna_pipeline'
 
+include { paramsSummaryMap                 } from 'plugin/nf-schema'
+include { paramsSummaryMultiqc             } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+
+include { softwareVersionsToYAML           } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { PREPARE_GENOME                   } from '../subworkflows/local/prepare_genome'
+include { BSJ_DETECTION                    } from '../subworkflows/local/bsj_detection'
+include { FLI_DETECTION                    } from '../subworkflows/local/fli_detection'
+include { COMBINE_TRANSCRIPTOMES           } from '../subworkflows/local/combine_transcriptomes'
+include { QUANTIFICATION                   } from '../subworkflows/local/quantification'
+include { MIRNA_PREDICTION                 } from '../subworkflows/local/mirna_prediction'
+include { STATISTICAL_TESTS                } from '../subworkflows/local/statistical_tests'
+include { LONGREAD                         } from '../subworkflows/local/longread'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT NF-CORE MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// MODULES:
+include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+
+// SUBWORKFLOWS:
+include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -17,80 +36,227 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_circ
 */
 
 workflow CIRCRNA {
-
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
-    multiqc_config
-    multiqc_logo
-    multiqc_methods_description
-    outdir
+    ch_samplesheet
+    ch_phenotype
+    ch_fasta
+    ch_gtf
+    ch_blacklist
+    ch_mature
+    ch_annotation
+    ch_versions
+    ch_mirna
 
     main:
 
-    def ch_versions = channel.empty()
-    def ch_multiqc_files = channel.empty()
+    ch_multiqc_files = channel.empty()
+
     //
-    // MODULE: Run FastQC
+    // 1. Pre-processing
     //
-    FASTQC(ch_samplesheet)
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.map{ _meta, file -> file })
+
+    // SUBWORKFLOW:
+    ch_samplesheet
+        .branch {
+            meta, fastqs ->
+                single  : fastqs.size() == 1
+                    return [ meta, fastqs.flatten() ]
+                multiple: fastqs.size() > 1
+                    return [ meta, fastqs.flatten() ]
+        }
+        .set { ch_fastq }
+
+    // MODULE:
+    // Concatenate FastQ files from same sample if required
+    CAT_FASTQ (ch_fastq.multiple)
+        .reads
+        .mix(
+            ch_fastq.single
+        )
+        .set { ch_cat_fastq }
+
+    // SUBORKFLOW:
+    // Prepare index files &/or use iGenomes if chosen.
+    PREPARE_GENOME (
+        ch_fasta,
+        ch_gtf
+    )
+
+    ch_gtf              = PREPARE_GENOME.out.gtf
+    bowtie_index        = PREPARE_GENOME.out.bowtie
+    bowtie2_index       = PREPARE_GENOME.out.bowtie2
+    bwa_index           = PREPARE_GENOME.out.bwa
+    chromosomes         = PREPARE_GENOME.out.chromosomes
+    circexplorer2_index = PREPARE_GENOME.out.circexplorer2
+    star_index          = PREPARE_GENOME.out.star
+    psirc_index         = PREPARE_GENOME.out.psirc
+    ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
+
+
+
+    if (params.longread) {
+        LONGREAD(
+            ch_cat_fastq,
+            "hg38"
+        )
+        ch_versions = ch_versions.mix(LONGREAD.out.versions)
+    } else {
+        // MODULE: Run FastQC, trimgalore!
+        FASTQC_TRIMGALORE (
+            ch_cat_fastq,
+            params.skip_fastqc,
+            params.skip_trimming
+        )
+        ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
+
+        //
+        // 2. BSJ Discovery
+        //
+
+        BSJ_DETECTION(
+            FASTQC_TRIMGALORE.out.reads,
+            ch_fasta,
+            ch_gtf,
+            ch_blacklist,
+            ch_annotation,
+            bowtie_index,
+            bowtie2_index,
+            bwa_index,
+            chromosomes,
+            star_index,
+            circexplorer2_index,
+            psirc_index,
+            params.bsj_reads
+        )
+
+        ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
+        ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
+
+        //
+        // 3. FLI Detection
+        //
+
+        FLI_DETECTION(
+            FASTQC_TRIMGALORE.out.reads,
+            BSJ_DETECTION.out.reads_fixed_length,
+            ch_fasta,
+            ch_gtf,
+            bwa_index,
+            BSJ_DETECTION.out.ciri_txt,
+            BSJ_DETECTION.out.ciri_sam,
+            BSJ_DETECTION.out.bed12,
+            BSJ_DETECTION.out.bed_reads,
+            psirc_index,
+            BSJ_DETECTION.out.psirc_bsj,
+            BSJ_DETECTION.out.star_bam,
+            BSJ_DETECTION.out.star_junction,
+            BSJ_DETECTION.out.bed_per_sample
+        )
+        ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
+
+        COMBINE_TRANSCRIPTOMES(
+            ch_fasta,
+            ch_gtf,
+            BSJ_DETECTION.out.gtf
+        )
+
+        ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
+
+        //
+        // 4. circRNA quantification
+        //
+
+        QUANTIFICATION(
+            FASTQC_TRIMGALORE.out.reads,
+            ch_gtf,
+            ch_fasta,
+            COMBINE_TRANSCRIPTOMES.out.fasta,
+            COMBINE_TRANSCRIPTOMES.out.gtf,
+            BSJ_DETECTION.out.bed12,
+            BSJ_DETECTION.out.gtf,
+            BSJ_DETECTION.out.bed_per_sample_tool,
+            params.bootstrap_samples,
+            ch_phenotype,
+            PREPARE_GENOME.out.faidx,
+            PREPARE_GENOME.out.bwa,
+            PREPARE_GENOME.out.hisat2
+        )
+
+        ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
+
+        //
+        // 5. miRNA prediction
+        //
+
+        if (params.mature) {
+            MIRNA_PREDICTION(
+                COMBINE_TRANSCRIPTOMES.out.fasta,
+                BSJ_DETECTION.out.bed12,
+                ch_mature,
+                ch_mirna,
+                QUANTIFICATION.out.circ,
+                QUANTIFICATION.out.rds
+            )
+            ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
+        }
+
+        //
+        // 6. Statistical tests
+        //
+
+        STATISTICAL_TESTS(
+            QUANTIFICATION.out.gene,
+            QUANTIFICATION.out.circ,
+            QUANTIFICATION.out.ciriquant,
+            QUANTIFICATION.out.stringtie,
+            ch_phenotype
+        )
+        ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
+
+    }
+
+
 
     //
     // Collate and save software versions
     //
-    def topic_versions = channel.topic("versions")
-        .distinct()
-        .branch { entry ->
-            versions_file: entry instanceof Path
-            versions_tuple: true
-        }
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_pipeline_software_mqc_versions.yml', sort: true, newLine: true)
+        .set { ch_collated_versions }
 
-    def topic_versions_string = topic_versions.versions_tuple
-        .map { process, tool, version ->
-            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
-        }
-        .groupTuple(by:0)
-        .map { process, tool_versions ->
-            tool_versions.unique().sort()
-            "${process}:\n${tool_versions.join('\n')}"
-        }
-
-    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
-        .mix(topic_versions_string)
-        .collectFile(
-            storeDir: "${outdir}/pipeline_info",
-            name: 'nf_core_'  +  'circrna_software_'  + 'mqc_'  + 'versions.yml',
-            sort: true,
-            newLine: true
-        )
-
-    //
-    // MODULE: MultiQC
-    //
-    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    // MultiQC
+    ch_multiqc_config          = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config) : channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo   ? channel.fromPath(params.multiqc_logo)   : channel.empty()
+    summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary      = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    def ch_multiqc_custom_methods_description = multiqc_methods_description
-        ? file(multiqc_methods_description, checkIfExists: true)
-        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
-    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
-    MULTIQC(
-        ch_multiqc_files.flatten().collect().map { files ->
-            [
-                [id: 'circrna'],
-                files,
-                multiqc_config
-                    ? file(multiqc_config, checkIfExists: true)
-                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
-                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
-                [],
-                [],
-            ]
-        }
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
+
+    ch_multiqc_config_files = ch_multiqc_config
+        .mix(ch_multiqc_custom_config)
+        .collect()
+        .map { configs -> [configs] }   // double-wrap so combine appends [configs] as one element
+
+    ch_multiqc_logo_files = ch_multiqc_logo
+        .collect()
+        .map { logos -> [logos] }       // double-wrap so combine appends [logos] as one element
+
+    MULTIQC (
+        ch_multiqc_files
+            .collect()
+            .map { files -> [[id: "multiqc"], files] }
+            .combine(ch_multiqc_config_files)
+            .combine(ch_multiqc_logo_files)
+            .map { meta, files, configs, logos ->
+                [meta, files, configs, logos, [], []]
+            }
     )
-    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+
+    emit:
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 

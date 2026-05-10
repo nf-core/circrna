@@ -1,0 +1,54 @@
+{
+    "join - csv": {
+        "content": [
+            {
+                "csv": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.csv:md5,d0ad82ca096c7e05eb9f9a04194c9e30"
+                    ]
+                ],
+                "versions_csvtk": [
+                    [
+                        "CSVTK_JOIN",
+                        "csvtk",
+                        "0.31.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-03-13T10:24:24.84342579",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.3"
+        }
+    },
+    "join - csv - stub": {
+        "content": [
+            {
+                "csv": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_csvtk": [
+                    [
+                        "CSVTK_JOIN",
+                        "csvtk",
+                        "0.31.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-03-13T10:24:34.01501199",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.3"
+        }
+    }
+}

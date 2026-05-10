@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::bedtools=2.31.1
+  - bioconda::circtools=2.0.1
+  - bioconda::nanofilt=2.8.0
+  - bioconda::pblat=2.5.1
+  - bioconda::samtools=1.22
