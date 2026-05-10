@@ -10,3 +10,16 @@ multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
 multiqc/multiqc_report.html
 fastqc/*_fastqc.{html,zip}
 pipeline_info/*.{html,json,txt,yml}
+
+# Quantification / pseudoalignment: hashes differ across CI vs local (tool versions, FP math, threading)
+**/abundance.h5
+**/abundance.tsv
+**/run_info.json
+**/pseudoalignments.bam
+**/pseudoalignments.bam.bai
+**/tximport/*.tsv
+**/tximeta/*.rds
+
+# miRNA prediction tables: environment-specific numeric / ordering differences
+**/mirna.majority.tsv
+**/mirna.targets.tsv
