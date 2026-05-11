@@ -15,7 +15,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CIRCRNA                 } from './workflows/circrna'
+include { CIRCRNA                 } from './workflows/circrna.nf'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circrna_pipeline'
@@ -120,7 +120,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         NFCORE_CIRCRNA.out.multiqc_report
     )
 }

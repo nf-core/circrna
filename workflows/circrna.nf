@@ -5,17 +5,17 @@
 */
 
 include { paramsSummaryMap                 } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc             } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
+include { paramsSummaryMultiqc             } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
-include { softwareVersionsToYAML           } from '../../subworkflows/nf-core/utils_nfcore_pipeline'
-include { PREPARE_GENOME                   } from '../../subworkflows/local/prepare_genome'
-include { BSJ_DETECTION                    } from '../../subworkflows/local/bsj_detection'
-include { FLI_DETECTION                    } from '../../subworkflows/local/fli_detection'
-include { COMBINE_TRANSCRIPTOMES           } from '../../subworkflows/local/combine_transcriptomes'
-include { QUANTIFICATION                   } from '../../subworkflows/local/quantification'
-include { MIRNA_PREDICTION                 } from '../../subworkflows/local/mirna_prediction'
-include { STATISTICAL_TESTS                } from '../../subworkflows/local/statistical_tests'
-include { LONGREAD                         } from '../../subworkflows/local/longread'
+include { softwareVersionsToYAML           } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { PREPARE_GENOME                   } from '../subworkflows/local/prepare_genome'
+include { BSJ_DETECTION                    } from '../subworkflows/local/bsj_detection'
+include { FLI_DETECTION                    } from '../subworkflows/local/fli_detection'
+include { COMBINE_TRANSCRIPTOMES           } from '../subworkflows/local/combine_transcriptomes'
+include { QUANTIFICATION                   } from '../subworkflows/local/quantification'
+include { MIRNA_PREDICTION                 } from '../subworkflows/local/mirna_prediction'
+include { STATISTICAL_TESTS                } from '../subworkflows/local/statistical_tests'
+include { LONGREAD                         } from '../subworkflows/local/longread'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,11 +24,11 @@ include { LONGREAD                         } from '../../subworkflows/local/long
 */
 
 // MODULES:
-include { MULTIQC                     } from '../../modules/nf-core/multiqc/main'
-include { CAT_FASTQ                   } from '../../modules/nf-core/cat/fastq/main'
+include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 
 // SUBWORKFLOWS:
-include { FASTQC_TRIMGALORE } from '../../subworkflows/nf-core/fastqc_trimgalore'
+include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -223,7 +223,7 @@ workflow CIRCRNA {
     // Collate and save software versions
     //
     softwareVersionsToYAML(ch_versions)
-        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_pipeline_software_mqc_versions.yml', sort: true, newLine: true)
+        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_circrna_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
     // MultiQC
