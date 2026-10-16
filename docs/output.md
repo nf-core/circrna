@@ -132,6 +132,8 @@ nf-core/circrna will add the reference files to the output directory if `save_re
 
 </details>
 
+[Nextflow](https://docs.seqera.io/platform-cloud/reports/overview) provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.
+
 ## BSJ detection
 
 The rough workflow for the BSJ detection looks like this:

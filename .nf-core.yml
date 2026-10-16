@@ -1,4 +1,10 @@
-nf_core_version: 4.0.2
+lint:
+  files_exist:
+    - .github/workflows/linting_comment.yml
+  files_unchanged:
+    - .github/workflows/branch.yml
+    - .github/workflows/linting.yml
+nf_core_version: 4.1.0
 repository_type: pipeline
 template:
   author: Barry Digby, Nico Trummer
@@ -9,9 +15,3 @@ template:
   org: nf-core
   outdir: .
   version: 0.0.1dev
-lint:
-  files_exist:
-    - .github/workflows/linting_comment.yml
-  files_unchanged:
-    - .github/workflows/branch.yml
-    - .github/workflows/linting.yml
