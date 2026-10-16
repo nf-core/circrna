@@ -283,6 +283,6 @@ workflow BSJ_DETECTION {
     psirc_bsj           = ch_psirc_bsj
     star_bam            = ch_star_bam
     star_junction       = ch_star_junction
-    multiqc_files       = ch_multiqc_files
+    multiqc_files       = ch_multiqc_files.flatten()
     versions            = ch_versions
 }
