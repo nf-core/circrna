@@ -62,9 +62,11 @@ workflow BSJ_DETECTION {
         STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf)
         ch_versions = ch_versions.mix(STAR2PASS.out.versions)
         ch_star_bam = STAR2PASS.out.bam
+        ch_star_junction = STAR2PASS.out.junction
     }
     else {
         ch_star_bam = channel.empty()
+        ch_star_junction = channel.empty()
     }
 
     //
@@ -280,7 +282,7 @@ workflow BSJ_DETECTION {
     reads_fixed_length  = ch_reads_fixed_length
     psirc_bsj           = ch_psirc_bsj
     star_bam            = ch_star_bam
-    star_junction       = STAR2PASS.out.junction
+    star_junction       = ch_star_junction
     multiqc_files       = ch_multiqc_files
     versions            = ch_versions
 }
