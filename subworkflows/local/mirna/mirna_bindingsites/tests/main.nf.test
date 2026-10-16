@@ -1,0 +1,162 @@
+nextflow_workflow {
+
+    name "Test Workflow MIRNA_BINDINGSITES"
+    script "../main.nf"
+    workflow "MIRNA_BINDINGSITES"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "mirna_bindingsites"
+    tag "bioawk"
+    tag "miranda"
+    tag "gawk"
+    tag "cat_cat"
+    tag "targetscan_predict"
+    tag "mirna_targets"
+    tag "majority_vote"
+
+    test("targetscan and miranda, three batches") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = ['targetscan', 'miranda']
+                input[4] = 1
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
+                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("miranda only") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = ['miranda']
+                input[4] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
+                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("targetscan only") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = ['targetscan']
+                input[4] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
+                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("targetscan and miranda - stub") {
+
+        options '-stub'
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = ['targetscan', 'miranda']
+                input[4] = 1
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    test("miranda only - stub") {
+
+        options '-stub'
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = ['miranda']
+                input[4] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    test("no tools") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = []
+                input[4] = 1
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains('No tools selected for miRNA discovery.') }
+            )
+        }
+    }
+}
