@@ -1,0 +1,154 @@
+nextflow_workflow {
+
+    name "Test Workflow ANNOTATION"
+    script "../main.nf"
+    workflow "ANNOTATION"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "annotation"
+
+    setup {
+        run("UCSC_GTFTOGENEPRED") {
+            script "../../../../modules/nf-core/ucsc/gtftogenepred/main.nf"
+            process {
+                """
+                input[0] = [[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+        run("GAWK", alias: "CIRCEXPLORER2_REFERENCE") {
+            script "../../../../modules/nf-core/gawk/main.nf"
+            process {
+                """
+                input[0] = UCSC_GTFTOGENEPRED.out.genepred
+                input[1] = []
+                input[2] = false
+                """
+            }
+        }
+    }
+
+    test("exons_only true") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)])
+                input[1] = channel.empty()
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed12.collect { meta, bed -> [meta, file(bed).name, path(bed).readLines().size(), path(bed).readLines().sort().hashCode()] },
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size(), path(gtf).readLines().sort().hashCode()] },
+                    workflow.out.fasta.collect { meta, fa -> [meta, file(fa).name, path(fa).readLines().size()] },
+                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("exons_only false") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                exons_only = false
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)])
+                input[1] = channel.empty()
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[4] = false
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed12.collect { meta, bed -> [meta, file(bed).name, path(bed).readLines().size(), path(bed).readLines().sort().hashCode()] },
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size(), path(gtf).readLines().sort().hashCode()] },
+                    workflow.out.fasta.collect { meta, fa -> [meta, file(fa).name, path(fa).readLines().size()] },
+                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("with annotation database") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)])
+                input[1] = channel.value([[id: 'database', min_overlap: 0.9], file("${moduleDir}/tests/database.bed", checkIfExists: true)])
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("ANNOTATION:INGEST_DATABASE_NAMES") },
+                { assert tasks.contains("ANNOTATION:INTERSECT_DATABASE") },
+                { assert snapshot(
+                    workflow.out.bed12.collect { meta, bed -> [meta, file(bed).name, path(bed).readLines().size()] },
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size()] }
+                ).match() }
+            )
+        }
+    }
+
+    test("exons_only true - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)])
+                input[1] = channel.empty()
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

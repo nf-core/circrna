@@ -1,0 +1,180 @@
+nextflow_workflow {
+
+    name "Test Workflow PREPARE_GENOME"
+    script "../main.nf"
+    workflow "PREPARE_GENOME"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "prepare_genome"
+
+    test("build all indices") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
+                input[3] = null
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:BWA_INDEX") },
+                { assert tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
+                { assert tasks.contains("PREPARE_GENOME:BOWTIE_BUILD") },
+                { assert tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
+                { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert snapshot(
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size()] },
+                    workflow.out.faidx.collect { meta, fai -> [meta, file(fai).name, path(fai).text] },
+                    workflow.out.bowtie.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bowtie2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.circexplorer2.flatten().collect { file(it).name },
+                    workflow.out.psirc.collect { meta, fasta, index -> [meta, file(fasta).name, index.collect { file(it).name }.sort()] },
+                    workflow.out.chromosomes.collect { meta, files -> [meta, [files].flatten().collect { file(it.toString()).name }.sort()] },
+                    workflow.out.splice_sites.collect { meta, txt -> [meta, file(txt).name] },
+                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("reuse prebuilt indices") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def prebuilt = { name ->
+                    def dir = file("$outputDir/prebuilt/" + name)
+                    dir.mkdirs()
+                    dir.resolve(name + '.idx').text = name
+                    return dir
+                }
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice']
+                input[3] = prebuilt('bowtie')
+                input[4] = prebuilt('bowtie2')
+                input[5] = prebuilt('bwa')
+                input[6] = prebuilt('hisat2')
+                input[7] = prebuilt('star')
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BWA_INDEX") },
+                { assert !tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert snapshot(
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size()] },
+                    workflow.out.bowtie.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bowtie2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.psirc,
+                    workflow.out.splice_sites
+                ).match() }
+            )
+        }
+    }
+
+    test("tools subset") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circexplorer2']
+                input[3] = null
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BWA_INDEX") },
+                { assert !tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
+                { assert workflow.out.bowtie.isEmpty() },
+                { assert workflow.out.bowtie2.isEmpty() },
+                { assert workflow.out.bwa.isEmpty() },
+                { assert workflow.out.hisat2.isEmpty() },
+                { assert workflow.out.psirc.isEmpty() },
+                { assert snapshot(
+                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.circexplorer2.flatten().collect { file(it).name },
+                    workflow.out.faidx.collect { meta, fai -> [meta, file(fai).name, path(fai).text] }
+                ).match() }
+            )
+        }
+    }
+
+    test("build all indices - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
+                input[3] = null
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}
