@@ -9,6 +9,9 @@ nextflow_pipeline {
         when {
             params {
                 outdir = "$outputDir"
+                // Skips miRNA prediction (MIRANDA and TARGETSCAN dominate the CPU time)
+                mature = null
+                bootstrap_samples = 2
             }
         }
 
@@ -17,6 +20,22 @@ nextflow_pipeline {
             def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_content: All files in ${params.outdir}/ with stable content
             def stable_content = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+
+            // Combined BSJ BED: the FUSIONJUNC_<n> names and the row order change between runs, so the
+            // name column is dropped and the rows are sorted before hashing
+            def combined_bed_rows = file("$outputDir/3_bsj_detection/combined/all.combined.bed").readLines()
+                .collect { line -> def f = line.split('\t').toList(); (f[0..2] + f[4..-1]).join('\t') }
+                .sort(false)
+            def combined_bed_md5 = java.security.MessageDigest.getInstance('MD5').digest(combined_bed_rows.join('\n').bytes).encodeHex().toString()
+
+            // Aggregated circRNA counts: the sample column order changes between runs
+            def sum_counts = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t').sort()
+            def max_counts = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t').sort()
+
+            // psirc matrices: the values change between runs (bootstrapping), the dimensions and ids do not
+            def circular = path("$outputDir/5_quantification/psirc/combined/circular.tsv").csv(sep: '\t')
+            def linear = path("$outputDir/5_quantification/psirc/combined/linear.tsv").csv(sep: '\t')
+
             assert workflow.success
             assertAll(
                 { assert snapshot(
@@ -25,7 +44,20 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_path,
                     // All files with stable contents
-                    stable_content
+                    stable_content,
+                    // Parsed content of the files with partly unstable content
+                    [
+                        combined_bed_rows: combined_bed_rows.size(),
+                        combined_bed_md5: combined_bed_md5,
+                        sum_columns: sum_counts.columnNames,
+                        sum_rows: sum_counts.rows,
+                        max_columns: max_counts.columnNames,
+                        max_rows: max_counts.rowCount,
+                        circular_columns: circular.columnNames.sort(false),
+                        circular_ids: circular.columns["tx"].sort(false),
+                        linear_columns: linear.columnNames.sort(false),
+                        linear_rows: linear.rowCount
+                    ]
                 ).match() }
             )
         }
