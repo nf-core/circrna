@@ -1,0 +1,39 @@
+nextflow_process {
+
+    name "Test Process CIRCTOOLS_NANOPORE"
+    script "../main.nf"
+    process "CIRCTOOLS_NANOPORE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circtools_nanopore"
+
+    // TODO(longread real test): blocked by missing nanopore test data
+    test("nanopore reads - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'nanopore_1', single_end:true ],
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true)
+                ]
+                input[1] = file(projectDir + '/assets', type: 'dir')
+                input[2] = 'hg38'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

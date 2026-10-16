@@ -1,0 +1,94 @@
+nextflow_process {
+
+    name "Test Process COMBINEBEDS_SHIFTS"
+    script "../main.nf"
+    process "COMBINEBEDS_SHIFTS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "combinebeds_shifts"
+
+    test("all samples and tools") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                def tools = ['ciri', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
+                def base = params.pipelines_testdata_base_path + 'mini/intermediates/'
+                input[0] = [
+                    [ id:'all' ],
+                    ['cel_N2_1', 'fust1_1'].collectMany { s -> tools.collect { t -> file(base + s + '.' + t + '.meta.bed', checkIfExists: true) } }
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.plots.flatten().collect { file(it).name }.sort(),
+                    process.out.multiqc.flatten().collect { file(it).name }.sort(),
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("empty bed file - no plots") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'empty' ],
+                    [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.plots.isEmpty() },
+                { assert process.out.multiqc.isEmpty() },
+                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+            )
+        }
+    }
+
+    test("all samples and tools - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                def tools = ['ciri', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
+                def base = params.pipelines_testdata_base_path + 'mini/intermediates/'
+                input[0] = [
+                    [ id:'all' ],
+                    ['cel_N2_1', 'fust1_1'].collectMany { s -> tools.collect { t -> file(base + s + '.' + t + '.meta.bed', checkIfExists: true) } }
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

@@ -1,0 +1,98 @@
+nextflow_process {
+
+    name "Test Process FAIL_ON_EMPTY"
+    script "../main.nf"
+    process "FAIL_ON_EMPTY"
+
+    tag "modules"
+    tag "modules_local"
+    tag "fail_on_empty"
+
+    test("non-empty bed") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'all' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)
+                ]
+                input[1] = []
+                input[2] = 'No circular RNAs were found'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success }
+            )
+        }
+    }
+
+    test("empty bed") {
+
+        when {
+            process {
+                """
+                input[0] = [ [ id:'empty' ], [] ]
+                input[1] = []
+                input[2] = 'No circular RNAs were found by at least 2 tools'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.stdout.join('\n').contains('No circular RNAs were found by at least 2 tools') }
+            )
+        }
+    }
+
+    test("non-empty bed - stub") {
+
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'all' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)
+                ]
+                input[1] = []
+                input[2] = 'No circular RNAs were found'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success }
+            )
+        }
+    }
+
+    test("empty bed - stub") {
+
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [ [ id:'empty' ], [] ]
+                input[1] = []
+                input[2] = 'No circular RNAs were found by at least 2 tools'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.stdout.join('\n').contains('No circular RNAs were found by at least 2 tools') }
+            )
+        }
+    }
+}
