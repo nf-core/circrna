@@ -31,4 +31,18 @@ process CIRCRNA_FINDER {
         circRNA_finder: $VERSION
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = 'v1.2'
+    """
+    touch ${prefix}.filteredJunctions.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        awk: stub
+        cat: stub
+        circRNA_finder: $VERSION
+    END_VERSIONS
+    """
 }

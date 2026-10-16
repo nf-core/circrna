@@ -20,4 +20,17 @@ process COMBINEBEDS_COUNTS {
     prefix      = task.ext.prefix      ?: "${meta.id}"
     suffix      = task.ext.suffix      ?: "tsv"
     template "counts.py"
+
+    stub:
+    prefix      = task.ext.prefix      ?: "${meta.id}"
+    suffix      = task.ext.suffix      ?: "tsv"
+    """
+    touch ${prefix}.${suffix}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+    END_VERSIONS
+    """
 }

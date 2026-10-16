@@ -22,7 +22,12 @@ process CIRI_READLENGTH {
     stub:
     prefix = task.ext.prefix ?: meta.id
     """
-    touch ${prefix}.txt
-    touch versions.yml
+    echo 100 > ${prefix}.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+    END_VERSIONS
     """
 }

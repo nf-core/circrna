@@ -24,4 +24,19 @@ process COMBINEBEDS_FILTER {
     prefix      = task.ext.prefix      ?: "${meta.id}"
     suffix      = task.ext.suffix      ?: "bed"
     template "filter.py"
+
+    stub:
+    prefix      = task.ext.prefix      ?: "${meta.id}"
+    suffix      = task.ext.suffix      ?: "bed"
+    """
+    touch ${prefix}.${suffix}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+        upsetplot: stub
+        matplotlib: stub
+    END_VERSIONS
+    """
 }

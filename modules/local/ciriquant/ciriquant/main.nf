@@ -62,4 +62,23 @@ process CIRIQUANT {
         hisat2: $VERSION
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = '2.1.0'
+    """
+    mkdir -p ${prefix}/gene
+    touch ${prefix}/${prefix}.gtf
+    touch ${prefix}/gene/${prefix}_genes.list
+    touch ${prefix}/gene/${prefix}_out.gtf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bwa: stub
+        ciriquant: stub
+        samtools: stub
+        stringtie: stub
+        hisat2: $VERSION
+    END_VERSIONS
+    """
 }

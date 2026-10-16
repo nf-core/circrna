@@ -33,4 +33,17 @@ process CIRI_CIRIAS {
         ciri-as: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "1.0.0"
+    """
+    touch ${prefix}_jav.list
+    touch ${prefix}_library_length.list
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ciri-as: ${VERSION}
+    END_VERSIONS
+    """
 }

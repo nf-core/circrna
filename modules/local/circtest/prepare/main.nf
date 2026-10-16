@@ -18,4 +18,16 @@ process CIRCTEST_PREPARE {
     script:
     prefix = task.ext.prefix ?: meta.id
     template 'prepare.R'
+
+    stub:
+    prefix = task.ext.prefix ?: meta.id
+    """
+    touch ${prefix}_genes.tsv
+    touch ${prefix}_circs.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: stub
+    END_VERSIONS
+    """
 }

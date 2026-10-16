@@ -21,4 +21,18 @@ process CIRCTEST_CIRCTEST {
     script:
     prefix = task.ext.prefix ?: meta.id
     template 'circtest.R'
+
+    stub:
+    prefix = task.ext.prefix ?: meta.id
+    """
+    touch ${prefix}_summary.txt
+    touch circ_linear_ratio_plots.pdf
+    touch circ_linear_line_plots.pdf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: stub
+        ggplot2: stub
+    END_VERSIONS
+    """
 }

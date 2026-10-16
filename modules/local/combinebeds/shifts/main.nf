@@ -18,4 +18,14 @@ process COMBINEBEDS_SHIFTS {
     script:
     prefix      = task.ext.prefix      ?: "${meta.id}"
     template "shifts.py"
+
+    stub:
+    """
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+        altair: stub
+    END_VERSIONS
+    """
 }

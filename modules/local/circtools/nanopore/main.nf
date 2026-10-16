@@ -34,4 +34,13 @@ process CIRCTOOLS_NANOPORE {
         circtools: \$(circtools -V)
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        circtools: stub
+    END_VERSIONS
+    """
 }

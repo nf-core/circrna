@@ -32,4 +32,18 @@ process CIRIQUANT_DE {
         ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    circ_path = "${prefix}.circ.csv"
+    gene_path = "${prefix}.gene.csv"
+    """
+    touch ${circ_path}
+    touch ${gene_path}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ciriquant: stub
+    END_VERSIONS
+    """
 }

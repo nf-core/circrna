@@ -20,4 +20,17 @@ process ANNOTATION_BED2GTF {
     prefix = task.ext.prefix ?: meta.id
     suffix = task.ext.suffix ?: 'gtf'
     template 'bed2gtf.py'
+
+    stub:
+    prefix = task.ext.prefix ?: meta.id
+    suffix = task.ext.suffix ?: 'gtf'
+    """
+    touch ${prefix}.${suffix}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+    END_VERSIONS
+    """
 }

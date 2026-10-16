@@ -21,4 +21,19 @@ process COMBINEBEDS_READS {
     consider_strand = task.ext.consider_strand ?: false
     min_tools       = task.ext.min_tools       ?: 2
     template "reads.py"
+
+    stub:
+    prefix          = task.ext.prefix          ?: "${meta.id}"
+    """
+    touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+        seaborn: stub
+        matplotlib: stub
+        upsetplot: stub
+    END_VERSIONS
+    """
 }

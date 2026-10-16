@@ -27,4 +27,16 @@ process CIRIFULL_RO2 {
         cirifull: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "2.1.2"
+    """
+    touch ${prefix}_ro2_info.list
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        cirifull: ${VERSION}
+    END_VERSIONS
+    """
 }

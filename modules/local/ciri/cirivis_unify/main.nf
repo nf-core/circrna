@@ -17,4 +17,15 @@ process CIRIVIS_UNIFY {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template("cirivis_unify.py")
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        pandas: stub
+    END_VERSIONS
+    """
 }

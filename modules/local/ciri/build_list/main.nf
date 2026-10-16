@@ -18,4 +18,16 @@ process BUILD_LIST {
     prefix = task.ext.prefix ?: "${meta.id}"
     max_shift = task.ext.max_shift ?: 0
     template "build_list.py"
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: stub
+        polars: stub
+    END_VERSIONS
+    """
 }
