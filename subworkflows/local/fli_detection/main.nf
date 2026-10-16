@@ -25,20 +25,20 @@ workflow FLI_DETECTION {
     ch_versions = channel.empty()
 
     ch_bed12 = channel.empty()
-    ch_fasta = channel.empty()
+    ch_fli_fasta = channel.empty()
 
     if (fli_tools.contains('cirifull')) {
         CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam)
         ch_versions = ch_versions.mix(CIRIFULL.out.versions)
         ch_bed12 = ch_bed12.mix(CIRIFULL.out.bed12)
-        ch_fasta = ch_fasta.mix(CIRIFULL.out.fasta)
+        ch_fli_fasta = ch_fli_fasta.mix(CIRIFULL.out.fasta)
     }
 
     if (fli_tools.contains('psirc')) {
         PSIRC(ch_reads, ch_psirc_bsj, ch_psirc_index)
         ch_versions = ch_versions.mix(PSIRC.out.versions)
         ch_bed12 = ch_bed12.mix(PSIRC.out.bed12)
-        ch_fasta = ch_fasta.mix(PSIRC.out.fasta)
+        ch_fli_fasta = ch_fli_fasta.mix(PSIRC.out.fasta)
     }
 
     if (fli_tools.contains('jccirc')) {
@@ -50,11 +50,11 @@ workflow FLI_DETECTION {
         CIRCTOOLS(ch_bsj_bed_per_sample, ch_star_bam, ch_star_junction, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
         ch_bed12 = ch_bed12.mix(CIRCTOOLS.out.bed12)
-        ch_fasta = ch_fasta.mix(CIRCTOOLS.out.fasta)
+        ch_fli_fasta = ch_fli_fasta.mix(CIRCTOOLS.out.fasta)
     }
 
     emit:
     bed12 = ch_bed12
-    fasta = ch_fasta
+    fasta = ch_fli_fasta
     versions = ch_versions
 }
