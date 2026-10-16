@@ -1,0 +1,121 @@
+{
+    "cel_N2_1 merged annotation": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1.list_circle.fa"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1.list",
+                    "38b5da5be9fd4b23ad7605479f542ea3"
+                ]
+            ],
+            [
+                "cel_N2_1_1.pdf",
+                "cel_N2_1_10.pdf",
+                "cel_N2_1_11.pdf",
+                "cel_N2_1_12.pdf",
+                "cel_N2_1_13.pdf",
+                "cel_N2_1_14.pdf",
+                "cel_N2_1_15.pdf",
+                "cel_N2_1_16.pdf",
+                "cel_N2_1_17.pdf",
+                "cel_N2_1_18.pdf",
+                "cel_N2_1_19.pdf",
+                "cel_N2_1_2.pdf",
+                "cel_N2_1_3.pdf",
+                "cel_N2_1_4.pdf",
+                "cel_N2_1_5.pdf",
+                "cel_N2_1_6.pdf",
+                "cel_N2_1_7.pdf",
+                "cel_N2_1_8.pdf",
+                "cel_N2_1_9.pdf"
+            ],
+            {
+                "CIRI_CIRIVIS": {
+                    "ciri-vis": "1.4.2"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:29:49.299094716"
+    },
+    "cel_N2_1 merged annotation - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.list_circle.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "cel_N2_1.pdf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "3": [
+                    "versions.yml:md5,a0470ad5e3dd96ea5cb653d5716209ea"
+                ],
+                "fasta": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.list_circle.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "list": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "pdf": [
+                    "cel_N2_1.pdf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "versions": [
+                    "versions.yml:md5,a0470ad5e3dd96ea5cb653d5716209ea"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:30:13.929951439"
+    }
+}

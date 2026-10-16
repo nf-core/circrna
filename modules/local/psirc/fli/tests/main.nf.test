@@ -1,0 +1,39 @@
+nextflow_process {
+
+    name "Test Process PSIRC_FLI"
+    script "../main.nf"
+    process "PSIRC_FLI"
+
+    tag "modules"
+    tag "modules_local"
+    tag "psirc_fli"
+
+    // TODO(psirc FLI real test): blocked by psirc BSJ finding 0 junctions on the mini data (empty psirc_bsj intermediates)
+    test("cel_N2_1 reads - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1', single_end:false ],
+                    [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true)
+                ]
+                input[1] = [ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

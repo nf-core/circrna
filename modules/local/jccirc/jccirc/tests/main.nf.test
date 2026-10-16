@@ -1,0 +1,41 @@
+nextflow_process {
+
+    name "Test Process JCCIRC_JCCIRC"
+    script "../main.nf"
+    process "JCCIRC_JCCIRC"
+
+    tag "modules"
+    tag "modules_local"
+    tag "jccirc_jccirc"
+
+    // TODO(jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set
+    test("cel_N2_1 reads - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1', single_end:false ],
+                    [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

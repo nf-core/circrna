@@ -1,0 +1,118 @@
+{
+    "STAR alignments of two samples": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "fli_tool": "circtools"
+                    },
+                    "cel_N2_1.fa",
+                    "f058a6889c325725ac912f1aae1d365b"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "fli_tool": "circtools"
+                    },
+                    "fust1_1.fa",
+                    "f72be751346030481ed5b0ded74ba17a"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "fli_tool": "circtools"
+                    },
+                    "cel_N2_1.exon_counts.bed",
+                    "c0d6940bc4f960c5bf0ab3535c3a634f"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "fli_tool": "circtools"
+                    },
+                    "fust1_1.exon_counts.bed",
+                    "ff1b1fc278f5840bced61e9263b34145"
+                ]
+            ],
+            [
+                {
+                    "CIRCTOOLS:ANNOTATION": {
+                        "polars": "0.20.31",
+                        "python": "3.12.10"
+                    }
+                },
+                {
+                    "CIRCTOOLS:RECONSTRUCT": {
+                        "circtools": 2.0
+                    }
+                }
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:36:01.115684292"
+    },
+    "STAR alignments of two samples - stub": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "fli_tool": "circtools"
+                    },
+                    "cel_N2_1.fa",
+                    "d751713988987e9331980363e24189ce"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "fli_tool": "circtools"
+                    },
+                    "fust1_1.fa",
+                    "d751713988987e9331980363e24189ce"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "fli_tool": "circtools"
+                    },
+                    "cel_N2_1.exon_counts.bed",
+                    "d751713988987e9331980363e24189ce"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "fli_tool": "circtools"
+                    },
+                    "fust1_1.exon_counts.bed",
+                    "d751713988987e9331980363e24189ce"
+                ]
+            ],
+            [
+                {
+                    "CIRCTOOLS:ANNOTATION": {
+                        "python": "stub",
+                        "polars": "stub"
+                    }
+                },
+                {
+                    "CIRCTOOLS:RECONSTRUCT": {
+                        "circtools": "stub"
+                    }
+                }
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:36:22.712720662"
+    }
+}

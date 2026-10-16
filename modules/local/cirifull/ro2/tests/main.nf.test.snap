@@ -1,0 +1,64 @@
+{
+    "cel_N2_1 RO1 alignment - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro2_info.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,fdce008babeb8de690cef099e5a054a8"
+                ],
+                "list": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro2_info.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,fdce008babeb8de690cef099e5a054a8"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:33:16.803134557"
+    },
+    "cel_N2_1 RO1 alignment": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_ro2_info.list",
+                    "59b95e932bca382415938380cdeb4eb9"
+                ]
+            ],
+            {
+                "CIRIFULL_RO2": {
+                    "cirifull": "2.1.2"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:32:58.326328148"
+    }
+}
