@@ -62,4 +62,29 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("-profile test - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                mature = null
+                bootstrap_samples = 2
+            }
+        }
+
+        then {
+            def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+
+            assert workflow.success
+            assertAll(
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml"),
+                    stable_path
+                ).match() }
+            )
+        }
+    }
 }
