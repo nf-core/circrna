@@ -17,4 +17,15 @@ process PSIRC_UNIFY {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template("psirc_unify.py")
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        pandas: \$(python -c "import pandas as pd; print(pd.__version__)")
+    END_VERSIONS
+    """
 }

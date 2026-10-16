@@ -72,4 +72,17 @@ process MAPSPLICE_ALIGN {
         END_VERSIONS
         """
     }
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = 'v2.2.1'
+    """
+    mkdir ${prefix}
+    touch ${prefix}/fusions_raw.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mapsplice: $VERSION
+    END_VERSIONS
+    """
 }

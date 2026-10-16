@@ -26,4 +26,19 @@ process PSIRC_FLI {
         psirc: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    VERSION = "1.0.0"
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir ${prefix}
+    touch ${prefix}/full_length_isoforms.fa
+    touch ${prefix}/full_length_isoforms_alt_fsj_supporting_reads.sam
+    touch ${prefix}/full_length_isoforms.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc: ${VERSION}
+    END_VERSIONS
+    """
 }

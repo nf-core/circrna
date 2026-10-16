@@ -12,4 +12,11 @@ process FAIL_ON_EMPTY {
 
         exit 1
     }
+
+    stub:
+    if (!bed) {
+        log.error message
+
+        exit 1
+    }
 }

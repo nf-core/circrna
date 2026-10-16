@@ -33,4 +33,16 @@ process SEQKIT_SPLIT {
         seqkit: \$(echo \$(seqkit 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir ${prefix}
+    touch ${prefix}/${fasta.baseName}.part_001.${fasta.extension}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        seqkit: \$(echo \$(seqkit 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
+    END_VERSIONS
+    """
 }

@@ -27,4 +27,15 @@ process TARGETSCAN_DATABASE {
         mawk: $VERSION
     END_VERSIONS
     """
+
+    stub:
+    def VERSION = '1.3.4'
+    """
+    touch mature.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mawk: $VERSION
+    END_VERSIONS
+    """
 }

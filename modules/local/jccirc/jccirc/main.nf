@@ -31,4 +31,13 @@ process JCCIRC_JCCIRC {
         jccirc: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    VERSION = "1.0.0"
+    """
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        jccirc: ${VERSION}
+    END_VERSIONS
+    """
 }

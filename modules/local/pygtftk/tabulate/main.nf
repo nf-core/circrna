@@ -33,4 +33,17 @@ process PYGTFTK_TABULATE {
         gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def suffix = task.ext.suffix ?: gtf.extension
+    outfile    = "${prefix}.${suffix}"
+    """
+    touch ${outfile}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
+    END_VERSIONS
+    """
 }

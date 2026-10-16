@@ -21,4 +21,14 @@ process MIRNA_FILTERING {
 
     script:
     template 'mirna_filtering.R'
+
+    stub:
+    """
+    touch ${meta.id}.normalized_counts_filtered.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: \$(R --version | sed -n '1s/^R version \\([0-9.]*\\).*\$/\\1/p')
+    END_VERSIONS
+    """
 }

@@ -28,4 +28,16 @@ process FIND_CIRC_ANCHORS {
         find_circ: $VERSION
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    def VERSION = '1.2'
+    """
+    echo "" | gzip > ${prefix}_anchors.qfa.gz
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        find_circ: $VERSION
+    END_VERSIONS
+    """
 }
