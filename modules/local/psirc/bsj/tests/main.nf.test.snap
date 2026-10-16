@@ -1,0 +1,75 @@
+{
+    "cel_N2_1 paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,a3b923dd10f6340af4cd283486eddccb"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "output": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,a3b923dd10f6340af4cd283486eddccb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:05:00.113213862"
+    },
+    "cel_N2_1 paired-end": {
+        "content": [
+            {
+                "PSIRC_BSJ": {
+                    "psirc": "1.0.0"
+                }
+            },
+            "candidate_circ_junctions.bed",
+            0
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:04:41.736998362"
+    }
+}

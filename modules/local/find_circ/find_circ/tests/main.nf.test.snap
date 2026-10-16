@@ -1,0 +1,133 @@
+{
+    "cel_N2_1 anchors - forward strandedness": {
+        "content": [
+            {
+                "FIND_CIRC": {
+                    "bowtie2": "2.3.5.1",
+                    "find_circ": 1.2
+                }
+            },
+            [
+                "cel_N2_1.sites.bed"
+            ],
+            426,
+            "f6d9971f2741384aa01ab8868e2426ab",
+            [
+                "cel_N2_1.sites.reads"
+            ],
+            [
+                "cel_N2_1.sites.log"
+            ],
+            26916
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:53:56.976653727"
+    },
+    "cel_N2_1 anchors - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.reads:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,52fff62f5304b1b38f3a2d4e4123e82d"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "log": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "reads": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.reads:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,52fff62f5304b1b38f3a2d4e4123e82d"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:14:15.952330918"
+    },
+    "cel_N2_1 anchors - auto strandedness": {
+        "content": [
+            {
+                "FIND_CIRC": {
+                    "bowtie2": "2.3.5.1",
+                    "find_circ": 1.2
+                }
+            },
+            [
+                "cel_N2_1.sites.bed"
+            ],
+            [
+                "cel_N2_1.sites.reads"
+            ],
+            [
+                "cel_N2_1.sites.log"
+            ],
+            426,
+            "15bded2419b44b3af0db4ac5c3226d9a",
+            26916
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:15:45.124743619"
+    }
+}

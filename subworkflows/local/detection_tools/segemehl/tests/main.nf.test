@@ -1,0 +1,120 @@
+nextflow_workflow {
+
+    name "Test Workflow SEGEMEHL"
+    script "../main.nf"
+    workflow "SEGEMEHL"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "segemehl"
+
+    test("cel_N2_1 paired-end - build index") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[2] = null
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.sort(),
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - prebuilt index") {
+        setup {
+            run("SEGEMEHL_INDEX") {
+                script "../../../../../modules/nf-core/segemehl/index/main.nf"
+                process {
+                    """
+                    input[0] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[2] = SEGEMEHL_INDEX.out.index
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.sort(),
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[2] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

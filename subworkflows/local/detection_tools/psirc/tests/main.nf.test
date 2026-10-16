@@ -1,0 +1,93 @@
+nextflow_workflow {
+
+    name "Test Workflow PSIRC"
+    script "../main.nf"
+    workflow "PSIRC"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "psirc"
+
+    setup {
+        run("PSIRC_TRANSCRIPTOME") {
+            script "../../../../../modules/local/psirc/transcriptome/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("PSIRC_INDEX") {
+            script "../../../../../modules/local/psirc/index/main.nf"
+            process {
+                """
+                input[0] = PSIRC_TRANSCRIPTOME.out.transcriptome
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 paired-end") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    workflow.out.output.collect { file(it[1]).list().sort() },
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

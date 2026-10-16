@@ -1,0 +1,86 @@
+nextflow_workflow {
+
+    name "Test Workflow FIND_CIRC"
+    script "../main.nf"
+    workflow "FIND_CIRC"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "find_circ"
+
+    setup {
+        run("BOWTIE2_BUILD") {
+            script "../../../../../modules/nf-core/bowtie2/build/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 paired-end") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.collect { line -> def cols = line.tokenize('\t'); cols.remove(3); cols.take(5).join('\t') }.sort(),
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}
