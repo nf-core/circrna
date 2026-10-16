@@ -1,0 +1,643 @@
+nextflow_workflow {
+
+    name "Test Workflow FLI_DETECTION"
+    script "../main.nf"
+    workflow "FLI_DETECTION"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "fli_detection"
+
+    test("cirifull") {
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['cirifull']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("circtools") {
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['circtools']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cirifull and circtools") {
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['cirifull', 'circtools']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("no FLI tools") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = channel.empty()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.empty()
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = []
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.fasta.isEmpty() },
+                { assert workflow.out.bed12.isEmpty() },
+                { assert workflow.out.versions.isEmpty() },
+                { assert workflow.trace.tasks().isEmpty() }
+            )
+        }
+    }
+
+    test("cirifull - stub") {
+
+        options '-stub'
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['cirifull']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("circtools - stub") {
+
+        options '-stub'
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['circtools']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("psirc - stub") {
+
+        options '-stub'
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+            run("PSIRC_INDEX") {
+                script "../../../../modules/local/psirc/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                    .join(PSIRC_INDEX.out.index.map { meta, a, b -> [ meta, [ a, b ] ] })
+                    .first()
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['psirc']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    // TODO(a4 ticket 1: JCCIRC input mismatch): JCCIRC only runs TRINITY here; JCCIRC_PREP/MAIN never start because the combined annotation (meta `all`) does not join the per-sample reads BED, and a real run is blocked by the mini data
+    test("all FLI tools - stub") {
+
+        options '-stub'
+
+        setup {
+            run("BWA_INDEX") {
+                script "../../../../modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                    """
+                }
+            }
+            run("PSIRC_INDEX") {
+                script "../../../../modules/local/psirc/index/main.nf"
+                process {
+                    """
+                    input[0] = [ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[9] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                    .join(PSIRC_INDEX.out.index.map { meta, a, b -> [ meta, [ a, b ] ] })
+                    .first()
+                input[10] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
+                )
+                input[14] = ['cirifull', 'psirc', 'jccirc', 'circtools']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+}
