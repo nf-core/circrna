@@ -1,0 +1,86 @@
+nextflow_process {
+
+    name "Test Process STRINGTIE_PREPDE"
+    script "../main.nf"
+    process "STRINGTIE_PREPDE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "stringtie"
+    tag "stringtie_prepde"
+
+    test("six samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.stringtie.gtf', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            def genes = path(process.out.gene_matrix[0][1]).csv()
+            def transcripts = path(process.out.transcript_matrix[0][1]).csv()
+            assertAll(
+                { assert process.success },
+                { assert genes.columnNames.sort() == [ 'cel_N2_1', 'cel_N2_2', 'cel_N2_3', 'fust1_1', 'fust1_2', 'fust1_3', 'gene_id' ] },
+                { assert genes.rowCount > 0 },
+                { assert transcripts.rowCount > 0 },
+                { assert snapshot(
+                    process.out.gene_matrix,
+                    process.out.transcript_matrix,
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("six samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.stringtie.gtf', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

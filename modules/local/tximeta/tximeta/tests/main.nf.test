@@ -1,0 +1,109 @@
+nextflow_process {
+
+    name "Test Process TXIMETA_TXIMETA"
+    script "../main.nf"
+    process "TXIMETA_TXIMETA"
+
+    tag "modules"
+    tag "modules_local"
+    tag "tximeta"
+    tag "tximeta_tximeta"
+
+    setup {
+        run("PSIRCQUANT_INDEX") {
+            script "modules/local/psircquant/index/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                """
+            }
+        }
+        run("PSIRCQUANT_QUANT") {
+            script "modules/local/psircquant/quant/main.nf"
+            process {
+                """
+                input[0] = channel.of(
+                    [
+                        [ id:'cel_N2_1', single_end:false ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'fust1_1', single_end:false ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = PSIRCQUANT_INDEX.out.index.collect()
+                input[2] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ]
+                input[4] = 2
+                """
+            }
+        }
+    }
+
+    test("psirc-quant directories") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = PSIRCQUANT_QUANT.out.directory
+                input[1] = 'kallisto'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.se.size() == 2 },
+                { assert process.out.se.every { meta, rds -> file(rds).size() > 0 } },
+                { assert snapshot(
+                    process.out.se.collect { meta, rds -> [ meta.id, file(rds).name ] }.sort(),
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("psirc-quant directories - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = PSIRCQUANT_QUANT.out.directory
+                input[1] = 'kallisto'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

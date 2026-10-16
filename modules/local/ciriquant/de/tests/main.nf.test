@@ -1,0 +1,98 @@
+nextflow_process {
+
+    name "Test Process CIRIQUANT_DE"
+    script "../main.nf"
+    process "CIRIQUANT_DE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "ciriquant"
+    tag "ciriquant_de"
+
+    setup {
+        run("CIRIQUANT_PREPDE") {
+            script "modules/local/ciriquant/prepde/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.ciriquant.gtf', checkIfExists: true)
+                    ],
+                    [ 'C', 'C', 'C', 'T', 'T', 'T' ]
+                ]
+                """
+            }
+        }
+        run("STRINGTIE_PREPDE") {
+            script "modules/local/stringtie/prepde/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.stringtie.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.stringtie.gtf', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+    }
+
+    test("six samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRIQUANT_PREPDE.out.library.join(CIRIQUANT_PREPDE.out.expression).join(STRINGTIE_PREPDE.out.gene_matrix)
+                """
+            }
+        }
+
+        then {
+            // 6-sample test data has only 5 circRNAs: edgeR fails inside CIRI_DE_replicate (exit code 0), so both optional outputs are empty
+            assertAll(
+                { assert process.success },
+                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+            )
+        }
+    }
+
+    test("six samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRIQUANT_PREPDE.out.library.join(CIRIQUANT_PREPDE.out.expression).join(STRINGTIE_PREPDE.out.gene_matrix)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

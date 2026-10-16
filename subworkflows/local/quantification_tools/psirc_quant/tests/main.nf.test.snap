@@ -1,0 +1,303 @@
+{
+    "paired-end mini samples - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "10": [
+                    "versions.yml:md5,251571cdd5de014a63cc0d714fb88f37",
+                    "versions.yml:md5,251571cdd5de014a63cc0d714fb88f37",
+                    "versions.yml:md5,398f4dcd940cd5535d371834450a0410",
+                    "versions.yml:md5,398f4dcd940cd5535d371834450a0410",
+                    "versions.yml:md5,7ba39956eb8f891a33e2f6dbcaa43510",
+                    "versions.yml:md5,9bb5050467df35f082485604df2b80a9",
+                    "versions.yml:md5,e031c59fd90b6196a5b74027e14de2ca",
+                    "versions.yml:md5,ea45f397a5e608cff478307428d2a263"
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "gene_counts"
+                        },
+                        "gene_counts.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "gene_tpm"
+                        },
+                        "gene_tpm.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "tx_counts.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "5": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "tx_tpm.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "6": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "7": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "9": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "circular_tx_counts": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "circular_tx_tpm": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gene_counts": [
+                    [
+                        {
+                            "id": "gene_counts"
+                        },
+                        "gene_counts.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gene_tpm": [
+                    [
+                        {
+                            "id": "gene_tpm"
+                        },
+                        "gene_tpm.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "linear_tx_counts": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "linear_tx_tpm": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "rds": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "se": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "tx_counts": [
+                    [
+                        {
+                            "id": "tx_counts"
+                        },
+                        "tx_counts.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "tx_tpm": [
+                    [
+                        {
+                            "id": "tx_tpm"
+                        },
+                        "tx_tpm.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,251571cdd5de014a63cc0d714fb88f37",
+                    "versions.yml:md5,251571cdd5de014a63cc0d714fb88f37",
+                    "versions.yml:md5,398f4dcd940cd5535d371834450a0410",
+                    "versions.yml:md5,398f4dcd940cd5535d371834450a0410",
+                    "versions.yml:md5,7ba39956eb8f891a33e2f6dbcaa43510",
+                    "versions.yml:md5,9bb5050467df35f082485604df2b80a9",
+                    "versions.yml:md5,e031c59fd90b6196a5b74027e14de2ca",
+                    "versions.yml:md5,ea45f397a5e608cff478307428d2a263"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:41:07.644596158"
+    },
+    "paired-end mini samples": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "gene_counts"
+                    },
+                    "gene_counts.csv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "gene_tpm"
+                    },
+                    "gene_tpm.csv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "tx_counts"
+                    },
+                    "tx_counts.csv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "tx_tpm"
+                    },
+                    "tx_tpm.csv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "tx_counts"
+                    },
+                    "linear.tsv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "tx_counts"
+                    },
+                    "circular.tsv"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            [
+                "cel_N2_1",
+                "fust1_1",
+                "gene_id",
+                "tx"
+            ],
+            [
+                "chrI:100178-100538:-",
+                "chrI:137353-141434:-",
+                "chrI:139758-141434:-",
+                "chrI:15805-22588:-",
+                "chrI:231083-231373:+",
+                "chrI:295212-296310:+",
+                "chrI:392534-395272:+",
+                "chrI:399299-399645:+",
+                "chrI:400846-407399:+",
+                "chrI:41228-45899:-",
+                "chrI:41228-49098:-",
+                "chrI:425352-427850:+",
+                "chrI:452388-452870:+",
+                "chrI:460272-465936:+",
+                "chrI:485564-486829:+",
+                "chrI:521959-523476:-",
+                "chrI:52880-54394:+",
+                "chrI:538888-539406:-",
+                "chrI:545970-546257:-",
+                "chrI:549942-550388:-",
+                "chrI:600048-600440:+",
+                "chrI:605818-606575:+",
+                "chrI:617491-617842:-",
+                "chrI:637292-637681:+",
+                "chrI:638590-639898:+",
+                "chrI:692302-692614:+",
+                "chrI:713160-714382:+",
+                "chrI:721344-723387:+",
+                "chrI:751519-752725:+",
+                "chrI:751519-755211:+",
+                "chrI:754505-757236:+",
+                "chrI:777511-779604:+",
+                "chrI:87576-97830:+",
+                "chrI:96049-97830:+"
+            ],
+            34,
+            203,
+            121
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:40:12.130255439"
+    }
+}

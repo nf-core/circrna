@@ -1,0 +1,75 @@
+{
+    "ciriquant gene tables": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "gene"
+                    },
+                    "gene.joined.tsv:md5,fc3fb421c658909ccf94e814a930f9d0"
+                ]
+            ],
+            {
+                "JOIN_SAMPLES": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:10:14.641657751"
+    },
+    "ciriquant circ tables - header only": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "circ"
+                    },
+                    "circ.joined.tsv:md5,138382d5b81a90b8ec92b3d886695bf0"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:10:36.123921303"
+    },
+    "ciriquant gene tables - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "gene"
+                        },
+                        "gene.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,5d1d612867d4e66939c2e203718b35cb"
+                ],
+                "joined": [
+                    [
+                        {
+                            "id": "gene"
+                        },
+                        "gene.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,5d1d612867d4e66939c2e203718b35cb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:10:57.66993317"
+    }
+}

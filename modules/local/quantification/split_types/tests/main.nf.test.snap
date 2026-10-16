@@ -1,0 +1,108 @@
+{
+    "psirc transcript counts": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,71f6d514cc2c61a7577ae7d88ff03b3c"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,8856a7b988932a548afe4426baa72d09"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,b19924e1f1a5ee5b83d6f32a0ea8d36f"
+                ],
+                "circular": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,8856a7b988932a548afe4426baa72d09"
+                    ]
+                ],
+                "linear": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,71f6d514cc2c61a7577ae7d88ff03b3c"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,b19924e1f1a5ee5b83d6f32a0ea8d36f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:11:14.217655356"
+    },
+    "psirc transcript counts - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,b19924e1f1a5ee5b83d6f32a0ea8d36f"
+                ],
+                "circular": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "linear": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,b19924e1f1a5ee5b83d6f32a0ea8d36f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:11:40.907341587"
+    }
+}

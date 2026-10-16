@@ -1,0 +1,94 @@
+nextflow_process {
+
+    name "Test Process PYGTFTK_TABULATE"
+    script "../main.nf"
+    process "PYGTFTK_TABULATE"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_local"
+    tag "pygtftk"
+    tag "pygtftk_tabulate"
+
+    test("ciriquant circRNA gtf") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_3' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def table = path(process.out.table[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert table.columnNames == ['circ_id', 'gene_id', 'score'] },
+                { assert table.rowCount == 2 },
+                { assert snapshot(
+                    process.out.table,
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("ciriquant circRNA gtf - header only") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciriquant.gtf', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.table.collect { meta, table -> [ meta, file(table).name, path(table).readLines() ] }
+                ).match() }
+            )
+        }
+    }
+
+    test("ciriquant circRNA gtf - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_3' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

@@ -1,0 +1,79 @@
+{
+    "with phenotype - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,52b5f6aecf076d631dde0f9db78fb29a"
+                ],
+                "merged": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,52b5f6aecf076d631dde0f9db78fb29a"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:18:23.349608661"
+    },
+    "without phenotype": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            {
+                "MERGE_EXPERIMENTS": {
+                    "bioconductor-summarizedexperiment": "1.32.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:17:37.287355255"
+    },
+    "with phenotype": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            {
+                "MERGE_EXPERIMENTS": {
+                    "bioconductor-summarizedexperiment": "1.32.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:16:34.789237359"
+    }
+}
