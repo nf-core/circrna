@@ -62,12 +62,14 @@ workflow MIRNA_BINDINGSITES {
     //
     // TODO: This is an artifact and should be removed if we have a replacement
 
-    // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
-    consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
+    if (tools.contains('targetscan') && tools.contains('miranda')) {
+        // consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt).join(circrna_bed12)
+        consolidate_targets = TARGETSCAN.out.txt.join(MIRANDA.out.txt)
 
-    MIRNA_TARGETS( consolidate_targets )
+        MIRNA_TARGETS( consolidate_targets )
 
-    ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
+        ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
+    }
 
     //
     // MAJORITY VOTING:
