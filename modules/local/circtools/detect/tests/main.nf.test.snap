@@ -1,0 +1,105 @@
+{
+    "mini - paired-end with mate junctions": {
+        "content": [
+            {
+                "CIRCTOOLS_DETECT": {
+                    "circtools": 2.0
+                }
+            },
+            [
+                "cel_N2_1_reads.junctions"
+            ],
+            [
+                "cel_N2_1_coordinates.tsv"
+            ],
+            [
+                "cel_N2_1_counts.tsv"
+            ],
+            164,
+            "bfde5b03a7069db354bda4d58a8cf7f8",
+            "8fc5175c2b5fed87ac8f411c56456908"
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:00:23.887469297"
+    },
+    "mini - paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,0211adab65c09f1d540499f9cf047988"
+                ],
+                "coordinates": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "reads": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,0211adab65c09f1d540499f9cf047988"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:00:43.889451919"
+    }
+}

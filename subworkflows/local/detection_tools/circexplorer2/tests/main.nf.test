@@ -1,0 +1,76 @@
+nextflow_workflow {
+
+    name "Test Subworkflow CIRCEXPLORER2"
+    script "../main.nf"
+    workflow "CIRCEXPLORER2"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "circexplorer2"
+
+    test("mini - STAR junctions") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[2] = []
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                workflow.out.bed.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size(), path(it[1]).md5] }.sort { it[0].id },
+                workflow.out.versions
+            ).match()
+        }
+    }
+
+    test("mini - STAR junctions - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[2] = []
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+}
