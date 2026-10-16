@@ -179,13 +179,25 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
+// Parse a comma separated list of tools into a lower-cased list without empty entries
+//
+def parseToolList(String tools) {
+    return tools.split(',').collect { tool -> tool.trim().toLowerCase() }.findAll { tool -> tool }
+}
+
+//
 // Check and validate pipeline parameters
 //
 def validateInputParameters() {
     genomeExistsError()
 
-    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
-    def bsj_tools = params.tools.split(',').collect { tool -> tool.trim().toLowerCase() }
+    def fli_tools = parseToolList(params.fli_tools)
+    def bsj_tools = parseToolList(params.tools)
+    def quantification_tools = parseToolList(params.quantification_tools)
+
+    if (!params.longread && quantification_tools.size() == 0) {
+        error('No tools selected for circRNA quantification.')
+    }
 
     if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
         error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
@@ -224,7 +236,7 @@ def validateInputSamplesheet(input) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
     }
 
-    def fli_tools = params.fli_tools.split(',').collect { tool -> tool.trim().toLowerCase() }
+    def fli_tools = parseToolList(params.fli_tools)
 
     if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }
