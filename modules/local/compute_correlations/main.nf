@@ -25,5 +25,10 @@ process COMPUTE_CORRELATIONS {
     stub:
     """
     touch ${meta.id}.circrna_correlation.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: \$(R --version | sed -n '1s/^R version \\([0-9.]*\\).*\$/\\1/p')
+    END_VERSIONS
     """
 }
