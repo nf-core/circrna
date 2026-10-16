@@ -18,7 +18,7 @@ versions = {
 with open("versions.yml", "w") as f:
     f.write(yaml.dump(versions))
 
-exons_only = bool("${exons_only}")
+exons_only = "${exons_only}".lower() == "true"
 
 columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
             'thickStart', 'thickEnd', 'itemRgb',
