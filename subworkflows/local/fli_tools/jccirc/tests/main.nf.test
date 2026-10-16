@@ -8,7 +8,7 @@ nextflow_workflow {
     tag "subworkflows_local"
     tag "fli_tools_jccirc"
 
-    // TODO(jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads of one sample and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set; not run in the pipeline either because `jccirc` is rejected by the `fli_tools` schema pattern
+    // TODO(#231 jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads of one sample and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set; not run in the pipeline either because `jccirc` is rejected by the `fli_tools` schema pattern
     test("two samples - stub") {
 
         options '-stub'

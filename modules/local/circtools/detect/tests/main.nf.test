@@ -85,7 +85,7 @@ nextflow_process {
         }
     }
 
-    // TODO(circtools detect fails for single-end data): real single-end test blocked by tmp_printcirclines only being written with -Pi, see tickets
+    // TODO(#230 circtools detect fails for single-end data): real single-end test blocked by tmp_printcirclines only being written with -Pi
 
     test("mini - paired-end - stub") {
 

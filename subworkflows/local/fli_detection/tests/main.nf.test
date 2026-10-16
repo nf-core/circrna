@@ -551,7 +551,7 @@ nextflow_workflow {
         }
     }
 
-    // TODO(a4 ticket 1: JCCIRC input mismatch): JCCIRC only runs TRINITY here; JCCIRC_PREP/MAIN never start because the combined annotation (meta `all`) does not join the per-sample reads BED, and a real run is blocked by the mini data
+    // TODO(#231 JCCIRC input mismatch): JCCIRC only runs TRINITY here; JCCIRC_PREP/MAIN never start because the combined annotation (meta `all`) does not join the per-sample reads BED, and a real run is blocked by the mini data
     test("all FLI tools - stub") {
 
         options '-stub'

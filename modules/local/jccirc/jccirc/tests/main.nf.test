@@ -8,7 +8,7 @@ nextflow_process {
     tag "modules_local"
     tag "jccirc_jccirc"
 
-    // TODO(jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set
+    // TODO(#231 jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set
     test("cel_N2_1 reads - stub") {
 
         options '-stub'

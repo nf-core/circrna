@@ -8,7 +8,7 @@ nextflow_process {
     tag "modules_local"
     tag "compute_correlations"
 
-    // TODO(COMPUTE_CORRELATIONS fails on the mini data): real test blocked by the 2-sample psirc rds; fishpond labelKeep keeps no transcripts ("No transcripts left after filtering"), see /tmp/opencode/tickets/a6.md
+    // TODO(#218 COMPUTE_CORRELATIONS fails on the mini data): real test blocked by the 2-sample psirc rds; fishpond labelKeep keeps no transcripts ("No transcripts left after filtering")
 
     test("mini binding sites - stub") {
 

@@ -88,7 +88,7 @@ nextflow_workflow {
         }
     }
 
-    // TODO(COMPUTE_CORRELATIONS fails on the mini data): real test with correlations blocked by the 2-sample psirc rds, see /tmp/opencode/tickets/a6.md
+    // TODO(#218 COMPUTE_CORRELATIONS fails on the mini data): real test with correlations blocked by the 2-sample psirc rds
 
     test("without miRNA expression - stub") {
 
