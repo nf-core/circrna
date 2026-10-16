@@ -10,9 +10,6 @@ inputs:
   total_shards:
     description: "Total number of test shards(NOT the total number of matrix jobs)"
     required: true
-  paths:
-    description: "Test paths"
-    required: true
   tags:
     description: "Tags to pass as argument for nf-test --tag parameter"
     required: false
