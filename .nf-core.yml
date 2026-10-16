@@ -15,9 +15,3 @@ template:
   org: nf-core
   outdir: .
   version: 0.0.1dev
-lint:
-  files_exist:
-    - .github/workflows/linting_comment.yml
-  files_unchanged:
-    - .github/workflows/branch.yml
-    - .github/workflows/linting.yml
