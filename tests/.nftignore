@@ -8,5 +8,44 @@ multiqc/multiqc_data/multiqc_software_versions.txt
 multiqc/multiqc_data/llms-full.txt
 multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
 multiqc/multiqc_report.html
-fastqc/*_fastqc.{html,zip}
 pipeline_info/*.{html,json,txt,yml}
+
+# FastQC outputs (zips and HTML vary by path to nested dir; hashes drift across runners)
+**/*_fastqc.{html,zip}
+
+# STAR genome index log (non-deterministic across CPU / compiler)
+**/star/Log.out
+
+# BSJ detection / upset summaries
+**/*.combined.bed
+**/all_samples.upset.png
+**/all_samples.upset_mqc.json
+
+# CIRCEexplorer2 exports (ordering / float noise)
+**/circexplorer2.csv
+**/*.circexplorer2.bed
+**/*.circexplorer2.filtered.bed
+**/*_circexplorer2.meta.bed
+
+# Quantification: pseudoalignment + tximport/tximeta + aggregations / merged tables
+**/abundance.h5
+**/abundance.tsv
+**/run_info.json
+**/pseudoalignments.bam
+**/pseudoalignments.bam.bai
+**/tximport/*.tsv
+**/tximeta/*.rds
+**/max.tsv
+**/sum.tsv
+**/circular.tsv
+**/linear.tsv
+**/experiments.merged.rds
+**/gene_counts.csv
+**/gene_tpm.csv
+**/tx_counts.csv
+**/tx_tpm.csv
+
+# miRNA stage
+**/mirna.majority.tsv
+**/mirna.targets.tsv
+**/transcriptome.fa
