@@ -151,6 +151,82 @@ nextflow_workflow {
         }
     }
 
+    test("ciriquant only builds bwa and hisat2") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circexplorer2']
+                input[3] = ['ciriquant']
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:BWA_INDEX") },
+                { assert tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE_BUILD") },
+                { assert !tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
+                { assert !workflow.out.bwa.isEmpty() },
+                { assert !workflow.out.hisat2.isEmpty() },
+                { assert workflow.out.bowtie.isEmpty() },
+                { assert workflow.out.bowtie2.isEmpty() },
+                { assert snapshot(
+                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] }
+                ).match() }
+            )
+        }
+    }
+
+    test("ciriquant only builds bwa and hisat2 - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circexplorer2']
+                input[3] = ['ciriquant']
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:BWA_INDEX") },
+                { assert tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
+                { assert !workflow.out.bwa.isEmpty() },
+                { assert !workflow.out.hisat2.isEmpty() }
+            )
+        }
+    }
+
     test("build all indices - stub") {
 
         options '-stub'

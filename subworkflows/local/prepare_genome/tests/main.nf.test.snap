@@ -573,5 +573,47 @@
             "nextflow": "25.10.4"
         },
         "timestamp": "2026-10-16T20:24:44.980435953"
+    },
+    "ciriquant only builds bwa and hisat2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "bwa",
+                    [
+                        "chrI_mini.amb",
+                        "chrI_mini.ann",
+                        "chrI_mini.bwt",
+                        "chrI_mini.pac",
+                        "chrI_mini.sa"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "hisat2",
+                    [
+                        "chrI_mini.1.ht2",
+                        "chrI_mini.2.ht2",
+                        "chrI_mini.3.ht2",
+                        "chrI_mini.4.ht2",
+                        "chrI_mini.5.ht2",
+                        "chrI_mini.6.ht2",
+                        "chrI_mini.7.ht2",
+                        "chrI_mini.8.ht2"
+                    ]
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:05:33.624807088"
     }
 }
