@@ -18,7 +18,7 @@ workflow ANNOTATION {
     main:
     ch_versions = channel.empty()
 
-    INGEST_DATABASE_NAMES(ch_annotation, [], false)
+    INGEST_DATABASE_NAMES(ch_annotation.map { meta, database -> [meta, database, "named.bed"] }, [], false)
 
     INTERSECT_DATABASE(
         regions.combine(INGEST_DATABASE_NAMES.out.output).map { meta1, _regions, meta2, database ->
@@ -34,16 +34,17 @@ workflow ANNOTATION {
             ]
         },
         [[], []],
+        "intersect_database.bed",
     )
 
     ANNOTATE(regions, fasta, circexplorer2_index)
 
-    RENAME(ANNOTATE.out.txt, [], false)
+    RENAME(ANNOTATE.out.txt.map { meta, txt -> [meta, txt, "annotated.bed12"] }, [], false)
 
     BED2GTF(RENAME.out.output.map { meta, bed12 -> [meta, bed12, []] }, exons_only)
     ch_versions = ch_versions.mix(BED2GTF.out.versions)
 
-    CUT_BED12(RENAME.out.output, [], false)
+    CUT_BED12(RENAME.out.output.map { meta, bed12 -> [meta, bed12, "cut.bed12"] }, [], false)
 
     GET_FASTA(RENAME.out.output, fasta)
 

@@ -12,20 +12,17 @@ process ANNOTATION_BED2GTF {
     val exons_only
 
     output:
-    tuple val(meta), path("${prefix}.${suffix}"), emit: gtf
-
-    path "versions.yml"                         , emit: versions
+    tuple val(meta), path("${prefix}.gtf"), emit: gtf
+    path "versions.yml"       , emit: versions
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    suffix = task.ext.suffix ?: 'gtf'
     template 'bed2gtf.py'
 
     stub:
     prefix = task.ext.prefix ?: meta.id
-    suffix = task.ext.suffix ?: 'gtf'
     """
-    touch ${prefix}.${suffix}
+    touch ${prefix}.gtf
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -160,7 +160,7 @@ workflow BSJ_DETECTION {
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
 
     if (blacklist) {
-        BLACKLIST(ch_bsj_bed_per_sample_tool.combine(channel.value(blacklist)), [[], []])
+        BLACKLIST(ch_bsj_bed_per_sample_tool.combine(channel.value(blacklist)), [[], []], "blacklist.bed")
         ch_bsj_bed_per_sample_tool = BLACKLIST.out.intersect
     }
 
@@ -175,7 +175,9 @@ workflow BSJ_DETECTION {
 
     if (enabled_tools_with_reads.size() > 1) {
         COMBINEBEDS_READS(
-            ch_bsj_bed_per_sample_tool_reads.map { meta, bed -> [[id: meta.id], meta.tool, bed] }.groupTuple()
+            ch_bsj_bed_per_sample_tool_reads.map { meta, bed -> [[id: meta.id], meta.tool, bed] }.groupTuple(),
+            consider_strand,
+            2,
         )
         ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
         ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
@@ -189,7 +191,7 @@ workflow BSJ_DETECTION {
     // QUANTIFY BSJs PER TOOL
     //
 
-    EXTRACT_COUNTS(ch_bsj_bed_per_sample_tool, [], false)
+    EXTRACT_COUNTS(ch_bsj_bed_per_sample_tool.map { meta, bed -> [meta, bed, "counts.tsv"] }, [], false)
 
     COMBINE_COUNTS_PER_TOOL(
         EXTRACT_COUNTS.out.output.map { meta, bed -> [[id: meta.tool], bed] }.groupTuple()
@@ -199,13 +201,13 @@ workflow BSJ_DETECTION {
     // APPLY bsj_reads FILTER
     //
 
-    ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS(ch_bsj_bed_per_sample_tool, [], false).output
+    ch_bsj_bed_per_sample_tool_filtered = FILTER_BSJS(ch_bsj_bed_per_sample_tool.map { meta, bed -> [meta, bed, "${meta.tool}.filtered.bed"] }, [], false).output
 
     //
     // MERGE BED FILES
     //
 
-    BED_ADD_SAMPLE_TOOL(ch_bsj_bed_per_sample_tool_filtered, [], false)
+    BED_ADD_SAMPLE_TOOL(ch_bsj_bed_per_sample_tool_filtered.map { meta, bed -> [meta, bed, "meta.bed"] }, [], false)
     ch_bsj_bed_per_sample_tool_meta = BED_ADD_SAMPLE_TOOL.out.output
 
     COMBINE_TOOLS_PER_SAMPLE(
@@ -214,6 +216,7 @@ workflow BSJ_DETECTION {
         consider_strand,
         min_tools,
         1,
+        "combined.bed",
     )
     ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined.filter { _meta, bed -> !bed.isEmpty() }
@@ -228,6 +231,7 @@ workflow BSJ_DETECTION {
         consider_strand,
         min_tools,
         min_samples,
+        "combined.bed",
     )
     ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined

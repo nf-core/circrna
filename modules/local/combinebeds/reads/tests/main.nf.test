@@ -3,7 +3,6 @@ nextflow_process {
     name "Test Process COMBINEBEDS_READS"
     script "../main.nf"
     process "COMBINEBEDS_READS"
-    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"
@@ -29,6 +28,8 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
                     ]
                 ]
+                input[1] = params.consider_strand
+                input[2] = params.reads_min_tools
                 """
             }
         }
@@ -68,6 +69,8 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
                     ]
                 ]
+                input[1] = params.consider_strand
+                input[2] = params.reads_min_tools
                 """
             }
         }
@@ -107,6 +110,8 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.filtered.bed', checkIfExists: true)
                     ]
                 ]
+                input[1] = params.consider_strand
+                input[2] = params.reads_min_tools
                 """
             }
         }
@@ -149,6 +154,8 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
                     ]
                 ]
+                input[1] = params.consider_strand
+                input[2] = params.reads_min_tools
                 """
             }
         }

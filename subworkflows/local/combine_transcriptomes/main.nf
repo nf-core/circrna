@@ -12,11 +12,11 @@ workflow COMBINE_TRANSCRIPTOMES {
     ch_versions = channel.empty()
 
     COMBINE_TRANSCRIPTOME_GTFS(
-        ch_genome_gtf.mix(ch_circ_gtf).map{ _meta, gtf -> gtf }.collect().map{ gtfs -> [[id: "transcriptome"], gtfs]},
+        ch_genome_gtf.mix(ch_circ_gtf).map{ _meta, gtf -> gtf }.collect().map{ gtfs -> [[id: "transcriptome"], gtfs, "combined.gtf"]},
     )
 
     EXCLUDE_OVERLONG_TRANSCRIPTS(
-        COMBINE_TRANSCRIPTOME_GTFS.out.sorted, [], false
+        COMBINE_TRANSCRIPTOME_GTFS.out.sorted.map{ meta, gtf -> [meta, gtf, "filtered.gtf"]}, [], false
     )
 
     TRANSCRIPTOME(

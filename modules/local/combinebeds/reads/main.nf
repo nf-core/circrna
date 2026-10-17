@@ -9,6 +9,8 @@ process COMBINEBEDS_READS {
 
     input:
     tuple val(meta), val(tools), path(beds)
+    val(consider_strand)
+    val(min_tools)
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: combined
@@ -17,13 +19,11 @@ process COMBINEBEDS_READS {
     path "versions.yml"                   , emit: versions
 
     script:
-    prefix          = task.ext.prefix          ?: "${meta.id}"
-    consider_strand = task.ext.consider_strand ?: false
-    min_tools       = task.ext.min_tools       ?: 2
+    prefix = task.ext.prefix ?: "${meta.id}"
     template "reads.py"
 
     stub:
-    prefix          = task.ext.prefix          ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.bed
 
