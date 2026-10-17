@@ -210,6 +210,8 @@ Follow these rules when you add a module or subworkflow:
   Optional files (prebuilt indices, blacklist, mature, miRNA expression) are passed as a plain value (`path` or `[meta, path]`) or `null`.
 - Add a `params {}` block to a test only where `conf/modules.config` reads a parameter in `ext.args`, `ext.when` or `publishDir`.
   Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
+- Local modules read only `ext.args`, `ext.argsN`, `ext.prefix`, `ext.prefixN` and `ext.when`.
+  Any other value that changes the module's behaviour (for example an output suffix) is a `val` process input, so tests pass it with `input[N] = ...`.
 - Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.
 - Snapshot only stable content: `process.out.versions` (or the parsed versions file), file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
   For files that change between runs, use `path(f).readLines().size()` or `.text.contains(...)`.
