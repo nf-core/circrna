@@ -14,7 +14,7 @@ process PSIRC_TRANSCRIPTOME {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    suffix = task.ext.suffix ?: 'fasta'
+    suffix = 'fasta'
     VERSION = "1.0.0"
     """
     create_custom_transcriptome_fa.pl $fasta $gtf $prefix.$suffix
@@ -27,7 +27,7 @@ process PSIRC_TRANSCRIPTOME {
 
     stub:
     prefix = task.ext.prefix ?: meta.id
-    suffix = task.ext.suffix ?: 'fasta'
+    suffix = 'fasta'
     VERSION = "1.0.0"
     """
     touch $prefix.$suffix

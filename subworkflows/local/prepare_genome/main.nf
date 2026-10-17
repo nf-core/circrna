@@ -31,7 +31,7 @@ workflow PREPARE_GENOME {
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
     if (tools.contains('mapsplice')) {
-        CLEAN_FASTA(ch_fasta, [], false)
+        CLEAN_FASTA(ch_fasta.map { meta, fasta -> [meta, fasta, ''] }, [], false)
         ch_fasta = CLEAN_FASTA.out.output
     }
 
@@ -107,7 +107,7 @@ workflow PREPARE_GENOME {
     SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false)
 
     // Circexplorer2 reference is needed for annotation
-    CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred, [], false)
+    CIRCEXPLORER2_REFERENCE(UCSC_GTFTOGENEPRED.out.genepred.map { meta, genepred -> [meta, genepred, 'circexplorer2.txt'] }, [], false)
     ch_circexplorer2_reference = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, file -> file }.collect()
 
     ch_psirc_index = channel.empty()

@@ -14,7 +14,7 @@ dfs = {
     pl.scan_csv(matrix,
                 separator="\\t",
                 new_columns=metacols + [sample],
-                has_header="${has_header}" == "true")
+                has_header=True)
         .group_by(metacols).agg(pl.sum(sample).alias(sample))
     for sample, matrix in zip(samples, matrices)}
 

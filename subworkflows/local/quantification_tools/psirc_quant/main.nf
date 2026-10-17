@@ -24,7 +24,7 @@ workflow PSIRC_QUANT {
     main:
     ch_versions = channel.empty()
 
-    MARK_CIRCULAR(ch_transcriptome_fasta, [], false)
+    MARK_CIRCULAR(ch_transcriptome_fasta.map { meta, fasta -> [meta, fasta, 'marked.fasta'] }, [], false)
 
     INDEX(MARK_CIRCULAR.out.output)
     ch_versions = ch_versions.mix(INDEX.out.versions)

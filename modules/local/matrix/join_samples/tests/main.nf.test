@@ -25,6 +25,7 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.gene.tsv', checkIfExists: true)
                     ]
                 ]
+                input[1] = "gene_id,gene_name"
                 """
             }
         }
@@ -45,8 +46,6 @@ nextflow_process {
 
     test("ciriquant circ tables - header only") {
 
-        config "./nextflow.config"
-
         when {
             params {
                 outdir = "$outputDir"
@@ -61,6 +60,7 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.circ.tsv', checkIfExists: true)
                     ]
                 ]
+                input[1] = "circ_id,gene_id"
                 """
             }
         }
@@ -92,6 +92,7 @@ nextflow_process {
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.gene.tsv', checkIfExists: true)
                     ]
                 ]
+                input[1] = "gene_id,gene_name"
                 """
             }
         }

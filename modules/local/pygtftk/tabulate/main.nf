@@ -20,8 +20,7 @@ process PYGTFTK_TABULATE {
     script:
     def args          = task.ext.args   ?: ''
     def prefix        = task.ext.prefix ?: "${meta.id}"
-    def suffix        = task.ext.suffix ?: gtf.extension
-    outfile           = "${prefix}.${suffix}"
+    outfile           = "${prefix}.circ.tsv"
     """
     export HOME="\$PWD"
 
@@ -38,8 +37,7 @@ process PYGTFTK_TABULATE {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.suffix ?: gtf.extension
-    outfile    = "${prefix}.${suffix}"
+    outfile    = "${prefix}.circ.tsv"
     """
     export HOME="\$PWD"
 
