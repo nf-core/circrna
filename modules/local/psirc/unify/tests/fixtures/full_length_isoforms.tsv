@@ -1,5 +1,0 @@
-output_name	genomic_loci	back_splice_junction_read_count	strand
-CIRC1	chrI:100-500	5	+
-CIRC2	chrI:700-900	.	-
-CIRC3	.	3	+
-CIRC4	chrI:1000-1300	2.0	-

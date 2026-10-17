@@ -16,7 +16,13 @@ nextflow_process {
             }
             process {
                 """
-                input[0] = [ [ id:'cel_N2_1', single_end:false ], file("$moduleTestDir/fixtures/full_length_isoforms.tsv", checkIfExists: true) ]
+                input[0] = channel.of(
+                    'output_name\\tgenomic_loci\\tback_splice_junction_read_count\\tstrand',
+                    'CIRC1\\tchrI:100-500\\t5\\t+',
+                    'CIRC2\\tchrI:700-900\\t.\\t-',
+                    'CIRC3\\t.\\t3\\t+',
+                    'CIRC4\\tchrI:1000-1300\\t2.0\\t-'
+                ).collectFile(name: 'full_length_isoforms.tsv', newLine: true).map { tsv -> [ [ id:'cel_N2_1', single_end:false ], tsv ] }
                 """
             }
         }
@@ -66,7 +72,13 @@ nextflow_process {
             }
             process {
                 """
-                input[0] = [ [ id:'cel_N2_1', single_end:false ], file("$moduleTestDir/fixtures/full_length_isoforms.tsv", checkIfExists: true) ]
+                input[0] = channel.of(
+                    'output_name\\tgenomic_loci\\tback_splice_junction_read_count\\tstrand',
+                    'CIRC1\\tchrI:100-500\\t5\\t+',
+                    'CIRC2\\tchrI:700-900\\t.\\t-',
+                    'CIRC3\\t.\\t3\\t+',
+                    'CIRC4\\tchrI:1000-1300\\t2.0\\t-'
+                ).collectFile(name: 'full_length_isoforms.tsv', newLine: true).map { tsv -> [ [ id:'cel_N2_1', single_end:false ], tsv ] }
                 """
             }
         }

@@ -101,7 +101,10 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.combined.bed', checkIfExists: true)])
-                input[1] = channel.value([[id: 'database', min_overlap: 0.9], file("${moduleDir}/tests/database.bed", checkIfExists: true)])
+                input[1] = channel.of('chrI\\t140000\\t145000\\tgeneA\\t0\\t-', 'chrI\\t100000\\t102000\\tgeneB\\t0\\t-')
+                    .collectFile(name: 'database.bed', newLine: true)
+                    .map { bed -> [[id: 'database', min_overlap: 0.9], bed] }
+                    .first()
                 input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
                 input[3] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[4] = true

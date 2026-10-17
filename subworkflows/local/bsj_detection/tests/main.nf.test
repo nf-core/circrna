@@ -234,7 +234,7 @@ nextflow_workflow {
                 )
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[3] = file("${moduleDir}/tests/blacklist.bed", checkIfExists: true)
+                input[3] = file("$outputDir/blacklist.bed").with { bed -> bed.parent.mkdirs(); bed.text = 'chrI\\t15800\\t15810\\n'; bed }
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()

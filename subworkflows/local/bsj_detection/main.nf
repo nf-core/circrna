@@ -160,7 +160,7 @@ workflow BSJ_DETECTION {
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }
 
     if (blacklist) {
-        BLACKLIST(ch_bsj_bed_per_sample_tool.combine(channel.value(blacklist)), [[], []], "blacklist.bed")
+        BLACKLIST(ch_bsj_bed_per_sample_tool.combine(channel.value(blacklist)), [[], []], [])
         ch_bsj_bed_per_sample_tool = BLACKLIST.out.intersect
     }
 

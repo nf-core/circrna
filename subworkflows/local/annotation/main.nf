@@ -34,7 +34,7 @@ workflow ANNOTATION {
             ]
         },
         [[], []],
-        "intersect_database.bed",
+        [],
     )
 
     ANNOTATE(regions, fasta, circexplorer2_index)
