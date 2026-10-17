@@ -182,40 +182,55 @@ If you update images or graphics, follow the nf-core [style guidelines](https://
 
 ## Pipeline specific contribution guidelines
 
-### Testing local modules and subworkflows
+### Testing conventions
 
 Every local module and subworkflow has its own nf-test, in addition to the pipeline test in `tests/default.nf.test`.
+Write tests in nf-test only and do not add test-only processes for assertions.
 
-- **Location:** `modules/local/<path>/tests/main.nf.test` (plus an optional `nextflow.config`) and `subworkflows/local/<name>/tests/main.nf.test`.
-  Local subworkflows live in `subworkflows/local/<name>/main.nf`, nested ones as well (e.g. `detection_tools/ciri/main.nf`).
-- **Header and tags:** use `script "../main.nf"` and `process "<NAME>"` / `workflow "<NAME>"`.
-  Modules are tagged `"modules"`, `"modules_local"` and `"<path with / replaced by _>"`.
-  Subworkflows are tagged `"subworkflows"`, `"subworkflows_local"` and `"<name>"`.
-- **Cases:** each module and subworkflow has a real test, `test("<case>")`, and a stub test, `test("<case> - stub")`, which uses `options '-stub'` and snapshots `process.out` / `workflow.out`.
-- **Params-free interfaces:** local subworkflows, `CIRCRNA`, and the modules `MAJORITY_VOTE` and `FAIL_ON_EMPTY` do not read `params`.
-  Only `NFCORE_CIRCRNA` in `main.nf` reads them, parses the comma-separated tool lists once with `parseToolList()` and passes typed values down.
-  Tests therefore set inputs with `input[N] = ...` and do not need a `params {}` block, except where `conf/modules.config` reads params for `ext.args` or `publishDir`.
+CI runs three nf-test categories, selected by tag:
+
+- `modules_local` for local module tests.
+- `subworkflows_local` for local subworkflow tests.
+- `pipeline` for the end-to-end tests in `tests/`.
+
+Follow these rules when you add a module or subworkflow:
+
+- Put the test in `modules/local/<path>/tests/main.nf.test` or `subworkflows/local/<name>/tests/main.nf.test`.
+  Nested subworkflows live in nested folders, for example `subworkflows/local/detection_tools/ciri/main.nf`.
+- Use `script "../main.nf"` together with `process "<NAME>"` or `workflow "<NAME>"`.
+- Tag module tests with `"modules"` and `"modules_local"`, and subworkflow tests with `"subworkflows"` and `"subworkflows_local"`.
+  Add the path of the module (with `/` replaced by `_`) or the name of the subworkflow as a further tag.
+  Further tags can overlap, so a bare `--tag circtools` can select both module and subworkflow tests.
+- Write a real test, `test("<case>")`, and a stub test, `test("<case> - stub")`.
+  The stub test uses `options '-stub'` and snapshots `process.out` or `workflow.out`.
+  Every local module needs a `stub:` block.
+- Keep local subworkflows, `CIRCRNA`, `MAJORITY_VOTE` and `FAIL_ON_EMPTY` free of `params`.
+  Only `NFCORE_CIRCRNA` in `main.nf` reads them, parses the comma-separated tool lists with `parseToolList()` and passes typed values down.
+  Tests set inputs with `input[N] = ...`.
   Optional files (prebuilt indices, blacklist, mature, miRNA expression) are passed as a plain value (`path` or `[meta, path]`) or `null`.
-- **Snapshots:** real tests only snapshot
-  - `process.out.versions` (or the contents of the versions file)
-  - file names
-  - `csv(path, sep:'\t', header:...)` content or row counts of deterministic tables
-  - `bam(path).getReadsMD5()` or read counts
-  - `path(x).readLines().size()` or `.text.contains(...)` for files whose content changes between runs
+- Add a `params {}` block to a test only where `conf/modules.config` reads a parameter in `ext.args`, `ext.when` or `publishDir`.
+  Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
+- Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.
+- Snapshot only stable content: `process.out.versions` (or the parsed versions file), file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
+  For files that change between runs, use `path(f).readLines().size()` or `.text.contains(...)`.
+  Use the md5 of a whole file only if two consecutive runs give identical results.
+- Never edit snapshots by hand.
+  Regenerate them with `nf-test test --update-snapshot <path>`.
+- A test file is done once it passes twice in a row without `--update-snapshot`.
 
-  The md5 of whole files is only used if two consecutive runs give identical results.
+Test inputs come from the `circrna` branch of [nf-core/test-datasets](https://github.com/nf-core/test-datasets/tree/circrna).
+Reference them through `params.pipelines_testdata_base_path` with `checkIfExists: true`; the files are listed in `tests/TESTDATA.md`.
+Build cheap indices for the mini reference in `setup {}` with the modules in `modules/nf-core`.
+Do not commit test data to this repository.
 
-- **Inputs:** use `params.pipelines_testdata_base_path + '<file listed in tests/TESTDATA.md>'` with `checkIfExists: true`.
-  Indices for the mini reference are built in `setup {}` with the nf-core index modules in `modules/nf-core`.
-- **Snapshot updates:** never edit snapshots by hand. Regenerate them with `nf-test test --update-snapshot <file> --profile=+docker`.
-- **Stability:** a test file is only done once it passes twice in a row without `--update-snapshot`.
-
-Run the tests of one group with, for example:
+Run one category with, for example:
 
 ```bash
 nf-test test --tag modules_local --profile=+docker
 nf-test test --tag subworkflows_local --profile=+docker
 nf-test test --tag pipeline --profile=+docker
 ```
+
+Use `--profile=+singularity` or `--profile=+apptainer` if docker is not available.
 
 <!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->
