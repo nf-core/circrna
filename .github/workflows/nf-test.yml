@@ -44,10 +44,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # The GitHub matrix is limited to 256 jobs per job definition. The nf-test matrix is
-      # target x profile x NXF_VER: on dev only docker runs (conda/singularity are excluded),
-      # giving 1 x 2 = 2 jobs per shard; on main/master all 3 profiles run, giving 3 x 2 = 6 jobs
-      # per shard. The max_shards sum (12 + 10 + 2 = 24) must therefore stay <= 42 (floor(256 / 6)).
+      # The matrix is limited to 256 jobs. Main PRs run 6 jobs per shard, so the max_shards sum must stay <= 42.
       - name: get number of shards for module tests
         id: set-modules-shards
         uses: ./.github/actions/get-shards
@@ -66,6 +63,7 @@ jobs:
           max_shards: 10
           tags: subworkflows_local
 
+      # max_shards equals the number of pipeline tests, so each test gets its own runner
       - name: get number of shards for pipeline tests
         id: set-pipeline-shards
         uses: ./.github/actions/get-shards
