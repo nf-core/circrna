@@ -72,7 +72,8 @@ workflow MIRNA_PREDICTION {
             .splitText(by: 100, file: true)
             .map{ _meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file]}
 
-        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered, quantification_rds)
+        // Value channels, so that every binding site batch is combined with the same inputs
+        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered.first(), quantification_rds.first())
 
         COMPUTE_CORRELATIONS.out.correlations
             .map{_meta, results -> results}

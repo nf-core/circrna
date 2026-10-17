@@ -55,7 +55,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T18:14:27.011914545"
+        "timestamp": "2026-10-17T18:26:45.335847799"
     },
     "with miRNA expression, filtered miRNAs, correlations disabled": {
         "content": [
@@ -67,14 +67,14 @@
                 "{MIRNA_PREDICTION:MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}",
                 "{MIRNA_PREDICTION:MIRNA_FILTERING={r-base=4.2.1}}"
             ],
-            "131fec2f087baaf55b2bdca9eda41259",
+            "8aa89fec72452ab756593f428d9058b6",
             "8c705596deac53cca23cba32bcce72cf",
-            "3921d10cb480da1cae79f8d440385146"
+            "6f4e2e0881faf0cc046fd88e90c1514f"
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T18:15:03.257634903"
+        "timestamp": "2026-10-17T18:27:20.019061652"
     }
 }
