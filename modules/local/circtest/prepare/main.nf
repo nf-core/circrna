@@ -27,7 +27,7 @@ process CIRCTEST_PREPARE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        r-base: stub
+        r-base: \$(R --version | head -n1 | cut -d' ' -f3)
     END_VERSIONS
     """
 }

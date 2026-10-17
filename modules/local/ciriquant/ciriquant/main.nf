@@ -74,10 +74,10 @@ process CIRIQUANT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bwa: stub
-        ciriquant: stub
-        samtools: stub
-        stringtie: stub
+        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
+        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
+        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        stringtie: \$(stringtie --version 2>&1)
         hisat2: $VERSION
     END_VERSIONS
     """

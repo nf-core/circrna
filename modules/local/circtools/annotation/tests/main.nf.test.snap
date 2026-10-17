@@ -11,7 +11,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,6474567960069bdfc28dbdef9ac855bb"
+                    "versions.yml:md5,c57aaa53aa23c4ab9e522f9997627233"
                 ],
                 "bed": [
                     [
@@ -22,7 +22,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,6474567960069bdfc28dbdef9ac855bb"
+                    "versions.yml:md5,c57aaa53aa23c4ab9e522f9997627233"
                 ]
             }
         ],
@@ -30,7 +30,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T21:26:17.470352314"
+        "timestamp": "2026-10-17T09:39:42.623499845"
     },
     "chrI_mini gtf": {
         "content": [

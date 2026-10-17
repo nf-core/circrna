@@ -25,7 +25,7 @@ process CIRIVIS_UNIFY {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        pandas: stub
+        pandas: \$(python -c "import pandas; print(pandas.__version__)")
     END_VERSIONS
     """
 }

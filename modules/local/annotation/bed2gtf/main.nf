@@ -29,8 +29,8 @@ process ANNOTATION_BED2GTF {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: stub
-        polars: stub
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
     END_VERSIONS
     """
 }

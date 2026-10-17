@@ -5,13 +5,13 @@
                 "reference"
             ],
             [
-                "versions.yml:md5,8a446076d6e13e6334583462937d37cf"
+                "versions.yml:md5,4dd86ddb55790ff7ef543ddf673051b9"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:29:03.81287993"
+        "timestamp": "2026-10-17T09:41:51.362566052"
     }
 }

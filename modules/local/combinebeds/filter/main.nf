@@ -33,10 +33,10 @@ process COMBINEBEDS_FILTER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: stub
-        polars: stub
-        upsetplot: stub
-        matplotlib: stub
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+        upsetplot: \$(python -c "import upsetplot; print(upsetplot.__version__)")
+        matplotlib: \$(python -c "import matplotlib; print(matplotlib.__version__)")
     END_VERSIONS
     """
 }

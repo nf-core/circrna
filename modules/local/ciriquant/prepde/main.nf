@@ -50,7 +50,7 @@ process CIRIQUANT_PREPDE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ciriquant: stub
+        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
     END_VERSIONS
     """
 }

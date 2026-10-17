@@ -35,7 +35,7 @@
                     ]
                 ],
                 "4": [
-                    "versions.yml:md5,9e941c6c886826b0f63ad6e95692a82e"
+                    "versions.yml:md5,a422e02034c508ac03fc9b058fed20cd"
                 ],
                 "annotation": [
                     [
@@ -70,7 +70,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,9e941c6c886826b0f63ad6e95692a82e"
+                    "versions.yml:md5,a422e02034c508ac03fc9b058fed20cd"
                 ]
             }
         ],
@@ -78,7 +78,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:24:52.943735757"
+        "timestamp": "2026-10-17T09:47:44.399325078"
     },
     "six samples": {
         "content": [

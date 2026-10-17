@@ -31,8 +31,10 @@ process CIRCTEST_CIRCTEST {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        r-base: stub
-        ggplot2: stub
+        r-base: \$(R --version | head -n1 | cut -d' ' -f3)
+        aod: \$(Rscript -e 'cat(as.character(packageVersion("aod")))')
+        plyr: \$(Rscript -e 'cat(as.character(packageVersion("plyr")))')
+        ggplot2: \$(Rscript -e 'cat(as.character(packageVersion("ggplot2")))')
     END_VERSIONS
     """
 }

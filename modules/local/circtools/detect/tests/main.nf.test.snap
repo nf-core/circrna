@@ -59,7 +59,7 @@
                     ]
                 ],
                 "3": [
-                    "versions.yml:md5,0211adab65c09f1d540499f9cf047988"
+                    "versions.yml:md5,d65d462726c00bd9d2f4f3ebe078a178"
                 ],
                 "coordinates": [
                     [
@@ -92,7 +92,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,0211adab65c09f1d540499f9cf047988"
+                    "versions.yml:md5,d65d462726c00bd9d2f4f3ebe078a178"
                 ]
             }
         ],
@@ -100,6 +100,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T21:00:43.889451919"
+        "timestamp": "2026-10-17T09:40:28.226188263"
     }
 }

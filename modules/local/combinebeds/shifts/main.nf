@@ -23,9 +23,9 @@ process COMBINEBEDS_SHIFTS {
     """
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: stub
-        polars: stub
-        altair: stub
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+        altair: \$(python -c "import altair; print(altair.__version__)")
     END_VERSIONS
     """
 }

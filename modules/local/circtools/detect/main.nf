@@ -55,7 +55,7 @@ process CIRCTOOLS_DETECT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        circtools: stub
+        circtools: \$(circtools -V)
     END_VERSIONS
     """
 }
