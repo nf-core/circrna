@@ -8,7 +8,37 @@ nextflow_process {
     tag "modules_local"
     tag "compute_correlations"
 
-    // TODO(#218 COMPUTE_CORRELATIONS fails on the mini data): real test blocked by the 2-sample psirc rds; fishpond labelKeep keeps no transcripts ("No transcripts left after filtering")
+    // The 2-sample psirc rds of the mini data keeps no transcripts in fishpond labelKeep,
+    // so only the sample check, which runs before the filtering, can be tested for real
+
+    test("miRNA table lacks an RNA-seq sample") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'batch_1' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna.binding_sites.targets.tsv', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id:'mirna' ],
+                    file("$outputDir/mirna_expression.tsv").with { tsv -> tsv.parent.mkdirs(); tsv.text = 'miRNA\\tcel_N2_1\\tother_1\\ncel-miR-1019-5p\\t10\\t20\\n'; tsv }
+                ]
+                input[2] = [
+                    [ id:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.contains('Error: RNA-seq samples missing from the miRNA expression table: fust1_1. Available miRNA samples: cel_N2_1, other_1') }
+            )
+        }
+    }
 
     test("mini binding sites - stub") {
 
