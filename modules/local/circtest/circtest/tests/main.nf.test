@@ -1,0 +1,87 @@
+nextflow_process {
+
+    name "Test Process CIRCTEST_CIRCTEST"
+    script "../main.nf"
+    process "CIRCTEST_CIRCTEST"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circtest"
+    tag "circtest_circtest"
+
+    setup {
+        run("CIRCTEST_PREPARE") {
+            script "modules/local/circtest/prepare/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.gene_counts.csv', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.circular_tx_counts.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+    }
+
+    test("psirc counts - 6 samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRCTEST_PREPARE.out.counts
+                input[1] = [
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/phenotype.csv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def summary_lines = file(process.out.summary[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert process.out.plots[0][1].collect { file(it).name }.sort() == [ 'circ_linear_line_plots.pdf', 'circ_linear_ratio_plots.pdf' ] },
+                { assert file(process.out.summary[0][1]).exists() },
+                { assert snapshot(
+                    file(process.out.summary[0][1]).name,
+                    summary_lines[0],
+                    summary_lines.size(),
+                    summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("psirc counts - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRCTEST_PREPARE.out.counts
+                input[1] = [
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/phenotype.csv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

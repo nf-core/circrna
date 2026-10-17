@@ -1,0 +1,65 @@
+nextflow_workflow {
+
+    name "Test Subworkflow CIRCRNA_FINDER"
+    script "../main.nf"
+    workflow "CIRCRNA_FINDER"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "circrna_finder"
+
+    test("mini - STAR 2-pass output") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def dir = file("$outputDir/input")
+                dir.mkdirs()
+                def stage = { sample, suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("\${sample}.\${suffix}")) }
+                def samples = ['cel_N2_1', 'fust1_1']
+                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.sam')] })
+                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.junction')] })
+                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'SJ.out.tab')] })
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                workflow.out.bed.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size(), path(it[1]).md5] }.sort { it[0].id },
+                workflow.out.versions.collect { path(it).yaml }.unique()
+            ).match()
+        }
+    }
+
+    test("mini - STAR 2-pass output - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def dir = file("$outputDir/input")
+                dir.mkdirs()
+                def stage = { sample, suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("\${sample}.\${suffix}")) }
+                def samples = ['cel_N2_1', 'fust1_1']
+                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.sam')] })
+                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.junction')] })
+                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'SJ.out.tab')] })
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+}

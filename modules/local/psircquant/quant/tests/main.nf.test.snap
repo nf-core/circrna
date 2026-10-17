@@ -1,0 +1,83 @@
+{
+    "paired-end": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1"
+                ]
+            ],
+            [
+                "abundance.h5",
+                "abundance.tsv",
+                "pseudoalignments.bam",
+                "pseudoalignments.bam.bai",
+                "run_info.json"
+            ],
+            [
+                "target_id",
+                "length",
+                "eff_length",
+                "est_counts",
+                "tpm"
+            ],
+            237,
+            {
+                "PSIRCQUANT_QUANT": {
+                    "psirc-quant": 1.0
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:08:40.207927477"
+    },
+    "paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "abundance.h5:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "abundance.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "run_info.json:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,e5d92e8e025b5169cec152bc75ded500"
+                ],
+                "directory": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "abundance.h5:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "abundance.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "run_info.json:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e5d92e8e025b5169cec152bc75ded500"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:09:03.201303341"
+    }
+}

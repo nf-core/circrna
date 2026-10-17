@@ -28,4 +28,16 @@ process CIRI_CIRI2 {
         ciri: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "2.0.0"
+    """
+    touch ${prefix}.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ciri: ${VERSION}
+    END_VERSIONS
+    """
 }

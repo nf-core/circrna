@@ -23,4 +23,14 @@ process PSIRCQUANT_INDEX {
         psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*\$/\\1/p')
     END_VERSIONS
     """
+
+    stub:
+    """
+    touch psirc.index
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*\$/\\1/p')
+    END_VERSIONS
+    """
 }

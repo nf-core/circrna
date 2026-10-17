@@ -1,0 +1,64 @@
+{
+    "cel_N2_1 CIRI2 + CIRI-AS + RO2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_merge_circRNA_detail.anno",
+                    "df31cc68235bd5278a3d838aed07b8ab"
+                ]
+            ],
+            {
+                "CIRIFULL_MERGE": {
+                    "cirifull": "2.1.2"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:31:43.744446886"
+    },
+    "cel_N2_1 CIRI2 + CIRI-AS + RO2 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_merge_circRNA_detail.anno:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,32a3a67fca792423373ca29220d21134"
+                ],
+                "anno": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_merge_circRNA_detail.anno:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,32a3a67fca792423373ca29220d21134"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T21:32:04.837003371"
+    }
+}

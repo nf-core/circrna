@@ -41,4 +41,16 @@ process STRINGTIE_PREPDE {
         stringtie: \$(stringtie --version 2>&1)
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}_transcript_count_matrix.csv
+    touch ${prefix}_gene_count_matrix.csv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        stringtie: \$(stringtie --version 2>&1)
+    END_VERSIONS
+    """
 }

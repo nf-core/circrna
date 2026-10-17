@@ -24,7 +24,6 @@ consider_strand = "${consider_strand}" == "true"
 aggregation = "${aggregation}"
 meta_id = "${meta.id}"
 prefix = "${prefix}"
-suffix = "${suffix}"
 
 candidate_path = "${candidates}"
 bed_paths = "${beds}".split()
@@ -35,7 +34,7 @@ try:
     df_candidates = pl.scan_csv(candidate_path, has_header=False, separator="\\t", new_columns=columns, raise_if_empty=True)
 except pl.exceptions.NoDataError:
     print("No data in ${candidates}")
-    with open(f"{prefix}.{suffix}", "w") as f:
+    with open(f"{prefix}.tsv", "w") as f:
         f.write('')
     exit(0)
 
@@ -46,7 +45,7 @@ try:
     df = pl.scan_csv(bed_paths, has_header=False, separator="\\t", new_columns=columns + ["sample", "tool"], raise_if_empty=True)
 except pl.exceptions.NoDataError:
     print("No data in ${beds}")
-    with open(f"{prefix}.{suffix}", "w") as f:
+    with open(f"{prefix}.tsv", "w") as f:
         f.write('')
     exit(0)
 
@@ -75,7 +74,7 @@ try:
     df = df.collect().lazy()
 except pl.exceptions.NoDataError:
     print("No data after processing")
-    with open(f"{prefix}.{suffix}", "w") as f:
+    with open(f"{prefix}.tsv", "w") as f:
         f.write('')
     exit(0)
 
@@ -87,4 +86,4 @@ df = df.sort("chr", "start", "end", "strand")
 df = df.select(["id"] + samples)
 df = df.fill_null(0)
 
-df.sink_csv(f"{prefix}.{suffix}", separator="\\t", include_header=True)
+df.sink_csv(f"{prefix}.tsv", separator="\\t", include_header=True)

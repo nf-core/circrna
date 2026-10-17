@@ -141,8 +141,8 @@
             "properties": {
                 "fli_tools": {
                     "type": "string",
-                    "description": "Comma separated list of FLI detection tools to use. Supported tools: psirc, circtools, cirifull",
-                    "pattern": "^(psirc|circtools|cirifull)?(,(psirc|circtools|cirifull))*$"
+                    "description": "Comma separated list of FLI detection tools to use. Supported tools: psirc, circtools, cirifull, jccirc",
+                    "pattern": "^(psirc|circtools|cirifull|jccirc)?(,(psirc|circtools|cirifull|jccirc))*$"
                 }
             }
         },

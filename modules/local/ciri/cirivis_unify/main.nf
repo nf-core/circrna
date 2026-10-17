@@ -11,10 +11,21 @@ process CIRIVIS_UNIFY {
     tuple val(meta), path(list)
 
     output:
-    path "${prefix}.bed", emit: bed
+    tuple val(meta), path("${prefix}.bed"), emit: bed
     path "versions.yml", emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template("cirivis_unify.py")
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        pandas: \$(python -c "import pandas; print(pandas.__version__)")
+    END_VERSIONS
+    """
 }

@@ -41,11 +41,45 @@ workflow CIRCRNA {
     ch_phenotype
     ch_fasta
     ch_gtf
-    ch_blacklist
-    ch_mature
+    blacklist                   // path or null
+    mature                      // [meta, path] or null
     ch_annotation
     ch_versions
-    ch_mirna
+    mirna_expression            // [meta, path] or null
+
+    // tool selection
+    tools                       // List<String>
+    fli_tools                   // List<String>
+    quantification_tools        // List<String>
+    mirna_tools                 // List<String>
+
+    // prebuilt indices (path or null)
+    bowtie
+    bowtie2
+    bwa
+    hisat2
+    star
+    segemehl
+
+    // settings
+    longread
+    skip_fastqc
+    skip_trimming
+    bsj_reads
+    max_shift
+    consider_strand
+    min_tools
+    min_samples
+    exons_only
+    bootstrap_samples
+    mirna_min_tools
+    mirna_min_reads
+    mirna_min_sample_percentage
+
+    // reporting
+    multiqc_config              // path or null
+    multiqc_logo                // path or null
+    outdir
 
     main:
 
@@ -79,7 +113,13 @@ workflow CIRCRNA {
     // Prepare index files &/or use iGenomes if chosen.
     PREPARE_GENOME (
         ch_fasta,
-        ch_gtf
+        ch_gtf,
+        tools,
+        bowtie,
+        bowtie2,
+        bwa,
+        hisat2,
+        star
     )
 
     ch_gtf              = PREPARE_GENOME.out.gtf
@@ -94,7 +134,7 @@ workflow CIRCRNA {
 
 
 
-    if (params.longread) {
+    if (longread) {
         LONGREAD(
             ch_cat_fastq,
             "hg38"
@@ -104,8 +144,8 @@ workflow CIRCRNA {
         // MODULE: Run FastQC, trimgalore!
         FASTQC_TRIMGALORE (
             ch_cat_fastq,
-            params.skip_fastqc,
-            params.skip_trimming
+            skip_fastqc,
+            skip_trimming
         )
         ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
         ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
@@ -119,7 +159,7 @@ workflow CIRCRNA {
             FASTQC_TRIMGALORE.out.reads,
             ch_fasta,
             ch_gtf,
-            ch_blacklist,
+            blacklist,
             ch_annotation,
             bowtie_index,
             bowtie2_index,
@@ -128,7 +168,15 @@ workflow CIRCRNA {
             star_index,
             circexplorer2_index,
             psirc_index,
-            params.bsj_reads
+            bsj_reads,
+            tools,
+            fli_tools,
+            segemehl,
+            max_shift,
+            consider_strand,
+            min_tools,
+            min_samples,
+            exons_only
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
@@ -152,7 +200,9 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.psirc_bsj,
             BSJ_DETECTION.out.star_bam,
             BSJ_DETECTION.out.star_junction,
-            BSJ_DETECTION.out.bed_per_sample
+            BSJ_DETECTION.out.bed_per_sample,
+            fli_tools,
+            max_shift
         )
         ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
@@ -177,11 +227,14 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.bed12,
             BSJ_DETECTION.out.gtf,
             BSJ_DETECTION.out.bed_per_sample_tool,
-            params.bootstrap_samples,
+            bootstrap_samples,
             ch_phenotype,
             PREPARE_GENOME.out.faidx,
             PREPARE_GENOME.out.bwa,
-            PREPARE_GENOME.out.hisat2
+            PREPARE_GENOME.out.hisat2,
+            quantification_tools,
+            max_shift,
+            consider_strand
         )
 
         ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
@@ -190,14 +243,18 @@ workflow CIRCRNA {
         // 5. miRNA prediction
         //
 
-        if (params.mature) {
+        if (mature) {
             MIRNA_PREDICTION(
                 COMBINE_TRANSCRIPTOMES.out.fasta,
                 BSJ_DETECTION.out.bed12,
-                ch_mature,
-                ch_mirna,
+                channel.value(mature),
+                mirna_expression,
                 QUANTIFICATION.out.circ,
-                QUANTIFICATION.out.rds
+                QUANTIFICATION.out.rds,
+                mirna_tools,
+                mirna_min_tools,
+                mirna_min_reads,
+                mirna_min_sample_percentage
             )
             ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
         }
@@ -223,13 +280,13 @@ workflow CIRCRNA {
     // Collate and save software versions
     //
     softwareVersionsToYAML(ch_versions)
-        .collectFile(storeDir: "${params.outdir}/pipeline_info", name: 'nf_core_circrna_software_mqc_versions.yml', sort: true, newLine: true)
+        .collectFile(storeDir: "${outdir}/pipeline_info", name: 'nf_core_circrna_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
     // MultiQC
     ch_multiqc_config          = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config) : channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo   ? channel.fromPath(params.multiqc_logo)   : channel.empty()
+    ch_multiqc_custom_config = multiqc_config ? channel.fromPath(multiqc_config) : channel.empty()
+    ch_multiqc_logo          = multiqc_logo   ? channel.fromPath(multiqc_logo)   : channel.empty()
     summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     ch_workflow_summary      = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))

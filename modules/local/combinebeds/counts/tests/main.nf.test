@@ -1,0 +1,133 @@
+nextflow_process {
+
+    name "Test Process COMBINEBEDS_COUNTS"
+    script "../main.nf"
+    process "COMBINEBEDS_COUNTS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "combinebeds"
+    tag "combinebeds_counts"
+
+    test("sum - strand-aware") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'sum' ],
+                    'sum',
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true)
+                    ]
+                ]
+                input[1] = 0
+                input[2] = true
+                """
+            }
+        }
+
+        then {
+            def counts = path(process.out.combined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert counts.columnNames.contains('id') },
+                { assert counts.columnNames.contains('cel_N2_1') },
+                { assert counts.columnNames.contains('fust1_1') },
+                { assert counts.rowCount > 0 },
+                { assert snapshot(
+                    process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
+                    counts.columnNames.sort(),
+                    counts.rowCount,
+                    counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort(),
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("max - shifted breakpoints without strand") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'max' ],
+                    'max',
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true)
+                    ]
+                ]
+                input[1] = 5
+                input[2] = false
+                """
+            }
+        }
+
+        then {
+            def counts = path(process.out.combined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert counts.columnNames.contains('id') },
+                { assert counts.rowCount > 0 },
+                { assert snapshot(
+                    process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
+                    counts.columnNames.sort(),
+                    counts.rowCount,
+                    counts.rows.collect { row -> "${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort()
+                ).match() }
+            )
+        }
+    }
+
+    test("sum - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'sum' ],
+                    'sum',
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true)
+                    ]
+                ]
+                input[1] = 0
+                input[2] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

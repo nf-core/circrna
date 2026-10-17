@@ -16,4 +16,16 @@ process JCCIRC_PREP {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template 'prep.py'
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //g')
+        polars: \$(python -c "import polars as pl; print(pl.__version__)")
+    END_VERSIONS
+    """
 }

@@ -1,0 +1,77 @@
+{
+    "psirc-quant directories - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
+                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                ],
+                "se": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
+                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:19:53.761307954"
+    },
+    "psirc-quant directories": {
+        "content": [
+            [
+                [
+                    "cel_N2_1",
+                    "cel_N2_1.rds"
+                ],
+                [
+                    "fust1_1",
+                    "fust1_1.rds"
+                ]
+            ],
+            {
+                "TXIMETA_TXIMETA": {
+                    "bioconductor-tximeta": "1.20.1"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:19:06.787316837"
+    }
+}

@@ -1,0 +1,176 @@
+{
+    "fust1_1 - min_tools 1, consider strand": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1_reads.bed"
+                ]
+            ],
+            141,
+            "70a9e790dc87b2a7cd33d593326f90b0",
+            [
+                "fust1_1_reads:read_agreement.png"
+            ],
+            [
+                "fust1_1_read_agreement_mqc.json"
+            ],
+            {
+                "COMBINEBEDS_READS": {
+                    "matplotlib": "3.10.1",
+                    "polars": "1.27.1",
+                    "python": "3.13.3",
+                    "seaborn": "0.13.2",
+                    "upsetplot": "0.9.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:11:26.70190462"
+    },
+    "cel_N2_1 - min_tools 2, ignore strand": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1_reads.bed"
+                ]
+            ],
+            [
+                "chrI:100178:100538:1:.",
+                "chrI:137353:141434:3:.",
+                "chrI:139758:143157:1:.",
+                "chrI:140423:143157:3:.",
+                "chrI:142581:143157:1:.",
+                "chrI:15805:22588:3:.",
+                "chrI:252019:261405:37:.",
+                "chrI:295212:296310:4:.",
+                "chrI:358084:360061:1:.",
+                "chrI:37619:38107:1:.",
+                "chrI:392534:395272:2:.",
+                "chrI:399299:399645:3:.",
+                "chrI:41228:45899:1:.",
+                "chrI:425352:427850:9:.",
+                "chrI:452388:452870:1:.",
+                "chrI:501345:501631:1:.",
+                "chrI:521959:523476:1:.",
+                "chrI:549942:550388:8:.",
+                "chrI:638590:639898:1:.",
+                "chrI:668255:670455:5:.",
+                "chrI:692302:692614:19:.",
+                "chrI:713160:714382:3:.",
+                "chrI:751519:752725:1:.",
+                "chrI:87576:97830:2:.",
+                "chrI:96049:111281:1:.",
+                "chrI:96049:97830:4:."
+            ],
+            [
+                "cel_N2_1_reads:read_agreement.png"
+            ],
+            [
+                "cel_N2_1_read_agreement_mqc.json"
+            ],
+            {
+                "COMBINEBEDS_READS": {
+                    "matplotlib": "3.10.1",
+                    "polars": "1.27.1",
+                    "python": "3.13.3",
+                    "seaborn": "0.13.2",
+                    "upsetplot": "0.9.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:11:01.697894704"
+    },
+    "cel_N2_1 - min_tools 2, consider strand": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1_reads.bed"
+                ]
+            ],
+            [
+                "chrI:692302:692614:19:+"
+            ],
+            [
+                "cel_N2_1_reads:read_agreement.png"
+            ],
+            [
+                "cel_N2_1_read_agreement_mqc.json"
+            ],
+            {
+                "COMBINEBEDS_READS": {
+                    "matplotlib": "3.10.1",
+                    "polars": "1.27.1",
+                    "python": "3.13.3",
+                    "seaborn": "0.13.2",
+                    "upsetplot": "0.9.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:10:37.610415598"
+    },
+    "cel_N2_1 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1_reads.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    "versions.yml:md5,4e2bdf396eac178b1d4c697a48766770"
+                ],
+                "combined": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1_reads.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "multiqc": [
+                    
+                ],
+                "plots": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,4e2bdf396eac178b1d4c697a48766770"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T09:53:14.76804746"
+    }
+}

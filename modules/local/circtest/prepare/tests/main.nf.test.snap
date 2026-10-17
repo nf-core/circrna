@@ -1,0 +1,87 @@
+{
+    "psirc counts - mini": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "counts",
+                        "quantification": "psirc"
+                    },
+                    "counts_genes.tsv:md5,8c4770cd90edb1e84b0495b62a44636f",
+                    "counts_circs.tsv:md5,72803571ddf58ebc1d2bce497546bea3"
+                ]
+            ],
+            {
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.2.1"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:33:19.996481813"
+    },
+    "psirc counts - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "counts",
+                            "quantification": "psirc"
+                        },
+                        "counts_genes.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "counts_circs.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,17deacd6756e0904450314c200f4da74"
+                ],
+                "counts": [
+                    [
+                        {
+                            "id": "counts",
+                            "quantification": "psirc"
+                        },
+                        "counts_genes.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "counts_circs.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,17deacd6756e0904450314c200f4da74"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T09:39:08.372685778"
+    },
+    "psirc counts - 6 samples": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "counts",
+                        "quantification": "psirc"
+                    },
+                    "counts_genes.tsv:md5,a3e5a280f6e0ef272db03b7dd553c507",
+                    "counts_circs.tsv:md5,a519e3b454990a49d85ea5a65596268c"
+                ]
+            ],
+            {
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.2.1"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:33:03.262707567"
+    }
+}

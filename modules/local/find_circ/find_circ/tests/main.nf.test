@@ -1,0 +1,147 @@
+nextflow_process {
+
+    name "Test Process FIND_CIRC"
+    script "../main.nf"
+    process "FIND_CIRC"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_local"
+    tag "find_circ_find_circ"
+
+    setup {
+        run("BOWTIE2_BUILD") {
+            script "modules/nf-core/bowtie2/build/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("BOWTIE2_ALIGN") {
+            script "modules/nf-core/bowtie2/align/main.nf"
+            process {
+                """
+                input[0] = [
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[3] = false
+                input[4] = true
+                """
+            }
+        }
+        run("SAMTOOLS_INDEX") {
+            script "modules/nf-core/samtools/index/main.nf"
+            process {
+                """
+                input[0] = BOWTIE2_ALIGN.out.bam
+                """
+            }
+        }
+        run("SAMTOOLS_VIEW") {
+            script "modules/nf-core/samtools/view/main.nf"
+            process {
+                """
+                input[0] = BOWTIE2_ALIGN.out.bam.join(SAMTOOLS_INDEX.out.index)
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true), []]
+                input[2] = [[id: 'qname'], []]
+                input[3] = [[id: 'bed'], []]
+                input[4] = ''
+                """
+            }
+        }
+        run("FIND_CIRC_ANCHORS") {
+            script "modules/local/find_circ/anchors/main.nf"
+            process {
+                """
+                input[0] = SAMTOOLS_VIEW.out.bam
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 anchors - auto strandedness") {
+        when {
+            process {
+                """
+                input[0] = FIND_CIRC_ANCHORS.out.anchors.map { meta, anchors -> [meta + [strandedness: 'auto'], anchors] }
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            def bed = path(process.out.bed[0][1]).readLines()
+            def reads = path(process.out.reads[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    path(process.out.versions[0]).yaml,
+                    process.out.bed.collect { file(it[1]).name },
+                    process.out.reads.collect { file(it[1]).name },
+                    process.out.log.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.collect { line -> def cols = line.tokenize('\t'); cols.remove(3); cols.join('\t') }.sort().toString().md5(),
+                    reads.size()
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 anchors - forward strandedness") {
+        when {
+            process {
+                """
+                input[0] = FIND_CIRC_ANCHORS.out.anchors.map { meta, anchors -> [meta + [strandedness: 'forward'], anchors] }
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            def bed = path(process.out.bed[0][1]).readLines()
+            def reads = path(process.out.reads[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    path(process.out.versions[0]).yaml,
+                    process.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.collect { line -> def cols = line.tokenize('\t'); [cols[0], cols[1], cols[2], cols[4]].join('\t') }.sort().toString().md5(),
+                    process.out.reads.collect { file(it[1]).name },
+                    process.out.log.collect { file(it[1]).name },
+                    reads.size()
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 anchors - stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = FIND_CIRC_ANCHORS.out.anchors.map { meta, anchors -> [meta + [strandedness: 'auto'], anchors] }
+                input[1] = BOWTIE2_BUILD.out.index
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

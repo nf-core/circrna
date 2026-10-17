@@ -1,0 +1,107 @@
+nextflow_process {
+
+    name "Test Process JOIN_SAMPLES"
+    script "../main.nf"
+    process "JOIN_SAMPLES"
+
+    tag "modules"
+    tag "modules_local"
+    tag "matrix"
+    tag "matrix_join_samples"
+
+    test("ciriquant gene tables") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'gene' ],
+                    [ 'cel_N2_1', 'fust1_1' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciriquant.gene.tsv', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.gene.tsv', checkIfExists: true)
+                    ]
+                ]
+                input[1] = "gene_id,gene_name"
+                """
+            }
+        }
+
+        then {
+            def joined = path(process.out.joined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert joined.columnNames == ['gene_id', 'gene_name', 'cel_N2_1', 'fust1_1'] },
+                { assert joined.rowCount > 0 },
+                { assert snapshot(
+                    process.out.joined,
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("ciriquant circ tables - header only") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'circ' ],
+                    [ 'cel_N2_1', 'fust1_1' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciriquant.circ.tsv', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.circ.tsv', checkIfExists: true)
+                    ]
+                ]
+                input[1] = "circ_id,gene_id"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.joined[0][1]).readLines() == ['circ_id\tgene_id\tcel_N2_1\tfust1_1'] },
+                { assert snapshot(process.out.joined).match() }
+            )
+        }
+    }
+
+    test("ciriquant gene tables - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'gene' ],
+                    [ 'cel_N2_1', 'fust1_1' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciriquant.gene.tsv', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.gene.tsv', checkIfExists: true)
+                    ]
+                ]
+                input[1] = "gene_id,gene_name"
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

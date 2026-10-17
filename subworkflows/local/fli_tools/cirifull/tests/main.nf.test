@@ -1,0 +1,105 @@
+nextflow_workflow {
+
+    name "Test Workflow CIRIFULL"
+    script "../main.nf"
+    workflow "CIRIFULL"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "fli_tools_cirifull"
+
+    setup {
+        run("BWA_INDEX") {
+            script "modules/nf-core/bwa/index/main.nf"
+            process {
+                """
+                input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                """
+            }
+        }
+    }
+
+    test("CIRI2 results of two samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("CIRI2 results of two samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = BWA_INDEX.out.index.first()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = 0
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
+                    workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+}

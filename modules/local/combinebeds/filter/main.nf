@@ -13,6 +13,7 @@ process COMBINEBEDS_FILTER {
     val(consider_strand)
     val(min_tools)
     val(min_samples)
+    val(suffix)
 
     output:
     tuple val(meta), path("${prefix}.${suffix}"), emit: combined, optional: true
@@ -21,7 +22,20 @@ process COMBINEBEDS_FILTER {
     path "versions.yml"                         , emit: versions
 
     script:
-    prefix      = task.ext.prefix      ?: "${meta.id}"
-    suffix      = task.ext.suffix      ?: "bed"
+    prefix = task.ext.prefix ?: "${meta.id}"
     template "filter.py"
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.${suffix}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+        upsetplot: \$(python -c "import upsetplot; print(upsetplot.__version__)")
+        matplotlib: \$(python -c "import matplotlib; print(matplotlib.__version__)")
+    END_VERSIONS
+    """
 }

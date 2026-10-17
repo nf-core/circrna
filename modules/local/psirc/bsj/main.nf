@@ -24,4 +24,16 @@ process PSIRC_BSJ {
         psirc: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    VERSION = "1.0.0"
+    """
+    mkdir -p output
+    touch output/candidate_circ_junctions.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc: ${VERSION}
+    END_VERSIONS
+    """
 }

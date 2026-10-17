@@ -41,4 +41,19 @@ process CIRI_CIRIVIS {
         ciri-vis: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "1.4.2"
+    """
+    mkdir -p ${prefix}
+    touch ${prefix}/${prefix}.list_circle.fa
+    touch ${prefix}/${prefix}.list
+    touch ${prefix}/${prefix}.pdf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ciri-vis: ${VERSION}
+    END_VERSIONS
+    """
 }

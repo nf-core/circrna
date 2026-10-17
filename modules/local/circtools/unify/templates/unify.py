@@ -72,7 +72,7 @@ df_counts = df_counts.with_columns(
     Name=pl.lit("FUSIONJUNC_") + pl.int_range(0, len(df_counts)).cast(pl.Utf8) + pl.lit("/") + pl.col("Count").cast(pl.Utf8)
 )
 df_counts = df_counts.select(["Chr", "Start", "End", "Name", "Count", "Strand", "Reads"])
-df_counts.write_csv("${prefix}.${suffix}", separator="\\t", include_header=False)
+df_counts.write_csv("${prefix}.bed", separator="\\t", include_header=False)
 
 versions = {
     "${task.process}": {

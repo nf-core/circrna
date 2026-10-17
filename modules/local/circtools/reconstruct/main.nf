@@ -43,4 +43,20 @@ process CIRCTOOLS_RECONSTRUCT {
         circtools: \$(circtools -V)
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.alternative_splicing.txt
+    touch ${prefix}.exon_counts.bed
+    touch ${prefix}.exon_counts.txt
+    touch ${prefix}.mate_status.txt
+    touch ${prefix}.skipped_exons.bed
+    touch ${prefix}.skipped_exons.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        circtools: \$(circtools -V)
+    END_VERSIONS
+    """
 }

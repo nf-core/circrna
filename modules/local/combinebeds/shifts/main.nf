@@ -18,4 +18,14 @@ process COMBINEBEDS_SHIFTS {
     script:
     prefix      = task.ext.prefix      ?: "${meta.id}"
     template "shifts.py"
+
+    stub:
+    """
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+        altair: \$(python -c "import altair; print(altair.__version__)")
+    END_VERSIONS
+    """
 }

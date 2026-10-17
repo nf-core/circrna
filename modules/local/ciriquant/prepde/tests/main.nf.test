@@ -1,0 +1,85 @@
+nextflow_process {
+
+    name "Test Process CIRIQUANT_PREPDE"
+    script "../main.nf"
+    process "CIRIQUANT_PREPDE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "ciriquant"
+    tag "ciriquant_prepde"
+
+    test("six samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.ciriquant.gtf', checkIfExists: true)
+                    ],
+                    [ 'C', 'C', 'C', 'T', 'T', 'T' ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.library,
+                    process.out.annotation,
+                    process.out.expression,
+                    process.out.gene,
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("six samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'fust1_N2' ],
+                    [ 'fust1_1', 'fust1_2', 'fust1_3', 'cel_N2_1', 'cel_N2_2', 'cel_N2_3' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.ciriquant.gtf', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.ciriquant.gtf', checkIfExists: true)
+                    ],
+                    [ 'C', 'C', 'C', 'T', 'T', 'T' ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

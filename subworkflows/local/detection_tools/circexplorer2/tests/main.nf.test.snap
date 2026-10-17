@@ -1,0 +1,89 @@
+{
+    "mini - STAR junctions - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "circexplorer2"
+                        },
+                        "cel_N2_1.circexplorer2.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false,
+                            "tool": "circexplorer2"
+                        },
+                        "fust1_1.circexplorer2.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "circexplorer2"
+                        },
+                        "cel_N2_1.circexplorer2.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false,
+                            "tool": "circexplorer2"
+                        },
+                        "fust1_1.circexplorer2.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:17:03.735874108"
+    },
+    "mini - STAR junctions": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "cel_N2_1.circexplorer2.bed",
+                    81,
+                    "f8105cb2220e2aa80640be6ce57221fd"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "fust1_1.circexplorer2.bed",
+                    90,
+                    "d7a64e8d4222049ff45e25f0ada5004d"
+                ]
+            ],
+            [
+                
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:16:39.389995466"
+    }
+}

@@ -1,0 +1,88 @@
+nextflow_process {
+
+    name "Test Process MIRNA_FILTERING"
+    script "../main.nf"
+    process "MIRNA_FILTERING"
+
+    tag "modules"
+    tag "modules_local"
+    tag "mirna_filtering"
+
+    test("normalized counts, default thresholds") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'mirna' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.normalized.tsv', checkIfExists: true)
+                ]
+                input[1] = 0.2
+                input[2] = 5
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.filtered.collect { meta, f -> [meta, file(f).name, path(f).csv(sep: '\t').columnNames, path(f).csv(sep: '\t').rowCount] },
+                    process.out.filtered.collect { meta, f -> path(f).readLines().sort().toString().md5() },
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("normalized counts, strict thresholds") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'mirna' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.normalized.tsv', checkIfExists: true)
+                ]
+                input[1] = 0.5
+                input[2] = 300
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.filtered.collect { meta, f -> [meta, file(f).name, path(f).csv(sep: '\t').columnNames, path(f).csv(sep: '\t').rowCount] },
+                    process.out.filtered.collect { meta, f -> path(f).readLines().sort().toString().md5() }
+                ).match() }
+            )
+        }
+    }
+
+    test("normalized counts - stub") {
+
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'mirna' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.normalized.tsv', checkIfExists: true)
+                ]
+                input[1] = 0.2
+                input[2] = 5
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

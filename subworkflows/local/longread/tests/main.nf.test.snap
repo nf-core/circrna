@@ -1,0 +1,21 @@
+{
+    "nanopore reads - stub": {
+        "content": [
+            {
+                "0": [
+                    "versions.yml:md5,9938da20a1b024611c9fc46a449cafb1",
+                    "versions.yml:md5,9d022266e9cd7eda394c0b6447f143bb"
+                ],
+                "versions": [
+                    "versions.yml:md5,9938da20a1b024611c9fc46a449cafb1",
+                    "versions.yml:md5,9d022266e9cd7eda394c0b6447f143bb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T11:12:59.38521044"
+    }
+}

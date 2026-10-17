@@ -1,0 +1,71 @@
+{
+    "all samples and tools": {
+        "content": [
+            [
+                "n_samples.png",
+                "n_tools.png"
+            ],
+            [
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ],
+            {
+                "COMBINEBEDS_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:24:14.795538505"
+    },
+    "empty bed file - no plots": {
+        "content": [
+            {
+                "COMBINEBEDS_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:24:32.802589456"
+    },
+    "all samples and tools - stub": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "versions.yml:md5,55d86d0d2b3190b5049fbb2d027326d4"
+                ],
+                "multiqc": [
+                    
+                ],
+                "plots": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,55d86d0d2b3190b5049fbb2d027326d4"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T09:54:15.142452535"
+    }
+}

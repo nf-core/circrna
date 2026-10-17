@@ -18,7 +18,7 @@ versions = {
 with open("versions.yml", "w") as f:
     f.write(yaml.dump(versions))
 
-exons_only = bool("${exons_only}")
+exons_only = "${exons_only}".lower() == "true"
 
 columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
             'thickStart', 'thickEnd', 'itemRgb',
@@ -29,7 +29,7 @@ columns = ['chr', 'start', 'end', 'name', 'score', 'strand',
 try:
     df = pl.scan_csv('${bed12}', separator='\\t', has_header=False, new_columns=columns, raise_if_empty=True)
 except pl.exceptions.NoDataError:
-    with open('${prefix}.${suffix}', 'w') as f:
+    with open('${prefix}.gtf', 'w') as f:
         f.write('')
     exit(0)
 
@@ -76,4 +76,4 @@ else:
 df_combined = pl.concat([df_exons, df_cds])
 df_combined = df_combined.sort('chr', 'start', 'end')
 
-df_combined.collect().write_csv('${prefix}.${suffix}', separator='\\t', include_header=False, quote_style="never")
+df_combined.collect().write_csv('${prefix}.gtf', separator='\\t', include_header=False, quote_style="never")

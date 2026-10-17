@@ -27,4 +27,16 @@ process CIRIFULL_MERGE {
         cirifull: ${VERSION}
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    VERSION = "2.1.2"
+    """
+    touch ${prefix}_merge_circRNA_detail.anno
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        cirifull: ${VERSION}
+    END_VERSIONS
+    """
 }

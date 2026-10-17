@@ -9,6 +9,7 @@ process BUILD_LIST {
 
     input:
     tuple val(meta), path(ciri_annotation), path(consensus)
+    val max_shift
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: list
@@ -16,6 +17,17 @@ process BUILD_LIST {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    max_shift = task.ext.max_shift ?: 0
     template "build_list.py"
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+    END_VERSIONS
+    """
 }

@@ -1,0 +1,120 @@
+nextflow_workflow {
+
+    name "Test Workflow STATISTICAL_TESTS"
+    script "../main.nf"
+    workflow "STATISTICAL_TESTS"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "statistical_tests"
+
+    test("psirc counts and ciriquant gtfs - 6 samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.gene_counts.csv', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.circular_tx_counts.tsv', checkIfExists: true)
+                ])
+                input[2] = channel.of(
+                    [ [ id:'cel_N2_1' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_2' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_3' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_1' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_2' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_3' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true) ]
+                )
+                input[3] = channel.of(
+                    [ [ id:'cel_N2_1' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_2' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_3' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_1' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_2' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_3' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.stringtie.gtf', checkIfExists: true) ]
+                )
+                input[4] = channel.value([
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/phenotype.csv', checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded().collect { it.name.tokenize(' ')[0].tokenize(':').last() }.unique().sort()
+            def summary_lines = file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.containsAll([ 'CIRCTEST_PREPARE', 'CIRCTEST_CIRCTEST', 'CIRIQUANT_PREPDE', 'STRINGTIE_PREPDE', 'CIRIQUANT_DE' ]) },
+                { assert file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").exists() },
+                { assert file("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_library.tsv").exists() },
+                { assert snapshot(
+                    tasks,
+                    summary_lines[0],
+                    summary_lines.size(),
+                    summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
+                    path("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_expression.tsv").md5,
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("psirc counts and ciriquant gtfs - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.gene_counts.csv', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/psirc.circular_tx_counts.tsv', checkIfExists: true)
+                ])
+                input[2] = channel.of(
+                    [ [ id:'cel_N2_1' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_2' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_3' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_1' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_2' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.ciriquant.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_3' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.ciriquant.gtf', checkIfExists: true) ]
+                )
+                input[3] = channel.of(
+                    [ [ id:'cel_N2_1' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_1.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_2' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_2.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'cel_N2_3' ], file(params.pipelines_testdata_base_path + 'full/stats/cel_N2_3.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_1' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_1.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_2' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_2.stringtie.gtf', checkIfExists: true) ],
+                    [ [ id:'fust1_3' ], file(params.pipelines_testdata_base_path + 'full/stats/fust1_3.stringtie.gtf', checkIfExists: true) ]
+                )
+                input[4] = channel.value([
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'full/stats/phenotype.csv', checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

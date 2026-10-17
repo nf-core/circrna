@@ -39,4 +39,18 @@ process CIRIQUANT_PREPDE {
         ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
     END_VERSIONS
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}_library.tsv
+    touch ${prefix}_annotation.tsv
+    touch ${prefix}_expression.tsv
+    touch ${prefix}_ratio.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
+    END_VERSIONS
+    """
 }

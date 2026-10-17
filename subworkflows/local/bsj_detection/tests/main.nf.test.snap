@@ -1,0 +1,848 @@
+{
+    "mini - blacklist removes junctions": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "cel_N2_1_circexplorer2.meta.bed",
+                    81,
+                    1382005344
+                ],
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "cel_N2_1_find_circ.meta.bed",
+                    29,
+                    -270818967
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "fust1_1_circexplorer2.meta.bed",
+                    89,
+                    -29940136
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "fust1_1_find_circ.meta.bed",
+                    32,
+                    -1488480879
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    93,
+                    1292861412
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    101,
+                    279097321
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    168,
+                    1922539682
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    33,
+                    -504438533
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T22:57:22.063604112"
+    },
+    "mini - stub": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "10": [
+                    
+                ],
+                "11": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "cel_N2_1.Aligned.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "cel_N2_1.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "cel_N2_1Xd.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        [
+                            "fust1_1.Aligned.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fust1_1.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fust1_1Xd.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "12": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "13": [
+                    
+                ],
+                "14": [
+                    "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
+                    "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
+                    "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
+                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
+                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
+                    "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
+                    "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
+                    "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372",
+                    "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372"
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    
+                ],
+                "6": [
+                    
+                ],
+                "7": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "9": [
+                    
+                ],
+                "bed": [
+                    
+                ],
+                "bed12": [
+                    
+                ],
+                "bed_per_sample": [
+                    
+                ],
+                "bed_per_sample_tool": [
+                    
+                ],
+                "bed_reads": [
+                    
+                ],
+                "ciri_sam": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "ciri_txt": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fasta": [
+                    
+                ],
+                "gtf": [
+                    
+                ],
+                "multiqc_files": [
+                    
+                ],
+                "psirc_bsj": [
+                    
+                ],
+                "reads_fixed_length": [
+                    
+                ],
+                "star_bam": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "cel_N2_1.Aligned.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "cel_N2_1.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "cel_N2_1Xd.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        [
+                            "fust1_1.Aligned.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fust1_1.sortedByCoord.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fust1_1Xd.out.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "star_junction": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
+                    "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
+                    "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
+                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
+                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
+                    "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
+                    "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
+                    "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372",
+                    "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T23:00:22.026402856"
+    },
+    "mini - min_tools 2 and min_samples 2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "cel_N2_1_circexplorer2.meta.bed",
+                    82,
+                    -71558796
+                ],
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "cel_N2_1_ciri.meta.bed",
+                    29,
+                    -1214650735
+                ],
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "cel_N2_1_find_circ.meta.bed",
+                    30,
+                    -935164217
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "fust1_1_circexplorer2.meta.bed",
+                    90,
+                    189166401
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "fust1_1_ciri.meta.bed",
+                    36,
+                    44303315
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "fust1_1_find_circ.meta.bed",
+                    33,
+                    774170462
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    17,
+                    1755586580
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    20,
+                    1683055154
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    11,
+                    -967602674
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    9,
+                    603948107
+                ]
+            ],
+            [
+                "cel_N2_1_read_agreement_mqc.json",
+                "fust1_1_read_agreement_mqc.json",
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T22:56:05.503901668"
+    },
+    "mini - STAR-based tools and non-STAR tools": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "cel_N2_1_circexplorer2.meta.bed",
+                    82,
+                    -71558796
+                ],
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "cel_N2_1_ciri.meta.bed",
+                    29,
+                    -1214650735
+                ],
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "cel_N2_1_find_circ.meta.bed",
+                    30,
+                    -935164217
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circexplorer2"
+                    },
+                    "fust1_1_circexplorer2.meta.bed",
+                    90,
+                    189166401
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "fust1_1_ciri.meta.bed",
+                    36,
+                    44303315
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "fust1_1_find_circ.meta.bed",
+                    33,
+                    774170462
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    124,
+                    1482320209
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    139,
+                    -431293931
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    217,
+                    -1028020285
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    34,
+                    254181829
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.gtf",
+                    170
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.fa",
+                    959680358
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1_reads.bed",
+                    0,
+                    1
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1_reads.bed",
+                    0,
+                    1
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.txt"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false
+                    },
+                    "fust1_1.txt"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.sam"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false
+                    },
+                    "fust1_1.sam"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.Aligned.out.bam"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false
+                    },
+                    "fust1_1.Aligned.out.bam"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.Chimeric.out.junction"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false
+                    },
+                    "fust1_1.Chimeric.out.junction"
+                ]
+            ],
+            [
+                "cel_N2_1_read_agreement_mqc.json",
+                "fust1_1_read_agreement_mqc.json",
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ],
+            {
+                "BSJ_DETECTION:ANNOTATE_COMBINED:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:CIRI:CIRI2": {
+                    "ciri": "2.0.0"
+                },
+                "BSJ_DETECTION:COMBINEBEDS_READS": {
+                    "matplotlib": "3.10.1",
+                    "polars": "1.27.1",
+                    "python": "3.13.3",
+                    "seaborn": "0.13.2",
+                    "upsetplot": "0.9.0"
+                },
+                "BSJ_DETECTION:COMBINE_SAMPLES": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:COMBINE_TOOLS_PER_SAMPLE": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:FIND_CIRC:ANCHORS": {
+                    "find_circ": 1.2
+                },
+                "BSJ_DETECTION:FIND_CIRC:GROUP_READS": {
+                    "csvtk": "0.31.0"
+                },
+                "BSJ_DETECTION:FIND_CIRC:MAIN": {
+                    "bowtie2": "2.3.5.1",
+                    "find_circ": 1.2
+                },
+                "BSJ_DETECTION:INVESTIGATE_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:STAR2PASS:SJDB": {
+                    "mawk": "1.3.4"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T22:54:49.575526459"
+    },
+    "mini - only non-STAR tool": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "cel_N2_1_find_circ.meta.bed",
+                    30,
+                    -935164217
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "fust1_1_find_circ.meta.bed",
+                    33,
+                    774170462
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    30,
+                    1090870224
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    33,
+                    -1308219558
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    47,
+                    -892353412
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    29,
+                    1686390788
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "cel_N2_1.find_circ.bed",
+                    30,
+                    -935164217
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "find_circ"
+                    },
+                    "fust1_1.find_circ.bed",
+                    33,
+                    774170462
+                ]
+            ],
+            [
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ],
+            {
+                "BSJ_DETECTION:ANNOTATE_COMBINED:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:COMBINE_SAMPLES": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:COMBINE_TOOLS_PER_SAMPLE": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:FIND_CIRC:ANCHORS": {
+                    "find_circ": 1.2
+                },
+                "BSJ_DETECTION:FIND_CIRC:GROUP_READS": {
+                    "csvtk": "0.31.0"
+                },
+                "BSJ_DETECTION:FIND_CIRC:MAIN": {
+                    "bowtie2": "2.3.5.1",
+                    "find_circ": 1.2
+                },
+                "BSJ_DETECTION:INVESTIGATE_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T22:58:38.321035193"
+    }
+}

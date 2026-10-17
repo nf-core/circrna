@@ -1,0 +1,83 @@
+{
+    "cel_N2_1 BWA-MEM alignment": {
+        "content": [
+            {
+                "CIRI_CIRI2": {
+                    "ciri": "2.0.0"
+                }
+            },
+            "cel_N2_1.txt",
+            [
+                "chrI:100179|100538\tchrI\t100179\t100538\t2\t1_1_0\t908\t0.004\texon\tY48G8AL.13,\t-",
+                "chrI:137354|141434\tchrI\t137354\t141434\t3\t2_2_0\t58\t0.094\texon\tgrh-1,\t-",
+                "chrI:139759|143157\tchrI\t139759\t143157\t1\t1_1_0\t33\t0.057\tintron\tBE10.7,\t-",
+                "chrI:140424|143157\tchrI\t140424\t143157\t3\t2_2_0\t37\t0.140\tintron\tBE10.7,\t-",
+                "chrI:142582|143157\tchrI\t142582\t143157\t1\t1_1_0\t46\t0.042\tintron\tBE10.7,\t-",
+                "chrI:15806|22588\tchrI\t15806\t22588\t1\t1_1_0\t5\t0.286\texon\tY48G8AL.10,\t-",
+                "chrI:231084|231373\tchrI\t231084\t231373\t1\t1_1_0\t69\t0.028\texon\tY92H12BL.1,\t+",
+                "chrI:252020|261405\tchrI\t252020\t261405\t45\t25_24_0\t6\t0.938\tintron\tBE10.7,\t-",
+                "chrI:295213|296310\tchrI\t295213\t296310\t10\t6_3_0\t70\t0.222\texon\tY92H12BR.3,\t+",
+                "chrI:302230|308719\tchrI\t302230\t308719\t2\t1_1_0\t2\t0.667\tintron\tBE10.7,\t-",
+                "chrI:392535|395272\tchrI\t392535\t395272\t2\t2_2_0\t27\t0.129\texon\tY92H12A.4,\t+",
+                "chrI:399300|399645\tchrI\t399300\t399645\t4\t3_2_0\t15\t0.348\texon\tY92H12A.4,\t+",
+                "chrI:41229|45899\tchrI\t41229\t45899\t1\t1_1_0\t6\t0.250\texon\thaf-6,\t-",
+                "chrI:41229|49098\tchrI\t41229\t49098\t1\t0_1_1\t3\t0.400\texon\thaf-6,\t-",
+                "chrI:425353|427850\tchrI\t425353\t427850\t8\t4_4_0\t85\t0.158\texon\tY92H12A.2,\t+",
+                "chrI:452389|452870\tchrI\t452389\t452870\t1\t1_1_0\t33\t0.057\texon\tsrc-1,\t+",
+                "chrI:459286|461341\tchrI\t459286\t461341\t2\t1_2_1\t4\t0.500\tintergenic_region\tn/a\t+",
+                "chrI:501346|501631\tchrI\t501346\t501631\t1\t1_1_0\t9\t0.182\tintergenic_region\tn/a\t-",
+                "chrI:521960|523476\tchrI\t521960\t523476\t1\t1_1_0\t38\t0.050\texon\tmab-20,\t-",
+                "chrI:549943|550388\tchrI\t549943\t550388\t8\t6_6_0\t7\t0.696\texon\tY71G12B.35,\t-",
+                "chrI:638591|639898\tchrI\t638591\t639898\t1\t1_1_0\t16\t0.111\texon\tlin-65,\t+",
+                "chrI:668256|670455\tchrI\t668256\t670455\t5\t2_2_0\t2\t0.833\tintergenic_region\tn/a\t+",
+                "chrI:692303|692614\tchrI\t692303\t692614\t18\t15_16_0\t7\t0.837\texon\tY71G12B.2,\t+",
+                "chrI:713161|714382\tchrI\t713161\t714382\t3\t2_2_0\t410\t0.014\texon\tegl-30,\t+",
+                "chrI:751520|752725\tchrI\t751520\t752725\t2\t2_1_1\t136\t0.029\texon\ttub-2,\t+",
+                "chrI:87577|97830\tchrI\t87577\t97830\t2\t2_2_0\t15\t0.211\texon\therc-1,\t+",
+                "chrI:96050|111281\tchrI\t96050\t111281\t1\t1_1_0\t16\t0.111\texon\therc-1,\t+",
+                "chrI:96050|97830\tchrI\t96050\t97830\t5\t4_3_0\t16\t0.385\texon\therc-1,\t+",
+                "circRNA_ID\tchr\tcircRNA_start\tcircRNA_end\t#junction_reads\tSM_MS_SMS\t#non_junction_reads\tjunction_reads_ratio\tcircRNA_type\tgene_id\tstrand"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:09:55.049466008"
+    },
+    "cel_N2_1 BWA-MEM alignment - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,28b3ff37016a348762e9bab202f603e6"
+                ],
+                "txt": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,28b3ff37016a348762e9bab202f603e6"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:09:22.84013532"
+    }
+}

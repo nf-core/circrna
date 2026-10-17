@@ -13,11 +13,22 @@ process COMBINEBEDS_COUNTS {
     val(consider_strand)
 
     output:
-    tuple val(meta), path("${prefix}.${suffix}"), emit: combined, optional: true
-    path "versions.yml"                         , emit: versions
+    tuple val(meta), path("${prefix}.tsv"), emit: combined, optional: true
+    path "versions.yml"                   , emit: versions
 
     script:
-    prefix      = task.ext.prefix      ?: "${meta.id}"
-    suffix      = task.ext.suffix      ?: "tsv"
+    prefix = task.ext.prefix ?: "${meta.id}"
     template "counts.py"
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+    END_VERSIONS
+    """
 }

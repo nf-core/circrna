@@ -21,4 +21,16 @@ process PSIRC_INDEX {
         psirc: $VERSION
     END_VERSIONS
     """
+
+    stub:
+    VERSION = "1.0.0"
+    """
+    touch ${fasta.baseName}.all_possible_bsj_targets.fa.index
+    touch ${fasta.baseName}.FirstandLastExons_entities.fa.index
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc: $VERSION
+    END_VERSIONS
+    """
 }

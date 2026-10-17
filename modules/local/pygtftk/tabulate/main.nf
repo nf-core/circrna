@@ -18,15 +18,30 @@ process PYGTFTK_TABULATE {
     task.ext.when == null || task.ext.when
 
     script:
-    def args          = task.ext.args   ?: ''
-    def prefix        = task.ext.prefix ?: "${meta.id}"
-    def suffix        = task.ext.suffix ?: gtf.extension
-    outfile           = "${prefix}.${suffix}"
+    def args   = task.ext.args   ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    outfile    = "${prefix}.circ.tsv"
     """
+    export HOME="\$PWD"
+
     gtftk tabulate \\
         $args \\
         -i $gtf | \\
         grep -v '^tabulate()' > ${outfile}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
+    END_VERSIONS
+    """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    outfile    = "${prefix}.circ.tsv"
+    """
+    export HOME="\$PWD"
+
+    touch ${outfile}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

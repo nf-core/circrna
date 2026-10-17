@@ -30,4 +30,17 @@ process PSIRCQUANT_QUANT {
         psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*\$/\\1/p')
     END_VERSIONS
     """
+
+    stub:
+    """
+    mkdir ${meta.id}
+    touch ${meta.id}/abundance.h5
+    touch ${meta.id}/abundance.tsv
+    touch ${meta.id}/run_info.json
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        psirc-quant: \$(psirc-quant version | sed -n 's/^psirc-quant, version \\([0-9.]*\\).*\$/\\1/p')
+    END_VERSIONS
+    """
 }

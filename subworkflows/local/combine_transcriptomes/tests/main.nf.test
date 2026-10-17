@@ -1,0 +1,62 @@
+nextflow_workflow {
+
+    name "Test Workflow COMBINE_TRANSCRIPTOMES"
+    script "../main.nf"
+    workflow "COMBINE_TRANSCRIPTOMES"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "combine_transcriptomes"
+
+    test("mini genome + annotated circRNA gtf") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size(), path(gtf).readLines().sort().hashCode()] },
+                    workflow.out.fasta.collect { meta, fa -> [meta, file(fa).name, path(fa).readLines().size(), path(fa).readLines().sort().hashCode()] }
+                ).match() },
+                { assert path(workflow.out.fasta[0][1]).readLines().any { it.startsWith(">chrI:") } }
+            )
+        }
+    }
+
+    test("mini genome + annotated circRNA gtf - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = channel.value([[id: 'all'], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

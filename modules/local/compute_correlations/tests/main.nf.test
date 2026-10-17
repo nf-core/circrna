@@ -1,0 +1,43 @@
+nextflow_process {
+
+    name "Test Process COMPUTE_CORRELATIONS"
+    script "../main.nf"
+    process "COMPUTE_CORRELATIONS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "compute_correlations"
+
+    // TODO(#218 COMPUTE_CORRELATIONS fails on the mini data): real test blocked by the 2-sample psirc rds; fishpond labelKeep keeps no transcripts ("No transcripts left after filtering")
+
+    test("mini binding sites - stub") {
+
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'batch_1' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna.binding_sites.targets.tsv', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id:'mirna' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.filtered.tsv', checkIfExists: true)
+                ]
+                input[2] = [
+                    [ id:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

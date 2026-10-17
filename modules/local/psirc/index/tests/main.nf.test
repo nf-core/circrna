@@ -1,0 +1,63 @@
+nextflow_process {
+
+    name "Test Process PSIRC_INDEX"
+    script "../main.nf"
+    process "PSIRC_INDEX"
+
+    tag "modules"
+    tag "modules_local"
+    tag "psirc_index"
+
+    test("transcriptome fasta") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.index.collect { meta, a, b -> [meta, file(a).name, file(b).name] },
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("transcriptome fasta - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

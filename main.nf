@@ -19,6 +19,7 @@ include { CIRCRNA                 } from './workflows/circrna.nf'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_circrna_pipeline'
+include { parseToolList           } from './subworkflows/local/utils_nfcore_circrna_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,24 +58,50 @@ workflow NFCORE_CIRCRNA {
     //
     ch_fasta = channel.value([[id: "fasta"], file(params.fasta, checkIfExists: true)])
     ch_gtf = channel.value([[id: "gtf"], file(params.gtf, checkIfExists: true)])
-    ch_blacklist = params.blacklist ? channel.value(file(params.blacklist, checkIfExists: true)) : channel.empty()
-    ch_mature = params.mature ? channel.value([[id: "mature"], file(params.mature, checkIfExists: true)]) : channel.empty()
+    blacklist = params.blacklist ? file(params.blacklist, checkIfExists: true) : null
+    mature = params.mature ? [[id: "mature"], file(params.mature, checkIfExists: true)] : null
+    mirna_expression = params.mature && params.mirna_expression ? [[id: "mirna"], file(params.mirna_expression, checkIfExists: true)] : null
     ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
     ch_annotation = (params.annotation && params.annotation instanceof String)
         ? channel.fromSamplesheet("annotation", parameters_schema: "${projectDir}/nextflow_schema.json")
         : channel.empty()
-    ch_mirna = params.mature && params.mirna_expression ? channel.value([[id: "mirna"], file(params.mirna_expression, checkIfExists: true)]) : channel.empty()
 
     CIRCRNA(
         ch_samplesheet,
         ch_phenotype,
         ch_fasta,
         ch_gtf,
-        ch_blacklist,
-        ch_mature,
+        blacklist,
+        mature,
         ch_annotation,
         ch_versions,
-        ch_mirna,
+        mirna_expression,
+        parseToolList(params.tools),
+        parseToolList(params.fli_tools),
+        parseToolList(params.quantification_tools),
+        parseToolList(params.mirna_tools),
+        params.bowtie ? file(params.bowtie, checkIfExists: true) : null,
+        params.bowtie2 ? file(params.bowtie2, checkIfExists: true) : null,
+        params.bwa ? file(params.bwa, checkIfExists: true) : null,
+        params.hisat2 ? file(params.hisat2, checkIfExists: true) : null,
+        params.star ? file(params.star, checkIfExists: true) : null,
+        params.segemehl ? file(params.segemehl, checkIfExists: true) : null,
+        params.longread,
+        params.skip_fastqc,
+        params.skip_trimming,
+        params.bsj_reads,
+        params.max_shift,
+        params.consider_strand,
+        params.min_tools,
+        params.min_samples,
+        params.exons_only,
+        params.bootstrap_samples,
+        params.mirna_min_tools,
+        params.mirna_min_reads,
+        params.mirna_min_sample_percentage,
+        params.multiqc_config ? file(params.multiqc_config) : null,
+        params.multiqc_logo ? file(params.multiqc_logo) : null,
+        params.outdir,
     )
 
     emit:

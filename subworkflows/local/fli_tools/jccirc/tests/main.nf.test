@@ -1,0 +1,49 @@
+nextflow_workflow {
+
+    name "Test Workflow JCCIRC"
+    script "../main.nf"
+    workflow "JCCIRC"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "fli_tools_jccirc"
+
+    // TODO(#231 jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads of one sample and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set; not run in the pipeline either because `jccirc` is rejected by the `fli_tools` schema pattern
+    test("two samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[2] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
+                )
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[4] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+}

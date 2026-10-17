@@ -1,0 +1,169 @@
+nextflow_workflow {
+
+    name "Test Workflow CIRI"
+    script "../main.nf"
+    workflow "CIRI"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "ciri"
+
+    setup {
+        run("BWA_INDEX") {
+            script "modules/nf-core/bwa/index/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 paired-end") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = BWA_INDEX.out.index
+                input[4] = []
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            def txt = path(workflow.out.ciri_txt[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.collect { it.tokenize('\t').take(6).join('\t') }.sort(),
+                    workflow.out.ciri_txt.collect { file(it[1]).name },
+                    txt.collect { it.tokenize('\t').take(11).join('\t') }.sort(),
+                    workflow.out.ciri_sam.collect { file(it[1]).name },
+                    workflow.out.reads_fixed_length.size(),
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - cirifull reads trimming") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = BWA_INDEX.out.index
+                input[4] = ['cirifull']
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            def txt = path(workflow.out.ciri_txt[0][1]).readLines()
+            def target_lengths = workflow.out.reads_fixed_length.collect { it[0].target_length }
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.collect { it.tokenize('\t').take(6).join('\t') }.sort(),
+                    workflow.out.ciri_txt.collect { file(it[1]).name },
+                    txt.collect { it.tokenize('\t').take(11).join('\t') }.sort(),
+                    workflow.out.ciri_sam.collect { file(it[1]).name },
+                    workflow.out.reads_fixed_length.collect { it[1].collect { file(it).name } },
+                    target_lengths,
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = BWA_INDEX.out.index
+                input[4] = []
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - cirifull - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = BWA_INDEX.out.index
+                input[4] = ['cirifull']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

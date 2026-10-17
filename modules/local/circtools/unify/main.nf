@@ -11,11 +11,22 @@ process UNIFY {
     tuple val(meta), path(reads), path(coordinates), path(counts)
 
     output:
-    tuple val(meta), path("${prefix}.${suffix}"), emit: bed
-    path "versions.yml"        , emit: versions
+    tuple val(meta), path("${prefix}.bed"), emit: bed
+    path "versions.yml"                   , emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    suffix = task.ext.suffix ?: "bed"
     template 'unify.py'
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //')
+        polars: \$(python -c "import polars; print(polars.__version__)")
+    END_VERSIONS
+    """
 }

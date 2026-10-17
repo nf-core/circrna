@@ -25,4 +25,14 @@ process CIRCTOOLS_REFERENCE {
         circtools: \$(circtools -V)
     END_VERSIONS
     """
+
+    stub:
+    """
+    mkdir -p reference
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        circtools: \$(circtools -V)
+    END_VERSIONS
+    """
 }

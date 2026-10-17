@@ -9,6 +9,7 @@ process MAJORITY_VOTE {
 
     input:
     tuple val(meta), path(bindingsites)
+    val(min_tools)
 
     output:
     tuple val(meta), path("${meta.id}.majority.tsv"), emit: tsv
@@ -19,17 +20,17 @@ process MAJORITY_VOTE {
     task.ext.when == null || task.ext.when
 
     script:
-    min_tools = params.mirna_min_tools
     template 'majority.py'
 
     stub:
     """
     touch ${meta.id}.majority.tsv
+    touch ${meta.id}.targets.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         python: \$(python --version | sed 's/Python //g')
-        pandas: \$(python -c "import pandas; print(pandas.__version__)")
+        polars: \$(python -c "import polars; print(polars.__version__)")
     END_VERSIONS
     """
 }

@@ -1,0 +1,101 @@
+nextflow_workflow {
+
+    name "Test Workflow MAPSPLICE"
+    script "../main.nf"
+    workflow "MAPSPLICE"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "mapsplice"
+
+    setup {
+        run("BOWTIE_BUILD") {
+            script "modules/nf-core/bowtie/build/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("SEQKIT_SPLIT") {
+            script "modules/local/seqkit/split/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 paired-end") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = BOWTIE_BUILD.out.index
+                input[4] = SEQKIT_SPLIT.out.split
+                input[5] = [[id: 'cel_N2_1'], []]
+                input[6] = []
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    bed.sort(),
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ])
+                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)
+                input[2] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[3] = BOWTIE_BUILD.out.index
+                input[4] = SEQKIT_SPLIT.out.split
+                input[5] = [[id: 'cel_N2_1'], []]
+                input[6] = []
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

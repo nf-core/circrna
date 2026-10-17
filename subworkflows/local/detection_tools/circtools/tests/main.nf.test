@@ -1,0 +1,133 @@
+nextflow_workflow {
+
+    name "Test Subworkflow CIRCTOOLS"
+    script "../main.nf"
+    workflow "CIRCTOOLS"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "circtools"
+
+    setup {
+        run("STAR_GENOMEGENERATE") {
+            script "modules/nf-core/star/genomegenerate/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+    }
+
+    test("mini - paired-end reads") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circtools'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = STAR_GENOMEGENERATE.out.index.collect()
+                input[4] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[5] = true
+                input[6] = 1
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                workflow.out.bed.collect { [it[0], file(it[1]).name] }.sort { it[0].id },
+                workflow.out.bed.collect { meta, bed ->
+                    // Name and Reads are dropped: their order depends on polars' unordered group_by/unique
+                    def rows = path(bed).readLines().collect { line -> def f = line.split('\t'); [f[0], f[1], f[2], f[4], f[5]].join('\t') }
+                    [meta.id, rows.size(), rows.sort(false).join('\n').md5()]
+                }.sort { it[0] },
+                workflow.out.versions.collect { path(it).yaml }.unique().sort { it.keySet()[0] }
+            ).match()
+        }
+    }
+
+    test("mini - paired-end reads - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circtools'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = STAR_GENOMEGENERATE.out.index.collect()
+                input[4] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[5] = true
+                input[6] = 1
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+}

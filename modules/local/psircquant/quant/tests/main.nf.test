@@ -1,0 +1,108 @@
+nextflow_process {
+
+    name "Test Process PSIRCQUANT_QUANT"
+    script "../main.nf"
+    process "PSIRCQUANT_QUANT"
+
+    tag "modules"
+    tag "modules_local"
+    tag "psircquant"
+    tag "psircquant_quant"
+
+    setup {
+        run("PSIRCQUANT_INDEX") {
+            script "modules/local/psircquant/index/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                """
+            }
+        }
+    }
+
+    test("paired-end") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1', single_end:false ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = PSIRCQUANT_INDEX.out.index
+                input[2] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ]
+                input[4] = 2
+                """
+            }
+        }
+
+        then {
+            def dir = file(process.out.directory[0][1])
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.directory.collect { meta, d -> [ meta, file(d).name ] },
+                    dir.listFiles().collect { it.name }.sort(),
+                    path("${dir}/abundance.tsv").csv(sep: '\t').columnNames,
+                    path("${dir}/abundance.tsv").csv(sep: '\t').rowCount,
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("paired-end - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1', single_end:false ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = PSIRCQUANT_INDEX.out.index
+                input[2] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ]
+                input[4] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "hg38 - stub": {
+        "content": [
+            [
+                "reference"
+            ],
+            [
+                "versions.yml:md5,4dd86ddb55790ff7ef543ddf673051b9"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T09:41:51.362566052"
+    }
+}
