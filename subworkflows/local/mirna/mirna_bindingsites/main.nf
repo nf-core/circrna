@@ -1,10 +1,10 @@
 include { BIOAWK as ADD_BACKSPLICE        } from '../../../../modules/nf-core/bioawk'
+include { BIOAWK as FORMAT_TARGETSCAN     } from '../../../../modules/nf-core/bioawk'
 include { MIRANDA                         } from '../../../../modules/nf-core/miranda'
 include { GAWK as UNIFY_MIRANDA           } from '../../../../modules/nf-core/gawk'
 include { TARGETSCAN                      } from '../../../../modules/local/targetscan/predict'
 include { GAWK as UNIFY_TARGETSCAN        } from '../../../../modules/nf-core/gawk'
 include { MIRNA_TARGETS                   } from '../../../../modules/local/mirna_targets'
-include { CAT_CAT as COMBINE_BINDINGSITES } from '../../../../modules/nf-core/cat/cat'
 include { MAJORITY_VOTE                   } from '../../../../modules/local/majority_vote'
 
 workflow MIRNA_BINDINGSITES {
@@ -39,7 +39,9 @@ workflow MIRNA_BINDINGSITES {
         //
         // TARGETSCAN WORKFLOW:
         //
-        TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
+        // TargetScan expects one line per miRNA: id, seed sequence (7bp after the first base) and a dummy species id
+        FORMAT_TARGETSCAN( mirna_fasta, "txt" )
+        TARGETSCAN( ch_transcriptome_batches, FORMAT_TARGETSCAN.out.output.collect() )
         UNIFY_TARGETSCAN( TARGETSCAN.out.txt.map { meta, txt -> [meta, txt, 'targetscan.tsv'] }, [], false )
 
         ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
@@ -81,30 +83,4 @@ workflow MIRNA_BINDINGSITES {
     binding_sites = MAJORITY_VOTE.out.targets
 
     versions = ch_versions
-}
-
-/*
-========================================================================================
-    FUNCTIONS
-========================================================================================
-*/
-// Formatting miRNA input for targetscan
-// takes mature.fa, iterates over entries (id, seq) and generates a new file
-// writing:
-// 1. miR ID
-// 2. miR (7bp) seed sequence from mature seq
-// 3. Species ID (set to 0000, not important for output).
-// to new file
-def formatMiRNAForTargetScan(ch_mature) {
-
-    def ch_targetscan_meta_formatted = ch_mature
-        .map { _meta, mature -> mature }
-        .splitFasta(record: [id: true, seqString: true])
-        .map { record ->
-            return "${record.id}\t${record.seqString[1..7]}\t0000\n"
-        }
-        .collectFile(name: 'mature.txt')
-
-    ch_targetscan_meta_formatted = ch_targetscan_meta_formatted.map { entry -> [[id: "mature_targetscan"], entry] }
-    return ch_targetscan_meta_formatted
 }
