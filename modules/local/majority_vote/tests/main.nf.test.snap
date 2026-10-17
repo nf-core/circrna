@@ -1,5 +1,5 @@
 {
-    "targetscan and miranda, min_tools 1": {
+    "targetscan and miranda, min_tools 2": {
         "content": [
             [
                 [
@@ -30,7 +30,40 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:11:18.959652623"
+        "timestamp": "2026-10-17T18:03:09.915640611"
+    },
+    "targetscan and miranda, min_tools 1": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.majority.tsv",
+                    "25529c377206c7e25c7e8f8e4314af7b"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    20
+                ]
+            ],
+            {
+                "MAJORITY_VOTE": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:02:46.334141725"
     },
     "targetscan and miranda, min_tools 1 - stub": {
         "content": [

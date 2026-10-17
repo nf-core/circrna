@@ -216,6 +216,13 @@ def validateInputParameters() {
     if (params.min_tools > bsj_tools.size()) {
         error("Please check input parameters -> The minimum number of tools required for BSJ detection (${params.min_tools}) must be less than or equal to the number of BSJ detection tools selected (${bsj_tools.size()}).")
     }
+
+    if (params.mature) {
+        def mirna_tools = parseToolList(params.mirna_tools)
+        if (params.mirna_min_tools > mirna_tools.size()) {
+            error("Please check input parameters -> The minimum number of tools required for miRNA binding site prediction (${params.mirna_min_tools}) must be less than or equal to the number of miRNA binding site prediction tools selected (${mirna_tools.size()}).")
+        }
+    }
 }
 
 //

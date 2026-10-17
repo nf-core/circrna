@@ -16,7 +16,7 @@ df = df.select(["mirna", "target", "tool"])
 
 df = df.group_by(['mirna', 'target']).agg(pl.col("tool").n_unique())
 
-df = df.filter(pl.col("tool") > int("${min_tools}")) \
+df = df.filter(pl.col("tool") >= int("${min_tools}")) \
     .select(["mirna", "target"])
 
 df = df.collect()
