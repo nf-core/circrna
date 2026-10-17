@@ -62,6 +62,45 @@
         },
         "timestamp": "2026-10-17T10:57:31.968784994"
     },
+    "mini - single-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": true,
+                            "tool": "circtools"
+                        },
+                        "fust1_1.circtools.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,6add1e420777178410a51006d5b72221",
+                    "versions.yml:md5,9e04f0143841d532d3dddc9494132d65"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": true,
+                            "tool": "circtools"
+                        },
+                        "fust1_1.circtools.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,6add1e420777178410a51006d5b72221",
+                    "versions.yml:md5,9e04f0143841d532d3dddc9494132d65"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:38:38.205807812"
+    },
     "mini - paired-end reads": {
         "content": [
             [
@@ -123,5 +162,44 @@
             "nextflow": "25.10.4"
         },
         "timestamp": "2026-10-16T20:32:41.770987861"
+    },
+    "mini - single-end": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": true,
+                        "tool": "circtools"
+                    },
+                    "fust1_1.circtools.bed"
+                ]
+            ],
+            [
+                [
+                    "fust1_1",
+                    39,
+                    "f10fec0731522cfd72d10e8ede714e12"
+                ]
+            ],
+            [
+                {
+                    "CIRCTOOLS:DETECT": {
+                        "circtools": 2.0
+                    }
+                },
+                {
+                    "CIRCTOOLS:UNIFY": {
+                        "python": "3.13.2",
+                        "polars": "1.24.0"
+                    }
+                }
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:44:30.15656615"
     }
 }
