@@ -2,6 +2,15 @@
     "-profile test - stub": {
         "content": [
             {
+                "CIRCTEST_CIRCTEST": {
+                    "r-base": "4.2.2",
+                    "aod": "1.3.2",
+                    "plyr": "1.8.8",
+                    "ggplot2": "3.4.0"
+                },
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.2.1"
+                },
                 "GTFFILTER": {
                     "python": "3.14.5"
                 },
@@ -222,6 +231,11 @@
                 "5_quantification/psirc/transcriptome/transcriptome.fasta",
                 "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf",
                 "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv",
+                "7_statistical_tests",
+                "7_statistical_tests/circtest",
+                "7_statistical_tests/circtest/circ_linear_line_plots.pdf",
+                "7_statistical_tests/circtest/circ_linear_ratio_plots.pdf",
+                "7_statistical_tests/circtest/counts_summary.txt",
                 "pipeline_info",
                 "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
             ]
@@ -230,7 +244,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T14:08:05.185360157"
+        "timestamp": "2026-10-17T22:59:44.848591413"
     },
     "-profile test": {
         "content": [
@@ -238,6 +252,15 @@
                 "BED2GTF": {
                     "polars": "1.31.0",
                     "python": "3.13.5"
+                },
+                "CIRCTEST_CIRCTEST": {
+                    "r-base": "4.2.2",
+                    "aod": "1.3.2",
+                    "plyr": "1.8.8",
+                    "ggplot2": "3.4.0"
+                },
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.2.1"
                 },
                 "COMBINE_COUNTS_PER_TOOL": {
                     "polars": "1.5.0",
@@ -580,6 +603,11 @@
                 "5_quantification/psirc/transcriptome/transcriptome.fasta",
                 "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf",
                 "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv",
+                "7_statistical_tests",
+                "7_statistical_tests/circtest",
+                "7_statistical_tests/circtest/circ_linear_line_plots.pdf",
+                "7_statistical_tests/circtest/circ_linear_ratio_plots.pdf",
+                "7_statistical_tests/circtest/counts_summary.txt",
                 "pipeline_info",
                 "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
             ],
@@ -1203,6 +1231,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T22:37:46.254376442"
+        "timestamp": "2026-10-17T22:58:19.908729756"
     }
 }
