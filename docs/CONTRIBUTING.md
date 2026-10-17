@@ -220,8 +220,8 @@ Follow these rules when you add a module or subworkflow:
   Regenerate them with `nf-test test --update-snapshot <path>`.
 - A test file is done once it passes twice in a row without `--update-snapshot`.
 
-Test inputs come from the `circrna` branch of [nf-core/test-datasets](https://github.com/nf-core/test-datasets/tree/circrna).
-Reference them through `params.pipelines_testdata_base_path` with `checkIfExists: true`; the files are listed in `tests/TESTDATA.md`.
+Test inputs come from the `circrna` branch of [nf-core/test-datasets](https://github.com/nf-core/test-datasets/tree/circrna) (until the new files are merged there, from the fork [nictru/test-datasets](https://github.com/nictru/test-datasets/tree/circrna) pinned in `tests/nextflow.config`).
+Reference them through `params.pipelines_testdata_base_path` with `checkIfExists: true`; the files are documented in the README of that branch.
 Build cheap indices for the mini reference in `setup {}` with the modules in `modules/nf-core`.
 Do not commit test data to this repository.
 
