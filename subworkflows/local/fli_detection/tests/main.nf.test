@@ -69,6 +69,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['cirifull']
+                input[15] = 0
                 """
             }
         }
@@ -146,6 +147,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['circtools']
+                input[15] = 0
                 """
             }
         }
@@ -223,6 +225,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['cirifull', 'circtools']
+                input[15] = 0
                 """
             }
         }
@@ -289,6 +292,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = []
+                input[15] = 0
                 """
             }
         }
@@ -367,6 +371,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['cirifull']
+                input[15] = 0
                 """
             }
         }
@@ -446,6 +451,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['circtools']
+                input[15] = 0
                 """
             }
         }
@@ -535,6 +541,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['psirc']
+                input[15] = 0
                 """
             }
         }
@@ -625,6 +632,7 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
                 input[14] = ['cirifull', 'psirc', 'jccirc', 'circtools']
+                input[15] = 0
                 """
             }
         }

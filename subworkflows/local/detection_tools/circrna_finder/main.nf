@@ -17,7 +17,7 @@ workflow CIRCRNA_FINDER {
     MAIN( ch_joined )
     ch_versions = ch_versions.mix(MAIN.out.versions)
 
-    UNIFY( MAIN.out.results, [], false )
+    UNIFY( MAIN.out.results.map{ meta, results -> [ meta, results, "circrna_finder.bed" ] }, [], false )
 
     emit:
     bed = UNIFY.out.output

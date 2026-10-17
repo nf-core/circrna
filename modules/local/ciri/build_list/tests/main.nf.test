@@ -85,7 +85,6 @@ nextflow_process {
         when {
             params {
                 outdir = "$outputDir"
-                max_shift = 0
             }
             process {
                 """
@@ -93,6 +92,7 @@ nextflow_process {
                     .map { _meta, anno -> [ [ id:'cirifull' ], anno ] }
                     .groupTuple()
                     .combine(channel.of(file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)))
+                input[1] = 0
                 """
             }
         }
@@ -113,7 +113,6 @@ nextflow_process {
         when {
             params {
                 outdir = "$outputDir"
-                max_shift = 1
             }
             process {
                 """
@@ -121,6 +120,7 @@ nextflow_process {
                     .map { _meta, anno -> [ [ id:'cirifull' ], anno ] }
                     .groupTuple()
                     .combine(channel.of(file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)))
+                input[1] = 1
                 """
             }
         }
@@ -150,6 +150,7 @@ nextflow_process {
                     .map { _meta, anno -> [ [ id:'cirifull' ], anno ] }
                     .groupTuple()
                     .combine(channel.of(file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)))
+                input[1] = 0
                 """
             }
         }

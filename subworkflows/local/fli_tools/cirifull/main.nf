@@ -16,6 +16,7 @@ workflow CIRIFULL {
     ch_bwa_index
     ch_ciri_txt
     ch_ciri_sam
+    max_shift
 
     main:
     ch_versions = channel.empty()
@@ -40,7 +41,8 @@ workflow CIRIFULL {
         MERGE.out.anno
             .map { _meta, anno -> [[id: 'cirifull'], anno] }
             .groupTuple()
-            .combine(ch_bsj_annotation.map { _meta, anno -> anno })
+            .combine(ch_bsj_annotation.map { _meta, anno -> anno }),
+        max_shift,
     )
     ch_versions = ch_versions.mix(BUILD_LIST.out.versions)
 

@@ -18,7 +18,7 @@ workflow MAPSPLICE {
     ALIGN( reads, bowtie_index.map{ _meta, index -> index}, chromosomes, gtf )
     PARSE( ALIGN.out.raw_fusions )
     UNIFY( PARSE.out.junction.map{ meta, bed ->
-        [ meta + [tool: "mapsplice"], bed ] }, [], false )
+        [ meta + [tool: "mapsplice"], bed, "mapsplice.bed" ] }, [], false )
 
     ch_versions = ch_versions.mix(ALIGN.out.versions)
 
