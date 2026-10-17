@@ -422,8 +422,8 @@ Circ.test <- function(Circ, Linear, CircCoordinates=None, group, alpha=0.05, plo
 
 ## MAIN
 
-circs = read.table("${circ_counts}", header=T, sep="\\t")
-genes = read.table("${gene_counts}", header=T, sep="\\t")
+circs = read.table("${circ_counts}", header=T, sep="\\t", check.names = FALSE)
+genes = read.table("${gene_counts}", header=T, sep="\\t", check.names = FALSE)
 pheno = read.csv  ("${phenotype}"  , header=T, row.names = "sample")
 
 circs <- Circ.filter(circ = circs, linear = genes, filter.sample = 2, filter.count = 5, percentage = 0.00001)
