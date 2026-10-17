@@ -21,7 +21,7 @@ pipeline_info/*.{html,json,txt,yml}
 **/*.combined.bed
 **/all_samples.upset.png
 **/all_samples.upset_mqc.json
-**/circexplorer2.csv
+**/circexplorer2.joined.tsv
 **/*circexplorer2*.bed
 
 # Quantification: psirc bootstrapping + tximport/tximeta + merged tables vary between runs
