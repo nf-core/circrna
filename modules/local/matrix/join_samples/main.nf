@@ -9,6 +9,7 @@ process JOIN_SAMPLES {
 
     input:
     tuple val(meta), val(samples), path(matrices)
+    val metacols
 
     output:
     tuple val(meta), path("${meta.id}.joined.tsv"), emit: joined
@@ -18,8 +19,6 @@ process JOIN_SAMPLES {
     task.ext.when == null || task.ext.when
 
     script:
-    metacols = task.ext.metacols ?: "gene_id,gene_name"
-    has_header = task.ext.has_header == null ? true : task.ext.has_header
     template 'join.py'
 
     stub:

@@ -18,12 +18,12 @@ process COMBINEBEDS_COUNTS {
 
     script:
     prefix      = task.ext.prefix      ?: "${meta.id}"
-    suffix      = task.ext.suffix      ?: "tsv"
+    suffix      = "tsv"
     template "counts.py"
 
     stub:
     prefix      = task.ext.prefix      ?: "${meta.id}"
-    suffix      = task.ext.suffix      ?: "tsv"
+    suffix      = "tsv"
     """
     touch ${prefix}.${suffix}
 

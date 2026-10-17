@@ -40,7 +40,7 @@ workflow MIRNA_BINDINGSITES {
         // TARGETSCAN WORKFLOW:
         //
         TARGETSCAN( ch_transcriptome_batches, formatMiRNAForTargetScan( mirna_fasta ).collect() )
-        UNIFY_TARGETSCAN( TARGETSCAN.out.txt, [], false )
+        UNIFY_TARGETSCAN( TARGETSCAN.out.txt.map { meta, txt -> [meta, txt, 'targetscan.tsv'] }, [], false )
 
         ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
@@ -51,7 +51,7 @@ workflow MIRNA_BINDINGSITES {
         // MIRANDA WORKFLOW:
         //
         MIRANDA( ch_transcriptome_batches, mirna_fasta.map{_meta, mature -> mature}.collect() )
-        UNIFY_MIRANDA( MIRANDA.out.txt, [], false )
+        UNIFY_MIRANDA( MIRANDA.out.txt.map { meta, txt -> [meta, txt, 'miranda.tsv'] }, [], false )
 
         ch_versions = ch_versions.mix(MIRANDA.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
