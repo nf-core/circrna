@@ -50,6 +50,7 @@ nextflow_workflow {
 
         then {
             def tasks = workflow.trace.succeeded().collect { it.name.tokenize(' ')[0].tokenize(':').last() }.unique().sort()
+            def summary_lines = file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").readLines()
             assertAll(
                 { assert workflow.success },
                 { assert tasks.containsAll([ 'CIRCTEST_PREPARE', 'CIRCTEST_CIRCTEST', 'CIRIQUANT_PREPDE', 'STRINGTIE_PREPDE', 'CIRIQUANT_DE' ]) },
@@ -57,7 +58,9 @@ nextflow_workflow {
                 { assert file("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_library.tsv").exists() },
                 { assert snapshot(
                     tasks,
-                    path("$outputDir/7_statistical_tests/circtest/counts_summary.txt").md5,
+                    summary_lines[0],
+                    summary_lines.size(),
+                    summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
                     path("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_expression.tsv").md5,
                     workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }

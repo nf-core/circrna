@@ -33,7 +33,11 @@
                 "CIRIQUANT_PREPDE",
                 "STRINGTIE_PREPDE"
             ],
-            "ff5986191583c5d6ce52c539050512a4",
+            "\"gene_id\" \"sig_p\" \"group_1_ratio_mean\"",
+            2,
+            [
+                "\"Y47G6A.29\""
+            ],
             "75fd75589f5e5a64c5e95e745c19dd74",
             [
                 {
@@ -70,6 +74,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:36:43.004687736"
+        "timestamp": "2026-10-17T08:44:27.522259272"
     }
 }

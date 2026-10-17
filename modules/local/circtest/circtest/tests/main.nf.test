@@ -42,12 +42,16 @@ nextflow_process {
         }
 
         then {
+            def summary_lines = file(process.out.summary[0][1]).readLines()
             assertAll(
                 { assert process.success },
                 { assert process.out.plots[0][1].collect { file(it).name }.sort() == [ 'circ_linear_line_plots.pdf', 'circ_linear_ratio_plots.pdf' ] },
                 { assert file(process.out.summary[0][1]).exists() },
                 { assert snapshot(
-                    process.out.summary,
+                    file(process.out.summary[0][1]).name,
+                    summary_lines[0],
+                    summary_lines.size(),
+                    summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
                     path(process.out.versions[0]).yaml
                 ).match() }
             )

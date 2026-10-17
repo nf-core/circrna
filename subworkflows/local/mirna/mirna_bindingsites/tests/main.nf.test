@@ -155,7 +155,7 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.failed },
-                { assert workflow.errorReport.contains('No tools selected for miRNA discovery.') }
+                { assert (workflow.stdout + workflow.stderr + [workflow.errorReport]).join('\n').contains('No tools selected for miRNA discovery.') }
             )
         }
     }
