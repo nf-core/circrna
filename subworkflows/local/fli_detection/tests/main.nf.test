@@ -48,28 +48,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
-                input[10] = channel.of(
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['cirifull']
-                input[15] = 0
+                input[15] = ['cirifull']
+                input[16] = 0
                 """
             }
         }
@@ -126,28 +130,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
-                input[10] = channel.of(
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['circtools']
-                input[15] = 0
+                input[15] = ['circtools']
+                input[16] = 0
                 """
             }
         }
@@ -204,28 +212,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
-                input[10] = channel.of(
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['cirifull', 'circtools']
-                input[15] = 0
+                input[15] = ['cirifull', 'circtools']
+                input[16] = 0
                 """
             }
         }
@@ -271,28 +283,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.empty()
-                input[10] = channel.of(
+                input[10] = channel.empty()
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = []
-                input[15] = 0
+                input[15] = []
+                input[16] = 0
                 """
             }
         }
@@ -350,28 +366,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
-                input[10] = channel.of(
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['cirifull']
-                input[15] = 0
+                input[15] = ['cirifull']
+                input[16] = 0
                 """
             }
         }
@@ -430,28 +450,32 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
-                input[10] = channel.of(
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['circtools']
-                input[15] = 0
+                input[15] = ['circtools']
+                input[16] = 0
                 """
             }
         }
@@ -518,30 +542,34 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
                     .join(PSIRC_INDEX.out.index.map { meta, a, b -> [ meta, [ a, b ] ] })
                     .first()
-                input[10] = channel.of(
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['psirc']
-                input[15] = 0
+                input[15] = ['psirc']
+                input[16] = 0
                 """
             }
         }
@@ -609,30 +637,34 @@ nextflow_workflow {
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.reads.bed', checkIfExists: true) ]
                 )
-                input[9] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[10] = channel.of([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
                     .join(PSIRC_INDEX.out.index.map { meta, a, b -> [ meta, [ a, b ] ] })
                     .first()
-                input[10] = channel.of(
+                input[11] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
                 )
-                input[11] = channel.of(
+                input[12] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Aligned.out.bam', checkIfExists: true) ]
                 )
-                input[12] = channel.of(
+                input[13] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true) ]
                 )
-                input[13] = channel.of(
+                input[14] = channel.of(
                     [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.combined.bed', checkIfExists: true) ]
                 )
-                input[14] = ['cirifull', 'psirc', 'jccirc', 'circtools']
-                input[15] = 0
+                input[15] = ['cirifull', 'psirc', 'jccirc', 'circtools']
+                input[16] = 0
                 """
             }
         }

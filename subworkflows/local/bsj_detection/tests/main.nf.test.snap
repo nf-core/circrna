@@ -101,6 +101,9 @@
                     
                 ],
                 "11": [
+                    
+                ],
+                "12": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -124,7 +127,7 @@
                         ]
                     ]
                 ],
-                "12": [
+                "13": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -140,10 +143,10 @@
                         "fust1_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "13": [
+                "14": [
                     
                 ],
-                "14": [
+                "15": [
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
@@ -170,6 +173,9 @@
                     
                 ],
                 "7": [
+                    
+                ],
+                "8": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -185,7 +191,7 @@
                         "fust1_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "8": [
+                "9": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -201,13 +207,13 @@
                         "fust1_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "9": [
-                    
-                ],
                 "bed": [
                     
                 ],
                 "bed12": [
+                    
+                ],
+                "bed12_per_sample": [
                     
                 ],
                 "bed_per_sample": [
@@ -323,7 +329,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T23:00:22.026402856"
+        "timestamp": "2026-10-17T18:04:56.617865128"
     },
     "mini - min_tools 2 and min_samples 2": {
         "content": [
@@ -525,6 +531,24 @@
             [
                 [
                     {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    21,
+                    -1504851648
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    25,
+                    116014267
+                ]
+            ],
+            [
+                [
+                    {
                         "id": "all"
                     },
                     "all.combined.bed",
@@ -707,7 +731,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:54:49.575526459"
+        "timestamp": "2026-10-17T17:58:31.905314955"
     },
     "mini - only non-STAR tool": {
         "content": [
@@ -754,6 +778,24 @@
             [
                 [
                     {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    18,
+                    1697201333
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    23,
+                    -955561703
+                ]
+            ],
+            [
+                [
+                    {
                         "id": "all"
                     },
                     "all.combined.bed",
@@ -774,9 +816,7 @@
             [
                 [
                     {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "tool": "find_circ"
+                        "id": "cel_N2_1"
                     },
                     "cel_N2_1.find_circ.bed",
                     30,
@@ -784,9 +824,7 @@
                 ],
                 [
                     {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "tool": "find_circ"
+                        "id": "fust1_1"
                     },
                     "fust1_1.find_circ.bed",
                     33,
@@ -843,6 +881,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:58:38.321035193"
+        "timestamp": "2026-10-17T18:02:55.040610088"
     }
 }

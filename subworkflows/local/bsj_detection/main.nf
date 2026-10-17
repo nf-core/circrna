@@ -184,7 +184,7 @@ workflow BSJ_DETECTION {
         ch_bsj_reads = COMBINEBEDS_READS.out.combined
     }
     else {
-        ch_bsj_reads = ch_bsj_bed_per_sample_tool_reads
+        ch_bsj_reads = ch_bsj_bed_per_sample_tool_reads.map { meta, bed -> [[id: meta.id], bed] }
     }
 
     //
@@ -280,6 +280,7 @@ workflow BSJ_DETECTION {
     fasta               = ch_bsj_fasta_combined
     bed_reads           = ch_bsj_reads
     bed_per_sample      = ch_bsj_bed_per_sample
+    bed12_per_sample    = ch_bsj_bed12_per_sample
     bed_per_sample_tool = ch_bsj_bed_per_sample_tool_meta
     ciri_txt            = ch_ciri_txt
     ciri_sam            = ch_ciri_sam

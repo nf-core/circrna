@@ -121,6 +121,7 @@ nextflow_workflow {
                 { assert snapshot(
                     summarize(bedPerSampleTool, [0, 1, 2, 4, 5]),
                     summarize(workflow.out.bed_per_sample, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12_per_sample),
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     workflow.out.gtf.collect { meta, f -> [meta, file(f).name, lines(f).size()] },
@@ -349,6 +350,7 @@ nextflow_workflow {
                 { assert snapshot(
                     summarize(workflow.out.bed_per_sample_tool, [0, 1, 2, 4, 5]),
                     summarize(workflow.out.bed_per_sample, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12_per_sample),
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     summarize(workflow.out.bed_reads, [0, 1, 2, 4, 5]),
