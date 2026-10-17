@@ -19,6 +19,7 @@ workflow PREPARE_GENOME {
     ch_fasta
     ch_gtf
     tools
+    quantification_tools
     bowtie
     bowtie2
     bwa
