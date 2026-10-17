@@ -201,7 +201,8 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.star_bam,
             BSJ_DETECTION.out.star_junction,
             BSJ_DETECTION.out.bed_per_sample,
-            fli_tools
+            fli_tools,
+            max_shift
         )
         ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
