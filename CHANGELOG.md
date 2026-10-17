@@ -26,6 +26,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#242](https://github.com/nf-core/circrna/pull/242) - Updated the nf-core modules `gawk`, `gnu/sort`, `bedtools/intersect`, `bedtools/sort`, `custom/gtffilter` and `seqkit/fx2tab`, which take the output suffix as an input (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - The per-tool BSJ count matrices are now published as `<tool>.joined.tsv` (tab-separated) instead of `<tool>.csv`. Counting is done by `JOIN_SAMPLES`, which now also works with a single sample (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - Renamed the config selectors `CIRCTOOLS:MAIN` to `CIRCTOOLS:DETECT` and `ANNOTATE_COMBINED:BED2GFF|BED2GTF` to `ANNOTATE_COMBINED:BED2(GFF|GTF)`, so that the options are applied to the intended processes only (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - `-profile test` sets `--quantification_tools 'psirc,sum,max'`, because the test data yields too few circRNAs for the CIRIquant differential expression (edgeR). CIRIquant is covered by the module and subworkflow tests (@nictru)
 
 ### `Fixed`
 
@@ -42,6 +43,12 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#243](https://github.com/nf-core/circrna/pull/243) - The pipeline now fails with an error if none of the BSJ detection tools finds a BSJ (`FAIL_ON_EMPTY`) (#238) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - Per-tool count matrices failed when only a single sample was present (#215) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - `JCCIRC` never ran in the pipeline; it now receives its inputs correctly, its CPU request is clamped to at least 1, and `tools_with_reads` is validated (#231) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - `psirc-quant` received the transcriptome FASTA instead of the GTF, so `pseudoalignments.bam` could not be built from the transcript annotation. It is now built from the combined transcriptome GTF (#232) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - `MERGE_EXPERIMENTS` dropped or renamed samples whose names start with a digit (#219) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - `MARK_CIRCULAR` ignored `--publish_dir_mode`, and the output docs listed the wrong path for `*.marked.fasta` and did not mention that it requires `--save_intermediates` (#220) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - Sample columns in the joined CIRIquant and psirc matrices and in the `sum`/`max` aggregations are now sorted by sample id, so the column order no longer varies between runs (#235) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - The BWA and HISAT2 indices are now built when `ciriquant` is selected as quantification tool, so CIRIquant works with the default `--quantification_tools` (#240) (@nictru)
+- [#244](https://github.com/nf-core/circrna/pull/244) - `CIRIQUANT_DE` now fails with a clear error when `CIRI_DE_replicate` produces no output, instead of silently continuing (#234) (@nictru)
 
 ### `Dependencies`
 

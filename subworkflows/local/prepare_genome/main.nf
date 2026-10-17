@@ -19,6 +19,7 @@ workflow PREPARE_GENOME {
     ch_fasta
     ch_gtf
     tools
+    quantification_tools
     bowtie
     bowtie2
     bwa
@@ -70,7 +71,7 @@ workflow PREPARE_GENOME {
     if (bwa) {
         ch_bwa = channel.value([[id: "bwa"], bwa])
     }
-    else if (tools.contains('ciri')) {
+    else if (tools.contains('ciri') || quantification_tools.contains('ciriquant')) {
         BWA_INDEX(ch_fasta)
         ch_bwa = BWA_INDEX.out.index
     }
@@ -82,7 +83,7 @@ workflow PREPARE_GENOME {
     if (hisat2) {
         ch_hisat2 = channel.value([[id: "hisat2"], hisat2])
     }
-    else if (tools.contains('ciri')) {
+    else if (tools.contains('ciri') || quantification_tools.contains('ciriquant')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
 

@@ -364,11 +364,11 @@ The quantification is performed using psirc-quant, which is a wrapper around `ka
 <details markdown="1">
 <summary>Output files</summary>
 
-- `quantification/transcriptome/`
+- `5_quantification/psirc/transcriptome/`
   - `*.combined.gtf`: Combined linear and circular transcriptome in GTF format.
   - `*.filtered.gtf`: Filtered linear and circular transcriptome in GTF format, based on `*.combined.gtf`.
   - `*.fasta`: Combined linear and circular transcriptome in FASTA format, based on `*.filtered.gtf`.
-  - `*.marked.fasta`: Transcript sequences in FASTA format with the circRNA sequences marked with a `C` field in the header.
+  - `*.marked.fasta`: Transcript sequences in FASTA format with the circRNA sequences marked with a `C` field in the header. Only published with `--save_intermediates`.
   - `*.tx2gene.tsv`: Transcript to gene mapping file.
 
 </details>
@@ -378,7 +378,7 @@ The quantification is performed using psirc-quant, which is a wrapper around `ka
 <details markdown="1">
 <summary>Output files</summary>
 
-- `quantification/samples/${sample_id}/`
+- `5_quantification/psirc/samples/${sample_id}/`
   - `psirc`
     - `*.abundance.h5`: Abundance estimates in HDF5 format.
     - `*.abundance.tsv`: Abundance estimates in TSV format.
@@ -406,7 +406,7 @@ nf-core/circrna performs quantification of linear and circular transcripts using
 <details markdown="1">
 <summary>Output files</summary>
 
-- `quantification/combined/`
+- `5_quantification/psirc/combined/`
   - `gene_counts.csv`: Count matrix of genes across samples.
   - `gene_tpm.csv`: TPM matrix of genes across samples.
   - `tx_counts.csv`: Count matrix of transcripts across samples.
