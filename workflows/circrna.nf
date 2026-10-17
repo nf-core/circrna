@@ -196,6 +196,7 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.ciri_txt,
             BSJ_DETECTION.out.ciri_sam,
             BSJ_DETECTION.out.bed12,
+            BSJ_DETECTION.out.bed12_per_sample,
             BSJ_DETECTION.out.bed_reads,
             psirc_index,
             BSJ_DETECTION.out.psirc_bsj,

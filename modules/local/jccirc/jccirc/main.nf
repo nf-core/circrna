@@ -23,6 +23,7 @@ process JCCIRC_JCCIRC {
     max_allowed_cpus=${task.cpus}
     max_sensible_cpus=\$((n_bsj / 4))
     cpus=\$((max_sensible_cpus > max_allowed_cpus ? max_allowed_cpus : max_sensible_cpus))
+    cpus=\$((cpus < 1 ? 1 : cpus))
 
     JCcirc -C ${bsjs} -G ${fasta} -F ${gtf} -P \$cpus --contig ${denovo} -O ${prefix} --read1 ${reads[0]} --read2 ${reads[1]} || test \$? -eq 25
 
