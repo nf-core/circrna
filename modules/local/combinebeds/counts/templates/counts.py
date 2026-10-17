@@ -78,7 +78,7 @@ except pl.exceptions.NoDataError:
         f.write('')
     exit(0)
 
-samples = df.select("sample").group_by("sample").len().collect()["sample"].to_list()
+samples = sorted(df.select("sample").unique().collect()["sample"].to_list())
 df = df.collect().pivot(on="sample", values="score", index=["chr", "start", "end", "strand", "start_group", "end_group"], aggregate_function=aggregation).lazy()
 df = df.group_by(["chr", "strand", "start_group", "end_group"] + samples).agg(start=pl.col("start").first(), end=pl.col("end").first())
 df = df.with_columns(id=pl.col("chr") + pl.lit(":") + pl.col("start").cast(str) + pl.lit("-") + pl.col("end").cast(str) + pl.lit(":") + pl.col("strand"))

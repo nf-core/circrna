@@ -1,4 +1,27 @@
 {
+    "ciriquant gene tables - samples in reverse order": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "gene"
+                    },
+                    "gene.joined.tsv:md5,fc3fb421c658909ccf94e814a930f9d0"
+                ]
+            ],
+            [
+                "gene_id",
+                "gene_name",
+                "cel_N2_1",
+                "fust1_1"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:19:29.336731597"
+    },
     "ciriquant gene tables": {
         "content": [
             [

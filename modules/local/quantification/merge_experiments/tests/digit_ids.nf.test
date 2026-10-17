@@ -1,0 +1,105 @@
+nextflow_process {
+
+    name "Test Process MERGE_EXPERIMENTS"
+    script "../main.nf"
+    process "MERGE_EXPERIMENTS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "quantification"
+    tag "quantification_merge_experiments"
+
+    setup {
+        run("PSIRCQUANT_INDEX") {
+            script "modules/local/psircquant/index/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                """
+            }
+        }
+        run("PSIRCQUANT_QUANT") {
+            script "modules/local/psircquant/quant/main.nf"
+            process {
+                """
+                input[0] = channel.of(
+                    [
+                        [ id:'1_cel', single_end:false ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'2_fust', single_end:false ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = PSIRCQUANT_INDEX.out.index.collect()
+                input[2] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ]
+                input[4] = 2
+                """
+            }
+        }
+        run("TXIMETA_TXIMETA") {
+            script "modules/local/tximeta/tximeta/main.nf"
+            process {
+                """
+                input[0] = PSIRCQUANT_QUANT.out.directory
+                input[1] = 'kallisto'
+                """
+            }
+        }
+    }
+
+    test("with digit-leading sample ids") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                def dir = java.nio.file.Files.createTempDirectory('merge_experiments_digit_ids')
+                def tpmFile = dir.resolve('tx_tpm.tsv')
+                tpmFile.text = file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.tx_tpm.csv', checkIfExists: true)
+                    .text.replace('cel_N2_1', '1_cel').replace('fust1_1', '2_fust')
+                def phenotypeFile = dir.resolve('phenotype.csv')
+                phenotypeFile.text = 'sample,condition\\n1_cel,N2\\n2_fust,fust1\\n'
+
+                input[0] = TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect().map { ses -> [ [ id:'experiments' ], ses ] }
+                input[1] = [ [ id:'phenotype' ], file(phenotypeFile.toString()) ]
+                input[2] = [
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ]
+                input[3] = [ [ id:'tx_tpm' ], file(tpmFile.toString()) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert file(process.out.merged[0][1]).size() > 0 },
+                { assert snapshot(
+                    process.out.merged.collect { meta, rds -> [ meta, file(rds).name ] },
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+}

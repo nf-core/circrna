@@ -29,7 +29,7 @@ workflow PSIRC_QUANT {
     INDEX(MARK_CIRCULAR.out.output)
     ch_versions = ch_versions.mix(INDEX.out.versions)
 
-    QUANT(reads, INDEX.out.index.collect(), MARK_CIRCULAR.out.output, ch_faidx, bootstrap_samples)
+    QUANT(reads, INDEX.out.index.collect(), ch_transcriptome_gtf, ch_faidx, bootstrap_samples)
     ch_versions = ch_versions.mix(QUANT.out.versions)
 
     CUSTOM_TX2GENE(
@@ -53,46 +53,46 @@ workflow PSIRC_QUANT {
     )
 
     JOIN_GENE_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_gene.map { _meta, counts -> counts }.collect().map { counts -> [[id: "gene_counts"], counts] }
+        TXIMETA_TXIMPORT.out.counts_gene.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "gene_counts"], samples.collect { _meta, file -> file }] }
     )
 
     JOIN_GENE_TPM(
-        TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "gene_tpm"], tpms] }
+        TXIMETA_TXIMPORT.out.tpm_gene.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "gene_tpm"], samples.collect { _meta, file -> file }] }
     )
 
     JOIN_TX_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_transcript.map { _meta, counts -> counts }.collect().map { counts -> [[id: "tx_counts"], counts] }
+        TXIMETA_TXIMPORT.out.counts_transcript.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "tx_counts"], samples.collect { _meta, file -> file }] }
     )
 
     JOIN_TX_TPM(
-        TXIMETA_TXIMPORT.out.tpm_transcript.map { _meta, tpm -> tpm }.collect().map { tpms -> [[id: "tx_tpm"], tpms] }
+        TXIMETA_TXIMPORT.out.tpm_transcript.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "tx_tpm"], samples.collect { _meta, file -> file }] }
     )
 
     SPLIT_TYPES_COUNTS(
-        JOIN_TX_COUNTS.out.csv
+        JOIN_TX_COUNTS.out.out_file
     )
     ch_versions = ch_versions.mix(SPLIT_TYPES_COUNTS.out.versions)
 
     SPLIT_TYPES_TPM(
-        JOIN_TX_TPM.out.csv
+        JOIN_TX_TPM.out.out_file
     )
     ch_versions = ch_versions.mix(SPLIT_TYPES_TPM.out.versions)
 
     MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect().map { ses -> [[id: "experiments"], ses] },
+        TXIMETA_TXIMETA.out.se.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "experiments"], samples.collect { _meta, se -> se }] },
         ch_phenotype.ifEmpty([[], []]),
         ch_transcriptome_gtf,
-        JOIN_TX_TPM.out.csv,
+        JOIN_TX_TPM.out.out_file,
     )
     ch_versions = ch_versions.mix(MERGE_EXPERIMENTS.out.versions)
 
     emit:
     se                 = MERGE_EXPERIMENTS.out.merged
     rds                = MERGE_EXPERIMENTS.out.merged
-    gene_counts        = JOIN_GENE_COUNTS.out.csv
-    gene_tpm           = JOIN_GENE_TPM.out.csv
-    tx_counts          = JOIN_TX_COUNTS.out.csv
-    tx_tpm             = JOIN_TX_TPM.out.csv
+    gene_counts        = JOIN_GENE_COUNTS.out.out_file
+    gene_tpm           = JOIN_GENE_TPM.out.out_file
+    tx_counts          = JOIN_TX_COUNTS.out.out_file
+    tx_tpm             = JOIN_TX_TPM.out.out_file
     linear_tx_counts   = SPLIT_TYPES_COUNTS.out.linear
     linear_tx_tpm      = SPLIT_TYPES_TPM.out.linear
     circular_tx_counts = SPLIT_TYPES_COUNTS.out.circular

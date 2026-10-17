@@ -16,9 +16,9 @@ dfs = {
                 new_columns=metacols + [sample],
                 has_header=True)
         .group_by(metacols).agg(pl.sum(sample).alias(sample))
-    for sample, matrix in zip(samples, matrices)}
+    for sample, matrix in sorted(zip(samples, matrices))}
 
-df_order = pl.concat([df.select(metacols) for df in dfs.values()]).unique().sort(metacols[0])
+df_order = pl.concat([df.select(metacols) for df in dfs.values()]).unique().sort(metacols)
 
 dfs_sorted = [
     df_order.join(df, on=metacols, how="left", coalesce=True)

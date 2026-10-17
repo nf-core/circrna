@@ -51,7 +51,7 @@ nextflow_process {
         }
     }
 
-    test("six samples") {
+    test("six samples - edgeR failure") {
 
         when {
             params {
@@ -65,10 +65,10 @@ nextflow_process {
         }
 
         then {
-            // 6-sample test data has only 5 circRNAs: edgeR fails inside CIRI_DE_replicate (exit code 0), so both optional outputs are empty
+            // 6-sample test data has only 5 circRNAs: edgeR fails inside CIRI_DE_replicate (exit code 0), the module must turn this into a task failure
             assertAll(
-                { assert process.success },
-                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+                { assert process.failed },
+                { assert (process.stdout.join("\n") + process.stderr.join("\n")).contains("CIRI_DE_replicate failed") }
             )
         }
     }

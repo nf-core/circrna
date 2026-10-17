@@ -121,6 +121,7 @@ nextflow_workflow {
                 { assert snapshot(
                     summarize(bedPerSampleTool, [0, 1, 2, 4, 5]),
                     summarize(workflow.out.bed_per_sample, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12_per_sample),
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     workflow.out.gtf.collect { meta, f -> [meta, file(f).name, lines(f).size()] },
@@ -349,6 +350,86 @@ nextflow_workflow {
                 { assert snapshot(
                     summarize(workflow.out.bed_per_sample_tool, [0, 1, 2, 4, 5]),
                     summarize(workflow.out.bed_per_sample, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12_per_sample),
+                    summarize(workflow.out.bed, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12),
+                    summarize(workflow.out.bed_reads, [0, 1, 2, 4, 5]),
+                    workflow.out.multiqc_files.collect { file(it).name }.sort(),
+                    versions
+                ).match() }
+            )
+        }
+    }
+
+    test("mini - only ciri") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                bsj_reads = 1
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = BOWTIE2_BUILD.out.index.first()
+                input[7] = BWA_INDEX.out.index.first()
+                input[8] = channel.empty()
+                input[9] = STAR_GENOMEGENERATE.out.index.first()
+                input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[11] = channel.empty()
+                input[12] = 1
+                input[13] = ['ciri']
+                input[14] = []
+                input[15] = channel.empty()
+                input[16] = 0
+                input[17] = true
+                input[18] = 1
+                input[19] = 1
+                input[20] = true
+                """
+            }
+        }
+
+        then {
+            def lines = { f -> path(f).readLines() }
+            def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
+            def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
+            def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
+            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.star_bam.isEmpty() },
+                { assert workflow.out.star_junction.isEmpty() },
+                { assert !workflow.out.ciri_txt.isEmpty() },
+                { assert workflow.out.psirc_bsj.isEmpty() },
+                { assert !workflow.out.bed12.isEmpty() },
+                { assert workflow.out.bed12.every { meta, f -> lines(f).size() > 0 } },
+                { assert workflow.out.bed_per_sample_tool.every { meta, f -> lines(f).every { it.tokenize('\t')[1].toInteger() >= 0 } } },
+                { assert snapshot(
+                    summarize(workflow.out.bed_per_sample_tool, [0, 1, 2, 4, 5]),
+                    summarize(workflow.out.bed_per_sample, [0, 1, 2, 5]),
+                    summarizeLines(workflow.out.bed12_per_sample),
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     summarize(workflow.out.bed_reads, [0, 1, 2, 4, 5]),
@@ -416,6 +497,117 @@ nextflow_workflow {
                 { assert tasks.contains("BSJ_DETECTION:COMBINE_SAMPLES") },
                 { assert !tasks.any { it.startsWith("BSJ_DETECTION:ANNOTATE_COMBINED") } },
                 { assert (workflow.stdout + workflow.stderr).join('\n').contains('No circular RNAs were found by at least 2 tools and in at least 1 samples.') }
+            )
+        }
+    }
+
+    test("mini - single sample") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                bsj_reads = 1
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = BOWTIE2_BUILD.out.index.first()
+                input[7] = BWA_INDEX.out.index.first()
+                input[8] = channel.empty()
+                input[9] = STAR_GENOMEGENERATE.out.index.first()
+                input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[11] = channel.empty()
+                input[12] = 1
+                input[13] = ['find_circ']
+                input[14] = []
+                input[15] = channel.empty()
+                input[16] = 0
+                input[17] = true
+                input[18] = 1
+                input[19] = 1
+                input[20] = true
+                """
+            }
+        }
+
+        then {
+            def joined = file("$outputDir/3_bsj_detection/tools/find_circ/find_circ.joined.tsv")
+            assertAll(
+                { assert workflow.success },
+                { assert joined.exists() },
+                { assert joined.readLines()[0] == "id\tcel_N2_1" },
+                { assert joined.readLines().size() > 1 }
+            )
+        }
+    }
+
+    test("mini - all tools find nothing fails") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                bsj_reads = 1
+                exons_only = true
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'noise', single_end: false],
+                        [1, 2].collect { mate ->
+                            def rnd = new Random(mate)
+                            def reads = (1..2000).collect { i ->
+                                def seq = (1..100).collect { 'ACGT'[rnd.nextInt(4)] }.join('')
+                                "@read\${i}\\n\${seq}\\n+\\n\${'I' * 100}\\n"
+                            }
+                            file("$outputDir/noise_\${mate}.fastq").with { fq -> fq.parent.mkdirs(); fq.text = reads.join(''); fq }
+                        }
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = BOWTIE2_BUILD.out.index.first()
+                input[7] = BWA_INDEX.out.index.first()
+                input[8] = channel.empty()
+                input[9] = STAR_GENOMEGENERATE.out.index.first()
+                input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[11] = channel.empty()
+                input[12] = 1
+                input[13] = ['ciri']
+                input[14] = []
+                input[15] = channel.empty()
+                input[16] = 0
+                input[17] = true
+                input[18] = 1
+                input[19] = 1
+                input[20] = true
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.failed },
+                { assert tasks.contains("BSJ_DETECTION:CIRI:UNIFY") },
+                { assert (workflow.stdout + workflow.stderr).join('\n').contains('No circular RNAs were found by at least 1 tools and in at least 1 samples.') }
             )
         }
     }
