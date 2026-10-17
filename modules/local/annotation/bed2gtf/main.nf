@@ -13,7 +13,7 @@ process ANNOTATION_BED2GTF {
 
     output:
     tuple val(meta), path("${prefix}.gtf"), emit: gtf
-    path "versions.yml"       , emit: versions
+    path "versions.yml"                   , emit: versions
 
     script:
     prefix = task.ext.prefix ?: meta.id

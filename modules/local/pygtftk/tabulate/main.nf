@@ -18,9 +18,9 @@ process PYGTFTK_TABULATE {
     task.ext.when == null || task.ext.when
 
     script:
-    def args          = task.ext.args   ?: ''
-    def prefix        = task.ext.prefix ?: "${meta.id}"
-    outfile           = "${prefix}.circ.tsv"
+    def args   = task.ext.args   ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    outfile    = "${prefix}.circ.tsv"
     """
     export HOME="\$PWD"
 

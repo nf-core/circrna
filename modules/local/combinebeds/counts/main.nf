@@ -17,11 +17,11 @@ process COMBINEBEDS_COUNTS {
     path "versions.yml"                   , emit: versions
 
     script:
-    prefix      = task.ext.prefix      ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
     template "counts.py"
 
     stub:
-    prefix      = task.ext.prefix      ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.tsv
 
