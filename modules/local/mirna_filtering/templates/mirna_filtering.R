@@ -19,7 +19,7 @@ rows_to_keep <- c()
 
 for (i in seq_len(nrow(expression_norm))) {
     mirna_per_sample <- 0
-    for (j in 5:ncol(expression_norm)) {
+    for (j in 2:ncol(expression_norm)) {
         if (expression_norm[i, j] >= $mirna_min_reads) {
             mirna_per_sample <- mirna_per_sample + 1
         }

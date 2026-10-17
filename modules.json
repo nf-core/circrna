@@ -72,11 +72,6 @@
                         "installed_by": ["modules"],
                         "patch": "modules/nf-core/bwa/mem/bwa-mem.diff"
                     },
-                    "cat/cat": {
-                        "branch": "master",
-                        "git_sha": "7ed72ef972290b93d0bdd7c60ff00a693250f77a",
-                        "installed_by": ["modules"]
-                    },
                     "cat/fastq": {
                         "branch": "master",
                         "git_sha": "5d28ea7cfaebcfae6f74d1067ea766d8ff19dff3",
