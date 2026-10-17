@@ -46,17 +46,17 @@ nextflow_workflow {
                 """
                 input[0] = channel.of(
                     [
-                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
-                        [
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
-                        ]
-                    ],
-                    [
                         [ id:'fust1_1', single_end:false, strandedness:'auto' ],
                         [
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                         ]
                     ]
                 )
@@ -82,10 +82,10 @@ nextflow_workflow {
             def gene = path(workflow.out.gene_tpm[0][1]).csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
-                { assert gene.columnNames.sort(false) == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'gene_name' ] },
+                { assert gene.columnNames == [ 'gene_id', 'gene_name', 'cel_N2_1', 'fust1_1' ] },
                 { assert gene.rowCount > 0 },
                 { assert path(workflow.out.circ_cpm[0][1]).readLines().size() == 1 },
-                { assert path(workflow.out.circ_cpm[0][1]).readLines()[0].split('\t').toList().sort() == [ 'cel_N2_1', 'circ_id', 'fust1_1', 'gene_id' ] },
+                { assert path(workflow.out.circ_cpm[0][1]).readLines()[0].split('\t').toList() == [ 'circ_id', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert workflow.out.raw.size() == 2 },
                 { assert workflow.out.stringtie.size() == 2 },
                 { assert snapshot(
@@ -93,7 +93,7 @@ nextflow_workflow {
                     workflow.out.circ_cpm.collect { meta, f -> [ meta, file(f).name ] },
                     workflow.out.raw.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
                     workflow.out.stringtie.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
-                    gene.columnNames.sort(false),
+                    gene.columnNames,
                     gene.rowCount
                 ).match() }
             )
