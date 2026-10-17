@@ -4,8 +4,16 @@ library(fishpond)
 suppressMessages(library(SummarizedExperiment))
 
 tx_expression <- readRDS('${transcript_rds}')
-mi_expression <- read.table('${mirna_expression}', header=TRUE, row.names=1, sep='\\t')
+mi_expression <- read.table('${mirna_expression}', header=TRUE, row.names=1, sep='\\t', check.names=FALSE)
 interactions <- read.table('${bindingsites}', sep='\\t')
+
+missing_samples <- setdiff(rownames(colData(tx_expression)), colnames(mi_expression))
+if (length(missing_samples) > 0) {
+    stop(paste0(
+        'RNA-seq samples missing from the miRNA expression table: ', paste(missing_samples, collapse = ', '),
+        '. Available miRNA samples: ', paste(colnames(mi_expression), collapse = ', ')
+    ))
+}
 
 tx_expression <- scaleInfReps(tx_expression)
 tx_expression <- labelKeep(tx_expression) # Here one can perform custom filtering

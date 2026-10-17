@@ -67,14 +67,14 @@
                 "{MIRNA_PREDICTION:MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}",
                 "{MIRNA_PREDICTION:MIRNA_FILTERING={r-base=4.2.1}}"
             ],
-            "af09b2072f5c2e1026508d550f36f7ae",
+            "389e6e4ac6ebc54f0bf93c980017b7c7",
             "8c705596deac53cca23cba32bcce72cf",
-            "3921d10cb480da1cae79f8d440385146"
+            "6f4e2e0881faf0cc046fd88e90c1514f"
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:38:46.424984349"
+        "timestamp": "2026-10-17T18:12:47.064564764"
     }
 }
