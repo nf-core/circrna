@@ -7,11 +7,24 @@ nextflow_process {
     tag "modules"
     tag "modules_local"
     tag "majority_vote"
+    tag "bioawk"
     tag "targetscan_predict"
     tag "miranda"
     tag "gawk"
 
     setup {
+        run("BIOAWK", alias: "FORMAT_TARGETSCAN") {
+            script "modules/nf-core/bioawk/main.nf"
+            process {
+                """
+                input[0] = [
+                    [ id:'mature' ],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)
+                ]
+                input[1] = 'txt'
+                """
+            }
+        }
         run("TARGETSCAN") {
             script "modules/local/targetscan/predict/main.nf"
             process {
@@ -20,11 +33,7 @@ nextflow_process {
                     [ id:'batch_1' ],
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)
                 ]
-                input[1] = channel.fromPath(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)
-                    .splitFasta(record: [id: true, seqString: true])
-                    .map { record -> "\${record.id}\\t\${record.seqString[1..7]}\\t0000\\n" }
-                    .collectFile(name: 'mature.txt')
-                    .map { f -> [[id: 'mature_targetscan'], f] }
+                input[1] = FORMAT_TARGETSCAN.out.output
                 """
             }
         }
@@ -77,6 +86,34 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                // any single tool is enough: more binding sites than with min_tools 2
+                { assert path(process.out.tsv[0][1]).readLines().size() > 20 },
+                { assert snapshot(
+                    process.out.tsv.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
+                    process.out.targets.collect { meta, f -> [meta, file(f).name, path(f).readLines().size()] },
+                    path(process.out.versions[0]).yaml
+                ).match() }
+            )
+        }
+    }
+
+    test("targetscan and miranda, min_tools 2") {
+
+        when {
+            process {
+                """
+                input[0] = UNIFY_TARGETSCAN.out.output.mix(UNIFY_MIRANDA.out.output)
+                    .map { _meta, f -> f }.collect().map { files -> [[id: 'mirna'], files] }
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                // both tools must agree: identical to the result of the former (off-by-one) min_tools 1
+                { assert path(process.out.tsv[0][1]).readLines().sort().toString().md5() == '1b17dc3417634855e13704cea98ae187' },
                 { assert snapshot(
                     process.out.tsv.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
                     process.out.targets.collect { meta, f -> [meta, file(f).name, path(f).readLines().size()] },

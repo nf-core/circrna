@@ -114,7 +114,7 @@ The FastQC plots in this directory are generated relative to the raw, input read
     - `circexplorer2`: Directory containing the `CIRCexplorer2` annotation file.
     - `mapsplice`: Directory containing the `MapSplice` annotation file.
   - `mirna_prediction`
-    - `targetscan`: Directory containing the TargetScan miRNA database.
+    - `targetscan`: Directory containing the formatted miRNA seed table for TargetScan (`mature.txt`).
 
 </details>
 

@@ -106,6 +106,11 @@ By providing a TSV file containing the miRNA expression of all samples via `mirn
 sub-workflow will perform additional normalization and filtering of `mirna_expression` and `mature` before
 executing the miRNA binding size prediction.
 
+The tools are selected via `mirna_tools` (default: `miranda,targetscan`).
+The parameter `mirna_min_tools` (default: `1`) specifies by how many of the selected tools a binding site has to be predicted to be kept, i.e. a binding site is kept if it is predicted by at least `mirna_min_tools` tools.
+Therefore, `mirna_min_tools` must not be larger than the number of selected `mirna_tools`.
+With both tools selected, `--mirna_min_tools 1` keeps the union of the predictions and `--mirna_min_tools 2` keeps only the intersection.
+
 To view the outputs of the module, please see the output [documentation](https://nf-co.re/circrna/dev/output#mirna-prediction).
 
 ## Statistical tests
