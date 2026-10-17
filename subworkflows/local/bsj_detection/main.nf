@@ -1,9 +1,9 @@
 // MODULES
 include { GAWK as EXTRACT_COUNTS                         } from '../../../modules/nf-core/gawk'
-include { CSVTK_JOIN as COMBINE_COUNTS_PER_TOOL          } from '../../../modules/nf-core/csvtk/join'
 include { GAWK as FILTER_BSJS                            } from '../../../modules/nf-core/gawk'
 include { GAWK as BED_ADD_SAMPLE_TOOL                    } from '../../../modules/nf-core/gawk'
 include { BEDTOOLS_INTERSECT as BLACKLIST                } from '../../../modules/nf-core/bedtools/intersect'
+include { JOIN_SAMPLES as COMBINE_COUNTS_PER_TOOL        } from '../../../modules/local/matrix/join_samples'
 include { COMBINEBEDS_READS                              } from '../../../modules/local/combinebeds/reads'
 include { COMBINEBEDS_FILTER as COMBINE_TOOLS_PER_SAMPLE } from '../../../modules/local/combinebeds/filter'
 include { COMBINEBEDS_SHIFTS as INVESTIGATE_SHIFTS       } from '../../../modules/local/combinebeds/shifts'
@@ -194,8 +194,16 @@ workflow BSJ_DETECTION {
     EXTRACT_COUNTS(ch_bsj_bed_per_sample_tool.map { meta, bed -> [meta, bed, "counts.tsv"] }, [], false)
 
     COMBINE_COUNTS_PER_TOOL(
-        EXTRACT_COUNTS.out.output.map { meta, bed -> [[id: meta.tool], bed] }.groupTuple()
+        EXTRACT_COUNTS.out.output
+            .map { meta, counts -> [[id: meta.tool], meta.id, counts] }
+            .groupTuple()
+            .map { meta, samples, counts ->
+                def sorted = [samples, counts].transpose().sort { pair -> pair[0] }
+                [meta, sorted.collect { pair -> pair[0] }, sorted.collect { pair -> pair[1] }]
+            },
+        "id",
     )
+    ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
 
     //
     // APPLY bsj_reads FILTER
@@ -269,7 +277,7 @@ workflow BSJ_DETECTION {
 
     FAIL_ON_EMPTY(
         ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),
-        channel.empty().mix(ch_bsj_bed12_combined).mix(ch_bsj_bed12_per_sample).mix(ch_bsj_bed12_per_sample_tool).mix(ch_bsj_fasta_combined).mix(ch_bsj_fasta_per_sample).mix(ch_bsj_fasta_per_sample_tool).map { _meta, f -> f }.collect(),
+        channel.empty().mix(ch_bsj_bed12_combined).mix(ch_bsj_bed12_per_sample).mix(ch_bsj_bed12_per_sample_tool).mix(ch_bsj_fasta_combined).mix(ch_bsj_fasta_per_sample).mix(ch_bsj_fasta_per_sample_tool).map { _meta, f -> f }.collect().ifEmpty([]),
         fail_message,
     )
 
