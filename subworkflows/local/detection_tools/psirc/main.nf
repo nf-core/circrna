@@ -13,7 +13,7 @@ workflow PSIRC {
     ch_versions = ch_versions.mix(BSJ.out.versions)
 
     UNIFY(
-        BSJ.out.bed.map { meta, bed -> [meta + [tool: "psirc"], bed] },
+        BSJ.out.bed.map { meta, bed -> [meta + [tool: "psirc"], bed, "psirc.bed"] },
         [],
         false,
     )

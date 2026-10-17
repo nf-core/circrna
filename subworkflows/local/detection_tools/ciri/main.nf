@@ -24,7 +24,7 @@ workflow CIRI {
         ch_read2 = ch_reads.map { meta, reads -> [[id: meta.id + '_r2', old_meta: meta, r: 2], reads[1]] }
 
         // Get the read lengths
-        SEQKIT_FX2TAB(ch_read1.mix(ch_read2))
+        SEQKIT_FX2TAB(ch_read1.mix(ch_read2), 'txt')
 
         ch_read1_len = SEQKIT_FX2TAB.out.text
             .filter { meta, _lengths -> meta.r == 1 }
@@ -59,7 +59,7 @@ workflow CIRI {
 
     UNIFY(
         CIRI2.out.txt.map { meta, txt ->
-            [meta + [tool: "ciri"], txt]
+            [meta + [tool: "ciri"], txt, "ciri.bed"]
         },
         [],
         false,

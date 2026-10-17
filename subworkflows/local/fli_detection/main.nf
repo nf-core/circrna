@@ -20,6 +20,7 @@ workflow FLI_DETECTION {
     ch_star_junction
     ch_bsj_bed_per_sample
     fli_tools
+    max_shift
 
     main:
     ch_versions = channel.empty()
@@ -28,7 +29,7 @@ workflow FLI_DETECTION {
     ch_fli_fasta = channel.empty()
 
     if (fli_tools.contains('cirifull')) {
-        CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam)
+        CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam, max_shift)
         ch_versions = ch_versions.mix(CIRIFULL.out.versions)
         ch_bed12 = ch_bed12.mix(CIRIFULL.out.bed12)
         ch_fli_fasta = ch_fli_fasta.mix(CIRIFULL.out.fasta)

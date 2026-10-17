@@ -11,19 +11,17 @@ process UNIFY {
     tuple val(meta), path(reads), path(coordinates), path(counts)
 
     output:
-    tuple val(meta), path("${prefix}.${suffix}"), emit: bed
+    tuple val(meta), path("${prefix}.bed"), emit: bed
     path "versions.yml"        , emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    suffix = task.ext.suffix ?: "bed"
     template 'unify.py'
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    suffix = task.ext.suffix ?: "bed"
     """
-    touch ${prefix}.${suffix}
+    touch ${prefix}.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

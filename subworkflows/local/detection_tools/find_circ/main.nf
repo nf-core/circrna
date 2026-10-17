@@ -45,7 +45,7 @@ workflow FIND_CIRC {
     )
 
     UNIFY( JOIN_READS.out.csv.map{ meta, bed ->
-        [ meta + [tool: "find_circ"], bed ] }, [], false )
+        [ meta + [tool: "find_circ"], bed, "find_circ.bed" ] }, [], false )
 
     emit:
     bed = UNIFY.out.output

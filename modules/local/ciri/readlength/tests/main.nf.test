@@ -18,6 +18,7 @@ nextflow_process {
                     [[id: 'cel_N2_1_r1'], file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true)],
                     [[id: 'cel_N2_1_r2'], file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]
                 )
+                input[1] = 'txt'
                 """
             }
         }

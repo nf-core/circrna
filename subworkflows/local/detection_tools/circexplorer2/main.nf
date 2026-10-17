@@ -13,7 +13,7 @@ workflow CIRCEXPLORER2 {
     PARSE( star_junctions )
 
     UNIFY( PARSE.out.junction
-        .map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt ] }, [], false )
+        .map{ meta, txt -> [ meta + [tool: "circexplorer2"], txt, "circexplorer2.bed" ] }, [], false )
 
     emit:
     bed   = UNIFY.out.output

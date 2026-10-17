@@ -9,6 +9,7 @@ process BUILD_LIST {
 
     input:
     tuple val(meta), path(ciri_annotation), path(consensus)
+    val max_shift
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: list
@@ -16,7 +17,6 @@ process BUILD_LIST {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    max_shift = task.ext.max_shift ?: 0
     template "build_list.py"
 
     stub:
