@@ -39,3 +39,6 @@ pipeline_info/*.{html,json,txt,yml}
 **/circular.tsv
 **/linear.tsv
 **/{gene,tx}_{counts,tpm}.csv
+
+# Statistical tests: the CIRCTEST p-values and plots depend on the psirc counts, which vary between runs
+**/circtest/*.{pdf,txt}
