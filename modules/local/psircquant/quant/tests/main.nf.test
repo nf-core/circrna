@@ -11,7 +11,7 @@ nextflow_process {
 
     setup {
         run("PSIRCQUANT_INDEX") {
-            script "../../index/main.nf"
+            script "modules/local/psircquant/index/main.nf"
             process {
                 """
                 input[0] = [

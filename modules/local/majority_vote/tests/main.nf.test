@@ -13,7 +13,7 @@ nextflow_process {
 
     setup {
         run("TARGETSCAN") {
-            script "../../targetscan/predict/main.nf"
+            script "modules/local/targetscan/predict/main.nf"
             process {
                 """
                 input[0] = [
@@ -29,7 +29,7 @@ nextflow_process {
             }
         }
         run("MIRANDA") {
-            script "../../../nf-core/miranda/main.nf"
+            script "modules/nf-core/miranda/main.nf"
             process {
                 """
                 input[0] = [
@@ -41,7 +41,7 @@ nextflow_process {
             }
         }
         run("GAWK", alias: "UNIFY_TARGETSCAN") {
-            script "../../../nf-core/gawk/main.nf"
+            script "modules/nf-core/gawk/main.nf"
             process {
                 """
                 input[0] = TARGETSCAN.out.txt.map { meta, txt -> [meta, txt, 'targetscan.tsv'] }
@@ -51,7 +51,7 @@ nextflow_process {
             }
         }
         run("GAWK", alias: "UNIFY_MIRANDA") {
-            script "../../../nf-core/gawk/main.nf"
+            script "modules/nf-core/gawk/main.nf"
             process {
                 """
                 input[0] = MIRANDA.out.txt.map { meta, txt -> [meta, txt, 'miranda.tsv'] }

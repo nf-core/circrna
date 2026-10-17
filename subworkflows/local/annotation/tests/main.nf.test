@@ -10,7 +10,7 @@ nextflow_workflow {
 
     setup {
         run("UCSC_GTFTOGENEPRED") {
-            script "../../../../modules/nf-core/ucsc/gtftogenepred/main.nf"
+            script "modules/nf-core/ucsc/gtftogenepred/main.nf"
             process {
                 """
                 input[0] = [[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
@@ -18,7 +18,7 @@ nextflow_workflow {
             }
         }
         run("GAWK", alias: "CIRCEXPLORER2_REFERENCE") {
-            script "../../../../modules/nf-core/gawk/main.nf"
+            script "modules/nf-core/gawk/main.nf"
             process {
                 """
                 input[0] = UCSC_GTFTOGENEPRED.out.genepred.map { meta, genepred -> [meta, genepred, 'circexplorer2.txt'] }

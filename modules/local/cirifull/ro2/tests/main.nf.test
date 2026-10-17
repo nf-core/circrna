@@ -11,7 +11,7 @@ nextflow_process {
 
     setup {
         run("BWA_INDEX") {
-            script "../../../../nf-core/bwa/index/main.nf"
+            script "modules/nf-core/bwa/index/main.nf"
             process {
                 """
                 input[0] = [
@@ -22,7 +22,7 @@ nextflow_process {
             }
         }
         run("CIRIFULL_RO1") {
-            script "../../ro1/main.nf"
+            script "modules/local/cirifull/ro1/main.nf"
             process {
                 """
                 input[0] = [
@@ -36,7 +36,7 @@ nextflow_process {
             }
         }
         run("BWA_MEM") {
-            script "../../../../nf-core/bwa/mem/main.nf"
+            script "modules/nf-core/bwa/mem/main.nf"
             process {
                 """
                 input[0] = CIRIFULL_RO1.out.fastq

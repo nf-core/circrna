@@ -10,7 +10,7 @@ nextflow_process {
 
     setup {
         run("SAMTOOLS_SORT") {
-            script "../../../../nf-core/samtools/sort/main.nf"
+            script "modules/nf-core/samtools/sort/main.nf"
             process {
                 """
                 input[0] = [ [ id:'cel_N2_1' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ]
@@ -20,7 +20,7 @@ nextflow_process {
             }
         }
         run("SAMTOOLS_INDEX") {
-            script "../../../../nf-core/samtools/index/main.nf"
+            script "modules/nf-core/samtools/index/main.nf"
             process {
                 """
                 input[0] = SAMTOOLS_SORT.out.bam
@@ -28,7 +28,7 @@ nextflow_process {
             }
         }
         run("CIRCTOOLS_ANNOTATION") {
-            script "../../annotation/main.nf"
+            script "modules/local/circtools/annotation/main.nf"
             process {
                 """
                 input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]

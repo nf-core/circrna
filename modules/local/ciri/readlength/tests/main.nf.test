@@ -11,7 +11,7 @@ nextflow_process {
 
     setup {
         run("SEQKIT_FX2TAB") {
-            script "../../../../nf-core/seqkit/fx2tab/main.nf"
+            script "modules/nf-core/seqkit/fx2tab/main.nf"
             process {
                 """
                 input[0] = channel.of(

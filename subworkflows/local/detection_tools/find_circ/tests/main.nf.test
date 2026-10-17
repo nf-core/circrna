@@ -10,7 +10,7 @@ nextflow_workflow {
 
     setup {
         run("BOWTIE2_BUILD") {
-            script "../../../../../modules/nf-core/bowtie2/build/main.nf"
+            script "modules/nf-core/bowtie2/build/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]

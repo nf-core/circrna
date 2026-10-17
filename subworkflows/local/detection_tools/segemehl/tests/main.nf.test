@@ -45,7 +45,7 @@ nextflow_workflow {
     test("cel_N2_1 paired-end - prebuilt index") {
         setup {
             run("SEGEMEHL_INDEX") {
-                script "../../../../../modules/nf-core/segemehl/index/main.nf"
+                script "modules/nf-core/segemehl/index/main.nf"
                 process {
                     """
                     input[0] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)

@@ -10,7 +10,7 @@ nextflow_workflow {
 
     setup {
         run("PSIRC_INDEX") {
-            script "../../../../../modules/local/psirc/index/main.nf"
+            script "modules/local/psirc/index/main.nf"
             process {
                 """
                 input[0] = [ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ]

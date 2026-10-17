@@ -11,7 +11,7 @@ nextflow_process {
 
     setup {
         run("BOWTIE2_BUILD") {
-            script "../../../../nf-core/bowtie2/build/main.nf"
+            script "modules/nf-core/bowtie2/build/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
@@ -19,7 +19,7 @@ nextflow_process {
             }
         }
         run("BOWTIE2_ALIGN") {
-            script "../../../../nf-core/bowtie2/align/main.nf"
+            script "modules/nf-core/bowtie2/align/main.nf"
             process {
                 """
                 input[0] = [
@@ -37,7 +37,7 @@ nextflow_process {
             }
         }
         run("SAMTOOLS_INDEX") {
-            script "../../../../nf-core/samtools/index/main.nf"
+            script "modules/nf-core/samtools/index/main.nf"
             process {
                 """
                 input[0] = BOWTIE2_ALIGN.out.bam
@@ -45,7 +45,7 @@ nextflow_process {
             }
         }
         run("SAMTOOLS_VIEW") {
-            script "../../../../nf-core/samtools/view/main.nf"
+            script "modules/nf-core/samtools/view/main.nf"
             process {
                 """
                 input[0] = BOWTIE2_ALIGN.out.bam.join(SAMTOOLS_INDEX.out.index)
@@ -57,7 +57,7 @@ nextflow_process {
             }
         }
         run("FIND_CIRC_ANCHORS") {
-            script "../../anchors/main.nf"
+            script "modules/local/find_circ/anchors/main.nf"
             process {
                 """
                 input[0] = SAMTOOLS_VIEW.out.bam

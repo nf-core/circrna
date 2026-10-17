@@ -10,7 +10,7 @@ nextflow_workflow {
 
     setup {
         run("BOWTIE_BUILD") {
-            script "../../../../../modules/nf-core/bowtie/build/main.nf"
+            script "modules/nf-core/bowtie/build/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
@@ -18,7 +18,7 @@ nextflow_workflow {
             }
         }
         run("SEQKIT_SPLIT") {
-            script "../../../../../modules/local/seqkit/split/main.nf"
+            script "modules/local/seqkit/split/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]

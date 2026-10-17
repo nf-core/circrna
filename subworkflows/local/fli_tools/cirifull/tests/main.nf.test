@@ -10,7 +10,7 @@ nextflow_workflow {
 
     setup {
         run("BWA_INDEX") {
-            script "../../../../../modules/nf-core/bwa/index/main.nf"
+            script "modules/nf-core/bwa/index/main.nf"
             process {
                 """
                 input[0] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
