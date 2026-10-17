@@ -172,6 +172,71 @@ nextflow_workflow {
         }
     }
 
+    test("jccirc") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[1] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                )
+                input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
+                input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
+                input[4] = channel.empty()
+                input[5] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ]
+                )
+                input[6] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ]
+                )
+                input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
+                input[8] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true) ]
+                )
+                input[9] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true) ]
+                )
+                input[10] = channel.value([ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ])
+                input[11] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true) ]
+                )
+                input[12] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Aligned.out.bam', checkIfExists: true) ]
+                )
+                input[13] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true) ]
+                )
+                input[14] = channel.of(
+                    [ [ id:'cel_N2_1', single_end:false ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.combined.bed', checkIfExists: true) ]
+                )
+                input[15] = ['jccirc']
+                input[16] = 0
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.any { it.contains('JCCIRC:PREP') } },
+                { assert tasks.any { it.contains('JCCIRC:MAIN') } },
+                { assert workflow.trace.succeeded().size() == workflow.trace.tasks().size() },
+                { assert workflow.out.fasta.isEmpty() },
+                { assert workflow.out.bed12.isEmpty() },
+                { assert snapshot(
+                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
+                ).match() }
+            )
+        }
+    }
+
     test("cirifull and circtools") {
 
         setup {
@@ -586,7 +651,6 @@ nextflow_workflow {
         }
     }
 
-    // TODO(#231 JCCIRC input mismatch): JCCIRC only runs TRINITY here; JCCIRC_PREP/MAIN never start because the combined annotation (meta `all`) does not join the per-sample reads BED, and a real run is blocked by the mini data
     test("all FLI tools - stub") {
 
         options '-stub'
@@ -670,8 +734,11 @@ nextflow_workflow {
         }
 
         then {
+            def tasks = workflow.trace.tasks().collect { it.name }
             assertAll(
                 { assert workflow.success },
+                { assert tasks.any { it.contains('JCCIRC:PREP') } },
+                { assert tasks.any { it.contains('JCCIRC:MAIN') } },
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },

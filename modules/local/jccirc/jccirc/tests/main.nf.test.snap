@@ -15,5 +15,19 @@
             "nextflow": "25.10.4"
         },
         "timestamp": "2026-10-16T21:33:38.693989741"
+    },
+    "cel_N2_1 reads and a single BSJ": {
+        "content": [
+            {
+                "JCCIRC_JCCIRC": {
+                    "jccirc": "1.0.0"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T18:58:24.087839094"
     }
 }

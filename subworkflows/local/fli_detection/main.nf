@@ -44,7 +44,7 @@ workflow FLI_DETECTION {
     }
 
     if (fli_tools.contains('jccirc')) {
-        JCCIRC(ch_reads, ch_bsj_annotation, ch_bsj_reads, ch_fasta, ch_gtf)
+        JCCIRC(ch_reads, ch_bsj_bed12_per_sample, ch_bsj_reads, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(JCCIRC.out.versions)
     }
 
