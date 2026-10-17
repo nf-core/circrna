@@ -139,8 +139,8 @@
             [
                 {
                     "CIRIFULL:BUILD_LIST": {
-                        "python": "stub",
-                        "polars": "stub"
+                        "python": "3.13.3",
+                        "polars": "1.29.0"
                     }
                 },
                 {
@@ -150,7 +150,7 @@
                 },
                 {
                     "CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "stub"
+                        "pandas": "2.3.0"
                     }
                 },
                 {
@@ -179,6 +179,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T21:37:28.35569141"
+        "timestamp": "2026-10-17T11:12:00.327378735"
     }
 }

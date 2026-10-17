@@ -104,19 +104,19 @@
             [
                 {
                     "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "python": "stub",
-                        "polars": "stub"
+                        "python": "3.12.10",
+                        "polars": "0.20.31"
                     }
                 },
                 {
                     "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": "stub"
+                        "circtools": 2.0
                     }
                 },
                 {
                     "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "python": "stub",
-                        "polars": "stub"
+                        "python": "3.13.3",
+                        "polars": "1.29.0"
                     }
                 },
                 {
@@ -126,7 +126,7 @@
                 },
                 {
                     "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "stub"
+                        "pandas": "2.3.0"
                     }
                 },
                 {
@@ -165,7 +165,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:31:40.617081576"
+        "timestamp": "2026-10-17T11:09:53.408293652"
     },
     "psirc - stub": {
         "content": [
@@ -269,8 +269,8 @@
             [
                 {
                     "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "python": "stub",
-                        "polars": "stub"
+                        "python": "3.13.3",
+                        "polars": "1.29.0"
                     }
                 },
                 {
@@ -280,7 +280,7 @@
                 },
                 {
                     "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "stub"
+                        "pandas": "2.3.0"
                     }
                 },
                 {
@@ -309,7 +309,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:30:20.695332263"
+        "timestamp": "2026-10-17T11:08:33.102284795"
     },
     "circtools - stub": {
         "content": [
@@ -348,13 +348,13 @@
             [
                 {
                     "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "python": "stub",
-                        "polars": "stub"
+                        "python": "3.12.10",
+                        "polars": "0.20.31"
                     }
                 },
                 {
                     "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": "stub"
+                        "circtools": 2.0
                     }
                 }
             ]
@@ -363,7 +363,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:30:47.616683185"
+        "timestamp": "2026-10-17T11:08:57.218401101"
     },
     "circtools": {
         "content": [

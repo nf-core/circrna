@@ -3,12 +3,12 @@
         "content": [
             {
                 "0": [
-                    "versions.yml:md5,9321fac1ab38ddee28ccdf871caa35d3",
-                    "versions.yml:md5,9ed833d9d771cabfeac69f48ddec7132"
+                    "versions.yml:md5,4d8395393d74e6f1662179d3efe4af0d",
+                    "versions.yml:md5,91980f69b9e9a382324e5301cd30ada7"
                 ],
                 "versions": [
-                    "versions.yml:md5,9321fac1ab38ddee28ccdf871caa35d3",
-                    "versions.yml:md5,9ed833d9d771cabfeac69f48ddec7132"
+                    "versions.yml:md5,4d8395393d74e6f1662179d3efe4af0d",
+                    "versions.yml:md5,91980f69b9e9a382324e5301cd30ada7"
                 ]
             }
         ],
@@ -16,6 +16,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:29:43.644948761"
+        "timestamp": "2026-10-17T11:13:16.551100459"
     }
 }
