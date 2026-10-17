@@ -3,7 +3,6 @@ nextflow_workflow {
     name "Test Workflow ANNOTATION"
     script "../main.nf"
     workflow "ANNOTATION"
-    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

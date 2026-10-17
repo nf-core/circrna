@@ -3,7 +3,6 @@ nextflow_workflow {
     name "Test Workflow QUANTIFICATION"
     script "../main.nf"
     workflow "QUANTIFICATION"
-    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
@@ -62,12 +61,12 @@ nextflow_workflow {
         then {
             def circular = path(workflow.out.circ.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
             def gene = path(workflow.out.gene.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
-            def sum = path("$outputDir/aggregations/sum.tsv").csv(sep: '\t')
+            def sum = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
-                { assert !new File("$outputDir/aggregations/max.tsv").exists() },
+                { assert !new File("$outputDir/5_quantification/aggregations/max.tsv").exists() },
                 { assert circular.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'tx' ] },
                 { assert circular.rowCount > 0 },
                 { assert gene.rowCount > 0 },
@@ -170,7 +169,7 @@ nextflow_workflow {
             def gene = path(workflow.out.gene.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
             def ciriquantGene = path(workflow.out.gene.find { it[0].id == 'gene' }[1]).csv(sep: '\t')
             def ciriquantCirc = path(workflow.out.circ.find { it[0].id == 'circ' }[1])
-            def max = path("$outputDir/aggregations/max.tsv").csv(sep: '\t')
+            def max = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert circular.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'tx' ] },
@@ -185,7 +184,7 @@ nextflow_workflow {
                 { assert ciriquantCirc.readLines()[0].split('\t').toList().sort() == [ 'cel_N2_1', 'circ_id', 'fust1_1', 'gene_id' ] },
                 { assert workflow.out.ciriquant.size() == 2 },
                 { assert workflow.out.stringtie.size() == 2 },
-                { assert !new File("$outputDir/aggregations/sum.tsv").exists() },
+                { assert !new File("$outputDir/5_quantification/aggregations/sum.tsv").exists() },
                 { assert max.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'id' ] },
                 { assert max.rowCount > 0 },
                 { assert snapshot(
@@ -257,8 +256,8 @@ nextflow_workflow {
         }
 
         then {
-            def sum = path("$outputDir/aggregations/sum.tsv").csv(sep: '\t')
-            def max = path("$outputDir/aggregations/max.tsv").csv(sep: '\t')
+            def sum = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t')
+            def max = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.gene.isEmpty() },
@@ -340,7 +339,7 @@ nextflow_workflow {
                 { assert workflow.out.rds.isEmpty() },
                 { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().isEmpty() },
-                { assert !new File("$outputDir/aggregations").exists() }
+                { assert !new File("$outputDir/5_quantification/aggregations").exists() }
             )
         }
     }

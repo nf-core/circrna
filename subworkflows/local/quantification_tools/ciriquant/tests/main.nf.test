@@ -3,7 +3,6 @@ nextflow_workflow {
     name "Test Workflow CIRIQUANT"
     script "../main.nf"
     workflow "CIRIQUANT"
-    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

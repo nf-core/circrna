@@ -3,7 +3,6 @@ nextflow_workflow {
     name "Test Workflow PSIRC_QUANT"
     script "../main.nf"
     workflow "PSIRC_QUANT"
-    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
