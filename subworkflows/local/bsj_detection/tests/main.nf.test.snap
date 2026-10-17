@@ -1,4 +1,151 @@
 {
+    "mini - only ciri": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "cel_N2_1_ciri.meta.bed",
+                    29,
+                    1804286366
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "ciri"
+                    },
+                    "fust1_1_ciri.meta.bed",
+                    36,
+                    610907067
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    29,
+                    -1435059235
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    36,
+                    -1566510345
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    19,
+                    1926771966
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    24,
+                    -463214922
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    47,
+                    555148391
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    31,
+                    -209261978
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.ciri.bed",
+                    29,
+                    1804286366
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.ciri.bed",
+                    36,
+                    610907067
+                ]
+            ],
+            [
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ],
+            {
+                "BSJ_DETECTION:ANNOTATE_COMBINED:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:CIRI:CIRI2": {
+                    "ciri": "2.0.0"
+                },
+                "BSJ_DETECTION:COMBINE_COUNTS_PER_TOOL": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
+                },
+                "BSJ_DETECTION:COMBINE_SAMPLES": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:COMBINE_TOOLS_PER_SAMPLE": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:INVESTIGATE_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-17T20:34:30.587240268"
+    },
     "mini - blacklist removes junctions": {
         "content": [
             [
@@ -101,6 +248,9 @@
                     
                 ],
                 "11": [
+                    
+                ],
+                "12": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -124,7 +274,7 @@
                         ]
                     ]
                 ],
-                "12": [
+                "13": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -140,10 +290,10 @@
                         "fust1_1.Chimeric.out.junction:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "13": [
+                "14": [
                     
                 ],
-                "14": [
+                "15": [
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
@@ -170,6 +320,9 @@
                     
                 ],
                 "7": [
+                    
+                ],
+                "8": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -185,7 +338,7 @@
                         "fust1_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "8": [
+                "9": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -201,13 +354,13 @@
                         "fust1_1.sam:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "9": [
-                    
-                ],
                 "bed": [
                     
                 ],
                 "bed12": [
+                    
+                ],
+                "bed12_per_sample": [
                     
                 ],
                 "bed_per_sample": [
@@ -323,7 +476,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T23:00:22.026402856"
+        "timestamp": "2026-10-17T18:04:56.617865128"
     },
     "mini - min_tools 2 and min_samples 2": {
         "content": [
@@ -346,7 +499,7 @@
                     },
                     "cel_N2_1_ciri.meta.bed",
                     29,
-                    -1214650735
+                    1804286366
                 ],
                 [
                     {
@@ -376,7 +529,7 @@
                     },
                     "fust1_1_ciri.meta.bed",
                     36,
-                    44303315
+                    610907067
                 ],
                 [
                     {
@@ -395,16 +548,16 @@
                         "id": "cel_N2_1"
                     },
                     "cel_N2_1.combined.bed",
-                    17,
-                    1755586580
+                    29,
+                    256775727
                 ],
                 [
                     {
                         "id": "fust1_1"
                     },
                     "fust1_1.combined.bed",
-                    20,
-                    1683055154
+                    36,
+                    -1566510345
                 ]
             ],
             [
@@ -413,8 +566,8 @@
                         "id": "all"
                     },
                     "all.combined.bed",
-                    11,
-                    -967602674
+                    18,
+                    -1176227503
                 ]
             ],
             [
@@ -423,8 +576,8 @@
                         "id": "all"
                     },
                     "all.annotated.bed12",
-                    9,
-                    603948107
+                    12,
+                    -1255038872
                 ]
             ],
             [
@@ -438,7 +591,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:56:05.503901668"
+        "timestamp": "2026-10-17T18:43:08.692613454"
     },
     "mini - STAR-based tools and non-STAR tools": {
         "content": [
@@ -461,7 +614,7 @@
                     },
                     "cel_N2_1_ciri.meta.bed",
                     29,
-                    -1214650735
+                    1804286366
                 ],
                 [
                     {
@@ -491,7 +644,7 @@
                     },
                     "fust1_1_ciri.meta.bed",
                     36,
-                    44303315
+                    610907067
                 ],
                 [
                     {
@@ -510,16 +663,34 @@
                         "id": "cel_N2_1"
                     },
                     "cel_N2_1.combined.bed",
-                    124,
-                    1482320209
+                    96,
+                    -1632033708
                 ],
                 [
                     {
                         "id": "fust1_1"
                     },
                     "fust1_1.combined.bed",
-                    139,
-                    -431293931
+                    103,
+                    -162425845
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    21,
+                    -1504851648
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    25,
+                    116014267
                 ]
             ],
             [
@@ -528,8 +699,8 @@
                         "id": "all"
                     },
                     "all.combined.bed",
-                    217,
-                    -1028020285
+                    171,
+                    -1476422456
                 ]
             ],
             [
@@ -566,16 +737,16 @@
                         "id": "cel_N2_1"
                     },
                     "cel_N2_1_reads.bed",
-                    0,
-                    1
+                    28,
+                    1116723071
                 ],
                 [
                     {
                         "id": "fust1_1"
                     },
                     "fust1_1_reads.bed",
-                    0,
-                    1
+                    33,
+                    -1308219558
                 ]
             ],
             [
@@ -671,6 +842,10 @@
                     "seaborn": "0.13.2",
                     "upsetplot": "0.9.0"
                 },
+                "BSJ_DETECTION:COMBINE_COUNTS_PER_TOOL": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
+                },
                 "BSJ_DETECTION:COMBINE_SAMPLES": {
                     "python": "3.12.6",
                     "polars": "1.8.2",
@@ -707,7 +882,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:54:49.575526459"
+        "timestamp": "2026-10-17T20:29:47.376198142"
     },
     "mini - only non-STAR tool": {
         "content": [
@@ -754,6 +929,24 @@
             [
                 [
                     {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    18,
+                    1697201333
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    23,
+                    -955561703
+                ]
+            ],
+            [
+                [
+                    {
                         "id": "all"
                     },
                     "all.combined.bed",
@@ -774,9 +967,7 @@
             [
                 [
                     {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "tool": "find_circ"
+                        "id": "cel_N2_1"
                     },
                     "cel_N2_1.find_circ.bed",
                     30,
@@ -784,9 +975,7 @@
                 ],
                 [
                     {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "tool": "find_circ"
+                        "id": "fust1_1"
                     },
                     "fust1_1.find_circ.bed",
                     33,
@@ -809,6 +998,10 @@
                 "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
                     "polars": "1.31.0",
                     "python": "3.13.5"
+                },
+                "BSJ_DETECTION:COMBINE_COUNTS_PER_TOOL": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
                 },
                 "BSJ_DETECTION:COMBINE_SAMPLES": {
                     "python": "3.12.6",
@@ -843,6 +1036,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:58:38.321035193"
+        "timestamp": "2026-10-17T20:33:41.308689668"
     }
 }

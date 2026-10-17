@@ -79,6 +79,56 @@ nextflow_workflow {
         }
     }
 
+    test("mini - single-end") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circtools'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'fust1_1', single_end: true],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = STAR_GENOMEGENERATE.out.index.collect()
+                input[4] = channel.of(
+                    [
+                        [id: 'fust1_1', single_end: true],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[5] = true
+                input[6] = 1
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            // Name and Reads depend on polars' unordered group_by/unique, so they are only checked for being non-empty
+            def rows = path(workflow.out.bed[0][1]).readLines().collect { it.split('\t') }
+            assert rows.size() > 0
+            assert rows.every { it.size() == 7 }
+            assert rows.any { it[6] }
+            assert snapshot(
+                workflow.out.bed.collect { [it[0], file(it[1]).name] },
+                workflow.out.bed.collect { meta, bed ->
+                    def coords = path(bed).readLines().collect { line -> def f = line.split('\t'); [f[0], f[1], f[2], f[4], f[5]].join('\t') }
+                    [meta.id, coords.size(), coords.sort(false).join('\n').md5()]
+                },
+                workflow.out.versions.collect { path(it).yaml }.unique().sort { it.keySet()[0] }
+            ).match()
+        }
+    }
+
     test("mini - paired-end reads - stub") {
 
         options "-stub"
@@ -116,6 +166,46 @@ nextflow_workflow {
                     ],
                     [
                         [id: 'fust1_1', single_end: false],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
+                    ]
+                )
+                input[5] = true
+                input[6] = 1
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+
+    test("mini - single-end - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circtools'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'fust1_1', single_end: true],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = STAR_GENOMEGENERATE.out.index.collect()
+                input[4] = channel.of(
+                    [
+                        [id: 'fust1_1', single_end: true],
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.star.Chimeric.out.junction', checkIfExists: true)
                     ]
                 )
