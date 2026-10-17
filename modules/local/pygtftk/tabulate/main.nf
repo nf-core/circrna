@@ -23,6 +23,8 @@ process PYGTFTK_TABULATE {
     def suffix        = task.ext.suffix ?: gtf.extension
     outfile           = "${prefix}.${suffix}"
     """
+    export HOME="\$PWD"
+
     gtftk tabulate \\
         $args \\
         -i $gtf | \\
@@ -39,6 +41,8 @@ process PYGTFTK_TABULATE {
     def suffix = task.ext.suffix ?: gtf.extension
     outfile    = "${prefix}.${suffix}"
     """
+    export HOME="\$PWD"
+
     touch ${outfile}
 
     cat <<-END_VERSIONS > versions.yml
