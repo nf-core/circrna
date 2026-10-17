@@ -15,7 +15,16 @@ workflow STATISTICAL_TESTS {
     main:
     ch_versions = channel.empty()
 
-    ch_counts = ch_gene_counts.join(ch_circ_counts)
+    ch_psirc_genes = ch_gene_counts
+        .filter{ meta, _counts -> meta.quantification == 'psirc' }
+        .map{ meta, counts -> [meta.quantification, counts] }
+    ch_psirc_circs = ch_circ_counts
+        .filter{ meta, _counts -> meta.quantification == 'psirc' }
+        .map{ meta, counts -> [meta.quantification, counts] }
+
+    ch_counts = ch_psirc_genes
+        .join(ch_psirc_circs)
+        .map{ quantification, genes, circs -> [[id: 'counts', quantification: quantification], genes, circs] }
 
     CIRCTEST_PREPARE(ch_counts)
     ch_versions = ch_versions.mix(CIRCTEST_PREPARE.out.versions)
