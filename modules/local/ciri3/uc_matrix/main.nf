@@ -1,5 +1,5 @@
 process CIRI3_UC_MATRIX {
-    tag "$meta.id"
+    tag "$meta2.id"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"

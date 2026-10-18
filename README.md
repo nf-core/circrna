@@ -55,6 +55,7 @@ If you want to contribute, feel free to create an issue or pull request on the [
 - Extract circRNA sequences and build circular transcriptome
 - Merge circular transcriptome with linear transcriptome derived from provided GTF
 - Quantification of combined circular and linear transcriptome
+  - CIRI3 consensus BSJ and FSJ count matrices
   - [`psirc-quant`](https://github.com/Christina-hshi/psirc)
 - miRNA binding affinity analysis (only if the `mature` parameter is provided)
   - Normalizes miRNA expression (only if the `mirna_expression` parameter is provided)
