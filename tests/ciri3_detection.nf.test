@@ -1,19 +1,13 @@
 nextflow_pipeline {
     name 'Test CIRI3 detection integration'
     script '../main.nf'
+    config './mini.config'
     tag 'pipeline'
     tag 'ciri3'
 
     test('CIRI and CIRI3 share one BWA-MEM task per sample') {
         when {
             params {
-                def pinnedRoot = params.pipelines_testdata_base_path
-                def sampleSheetSource = file(pinnedRoot + 'mini/samples_mini.csv', checkIfExists: true).text
-                def oldFastqRoot = 'https://raw.githubusercontent.com/nictru/test-datasets/circrna/mini/fastq/'
-                def sampleSheet = file("$outputDir/ciri3-shared-bwa-samples.csv")
-                sampleSheet.parent.mkdirs()
-                sampleSheet.text = sampleSheetSource.replace(oldFastqRoot, pinnedRoot + 'mini/fastq/')
-                input = sampleSheet.toString()
                 outdir = "$outputDir"
                 tools = 'ciri,ciri3'
                 fli_tools = ''
@@ -42,13 +36,6 @@ nextflow_pipeline {
         options '-stub'
         when {
             params {
-                def pinnedRoot = params.pipelines_testdata_base_path
-                def sampleSheetSource = file(pinnedRoot + 'mini/samples_mini.csv', checkIfExists: true).text
-                def oldFastqRoot = 'https://raw.githubusercontent.com/nictru/test-datasets/circrna/mini/fastq/'
-                def sampleSheet = file("$outputDir/ciri3-only-samples.csv")
-                sampleSheet.parent.mkdirs()
-                sampleSheet.text = sampleSheetSource.replace(oldFastqRoot, pinnedRoot + 'mini/fastq/')
-                input = sampleSheet.toString()
                 outdir = "$outputDir"
                 tools = 'ciri3'
                 fli_tools = ''

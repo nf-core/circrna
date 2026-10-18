@@ -190,6 +190,7 @@ def parseToolList(String tools) {
 def bsjToolProperties() {
     return [
         ciri            : [reads: true,  star: false],
+        ciri3           : [reads: true,  star: false],
         circminer       : [reads: true,  star: false],
         circexplorer2   : [reads: false, star: true],
         circrna_finder  : [reads: false, star: true],
