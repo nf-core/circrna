@@ -56,7 +56,10 @@ nextflow_process {
             }
         }
         then {
-            assert process.failed
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('coordinates/count must be integers') }
+            )
         }
     }
 
@@ -78,7 +81,10 @@ nextflow_process {
             }
         }
         then {
-            assert process.failed
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('expected header circRNA') }
+            )
         }
     }
 

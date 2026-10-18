@@ -46,7 +46,10 @@ nextflow_process {
             }
         }
         then {
-            assert process.failed
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('expected at least 12 columns') }
+            )
         }
     }
 
@@ -63,7 +66,10 @@ nextflow_process {
             }
         }
         then {
-            assert process.failed
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('consensus BED12 contains no circRNA candidates') }
+            )
         }
     }
 
