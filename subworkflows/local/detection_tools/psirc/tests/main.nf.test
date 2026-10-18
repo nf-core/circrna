@@ -65,17 +65,17 @@ nextflow_workflow {
         }
 
         then {
-            def bed = path(workflow.out.bed[0][1]).readLines()
+            def beds = workflow.out.bed.collect { meta, output -> [meta.id, path(output).readLines()] }.sort { row -> row[0] }
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.bed.size() == 2 },
-                { assert bed.every { it.split('\\t').size() >= 6 } },
+                { assert beds.every { sample, rows -> rows.every { row -> row.split('\t').size() >= 6 } } },
                 { assert workflow.out.bed.every { _meta, output -> file(output).name.endsWith('.psirc.bed') } },
                 { assert workflow.out.output.every { _meta, output -> file(output).exists() } },
                 { assert snapshot(
-                    workflow.out.bed.collect { file(it[1]).name },
-                    bed.size(),
-                    workflow.out.output.collect { file(it[1]).list().sort() },
+                    workflow.out.bed.collect { file(it[1]).name }.sort(),
+                    beds.collect { sample, rows -> [sample, rows.size()] },
+                    workflow.out.output.collect { meta, output -> [meta.id, file(output).list().sort()] }.sort { row -> row[0] },
                     workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
                 ).match() }
             )

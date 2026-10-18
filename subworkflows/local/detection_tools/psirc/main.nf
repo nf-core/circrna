@@ -12,7 +12,7 @@ workflow PSIRC {
     main:
     ch_versions = channel.empty()
 
-    BSJ(ch_reads, ch_index)
+    BSJ(ch_reads, ch_index.first())
     ch_versions = ch_versions.mix(BSJ.out.versions)
 
     // These are singleton references. Convert them to value channels so every sample task receives them.

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Fill unstranded BED records from canonical genomic BSJ splice motifs."""
+# Fill unstranded BED records from canonical genomic BSJ splice motifs.
 
 import pysam
 
 
 def infer_strand(reference, fields):
-    """Return a strand only for canonical flanks around a valid BED interval."""
+    # Return a strand only for canonical flanks around a valid BED interval.
     if len(fields) < 6 or fields[5] != ".":
         return fields
 
@@ -27,8 +27,8 @@ def infer_strand(reference, fields):
 
 with pysam.FastaFile("${fasta}") as reference, open("${bed}") as source, open("${prefix}.bed", "w") as destination:
     for line in source:
-        fields = line.rstrip("\n").split("\t")
-        destination.write("\t".join(infer_strand(reference, fields)) + "\n")
+        fields = line.rstrip("\\n").split("\\t")
+        destination.write("\\t".join(infer_strand(reference, fields)) + "\\n")
 
 with open("versions.yml", "w") as handle:
-    handle.write('"${task.process}":\n    pysam: "{}"\n'.format(pysam.__version__))
+    handle.write('"${task.process}":\\n    pysam: "{}"\\n'.format(pysam.__version__))

@@ -4,8 +4,8 @@ process INFER_STRAND {
 
     conda "bioconda::pysam=0.22.1"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://depot.galaxyproject.org/singularity/pysam:0.22.1--py311h41dec4a_1'
-        : 'quay.io/biocontainers/pysam:0.22.1--py311h41dec4a_1'}"
+        ? 'https://depot.galaxyproject.org/singularity/pysam:0.23.3--py311h5f69268_3'
+        : 'quay.io/biocontainers/pysam:0.23.3--py311h5f69268_3'}"
 
     input:
     tuple val(meta), path(bed, stageAs: 'input/*')
