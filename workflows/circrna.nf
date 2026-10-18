@@ -183,7 +183,8 @@ workflow CIRCRNA {
             min_samples,
             exons_only,
             PREPARE_GENOME.out.faidx,
-            circminer_index
+            circminer_index,
+            PREPARE_GENOME.out.circminer_gtf
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)

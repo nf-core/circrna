@@ -1,5 +1,4 @@
 include { CIRCMINER_CIRCMINER as DETECT } from '../../../../modules/local/circminer/circminer'
-include { CIRCMINER_PREPAREGTF as PREPAREGTF } from '../../../../modules/local/circminer/preparegtf'
 include { GAWK as UNIFY } from '../../../../modules/nf-core/gawk'
 include { INFER_STRAND } from '../../../../modules/local/infer_strand'
 
@@ -14,10 +13,7 @@ workflow CIRCMINER {
     main:
     ch_versions = channel.empty()
 
-    PREPAREGTF(gtf.first())
-    ch_versions = ch_versions.mix(PREPAREGTF.out.versions)
-
-    DETECT(reads, index.first(), PREPAREGTF.out.gtf.first())
+    DETECT(reads, index.first(), gtf.first())
     ch_versions = ch_versions.mix(DETECT.out.versions)
 
     UNIFY(

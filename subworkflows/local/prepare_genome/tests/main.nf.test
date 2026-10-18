@@ -9,8 +9,11 @@ nextflow_workflow {
     tag "subworkflows_local"
     tag "prepare_genome"
 
-    test("build circMiner index only when selected") {
+    test("build circMiner index and prepare its dedicated GTF") {
         when {
+            params {
+                outdir = "$outputDir"
+            }
             workflow {
                 """
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
@@ -34,6 +37,20 @@ nextflow_workflow {
             assert tasks.contains('PREPARE_GENOME:CIRCMINER_INDEX')
             assert circminerIndices.size() == 1
             assert circminerIndices[0][1]
+            assert tasks.count { it == 'PREPARE_GENOME:CIRCMINER_STANDARDIZE_GTF' } == 1
+            assert tasks.count { it == 'PREPARE_GENOME:CIRCMINER_ORDERGTF' } == 1
+            assert workflow.out.circminer_gtf.size() == 1
+            def specificRows = path(workflow.out.circminer_gtf[0][1]).readLines()
+            def sharedRows = path(workflow.out.gtf[0][1]).readLines()
+            assert specificRows.any { it.split('\t')[2] == 'gene' }
+            assert sharedRows.every { it.split('\t')[2] != 'gene' }
+            def exonCoordinates = { rows -> rows.findAll { it.split('\t')[2] == 'exon' }.collect { row ->
+                def fields = row.split('\t')
+                [fields[0], fields[3], fields[4], fields[6]]
+            }.sort { a, b -> a.join(':') <=> b.join(':') } }
+            assert exonCoordinates(specificRows) == exonCoordinates(sharedRows)
+            assert specificRows.findAll { it.split('\t')[2] == 'exon' && it.contains('transcript_id "NR_052813"') }
+                .collect { it.split('\t')[3] } == ['350134', '191241', '142375', '1941', '1900', '1827']
         }
     }
 
@@ -176,6 +193,8 @@ nextflow_workflow {
                 { assert workflow.out.bwa.isEmpty() },
                 { assert workflow.out.hisat2.isEmpty() },
                 { assert workflow.out.psirc.isEmpty() },
+                { assert workflow.out.circminer_gtf.isEmpty() },
+                { assert !tasks.any { it.contains('CIRCMINER_STANDARDIZE_GTF') || it.contains('CIRCMINER_ORDERGTF') } },
                 { assert snapshot(
                     workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
                     workflow.out.circexplorer2.flatten().collect { file(it).name },

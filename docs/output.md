@@ -152,6 +152,8 @@ The rough workflow for the BSJ detection looks like this:
 
 circMiner's unmodified report is published under `3_bsj_detection/tools/circminer/raw/<sample>/` with `--save_intermediates`; the pipeline-normalized BED is published under `3_bsj_detection/tools/circminer/unified/`. The BED includes passing calls, converted to 0-based starts, with counts, supporting-read IDs and strand inferred from canonical splice motifs where possible.
 
+With `--save_reference`, the circMiner-specific AGAT-standardized, strand-ordered GTF is published under `1_references/genome/circminer_gtf/`. Other tools continue to use the shared filtered GTF.
+
 <details markdown="1">
 <summary>Output files available for all tools</summary>
 

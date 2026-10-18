@@ -33,7 +33,7 @@ nextflow_process {
         then {
             assert process.success
             def outputPath = path(process.out.gtf[0][1])
-            def source = outputPath.parent.resolve('input/chrI_mini.agat.gtf').readLines()
+            def source = outputPath.parent.resolve('input/chrI_mini.agat.gtf').readLines().findAll { it && !it.startsWith('#') }
             def output = outputPath.readLines()
             def selected = ['gene', 'transcript', 'exon']
             def sourceRows = source.findAll { it.split('\t')[2] in selected }.sort()

@@ -15,6 +15,8 @@ include { PSIRC_TRANSCRIPTOME             } from '../../../modules/local/psirc/t
 include { PSIRC_INDEX                     } from '../../../modules/local/psirc/index'
 include { starBasedTools                  } from '../utils_nfcore_circrna_pipeline'
 include { CIRCMINER_INDEX                  } from '../../../modules/local/circminer/index'
+include { AGAT_CONVERTSPGFF2GTF as CIRCMINER_STANDARDIZE_GTF } from '../../../modules/nf-core/agat/convertspgff2gtf'
+include { CIRCMINER_ORDERGTF                } from '../../../modules/local/circminer/ordergtf'
 
 workflow PREPARE_GENOME {
     take:
@@ -44,6 +46,16 @@ workflow PREPARE_GENOME {
     GTFFILTER(ch_gtf, ch_fasta)
     ch_gtf = GTFFILTER.out.gtf
     ch_versions = ch_versions.mix(GTFFILTER.out.versions)
+
+    // circMiner needs parent records and transcript-direction exon ordering.
+    // Keep this annotation separate: AGAT repairs must not alter other callers' inputs.
+    ch_circminer_gtf = channel.empty()
+    if (tools.contains('circminer')) {
+        CIRCMINER_STANDARDIZE_GTF(ch_gtf)
+        CIRCMINER_ORDERGTF(CIRCMINER_STANDARDIZE_GTF.out.output_gtf)
+        ch_circminer_gtf = CIRCMINER_ORDERGTF.out.gtf
+        ch_versions = ch_versions.mix(CIRCMINER_ORDERGTF.out.versions)
+    }
 
     UCSC_GTFTOGENEPRED(ch_gtf)
 
@@ -152,4 +164,5 @@ workflow PREPARE_GENOME {
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions
+    circminer_gtf = ch_circminer_gtf
 }

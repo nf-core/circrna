@@ -52,6 +52,7 @@ workflow BSJ_DETECTION {
     exons_only
     ch_faidx
     circminer_index
+    circminer_gtf
 
     main:
     ch_versions = channel.empty()
@@ -163,7 +164,7 @@ workflow BSJ_DETECTION {
     }
 
     if (tools.contains('circminer')) {
-        CIRCMINER(reads, circminer_index, ch_gtf, ch_fasta, ch_faidx)
+        CIRCMINER(reads, circminer_index, circminer_gtf, ch_fasta, ch_faidx)
         ch_versions = ch_versions.mix(CIRCMINER.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCMINER.out.bed)
     }

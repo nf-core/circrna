@@ -88,6 +88,32 @@ nextflow_pipeline {
         }
     }
 
+    test("circMiner shares one prepared annotation across samples - stub") {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2,circminer'
+                fli_tools = ''
+                quantification_tools = 'sum'
+                mature = null
+                bsj_reads = 1
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('PREPARE_GENOME:CIRCMINER_STANDARDIZE_GTF') } == 1 },
+                { assert tasks.count { task -> task.name.contains('PREPARE_GENOME:CIRCMINER_ORDERGTF') } == 1 },
+                { assert tasks.count { task -> task.name.contains('BSJ_DETECTION:CIRCMINER:DETECT') } == 2 }
+            )
+        }
+    }
+
     test("circMiner rejects single-end input - stub") {
         config './circminer_input.config'
         options '-stub'

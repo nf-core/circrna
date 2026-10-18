@@ -10,11 +10,19 @@ nextflow_process {
     tag "circminer_circminer"
 
     setup {
-        run("CIRCMINER_PREPAREGTF") {
-            script "modules/local/circminer/preparegtf/main.nf"
+        run("AGAT_CONVERTSPGFF2GTF") {
+            script "modules/nf-core/agat/convertspgff2gtf/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+        run("CIRCMINER_ORDERGTF") {
+            script "modules/local/circminer/ordergtf/main.nf"
+            process {
+                """
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
                 """
             }
         }
@@ -34,7 +42,7 @@ nextflow_process {
                 """
                 input[0] = [[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]]
                 input[1] = CIRCMINER_INDEX.out.index
-                input[2] = CIRCMINER_PREPAREGTF.out.gtf
+                input[2] = CIRCMINER_ORDERGTF.out.gtf
                 """
             }
         }
@@ -53,7 +61,7 @@ nextflow_process {
                 """
                 input[0] = [[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]]
                 input[1] = CIRCMINER_INDEX.out.index
-                input[2] = CIRCMINER_PREPAREGTF.out.gtf
+                input[2] = CIRCMINER_ORDERGTF.out.gtf
                 """
             }
         }

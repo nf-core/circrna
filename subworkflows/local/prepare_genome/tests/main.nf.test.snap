@@ -41,6 +41,7 @@
                     "versions.yml:md5,f55334c247ef6e4a510ef45e1eb3c921",
                     "versions.yml:md5,f56661fed4a9723e2f866e609363893e"
                 ],
+                "13": [],
                 "2": [
                     [
                         {
@@ -90,9 +91,7 @@
                         {
                             "id": "fasta"
                         },
-                        [
-                            
-                        ]
+                        []
                     ]
                 ],
                 "6": [
@@ -137,9 +136,7 @@
                         ]
                     ]
                 ],
-                "9": [
-                    
-                ],
+                "9": [],
                 "bowtie": [
                     [
                         {
@@ -197,9 +194,8 @@
                         "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "circminer": [
-                    
-                ],
+                "circminer": [],
+                "circminer_gtf": [],
                 "faidx": [
                     [
                         {
@@ -221,9 +217,7 @@
                         {
                             "id": "fasta"
                         },
-                        [
-                            
-                        ]
+                        []
                     ]
                 ],
                 "psirc": [
@@ -284,7 +278,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T13:57:20.236279286"
+        "timestamp": "2026-10-18T15:22:08.786505617"
     },
     "build all indices": {
         "content": [
@@ -520,12 +514,8 @@
                     ]
                 ]
             ],
-            [
-                
-            ],
-            [
-                
-            ]
+            [],
+            []
         ],
         "meta": {
             "nf-test": "0.9.2",
