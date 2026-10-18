@@ -25,13 +25,13 @@ workflow CIRIQUANT {
     EXTRACT_GENES( MAIN.out.gene_list.map { meta, gene_list -> [meta, gene_list, 'gene.tsv'] }, [], false )
 
     JOIN_GENE(
-        EXTRACT_GENES.out.output.map{meta, table -> [meta.id, table]}.toSortedList{ a, b -> a[0] <=> b[0] }.map{ samples -> [[id: 'gene'], samples.collect{ sample, _table -> sample }, samples.collect{ _sample, table -> table }]},
+        EXTRACT_GENES.out.output.map{meta, table -> [[id: 'gene'], meta.id, table]}.groupTuple(),
         "gene_id,gene_name"
     )
     ch_versions = ch_versions.mix(JOIN_GENE.out.versions)
 
     JOIN_CIRC(
-        EXTRACT_CIRC.out.table.map{meta, table -> [meta.id, table]}.toSortedList{ a, b -> a[0] <=> b[0] }.map{ samples -> [[id: 'circ'], samples.collect{ sample, _table -> sample }, samples.collect{ _sample, table -> table }]},
+        EXTRACT_CIRC.out.table.map{meta, table -> [[id: 'circ'], meta.id, table]}.groupTuple(),
         "circ_id,gene_id"
     )
     ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
