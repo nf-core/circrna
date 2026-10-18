@@ -21,6 +21,7 @@ def main(bed_path, output_path):
         )
     except pl.exceptions.ComputeError as error:
         raise ValueError("BED12 coordinates must be integers") from error
+    bed = bed.filter(~pl.all_horizontal(pl.all().is_null()))
     if bed.is_empty():
         raise ValueError("consensus BED12 contains no circRNA candidates")
     if bed["block_starts"].is_null().any():
