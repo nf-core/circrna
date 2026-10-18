@@ -58,6 +58,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#245](https://github.com/nf-core/circrna/pull/245) - `COMPUTE_CORRELATIONS` only ran for the first binding-site batch of `MIRNA_PREDICTION`. It now runs for all batches (#218) (@nictru)
 - [#245](https://github.com/nf-core/circrna/pull/245) - `MIRNA_FILTERING` also considered the non-sample columns as samples. Only the sample columns (column 5 onwards) are considered now (#218) (@nictru)
 - [#245](https://github.com/nf-core/circrna/pull/245) - `CIRCTEST` mangled sample-named column headers (`check.names`). They are now read unchanged (#233, #218) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - The CIRI-vis jar moved to `bin/`, so that it is found on the `PATH` and accessible inside containers. `CIRI_CIRIVIS` failed with `Unable to access jarfile` once `bin/` was empty, because Nextflow then no longer mounted the project directory (@nictru)
 
 ### `Dependencies`
 
