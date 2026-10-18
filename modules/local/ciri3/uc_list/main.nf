@@ -3,7 +3,9 @@ process CIRI3_UC_LIST {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container 'community.wave.seqera.io/library/polars_pyyaml:ad93db0d7bcd508e'
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+?         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/31/31cbdd6f827c754d8ebddcc66a9e50f97341b96b13c766c27cfd9c2b2f99f850/data'
+:         'community.wave.seqera.io/library/python_polars_pyyaml:3d5318c405239fe0' }"
 
     input:
     tuple val(meta), path(bed)
@@ -23,9 +25,13 @@ process CIRI3_UC_LIST {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.ciri3.list
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //')
-    END_VERSIONS
+    python - <<'PY'
+    import platform
+    import polars
+    import yaml
+
+    with open("versions.yml", "w") as versions:
+        yaml.safe_dump({"${task.process}": {"python": platform.python_version(), "polars": polars.__version__, "pyyaml": yaml.__version__}}, versions)
+    PY
     """
 }

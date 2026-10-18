@@ -1,0 +1,66 @@
+name: ciri3_uc_list
+description: Build a CIRI3 circRNA list from a BED12 annotation
+keywords:
+  - ciri3
+  - circrna
+  - bed
+tools:
+  - polars:
+      description: Fast DataFrame library for Python
+      homepage: https://pola.rs/
+      documentation: https://docs.pola.rs/
+      licence: [MIT]
+  - pyyaml:
+      description: Serialize software versions as YAML
+      homepage: https://pyyaml.org/
+      licence: [MIT]
+input:
+  - - meta:
+        type: map
+        description: Annotation metadata
+    - bed:
+        type: file
+        description: BED12 circRNA annotation
+        pattern: "*.{bed,bed12}"
+output:
+  list:
+    - - meta:
+          type: map
+          description: Annotation metadata
+      - "*.ciri3.list":
+          type: file
+          description: CIRI3 circRNA list
+          pattern: "*.ciri3.list"
+  versions:
+    - versions.yml:
+        type: file
+        description: Python, Polars and PyYAML versions
+        pattern: versions.yml
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_polars_pyyaml:0029aaf4a8c64f7f
+      build_id: bd-0029aaf4a8c64f7f_1
+      scan_id: sc-b9c3d8517ce74695_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_polars_pyyaml:3d5318c405239fe0
+      build_id: bd-3d5318c405239fe0_1
+      scan_id: sc-1a4cd6c4b3504beb_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars_pyyaml:5c38cd573347a19b
+      build_id: bd-5c38cd573347a19b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/6c/6c9c9e6aed659c93b4d26fff2596b4a017f55d76b7aee7c8d852b5c4467038b4/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_polars_pyyaml:92ce592761658a28
+      build_id: bd-92ce592761658a28_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/31/31cbdd6f827c754d8ebddcc66a9e50f97341b96b13c766c27cfd9c2b2f99f850/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_amd64-bd-3d5318c405239fe0_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_arm64-bd-0029aaf4a8c64f7f_1.txt

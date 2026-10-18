@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import platform
+
+import polars as pl
 import yaml
 
 circ_list_path = "${circ_list}"
@@ -9,74 +11,66 @@ fsj_path = "${fsj_matrix}"
 prefix = "${prefix}"
 
 
-def fail(message):
-    raise ValueError(message)
+COORDINATES = {"chrom": pl.String, "start": pl.Int64, "end": pl.Int64}
 
 
 def parse_candidates(path):
-    candidates = []
-    seen = set()
-    with open(path, encoding="utf-8") as handle:
-        for line_number, line in enumerate(handle, 1):
-            fields = line.rstrip("\\n").split("\\t")
-            if len(fields) != 3 or not fields[0]:
-                fail(f"candidate list row {line_number}: expected chrom, start, end")
-            try:
-                chrom, start, end = fields[0], int(fields[1]), int(fields[2])
-            except ValueError as error:
-                raise ValueError(f"candidate list row {line_number}: coordinates must be integers") from error
-            if start < 1 or end <= start:
-                fail(f"candidate list row {line_number}: invalid 1-based interval {chrom}:{start}-{end}")
-            key = (chrom, start, end)
-            if key in seen:
-                fail(f"duplicate candidate at row {line_number}: {key}")
-            seen.add(key)
-            candidates.append(key)
-    if not candidates:
-        fail("candidate list is empty")
-    return candidates, seen
+    try:
+        candidates = pl.read_csv(
+            path, separator="\\t", has_header=False, schema=COORDINATES,
+            quote_char=None, raise_if_empty=False,
+        )
+    except pl.exceptions.ComputeError as error:
+        raise ValueError("candidate list: expected chrom, start, end with integer coordinates") from error
+    if candidates.is_empty():
+        raise ValueError("candidate list is empty")
+    if candidates.null_count().sum_horizontal().item() or candidates.filter(
+        (pl.col("chrom") == "") | (pl.col("start") < 1) | (pl.col("end") <= pl.col("start"))
+    ).height:
+        raise ValueError("candidate list: invalid 1-based interval")
+    if candidates.is_duplicated().any():
+        raise ValueError("duplicate candidate in consensus list")
+    return candidates
 
 
 def parse_matrix(path, expected_header, candidates):
-    counts = {}
     with open(path, encoding="utf-8") as handle:
         header = handle.readline().rstrip("\\r\\n").split("\\t")
-        if header != ["circRNA", expected_header]:
-            fail(f"{path}: expected header circRNA\\t{expected_header}, got {header!r}")
-        for line_number, line in enumerate(handle, 2):
-            fields = line.rstrip("\\r\\n").split("\\t")
-            if len(fields) != 4:
-                fail(f"{path} row {line_number}: expected chrom, start, end, count")
-            chrom = fields[0]
-            try:
-                key = (chrom, int(fields[1]), int(fields[2]))
-                count = int(fields[3])
-            except ValueError as error:
-                raise ValueError(f"{path} row {line_number}: coordinates/count must be integers") from error
-            if key not in candidates:
-                fail(f"{path} row {line_number}: CIRI3 returned a coordinate outside the requested consensus: {key}")
-            if count < 0:
-                fail(f"{path} row {line_number}: count must not be negative")
-            if key in counts:
-                fail(f"{path} row {line_number}: duplicate matrix coordinate {key}")
-            counts[key] = count
+    if header != ["circRNA", expected_header]:
+        raise ValueError(f"{path}: expected header circRNA\\t{expected_header}, got {header!r}")
+    try:
+        counts = pl.read_csv(
+            path, separator="\\t", has_header=False, skip_rows=1,
+            schema={**COORDINATES, "count": pl.Int64}, quote_char=None,
+            raise_if_empty=False,
+        )
+    except pl.exceptions.ComputeError as error:
+        raise ValueError(f"{path}: coordinates/count must be integers") from error
+    if counts.null_count().sum_horizontal().item():
+        raise ValueError(f"{path}: expected chrom, start, end, count without missing values")
+    if counts.filter(pl.col("count") < 0).height:
+        raise ValueError(f"{path}: count must not be negative")
+    if counts.select(*COORDINATES).is_duplicated().any():
+        raise ValueError(f"{path}: duplicate matrix coordinate")
+    if counts.join(candidates, on=list(COORDINATES), how="anti").height:
+        raise ValueError(f"{path}: CIRI3 returned a coordinate outside the requested consensus")
     return counts
 
 
-candidates, candidate_set = parse_candidates(circ_list_path)
-bsj_counts = parse_matrix(bsj_path, "BSJ", candidate_set)
-fsj_counts = parse_matrix(fsj_path, "FSJ", candidate_set)
+candidates = parse_candidates(circ_list_path)
 
-for suffix, counts in (("bsj", bsj_counts), ("fsj", fsj_counts)):
-    with open(f"{prefix}.{suffix}.tsv", "w", encoding="utf-8") as output:
-        output.write("circRNA_ID\\tcount\\n")
-        for chrom, start, end in candidates:
-            key = (chrom, start, end)
-            output.write(f"{chrom}:{start}|{end}\\t{counts.get(key, 0)}\\n")
+for suffix, path in (("bsj", bsj_path), ("fsj", fsj_path)):
+    counts = parse_matrix(path, suffix.upper(), candidates)
+    candidates.join(counts, on=list(COORDINATES), how="left", maintain_order="left").select(
+        pl.format("{}:{}|{}", "chrom", "start", "end").alias("circRNA_ID"),
+        pl.col("count").fill_null(0),
+    ).write_csv(f"{prefix}.{suffix}.tsv", separator="\\t")
 
 versions = {
     "${task.process}": {
         "python": platform.python_version(),
+        "polars": pl.__version__,
+        "pyyaml": yaml.__version__,
     }
 }
 with open("versions.yml", "w", encoding="utf-8") as version_file:

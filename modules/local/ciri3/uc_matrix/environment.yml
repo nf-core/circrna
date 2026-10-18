@@ -1,5 +1,8 @@
-name: ciri3_uc_matrix
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
 channels:
   - conda-forge
 dependencies:
-  - python=3.12.8
+  - conda-forge::python=3.12.8
+  - conda-forge::polars=1.31.0
+  - conda-forge::pyyaml=6.0.2

@@ -53,6 +53,87 @@ nextflow_process {
         }
     }
 
+    test('ignores comments and blank lines while preserving requested locus order') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/ordered.bed12")
+                bed.text = '# comment\\n\\nchr2\\t9\\t20\\tb\\t0\\t-\\t9\\t20\\t0\\t1\\t11,\\t0,\\nchr1\\t0\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'ordered'], bed]
+                """
+            }
+        }
+        then {
+            def list = path(process.out.list[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert list == ['chr2\t10\t20', 'chr1\t1\t10'] }
+            )
+        }
+    }
+
+    test('rejects duplicate loci even when their strands differ') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/duplicate.bed12")
+                bed.text = 'chr1\\t0\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\nchr1\\t0\\t10\\tb\\t0\\t-\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'duplicate'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('duplicate consensus interval') }
+            )
+        }
+    }
+
+    test('rejects negative BED starts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/invalid-start.bed12")
+                bed.text = 'chr1\\t-1\\t10\\ta\\t0\\t+\\t-1\\t10\\t0\\t1\\t11,\\t0,\\n'
+                input[0] = [[id: 'invalid_start'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('invalid interval') }
+            )
+        }
+    }
+
+    test('rejects noninteger BED starts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/noninteger-start.bed12")
+                bed.text = 'chr1\\tstart\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'noninteger_start'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('coordinates must be integers') }
+            )
+        }
+    }
+
     test('rejects empty candidate universe') {
         when {
             process {
