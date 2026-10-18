@@ -196,11 +196,7 @@ workflow BSJ_DETECTION {
     COMBINE_COUNTS_PER_TOOL(
         EXTRACT_COUNTS.out.output
             .map { meta, counts -> [[id: meta.tool], meta.id, counts] }
-            .groupTuple()
-            .map { meta, samples, counts ->
-                def sorted = [samples, counts].transpose().sort { pair -> pair[0] }
-                [meta, sorted.collect { pair -> pair[0] }, sorted.collect { pair -> pair[1] }]
-            },
+            .groupTuple(),
         "id",
     )
     ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
