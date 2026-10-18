@@ -1,0 +1,97 @@
+nextflow_process {
+    name 'Test Process CIRI3_CIRI3'
+    script '../main.nf'
+    process 'CIRI3_CIRI3'
+    config './nextflow.config'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3_ciri3'
+
+    setup {
+        run('BWA_INDEX') {
+            script 'modules/nf-core/bwa/index/main.nf'
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run('BWA_MEM') {
+            script 'modules/nf-core/bwa/mem/main.nf'
+            process {
+                """
+                input[0] = [[id: 'cel_N2_1', single_end: false], [
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                ]]
+                input[1] = BWA_INDEX.out.index
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[3] = false
+                """
+            }
+        }
+    }
+
+    test('detection mode') {
+        when {
+            process {
+                """
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = []
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.txt[0][1]).exists() },
+                { assert path(process.out.versions[0]).yaml.CIRI3_CIRI3.ciri3 == '3.0.1' }
+            )
+        }
+    }
+
+    test('user circRNA quantification mode with two circRNAs') {
+        when {
+            process {
+                """
+                def circList = file('two-circRNAs.tsv', content: 'chrI_mini\\t1\\t10\\nchrI_mini\\t20\\t30\\n')
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = circList
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.bsj_matrix[0][1]).exists() },
+                { assert path(process.out.fsj_matrix[0][1]).exists() }
+            )
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = []
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.txt[0][1]).exists() },
+                { assert path(process.out.versions[0]).yaml.CIRI3_CIRI3.ciri3 == '3.0.1' }
+            )
+        }
+    }
+}
