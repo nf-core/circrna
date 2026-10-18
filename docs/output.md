@@ -336,6 +336,17 @@ nf-core/circrna combines the sample-specific BSJ calls into a single file. The f
 Since we now know the BSJ locations, we can now quantify their expression by mapping the reads to the region between the BSJ start and end coordinates. As each read can potentially originate from both linear and circular transcripts, the pipeline performs a joint quantification of the linear and circular transcriptome.
 The quantification is performed using psirc-quant, which is a wrapper around `kallisto`. It allows for inferential-uncertainty aware quantification of linear and circular transcripts.
 
+### CIRI3
+
+With `--quantification_tools ciri3`:
+
+- `5_quantification/ciri3/combined/ciri3_bsj.joined.tsv`: raw BSJ counts for each consensus circRNA and sample.
+- `5_quantification/ciri3/combined/ciri3_fsj.joined.tsv`: raw FSJ counts for the same candidates and samples.
+- `5_quantification/ciri3/raw/<sample>/`: CIRI3's original BSJ and FSJ matrices.
+- `5_quantification/ciri3/reference/` and `5_quantification/ciri3/samples/<sample>/`: candidate lists and normalized per-sample tables, published with `--save_intermediates`.
+
+The joined matrices have a `circRNA_ID` column (`chrom:start|end`, 1-based inclusive) followed by sample columns sorted by name. All requested candidate loci are retained; absent observations are zero-filled. FSJ counts are not gene counts.
+
 ### Transcriptome
 
 <details markdown="1">

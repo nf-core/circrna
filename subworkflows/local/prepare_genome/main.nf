@@ -88,7 +88,7 @@ workflow PREPARE_GENOME {
     if (bwa) {
         ch_bwa = channel.value([[id: "bwa"], bwa])
     }
-    else if (tools.contains('ciri2') || tools.contains('ciri3') || quantification_tools.contains('ciriquant')) {
+    else if (tools.intersect(['ciri2', 'ciri3']).size() > 0 || quantification_tools.intersect(['ciriquant', 'ciri3']).size() > 0) {
         BWA_INDEX(ch_fasta)
         ch_bwa = BWA_INDEX.out.index
     }

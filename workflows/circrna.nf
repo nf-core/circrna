@@ -162,7 +162,7 @@ workflow CIRCRNA {
         // 2. BSJ Discovery
         //
 
-        if (tools.intersect(['ciri2', 'ciri3']).size() > 0) {
+        if (tools.intersect(['ciri2', 'ciri3']).size() > 0 || quantification_tools.contains('ciri3')) {
             if (fli_tools.contains('cirifull')) {
                 CIRI_READS(FASTQC_TRIMGALORE.out.reads)
                 ch_bwa_reads = CIRI_READS.out.reads
@@ -266,7 +266,8 @@ workflow CIRCRNA {
             PREPARE_GENOME.out.hisat2,
             quantification_tools,
             max_shift,
-            consider_strand
+            consider_strand,
+            ch_bwa_sam
         )
 
         ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)

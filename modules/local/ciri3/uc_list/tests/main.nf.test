@@ -1,0 +1,175 @@
+nextflow_process {
+    name 'Test Process CIRI3_UC_LIST'
+    script '../main.nf'
+    process 'CIRI3_UC_LIST'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3'
+    tag 'ciri3_uc_list'
+
+    test('converts all consensus BED12 intervals to 1-based CIRI3 coordinates') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/consensus.bed12")
+                bed.text = [
+                    'chr1\\t0\\t100\\tcircA\\t5\\t+\\t0\\t100\\t0\\t2\\t50,50,\\t0,50,',
+                    'chr2\\t199\\t300\\tcircB\\t2\\t-\\t199\\t300\\t0\\t2\\t40,61,\\t0,40,'
+                ].join('\\n') + '\\n'
+                input[0] = [[id: 'sample_1'], bed]
+                """
+            }
+        }
+        then {
+            def list = path(process.out.list[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert list == ['chr1\t1\t100', 'chr2\t200\t300'] },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+    }
+
+    test('rejects malformed BED12 input') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/bad.bed")
+                bed.text = 'chr1\\t0\\t100\\tonly-four-columns\\n'
+                input[0] = [[id: 'bad'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('expected at least 12 columns') }
+            )
+        }
+    }
+
+    test('ignores comments and blank lines while preserving requested locus order') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/ordered.bed12")
+                bed.text = '# comment\\n\\nchr2\\t9\\t20\\tb\\t0\\t-\\t9\\t20\\t0\\t1\\t11,\\t0,\\nchr1\\t0\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'ordered'], bed]
+                """
+            }
+        }
+        then {
+            def list = path(process.out.list[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert list == ['chr2\t10\t20', 'chr1\t1\t10'] }
+            )
+        }
+    }
+
+    test('rejects duplicate loci even when their strands differ') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/duplicate.bed12")
+                bed.text = 'chr1\\t0\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\nchr1\\t0\\t10\\tb\\t0\\t-\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'duplicate'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('duplicate consensus interval') }
+            )
+        }
+    }
+
+    test('rejects negative BED starts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/invalid-start.bed12")
+                bed.text = 'chr1\\t-1\\t10\\ta\\t0\\t+\\t-1\\t10\\t0\\t1\\t11,\\t0,\\n'
+                input[0] = [[id: 'invalid_start'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('invalid interval') }
+            )
+        }
+    }
+
+    test('rejects noninteger BED starts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/noninteger-start.bed12")
+                bed.text = 'chr1\\tstart\\t10\\ta\\t0\\t+\\t0\\t10\\t0\\t1\\t10,\\t0,\\n'
+                input[0] = [[id: 'noninteger_start'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('coordinates must be integers') }
+            )
+        }
+    }
+
+    test('rejects empty candidate universe') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/empty.bed12")
+                bed.text = ''
+                input[0] = [[id: 'empty'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('consensus BED12 contains no circRNA candidates') }
+            )
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                def bed = file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                input[0] = [[id: 'sample_1'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.list.size() == 1 },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+    }
+}

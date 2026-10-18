@@ -54,6 +54,7 @@ nextflow_workflow {
                 input[13] = ['psirc', 'sum']
                 input[14] = 0
                 input[15] = true
+                input[16] = channel.empty()
                 """
             }
         }
@@ -160,6 +161,7 @@ nextflow_workflow {
                 input[13] = ['psirc', 'ciriquant', 'max']
                 input[14] = 5
                 input[15] = false
+                input[16] = channel.empty()
                 """
             }
         }
@@ -251,6 +253,7 @@ nextflow_workflow {
                 input[13] = ['sum', 'max']
                 input[14] = 0
                 input[15] = false
+                input[16] = channel.empty()
                 """
             }
         }
@@ -325,6 +328,7 @@ nextflow_workflow {
                 input[13] = []
                 input[14] = 0
                 input[15] = true
+                input[16] = channel.empty()
                 """
             }
         }
@@ -419,6 +423,7 @@ nextflow_workflow {
                 input[13] = ['psirc', 'ciriquant', 'sum', 'max']
                 input[14] = 0
                 input[15] = true
+                input[16] = channel.empty()
                 """
             }
         }

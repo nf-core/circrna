@@ -75,6 +75,12 @@ Additionally, the parameter `min_tools` can be used to specify how many tools a 
 
 For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/output#bsj-detection).
 
+## CIRI3 quantification
+
+Use `--quantification_tools ciri3` to count back-splice junctions (BSJs) and forward-splice junctions (FSJs) for the combined circRNA candidates. This is independent of `--tools`: for example, `--tools circexplorer2 --quantification_tools ciri3` discovers junctions with CIRCexplorer2 and quantifies them with CIRI3.
+
+CIRI3 runs once per sample using `-UC` and shares the BWA-MEM alignment with CIRI2/CIRI3 discovery when selected. The count matrices use 1-based inclusive `chrom:start|end` identifiers and sorted sample columns. Unobserved candidates have zero counts. FSJ counts describe CIRI3's junction-level linear support, not gene-level expression. CIRI3 differential expression is not run, and the existing CIRCTEST analysis remains psirc-specific.
+
 ## Annotation
 
 The annotation is generally based on the reference GTF file. It can also utilize BED files that are provided by the various circRNA databases.
