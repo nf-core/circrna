@@ -42,6 +42,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#243](https://github.com/nf-core/circrna/pull/243) - The pipeline now fails with an error if none of the BSJ detection tools finds a BSJ (`FAIL_ON_EMPTY`) (#238) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - Per-tool count matrices failed when only a single sample was present (#215) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - `JCCIRC` never ran in the pipeline; it now receives its inputs correctly, its CPU request is clamped to at least 1, and `tools_with_reads` is validated (#231) (@nictru)
+- [#243](https://github.com/nf-core/circrna/pull/243) - `JCCIRC` now tolerates samples where no fragments are found (JCcirc dies with `... is empty!` and a machine-dependent exit code) and emits its log (#231) (@nictru)
 
 ### `Dependencies`
 

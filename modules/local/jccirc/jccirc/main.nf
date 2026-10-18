@@ -13,7 +13,8 @@ process JCCIRC_JCCIRC {
     tuple val(meta3), path(gtf)
 
     output:
-    path "versions.yml", emit: versions
+    tuple val(meta), path("${prefix}.jccirc.log"), emit: log
+    path "versions.yml"                          , emit: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
@@ -25,7 +26,16 @@ process JCCIRC_JCCIRC {
     cpus=\$((max_sensible_cpus > max_allowed_cpus ? max_allowed_cpus : max_sensible_cpus))
     cpus=\$((cpus < 1 ? 1 : cpus))
 
-    JCcirc -C ${bsjs} -G ${fasta} -F ${gtf} -P \$cpus --contig ${denovo} -O ${prefix} --read1 ${reads[0]} --read2 ${reads[1]} || test \$? -eq 25
+    # JCcirc reports "... is empty!" and dies when no fragments are found. The exit code
+    # of that die() depends on errno (e.g. 25 or 1), so the log is checked as well.
+    # This is a valid empty result, not an error.
+    status=0
+    JCcirc -C ${bsjs} -G ${fasta} -F ${gtf} -P \$cpus --contig ${denovo} -O ${prefix} --read1 ${reads[0]} --read2 ${reads[1]} > ${prefix}.jccirc.log 2>&1 || status=\$?
+    cat ${prefix}.jccirc.log
+
+    if [ \$status -ne 0 ] && [ \$status -ne 25 ] && ! grep -q 'is empty!' ${prefix}.jccirc.log; then
+        exit \$status
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -34,8 +44,11 @@ process JCCIRC_JCCIRC {
     """
 
     stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "1.0.0"
     """
+    touch ${prefix}.jccirc.log
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         jccirc: ${VERSION}
