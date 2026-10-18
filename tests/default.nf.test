@@ -215,7 +215,7 @@ nextflow_pipeline {
         }
     }
 
-    test('CIRI3 quantification without CIRI3 discovery - stub') {
+    test('CIRI3 quantification with empty stub discovery') {
         config './mini.config'
         options '-stub'
 
@@ -230,11 +230,15 @@ nextflow_pipeline {
         }
 
         then {
+            // Discovery stubs write empty BEDs, which BSJ_DETECTION filters out.
+            // Non-empty candidate propagation is covered by the real pipeline test
+            // and the CIRI3_QUANT subworkflow's real/stub tests.
             assertAll(
                 { assert workflow.success },
                 { assert workflow.trace.succeeded().count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
-                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
-                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
+                { assert !workflow.trace.tasks().any { task -> task.name.contains('QUANTIFICATION:CIRI3_QUANT:') } },
+                { assert !path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
+                { assert !path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
             )
         }
     }

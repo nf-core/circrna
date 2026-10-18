@@ -12,8 +12,8 @@ nextflow_process {
         when {
             process {
                 """
-                def input = file("\$outputDir/input")
-                input.mkdirs()
+                def inputDir = file("\$outputDir/input")
+                inputDir.mkdirs()
                 def circ = file("\$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\nchr1\\t30\\t40\\nchr2\\t50\\t70\\n'
                 def bsj = file("\$outputDir/input/sample.ciri3.txt.BSJ_Matrix")
@@ -31,8 +31,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert process.out.bsj[0][0].id == 'sample_9' },
-                { assert bsj == ['circRNA_ID\\tcount', 'chr1:10|20\\t7', 'chr1:30|40\\t0', 'chr2:50|70\\t0'] },
-                { assert fsj == ['circRNA_ID\\tcount', 'chr1:10|20\\t19', 'chr1:30|40\\t0', 'chr2:50|70\\t3'] },
+                { assert bsj == ['circRNA_ID\tcount', 'chr1:10|20\t7', 'chr1:30|40\t0', 'chr2:50|70\t0'] },
+                { assert fsj == ['circRNA_ID\tcount', 'chr1:10|20\t19', 'chr1:30|40\t0', 'chr2:50|70\t3'] },
                 { assert process.out.versions.size() == 1 }
             )
         }
@@ -42,8 +42,8 @@ nextflow_process {
         when {
             process {
                 """
-                def input = file("\$outputDir/input")
-                input.mkdirs()
+                def inputDir = file("\$outputDir/input")
+                inputDir.mkdirs()
                 def circ = file("\$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
                 def bsj = file("\$outputDir/input/bad.BSJ_Matrix")
@@ -64,8 +64,8 @@ nextflow_process {
         when {
             process {
                 """
-                def input = file("\$outputDir/input")
-                input.mkdirs()
+                def inputDir = file("\$outputDir/input")
+                inputDir.mkdirs()
                 def circ = file("\$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
                 def bsj = file("\$outputDir/input/missing.BSJ_Matrix")
@@ -87,8 +87,8 @@ nextflow_process {
         when {
             process {
                 """
-                def input = file("\$outputDir/input")
-                input.mkdirs()
+                def inputDir = file("\$outputDir/input")
+                inputDir.mkdirs()
                 def circ = file("\$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
                 def bsj = file("\$outputDir/input/sample.BSJ_Matrix")
