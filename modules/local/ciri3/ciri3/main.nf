@@ -17,6 +17,9 @@ process CIRI3_CIRI3 {
     tuple val(meta), path("${prefix}.ciri3.txt.FSJ_Matrix"), emit: fsj_matrix, optional: true
     path 'versions.yml', emit: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
@@ -26,7 +29,7 @@ process CIRI3_CIRI3 {
     def heapMb = Math.max(1, (task.memory.toMega() * 0.8) as long)
     VERSION = '3.0.1'
     """
-    java -Xmx${heapMb}m -jar \$(command -v CIRI3_Java_1.8.0.jar) \\
+    java -Xmx${heapMb}m -jar "\$(command -v CIRI3_Java_1.8.0.jar)" \\
         -I ${sam} -O ${prefix}.ciri3.txt -F ${fasta} -A ${gtf} -T ${task.cpus} ${circListArg} ${args}
 
     if [ ${hasCircList} = false ] && [ ! -f ${prefix}.ciri3.txt ]; then

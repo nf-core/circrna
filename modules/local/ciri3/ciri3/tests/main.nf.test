@@ -57,7 +57,13 @@ nextflow_process {
         when {
             process {
                 """
-                def circList = file('two-circRNAs.tsv', content: 'chrI_mini\\t1\\t10\\nchrI_mini\\t20\\t30\\n')
+                def candidates = file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                def circList = file("$outputDir/two-circRNAs.tsv")
+                circList.parent.mkdirs()
+                circList.text = candidates.readLines().take(2).collect { line ->
+                    def fields = line.split('\\t')
+                    [fields[0], fields[1].toInteger() + 1, fields[2]].join('\\t')
+                }.join('\\n') + '\\n'
                 input[0] = BWA_MEM.out.sam
                 input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
                 input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
