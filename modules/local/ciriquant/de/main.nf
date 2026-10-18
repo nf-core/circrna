@@ -8,8 +8,8 @@ process CIRIQUANT_DE {
     tuple val(meta), path(library), path(expression), path(gene)
 
     output:
-    tuple val(meta), path("${circ_path}"), emit: circ, optional: true
-    tuple val(meta), path("${gene_path}"), emit: gene, optional: true
+    tuple val(meta), path("${circ_path}"), emit: circ
+    tuple val(meta), path("${gene_path}"), emit: gene
     path "versions.yml", emit: versions
 
     when:
@@ -26,6 +26,12 @@ process CIRIQUANT_DE {
         --gene ${gene} \\
         --out ${circ_path} \\
         --out2 ${gene_path}
+
+    if [ ! -f ${circ_path} ] || [ ! -f ${gene_path} ]; then
+        echo "ERROR: CIRI_DE_replicate failed to produce ${circ_path} and ${gene_path}." >&2
+        echo "edgeR most likely failed (e.g. too few samples or replicates per group); see .command.err and .command.log in the task directory." >&2
+        exit 1
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

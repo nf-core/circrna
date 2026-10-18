@@ -22,12 +22,12 @@ nextflow_process {
                     'sum',
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true)
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
                     ]
                 ]
                 input[1] = 0
@@ -40,15 +40,13 @@ nextflow_process {
             def counts = path(process.out.combined[0][1]).csv(sep: '\t')
             assertAll(
                 { assert process.success },
-                { assert counts.columnNames.contains('id') },
-                { assert counts.columnNames.contains('cel_N2_1') },
-                { assert counts.columnNames.contains('fust1_1') },
+                { assert counts.columnNames == ['id', 'cel_N2_1', 'fust1_1'] },
                 { assert counts.rowCount > 0 },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
-                    counts.columnNames.sort(),
+                    counts.columnNames,
                     counts.rowCount,
-                    counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort(),
+                    counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() },
                     path(process.out.versions[0]).yaml
                 ).match() }
             )
@@ -68,12 +66,12 @@ nextflow_process {
                     'max',
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true)
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
                     ]
                 ]
                 input[1] = 5
@@ -86,11 +84,11 @@ nextflow_process {
             def counts = path(process.out.combined[0][1]).csv(sep: '\t')
             assertAll(
                 { assert process.success },
-                { assert counts.columnNames.contains('id') },
+                { assert counts.columnNames == ['id', 'cel_N2_1', 'fust1_1'] },
                 { assert counts.rowCount > 0 },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
-                    counts.columnNames.sort(),
+                    counts.columnNames,
                     counts.rowCount,
                     counts.rows.collect { row -> "${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort()
                 ).match() }

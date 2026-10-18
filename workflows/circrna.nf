@@ -115,6 +115,7 @@ workflow CIRCRNA {
         ch_fasta,
         ch_gtf,
         tools,
+        quantification_tools,
         bowtie,
         bowtie2,
         bwa,

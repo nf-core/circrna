@@ -6,7 +6,7 @@ paths <- c('${experiments.join("\', \'")}')
 experiments <- lapply(paths, readRDS)
 
 annotation <- rtracklayer::import('${gtf}')
-tpm <- read.table('${tpm}', header=TRUE, row.names=1)[, -1]
+tpm <- read.table('${tpm}', header=TRUE, sep='\\t', row.names=1, check.names=FALSE)[, -1]
 
 se_assays <- list()
 

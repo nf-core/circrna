@@ -44,6 +44,41 @@ nextflow_process {
         }
     }
 
+    test("ciriquant gene tables - samples in reverse order") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'gene' ],
+                    [ 'fust1_1', 'cel_N2_1' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciriquant.gene.tsv', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciriquant.gene.tsv', checkIfExists: true)
+                    ]
+                ]
+                input[1] = "gene_id,gene_name"
+                """
+            }
+        }
+
+        then {
+            def joined = path(process.out.joined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert joined.columnNames == ['gene_id', 'gene_name', 'cel_N2_1', 'fust1_1'] },
+                { assert joined.rowCount > 0 },
+                { assert snapshot(
+                    process.out.joined,
+                    joined.columnNames
+                ).match() }
+            )
+        }
+    }
+
     test("ciriquant circ tables - header only") {
 
         when {

@@ -10,6 +10,9 @@ nextflow_workflow {
 
     test("psirc counts and ciriquant gtfs - 6 samples") {
 
+        // CIRIQUANT_DE is expected to fail on this data (see assertions below), so it must not abort the workflow
+        config "./nextflow.config"
+
         when {
             params {
                 outdir = "$outputDir"
@@ -49,15 +52,22 @@ nextflow_workflow {
         }
 
         then {
-            def tasks = workflow.trace.succeeded().collect { it.name.tokenize(' ')[0].tokenize(':').last() }.unique().sort()
+            def processName = { trace -> trace.name.tokenize(' ')[0].tokenize(':').last() }
+            def tasks = workflow.trace.succeeded().collect(processName).unique().sort()
+            def failedTasks = workflow.trace.failed().collect(processName).unique().sort()
             def summary_lines = file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").readLines()
+            // The sparse 6-sample test data (5 circRNAs) makes edgeR crash inside CIRI_DE_replicate, so CIRIQUANT_DE
+            // is expected to fail (same as "six samples - edgeR failure" in its module test).
+            // A successful DE run needs denser test data.
             assertAll(
                 { assert workflow.success },
-                { assert tasks.containsAll([ 'CIRCTEST_PREPARE', 'CIRCTEST_CIRCTEST', 'CIRIQUANT_PREPDE', 'STRINGTIE_PREPDE', 'CIRIQUANT_DE' ]) },
+                { assert tasks.containsAll([ 'CIRCTEST_PREPARE', 'CIRCTEST_CIRCTEST', 'CIRIQUANT_PREPDE', 'STRINGTIE_PREPDE' ]) },
+                { assert failedTasks == [ 'CIRIQUANT_DE' ] },
                 { assert file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").exists() },
                 { assert file("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_library.tsv").exists() },
                 { assert snapshot(
                     tasks,
+                    failedTasks,
                     summary_lines[0],
                     summary_lines.size(),
                     summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),

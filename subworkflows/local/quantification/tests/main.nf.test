@@ -18,17 +18,17 @@ nextflow_workflow {
                 """
                 input[0] = channel.of(
                     [
-                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
-                        [
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
-                        ]
-                    ],
-                    [
                         [ id:'fust1_1', single_end:false, strandedness:'auto' ],
                         [
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                         ]
                     ]
                 )
@@ -39,12 +39,12 @@ nextflow_workflow {
                 input[5] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
-                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ]
+                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
                 input[9] = channel.value([ [ id:'phenotype' ], file(params.pipelines_testdata_base_path + 'mini/phenotype.csv', checkIfExists: true) ])
@@ -67,21 +67,21 @@ nextflow_workflow {
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
                 { assert !new File("$outputDir/5_quantification/aggregations/max.tsv").exists() },
-                { assert circular.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'tx' ] },
+                { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert circular.rowCount > 0 },
                 { assert gene.rowCount > 0 },
                 { assert workflow.out.rds.size() == 1 },
-                { assert sum.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'id' ] },
+                { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert sum.rowCount > 0 },
                 { assert snapshot(
                     workflow.out.gene.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.circ.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.rds.collect { meta, f -> [ meta, file(f).name ] },
                     workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort().findAll { it.contains('AGGREGATE') },
-                    circular.columns['tx'].sort(),
+                    circular.columns['tx'],
                     gene.rowCount,
                     sum.rowCount,
-                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort()
+                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
                 ).match() }
             )
         }
@@ -124,17 +124,17 @@ nextflow_workflow {
                 """
                 input[0] = channel.of(
                     [
-                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
-                        [
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
-                        ]
-                    ],
-                    [
                         [ id:'fust1_1', single_end:false, strandedness:'auto' ],
                         [
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                         ]
                     ]
                 )
@@ -145,12 +145,12 @@ nextflow_workflow {
                 input[5] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
-                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ]
+                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
                 input[9] = channel.value([ [ id:'phenotype' ], file(params.pipelines_testdata_base_path + 'mini/phenotype.csv', checkIfExists: true) ])
@@ -172,29 +172,29 @@ nextflow_workflow {
             def max = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
-                { assert circular.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'tx' ] },
+                { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert circular.rowCount > 0 },
                 { assert gene.rowCount > 0 },
                 { assert workflow.out.rds.size() == 1 },
                 { assert workflow.out.gene.size() == 2 },
                 { assert workflow.out.circ.size() == 2 },
-                { assert ciriquantGene.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id', 'gene_name' ] },
+                { assert ciriquantGene.columnNames == [ 'gene_id', 'gene_name', 'cel_N2_1', 'fust1_1' ] },
                 { assert ciriquantGene.rowCount > 0 },
                 { assert ciriquantCirc.readLines().size() == 1 },
-                { assert ciriquantCirc.readLines()[0].split('\t').toList().sort() == [ 'cel_N2_1', 'circ_id', 'fust1_1', 'gene_id' ] },
+                { assert ciriquantCirc.readLines()[0].split('\t').toList() == [ 'circ_id', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert workflow.out.ciriquant.size() == 2 },
                 { assert workflow.out.stringtie.size() == 2 },
                 { assert !new File("$outputDir/5_quantification/aggregations/sum.tsv").exists() },
-                { assert max.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'id' ] },
+                { assert max.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert max.rowCount > 0 },
                 { assert snapshot(
                     workflow.out.gene.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.circ.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.rds.collect { meta, f -> [ meta, file(f).name ] },
                     workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort().findAll { it.contains('AGGREGATE') },
-                    circular.columns['tx'].sort(),
+                    circular.columns['tx'],
                     gene.rowCount,
-                    ciriquantGene.columnNames.sort(),
+                    ciriquantGene.columnNames,
                     ciriquantGene.rowCount,
                     workflow.out.ciriquant.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
                     workflow.out.stringtie.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
@@ -215,17 +215,17 @@ nextflow_workflow {
                 """
                 input[0] = channel.of(
                     [
-                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
-                        [
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
-                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
-                        ]
-                    ],
-                    [
                         [ id:'fust1_1', single_end:false, strandedness:'auto' ],
                         [
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
                             file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                         ]
                     ]
                 )
@@ -236,12 +236,12 @@ nextflow_workflow {
                 input[5] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
-                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ]
+                    [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
                 input[9] = channel.value([ [ id:'phenotype' ], file(params.pipelines_testdata_base_path + 'mini/phenotype.csv', checkIfExists: true) ])
@@ -265,15 +265,15 @@ nextflow_workflow {
                 { assert workflow.out.rds.isEmpty() },
                 { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().every { it.name.startsWith('QUANTIFICATION:AGGREGATE') } },
-                { assert sum.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'id' ] },
+                { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert sum.rowCount > 0 },
-                { assert max.columnNames.sort() == [ 'cel_N2_1', 'fust1_1', 'id' ] },
+                { assert max.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert max.rowCount > 0 },
                 { assert snapshot(workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort(),
                     sum.rowCount,
-                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort(),
+                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() },
                     max.rowCount,
-                    max.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort()
+                    max.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
                 ).match() }
             )
         }
