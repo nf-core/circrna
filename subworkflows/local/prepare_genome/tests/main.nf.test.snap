@@ -21,12 +21,20 @@
                 "10": [
                     [
                         {
+                            "id": "fasta"
+                        },
+                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "11": [
+                    [
+                        {
                             "id": "gtf"
                         },
                         "gtf.filtered.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "11": [
+                "12": [
                     "versions.yml:md5,0ef1455f33951e8b66782a671e8213e5",
                     "versions.yml:md5,0f716c4a747b3c98786cd74818a3b55d",
                     "versions.yml:md5,f48c2580b91bfa51defc7ec157600e8b",
@@ -130,12 +138,7 @@
                     ]
                 ],
                 "9": [
-                    [
-                        {
-                            "id": "fasta"
-                        },
-                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
+                    
                 ],
                 "bowtie": [
                     [
@@ -193,6 +196,9 @@
                     [
                         "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
+                ],
+                "circminer": [
+                    
                 ],
                 "faidx": [
                     [
@@ -278,7 +284,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T12:49:12.131297551"
+        "timestamp": "2026-10-18T13:57:20.236279286"
     },
     "build all indices": {
         "content": [
