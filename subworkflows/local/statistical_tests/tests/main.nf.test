@@ -55,7 +55,7 @@ nextflow_workflow {
             def processName = { trace -> trace.name.tokenize(' ')[0].tokenize(':').last() }
             def tasks = workflow.trace.succeeded().collect(processName).unique().sort()
             def failedTasks = workflow.trace.failed().collect(processName).unique().sort()
-            def circtest_runs = workflow.trace.succeeded().findAll { it.name.contains('CIRCTEST_CIRCTEST') }.size()
+            def circtest_runs = workflow.trace.succeeded().findAll { task -> task.name.contains('CIRCTEST_CIRCTEST') }.size()
             def summary_lines = file("$outputDir/7_statistical_tests/circtest/counts_summary.txt").readLines()
             // The sparse 6-sample test data (5 circRNAs) makes edgeR crash inside CIRI_DE_replicate, so CIRIQUANT_DE
             // is expected to fail (same as "six samples - edgeR failure" in its module test).
@@ -125,7 +125,7 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.trace.succeeded().findAll { it.name.contains('CIRCTEST_CIRCTEST') }.size() == 1 },
+                { assert workflow.trace.succeeded().findAll { task -> task.name.contains('CIRCTEST_CIRCTEST') }.size() == 1 },
                 { assert snapshot(workflow.out).match() }
             )
         }

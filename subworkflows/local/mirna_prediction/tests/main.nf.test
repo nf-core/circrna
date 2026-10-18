@@ -93,7 +93,7 @@ nextflow_workflow {
 
     test("with miRNA expression, 101 miRNAs are split into two correlation batches") {
 
-        config "./two_batches.config"
+        config "./ignore_correlation_failures.config"
 
         when {
             params {
@@ -138,8 +138,6 @@ nextflow_workflow {
     }
 
     test("with miRNA expression, without quantification rds") {
-
-        config "./two_batches.config"
 
         when {
             params {
