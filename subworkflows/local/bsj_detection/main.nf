@@ -36,7 +36,7 @@ workflow BSJ_DETECTION {
     ch_annotation
     bowtie_index
     bowtie2_index
-    bwa_index
+    ch_bwa_sam
     chromosomes
     star_index
     circexplorer2_index
@@ -53,6 +53,7 @@ workflow BSJ_DETECTION {
     ch_faidx
     circminer_index
     circminer_gtf
+    ch_reads_fixed_length
 
     main:
     ch_versions = channel.empty()
@@ -112,15 +113,13 @@ workflow BSJ_DETECTION {
     }
 
     if (tools.contains('ciri')) {
-        CIRI(reads, ch_fasta, ch_gtf, bwa_index, fli_tools)
+        CIRI(ch_bwa_sam, ch_fasta, ch_gtf)
         ch_versions = ch_versions.mix(CIRI.out.versions)
         ch_ciri_txt = CIRI.out.ciri_txt
         ch_ciri_sam = CIRI.out.ciri_sam
-        ch_reads_fixed_length = CIRI.out.reads_fixed_length
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI.out.bed)
     }
     else {
-        ch_reads_fixed_length = channel.empty()
         ch_ciri_txt = channel.empty()
         ch_ciri_sam = channel.empty()
     }

@@ -27,14 +27,6 @@ nextflow_workflow {
                 """
             }
         }
-        run("BWA_INDEX") {
-            script "modules/nf-core/bwa/index/main.nf"
-            process {
-                """
-                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
-                """
-            }
-        }
         run("CIRCMINER_INDEX") {
             script "modules/local/circminer/index/main.nf"
             process {
@@ -121,6 +113,7 @@ nextflow_workflow {
                 input[21] = SAMTOOLS_FAIDX.out.fai
                 input[22] = CIRCMINER_INDEX.out.index
                 input[23] = CIRCMINER_ORDERGTF.out.gtf
+                input[24] = channel.empty()
                 """
             }
         }
@@ -167,7 +160,10 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.of(
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -184,6 +180,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -253,7 +250,10 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.of(
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -270,6 +270,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -325,7 +326,7 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.empty()
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -342,6 +343,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -404,7 +406,7 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.empty()
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -421,6 +423,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -485,7 +488,10 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.of(
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -502,6 +508,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -567,7 +574,7 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.empty()
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -584,6 +591,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -624,7 +632,7 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.empty()
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -641,6 +649,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -685,7 +694,9 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.of(
+                    [[id: 'noise', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)]
+                )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -702,6 +713,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
@@ -750,7 +762,7 @@ nextflow_workflow {
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = BWA_INDEX.out.index.first()
+                input[7] = channel.empty()
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
@@ -767,6 +779,7 @@ nextflow_workflow {
                 input[21] = channel.empty()
                 input[22] = channel.empty()
                 input[23] = channel.empty()
+                input[24] = channel.empty()
                 """
             }
         }
