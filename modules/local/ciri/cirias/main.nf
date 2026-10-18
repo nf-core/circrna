@@ -14,7 +14,7 @@ process CIRI_CIRIAS {
 
     output:
     tuple val(meta), path("${prefix}_jav.list"), emit: list
-    tuple val(meta), path("${prefix}_library_length.list"), emit: library_length, optional: true
+    tuple val(meta), path("${prefix}_library_length.list"), emit: library_length
     path "versions.yml", emit: versions
 
     script:
@@ -24,9 +24,7 @@ process CIRI_CIRIAS {
     """
     CIRI-AS -S ${sam} -C ${ciri} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
 
-    # if ( ! \$(cat ${prefix}_library_length.list | grep -q "^library_length") ); then
-    #     rm -f ${prefix}_library_length.list
-    # fi
+    # The library length file stays even if it is empty: CIRI-vis needs it via -l to write the circRNA sequences
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
