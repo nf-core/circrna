@@ -34,7 +34,7 @@ process CIRI_CIRIVIS {
         LIST_FILE=${list}
     fi
 
-    java -jar ${moduleDir}/CIRI_vis_v${VERSION}.jar -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} -list \$LIST_FILE ${args}
+    java -jar \$(command -v CIRI_vis_v${VERSION}.jar) -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} -list \$LIST_FILE ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

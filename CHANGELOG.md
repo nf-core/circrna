@@ -27,6 +27,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#243](https://github.com/nf-core/circrna/pull/243) - The per-tool BSJ count matrices are now published as `<tool>.joined.tsv` (tab-separated) instead of `<tool>.csv`. Counting is done by `JOIN_SAMPLES`, which now also works with a single sample (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - Renamed the config selectors `CIRCTOOLS:MAIN` to `CIRCTOOLS:DETECT` and `ANNOTATE_COMBINED:BED2GFF|BED2GTF` to `ANNOTATE_COMBINED:BED2(GFF|GTF)`, so that the options are applied to the intended processes only (@nictru)
 - [#244](https://github.com/nf-core/circrna/pull/244) - `-profile test` sets `--quantification_tools 'psirc,sum,max'`, because the test data yields too few circRNAs for the CIRIquant differential expression (edgeR). CIRIquant is covered by the module and subworkflow tests (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - The `mirna_min_tools` parameter description, the usage documentation and the output documentation (`mature.txt` of TargetScan) are updated (#236, #237) (@nictru)
 
 ### `Fixed`
 
@@ -50,9 +51,17 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#244](https://github.com/nf-core/circrna/pull/244) - Sample columns in the joined CIRIquant and psirc matrices and in the `sum`/`max` aggregations are now sorted by sample id, so the column order no longer varies between runs (#235) (@nictru)
 - [#244](https://github.com/nf-core/circrna/pull/244) - The BWA and HISAT2 indices are now built when `ciriquant` is selected as quantification tool, so CIRIquant works with the default `--quantification_tools` (#240) (@nictru)
 - [#244](https://github.com/nf-core/circrna/pull/244) - `CIRIQUANT_DE` now fails with a clear error when `CIRI_DE_replicate` produces no output, instead of silently continuing (#234) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `CIRCTEST` never ran: the inputs of `STATISTICAL_TESTS` were joined on the wrong key. They are now joined on `meta.quantification`, and only psirc-quant counts are used (#233) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `mirna_min_tools` now means "at least": a binding site is kept if it is predicted by at least `mirna_min_tools` of the selected `mirna_tools` (#236). **Note:** with the default of `1`, binding sites predicted by any single tool are now kept (union), so the default results change. Use `--mirna_min_tools 2` for the previous behaviour (intersection of miRanda and TargetScan). The parameter maximum is lowered from 4 to 2 (the number of available tools) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - The TargetScan `mature.txt` seed table is now built with the nf-core `BIOAWK` module instead of a Groovy function in `MIRNA_BINDINGSITES`. The unused `TARGETSCAN_DATABASE` module and `bin/targetscan_format.sh` are removed (#237) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `COMPUTE_CORRELATIONS` read sample-named headers with mangled names (`check.names`) and failed with an obscure error for samples missing from the miRNA table. It now reads headers unchanged and reports the missing samples in a clear error message (#218) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `COMPUTE_CORRELATIONS` only ran for the first binding-site batch of `MIRNA_PREDICTION`. It now runs for all batches (#218) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `MIRNA_FILTERING` only checked columns 5 onwards and so ignored the first three samples. All sample columns are checked now (#218) (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - `CIRCTEST` mangled sample-named column headers (`check.names`). They are now read unchanged (#233, #218) (@nictru)
 
 ### `Dependencies`
 
 - [#243](https://github.com/nf-core/circrna/pull/243) - Updated the nf-core module `csvtk/join` (its stub referenced an undefined `args` variable). The output channel is now called `out_file` (@nictru)
+- [#245](https://github.com/nf-core/circrna/pull/245) - Removed the nf-core module `cat/cat`, which is no longer used (#237) (@nictru)
 
 ### `Deprecated`

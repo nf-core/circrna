@@ -61,6 +61,38 @@ nextflow_process {
         }
     }
 
+    test("miRNA expressed only in the first three samples is kept") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'mirna' ],
+                    file("$outputDir/mirna_expression.normalized.tsv").with { tsv ->
+                        tsv.parent.mkdirs()
+                        tsv.text = [
+                            'miRNA\\ts1\\ts2\\ts3\\ts4\\ts5',
+                            'early_mirna\\t10\\t10\\t10\\t0\\t0',
+                            'late_mirna\\t0\\t0\\t0\\t10\\t10',
+                            'silent_mirna\\t0\\t0\\t0\\t0\\t0'
+                        ].join('\\n') + '\\n'
+                        tsv
+                    }
+                ]
+                input[1] = 0.4
+                input[2] = 5
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.filtered[0][1]).readLines()*.split('\t')*.getAt(0) == ['miRNA', 'early_mirna', 'late_mirna'] }
+            )
+        }
+    }
+
     test("normalized counts - stub") {
 
         options '-stub'
