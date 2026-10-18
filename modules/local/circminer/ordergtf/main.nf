@@ -4,8 +4,8 @@ process CIRCMINER_ORDERGTF {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-?         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/18/1841daa69f98a0b0ffcb8f545070c8350a75febb167202136eab0990131d31c0/data'
-:         'community.wave.seqera.io/library/python:3.14.5--dc8358b3c5eeb927' }"
+?         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/49/49df43a275ec8361a3a4f810876e9a7e7034f9998084dccd8f77f299c18225cb/data'
+:         'community.wave.seqera.io/library/python_gffutils_pyyaml:7521a2b68d4ddc13' }"
 
     input:
     tuple val(meta), path(gtf, stageAs: 'input/*')
@@ -26,9 +26,13 @@ process CIRCMINER_ORDERGTF {
     """
     touch ${prefix}.gtf
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version 2>&1 | cut -d ' ' -f 2)
-    END_VERSIONS
+    python - <<'PY'
+    import platform
+    import gffutils
+    import yaml
+
+    with open("versions.yml", "w") as versions:
+        yaml.safe_dump({"${task.process}": {"python": platform.python_version(), "gffutils": gffutils.__version__, "pyyaml": yaml.__version__}}, versions)
+    PY
     """
 }
