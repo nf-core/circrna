@@ -257,4 +257,34 @@ nextflow_workflow {
             )
         }
     }
+
+    test("circtools builds a STAR index") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circtools']
+                input[3] = []
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert !workflow.out.star.isEmpty() }
+            )
+        }
+    }
 }

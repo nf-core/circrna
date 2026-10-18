@@ -101,6 +101,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -184,6 +185,7 @@ nextflow_workflow {
                 input[18] = 2
                 input[19] = 2
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -253,6 +255,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -329,6 +332,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -407,6 +411,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -486,6 +491,7 @@ nextflow_workflow {
                 input[18] = 2
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -540,6 +546,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -598,6 +605,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }
@@ -660,6 +668,7 @@ nextflow_workflow {
                 input[18] = 1
                 input[19] = 1
                 input[20] = true
+                input[21] = channel.empty()
                 """
             }
         }

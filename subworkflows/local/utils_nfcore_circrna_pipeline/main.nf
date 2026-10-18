@@ -185,6 +185,31 @@ def parseToolList(String tools) {
     return tools.split(',').collect { tool -> tool.trim().toLowerCase() }.findAll { tool -> tool }
 }
 
+// Facts about BSJ callers belong here so index preparation, dispatch and validation
+// cannot silently drift apart.
+def bsjToolProperties() {
+    return [
+        ciri            : [reads: true,  star: false],
+        circexplorer2   : [reads: false, star: true],
+        circrna_finder  : [reads: false, star: true],
+        circtools       : [reads: true,  star: true],
+        find_circ       : [reads: true,  star: false],
+        mapsplice       : [reads: false, star: true],
+        psirc           : [reads: false, star: false],
+        segemehl        : [reads: true,  star: false],
+    ]
+}
+
+def starBasedTools(List tools) {
+    def properties = bsjToolProperties()
+    return tools.findAll { tool -> properties[tool]?.star }
+}
+
+def readCarryingTools(List tools) {
+    def properties = bsjToolProperties()
+    return tools.findAll { tool -> properties[tool]?.reads }
+}
+
 //
 // Check and validate pipeline parameters
 //
@@ -207,8 +232,8 @@ def validateInputParameters() {
         error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI must also be selected for BSJ detection.")
     }
 
-    def tools_with_reads = ["find_circ", "segemehl", "circtools", "ciri"]
-    def enabled_bsj_tools_with_reads = bsj_tools.intersect(tools_with_reads)
+    def tools_with_reads = readCarryingTools(bsjToolProperties().keySet() as List)
+    def enabled_bsj_tools_with_reads = readCarryingTools(bsj_tools)
     if (fli_tools.contains('jccirc') && enabled_bsj_tools_with_reads.size() == 0) {
         error("Please check input parameters -> If jccirc is selected for FLI detection, at least one BSJ detection tool that supports read-level detection (${tools_with_reads.join(', ')}) must also be selected.")
     }

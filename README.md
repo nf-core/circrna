@@ -38,13 +38,14 @@ If you want to contribute, feel free to create an issue or pull request on the [
 - Raw read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
 - BSJ detection
-  - [`CIRIquant`](https://github.com/Kevinzjy/CIRIquant)
+  - [`CIRI`](https://sourceforge.net/projects/ciri/)
   - [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
     - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
     - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
-    - [`DCC`](https://github.com/dieterich-lab/DCC)
+    - [`circtools`](https://github.com/dieterich-lab/circtools)
   - [`find circ`](https://github.com/marvin-jens/find_circ)
   - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
+  - [`psirc`](https://github.com/Christina-hshi/psirc)
   - [`Segemehl`](https://www.bioinf.uni-leipzig.de/Software/segemehl/)
 - circRNA annotation
   - Based on a GTF file

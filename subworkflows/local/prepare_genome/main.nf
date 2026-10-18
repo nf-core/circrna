@@ -13,6 +13,7 @@ include { GAWK as CIRCEXPLORER2_REFERENCE } from '../../../modules/nf-core/gawk'
 include { GFFREAD                         } from '../../../modules/nf-core/gffread'
 include { PSIRC_TRANSCRIPTOME             } from '../../../modules/local/psirc/transcriptome'
 include { PSIRC_INDEX                     } from '../../../modules/local/psirc/index'
+include { starBasedTools                  } from '../utils_nfcore_circrna_pipeline'
 
 workflow PREPARE_GENOME {
     take:
@@ -25,8 +26,10 @@ workflow PREPARE_GENOME {
     bwa
     hisat2
     star
+    fli_tools
 
     main:
+    fli_tools = fli_tools ?: []
     ch_versions = channel.empty()
 
     // MapSplice cannot deal with extra field in the fasta headers
@@ -97,7 +100,7 @@ workflow PREPARE_GENOME {
     if (star) {
         ch_star = channel.value([[id: "star"], star])
     }
-    else if (tools.intersect(['circexplorer2', 'circrna_finder', 'dcc', 'mapsplice']).size() > 0) {
+    else if (starBasedTools(tools).size() > 0 || fli_tools.contains('circtools')) {
         STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
         ch_star = STAR_GENOMEGENERATE.out.index
     }
