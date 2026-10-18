@@ -26,6 +26,7 @@ nextflow_workflow {
                 input[6] = null
                 input[7] = null
                 input[8] = null
+                input[9] = []
                 """
             }
         }
@@ -80,6 +81,7 @@ nextflow_workflow {
                 input[6] = prebuilt('bwa')
                 input[7] = prebuilt('hisat2')
                 input[8] = prebuilt('star')
+                input[9] = []
                 """
             }
         }
@@ -124,6 +126,7 @@ nextflow_workflow {
                 input[6] = null
                 input[7] = null
                 input[8] = null
+                input[9] = []
                 """
             }
         }
@@ -168,6 +171,7 @@ nextflow_workflow {
                 input[6] = null
                 input[7] = null
                 input[8] = null
+                input[9] = []
                 """
             }
         }
@@ -211,6 +215,7 @@ nextflow_workflow {
                 input[6] = null
                 input[7] = null
                 input[8] = null
+                input[9] = []
                 """
             }
         }
@@ -246,6 +251,7 @@ nextflow_workflow {
                 input[6] = null
                 input[7] = null
                 input[8] = null
+                input[9] = []
                 """
             }
         }
@@ -254,6 +260,68 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    test("circtools builds a STAR index") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circtools']
+                input[3] = []
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                input[9] = []
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert !workflow.out.star.isEmpty() }
+            )
+        }
+    }
+
+    test("FLI circtools builds a STAR index") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = []
+                input[3] = []
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                input[9] = ['circtools']
+                """
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert !workflow.out.star.isEmpty() }
             )
         }
     }

@@ -23,6 +23,8 @@ include { PSIRC                                          } from '../detection_to
 include { ANNOTATION as ANNOTATE_COMBINED                } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE              } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL         } from '../annotation'
+include { starBasedTools                                  } from '../utils_nfcore_circrna_pipeline'
+include { readCarryingTools                               } from '../utils_nfcore_circrna_pipeline'
 
 workflow BSJ_DETECTION {
     take:
@@ -47,6 +49,7 @@ workflow BSJ_DETECTION {
     min_tools
     min_samples
     exons_only
+    ch_faidx
 
     main:
     ch_versions = channel.empty()
@@ -58,7 +61,7 @@ workflow BSJ_DETECTION {
     // STAR 2-PASS-MODE
     star_ignore_sjdbgtf = true
 
-    if ((tools.intersect(['circexplorer2', 'circrna_finder', 'circtools', 'mapsplice']).size() > 0) || (fli_tools.intersect(['circtools']).size() > 0)) {
+    if (starBasedTools(tools).size() > 0 || fli_tools.contains('circtools')) {
         STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf)
         ch_versions = ch_versions.mix(STAR2PASS.out.versions)
         ch_star_bam = STAR2PASS.out.bam
@@ -148,7 +151,7 @@ workflow BSJ_DETECTION {
     }
 
     if (tools.contains('psirc')) {
-        PSIRC(reads, psirc_index)
+        PSIRC(reads, psirc_index, ch_fasta, ch_faidx)
         ch_versions = ch_versions.mix(PSIRC.out.versions)
         ch_psirc_bsj = PSIRC.out.output
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
@@ -168,10 +171,9 @@ workflow BSJ_DETECTION {
     // Analyze read-level agreement
     //
 
-    def tools_with_reads = ["find_circ", "segemehl", "circtools", "ciri"]
-    def enabled_tools_with_reads = tools.intersect(tools_with_reads)
+    def enabled_tools_with_reads = readCarryingTools(tools)
 
-    ch_bsj_bed_per_sample_tool_reads = ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> tools_with_reads.contains(_meta.tool) }
+    ch_bsj_bed_per_sample_tool_reads = ch_bsj_bed_per_sample_tool.filter { _meta, _bed -> readCarryingTools([_meta.tool]).size() > 0 }
 
     if (enabled_tools_with_reads.size() > 1) {
         COMBINEBEDS_READS(

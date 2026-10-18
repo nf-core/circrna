@@ -120,7 +120,8 @@ workflow CIRCRNA {
         bowtie2,
         bwa,
         hisat2,
-        star
+        star,
+        fli_tools
     )
 
     ch_gtf              = PREPARE_GENOME.out.gtf
@@ -177,7 +178,8 @@ workflow CIRCRNA {
             consider_strand,
             min_tools,
             min_samples,
-            exons_only
+            exons_only,
+            PREPARE_GENOME.out.faidx
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)

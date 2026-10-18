@@ -1,0 +1,52 @@
+nextflow_process {
+
+    name "Test Process PSIRC_BSJ_UNIFY"
+    script "../main.nf"
+    process "PSIRC_BSJ_UNIFY"
+
+    tag "modules"
+    tag "modules_local"
+    tag "psirc"
+    tag "bsj_unify"
+
+    test("resolves authentic psiRC transcript headers without overwriting staged calls") {
+        when {
+            process {
+                """
+                def calls = file("$outputDir/calls.bed").with { file -> file.parent.mkdirs(); file.text = 'chr1\\t2\\t4\\t5:tx_plus_E1B2\\nchr1\\t5\\t7\\t3:tx_plus_E1B2=tx_minus_E1B2\\nchr1\\t8\\t10\\t2:missing_E1B2\\nchr1\\t11\\t13\\t1:tx_plus_E1B2:0\\n'; file }
+                def transcriptome = file("$outputDir/transcriptome.fasta").with { file -> file.text = '>chr1:0-10_tx_plus_Exon_Lengths_10_Offsets_0_+\\nAAAAAAAAAA\\n>chr1:20-30_tx_minus_Exon_Lengths_10_Offsets_0_-\\nCCCCCCCCCC\\n'; file }
+                input[0] = [[id: 'calls'], calls]
+                input[1] = [[id: 'transcriptome'], transcriptome]
+                """
+            }
+        }
+
+        then {
+            def output = path(process.out.bed[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert output == ['chr1\t2\t4\tFUSIONJUNC_0/5\t5\t+', 'chr1\t5\t7\tFUSIONJUNC_1/3\t3\t.', 'chr1\t8\t10\tFUSIONJUNC_2/2\t2\t.', 'chr1\t11\t13\tFUSIONJUNC_3/1\t1\t+'] },
+                { assert file("$outputDir/calls.bed").readLines().size() == 4 }
+            )
+        }
+    }
+
+    test("stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                def calls = file("$outputDir/calls.bed").with { file -> file.parent.mkdirs(); file.text = 'chr1\\t2\\t4\\t5:tx_plus_E1B2\\n'; file }
+                def transcriptome = file("$outputDir/transcriptome.fasta").with { file -> file.text = '>chr1:0-10_tx_plus_Exon_Lengths_10_Offsets_0_+\\nAAAAAAAAAA\\n'; file }
+                input[0] = [[id: 'calls'], calls]
+                input[1] = [[id: 'transcriptome'], transcriptome]
+                """
+            }
+        }
+
+        then {
+            assertAll({ assert process.success }, { assert path(process.out.bed[0][1]).text == '' })
+        }
+    }
+}
