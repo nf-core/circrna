@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
+import platform
+import yaml
 
-circ_list_path, bsj_path, fsj_path, prefix = sys.argv[1:]
+circ_list_path = "${circ_list}"
+bsj_path = "${bsj_matrix}"
+fsj_path = "${fsj_matrix}"
+prefix = "${prefix}"
 
 
 def fail(message):
@@ -14,7 +18,7 @@ def parse_candidates(path):
     seen = set()
     with open(path, encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, 1):
-            fields = line.rstrip("\n").split("\t")
+            fields = line.rstrip("\\n").split("\\t")
             if len(fields) != 3 or not fields[0]:
                 fail(f"candidate list row {line_number}: expected chrom, start, end")
             try:
@@ -36,11 +40,11 @@ def parse_candidates(path):
 def parse_matrix(path, expected_header, candidates):
     counts = {}
     with open(path, encoding="utf-8") as handle:
-        header = handle.readline().rstrip("\r\n").split("\t")
+        header = handle.readline().rstrip("\\r\\n").split("\\t")
         if header != ["circRNA", expected_header]:
             fail(f"{path}: expected header circRNA\\t{expected_header}, got {header!r}")
         for line_number, line in enumerate(handle, 2):
-            fields = line.rstrip("\r\n").split("\t")
+            fields = line.rstrip("\\r\\n").split("\\t")
             if len(fields) != 4:
                 fail(f"{path} row {line_number}: expected chrom, start, end, count")
             chrom = fields[0]
@@ -65,7 +69,15 @@ fsj_counts = parse_matrix(fsj_path, "FSJ", candidate_set)
 
 for suffix, counts in (("bsj", bsj_counts), ("fsj", fsj_counts)):
     with open(f"{prefix}.{suffix}.tsv", "w", encoding="utf-8") as output:
-        output.write("circRNA_ID\tcount\n")
+        output.write("circRNA_ID\\tcount\\n")
         for chrom, start, end in candidates:
             key = (chrom, start, end)
-            output.write(f"{chrom}:{start}|{end}\t{counts.get(key, 0)}\n")
+            output.write(f"{chrom}:{start}|{end}\\t{counts.get(key, 0)}\\n")
+
+versions = {
+    "${task.process}": {
+        "python": platform.python_version(),
+    }
+}
+with open("versions.yml", "w", encoding="utf-8") as version_file:
+    yaml.safe_dump(versions, version_file)

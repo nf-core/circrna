@@ -20,13 +20,6 @@ process CIRI3_UC_MATRIX {
     script:
     prefix = task.ext.prefix ?: "${meta2.id}"
     template 'uc_matrix.py'
-    """
-    python3 uc_matrix.py ${circ_list} ${bsj_matrix} ${fsj_matrix} ${prefix}
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //')
-    END_VERSIONS
-    """
 
     stub:
     prefix = task.ext.prefix ?: "${meta2.id}"

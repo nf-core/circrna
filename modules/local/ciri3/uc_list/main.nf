@@ -18,13 +18,6 @@ process CIRI3_UC_LIST {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template 'uc_list.py'
-    """
-    python3 uc_list.py ${bed} ${prefix}.ciri3.list
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //')
-    END_VERSIONS
-    """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

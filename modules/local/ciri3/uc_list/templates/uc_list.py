@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
+import platform
+import yaml
 
 
 def main(bed_path, output_path):
@@ -9,7 +10,7 @@ def main(bed_path, output_path):
         for line_number, line in enumerate(bed, 1):
             if not line.strip() or line.startswith("#"):
                 continue
-            fields = line.rstrip("\r\n").split("\t")
+            fields = line.rstrip("\\r\\n").split("\\t")
             if len(fields) < 12:
                 raise ValueError(f"BED12 row {line_number}: expected at least 12 columns, found {len(fields)}")
             chrom = fields[0]
@@ -23,10 +24,17 @@ def main(bed_path, output_path):
             if candidate in seen:
                 raise ValueError(f"BED12 row {line_number}: duplicate consensus interval {candidate}")
             seen.add(candidate)
-            output.write("\t".join(map(str, candidate)) + "\n")
+            output.write("\\t".join(map(str, candidate)) + "\\n")
     if not seen:
         raise ValueError("consensus BED12 contains no circRNA candidates")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main("${bed}", "${prefix}.ciri3.list")
+    versions = {
+        "${task.process}": {
+            "python": platform.python_version(),
+        }
+    }
+    with open("versions.yml", "w", encoding="utf-8") as version_file:
+        yaml.safe_dump(versions, version_file)
