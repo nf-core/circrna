@@ -53,19 +53,19 @@ workflow PSIRC_QUANT {
     )
 
     JOIN_GENE_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_gene.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "gene_counts"], samples.collect { _meta, file -> file }] }
+        TXIMETA_TXIMPORT.out.counts_gene.map { _meta, file -> file }.collect(sort: { file -> file.name }).map { files -> [[id: "gene_counts"], files] }
     )
 
     JOIN_GENE_TPM(
-        TXIMETA_TXIMPORT.out.tpm_gene.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "gene_tpm"], samples.collect { _meta, file -> file }] }
+        TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, file -> file }.collect(sort: { file -> file.name }).map { files -> [[id: "gene_tpm"], files] }
     )
 
     JOIN_TX_COUNTS(
-        TXIMETA_TXIMPORT.out.counts_transcript.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "tx_counts"], samples.collect { _meta, file -> file }] }
+        TXIMETA_TXIMPORT.out.counts_transcript.map { _meta, file -> file }.collect(sort: { file -> file.name }).map { files -> [[id: "tx_counts"], files] }
     )
 
     JOIN_TX_TPM(
-        TXIMETA_TXIMPORT.out.tpm_transcript.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "tx_tpm"], samples.collect { _meta, file -> file }] }
+        TXIMETA_TXIMPORT.out.tpm_transcript.map { _meta, file -> file }.collect(sort: { file -> file.name }).map { files -> [[id: "tx_tpm"], files] }
     )
 
     SPLIT_TYPES_COUNTS(
