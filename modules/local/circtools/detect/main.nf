@@ -30,13 +30,19 @@ process CIRCTOOLS_DETECT {
         : "printf ${mate1} > mate1file && printf ${mate2} > mate2file"
 
     def mate_args = meta.single_end ? '' : '-mt1 @mate1file -mt2 @mate2file -Pi'
+
+    // circtools only writes tmp_printcirclines in paired-end independent mode (-Pi). For single-end data the
+    // equivalent is built from the STAR chimeric junctions: no header or comment lines, 14 STAR columns plus the sample.
+    def reads_command = meta.single_end
+        ? """awk -F'\\t' -v OFS='\\t' -v sample='${meta.id}' '!/^#/ && \$1 != "chr_donorA" && NF >= 14 { for (i = 1; i <= 14; i++) printf "%s\\t", \$i; print sample }' paired.junctions > ${prefix}_reads.junctions"""
+        : "mv _tmp_circtools/tmp_printcirclines.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z] ${prefix}_reads.junctions"
     """
     printf "${paired}" > samplesheet
     ${matefile_commands}
 
     circtools detect @samplesheet ${mate_args} -D -an ${gtf} ${args} -F -M -k -Nr 1 1 -A ${fasta} ${strand_args} -T ${task.cpus}
 
-    mv _tmp_circtools/tmp_printcirclines.[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z] ${prefix}_reads.junctions
+    ${reads_command}
     mv CircCoordinates ${prefix}_coordinates.tsv
     mv CircRNACount ${prefix}_counts.tsv
 

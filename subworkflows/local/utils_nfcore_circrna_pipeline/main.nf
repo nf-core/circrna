@@ -207,7 +207,7 @@ def validateInputParameters() {
         error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI must also be selected for BSJ detection.")
     }
 
-    def tools_with_reads = ["find_circ", "segemehl", "dcc"]
+    def tools_with_reads = ["find_circ", "segemehl", "circtools", "ciri"]
     def enabled_bsj_tools_with_reads = bsj_tools.intersect(tools_with_reads)
     if (fli_tools.contains('jccirc') && enabled_bsj_tools_with_reads.size() == 0) {
         error("Please check input parameters -> If jccirc is selected for FLI detection, at least one BSJ detection tool that supports read-level detection (${tools_with_reads.join(', ')}) must also be selected.")

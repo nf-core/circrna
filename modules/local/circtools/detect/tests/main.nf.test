@@ -85,7 +85,70 @@ nextflow_process {
         }
     }
 
-    // TODO(#230 circtools detect fails for single-end data): real single-end test blocked by tmp_printcirclines only being written with -Pi
+    test("mini - single-end") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = STAR_ALIGN_MATE1.out.junction
+                    .map { _meta, junction ->
+                        [[id: 'cel_N2_1', single_end: true, strandedness: 'auto'], junction, [], []]
+                    }
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            def reads = path(process.out.reads[0][1]).readLines().collect { it.split('\t') }
+            assert reads.size() > 0
+            // 14 STAR chimeric columns plus the sample column, as written by circtools for paired-end data
+            assert reads.every { it.size() == 15 && it[14] == 'cel_N2_1' }
+            assert reads.every { !it[0].startsWith('#') && it[0] != 'chr_donorA' }
+            assert snapshot(
+                path(process.out.versions[0]).yaml,
+                process.out.reads.collect { file(it[1]).name },
+                process.out.coordinates.collect { file(it[1]).name },
+                process.out.counts.collect { file(it[1]).name },
+                reads.size(),
+                path(process.out.coordinates[0][1]).readLines().collect { line -> def f = line.split('\t'); f[3] = f[3].split(',').sort().join(','); f.join('\t') }.sort(false).join('\n').md5(),
+                path(process.out.counts[0][1]).readLines().sort(false).join('\n').md5()
+            ).match()
+        }
+    }
+
+    test("mini - single-end - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of([
+                    [id: 'cel_N2_1', single_end: true, strandedness: 'auto'],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true),
+                    [],
+                    []
+                ])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+    }
 
     test("mini - paired-end - stub") {
 

@@ -8,7 +8,63 @@ nextflow_process {
     tag "modules_local"
     tag "jccirc_jccirc"
 
-    // TODO(#231 jccirc real test): blocked by the mini data. Trinity needs ~7 min on the mini reads and JCcirc exits 1 ("contig_frag.txt is empty") with the single BSJ of the mini set
+    test("cel_N2_1 reads and a single BSJ") {
+
+        setup {
+            run("TRINITY") {
+                script "modules/nf-core/trinity/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'cel_N2_1', single_end:false ],
+                        [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ]
+                    ]
+                    """
+                }
+            }
+            run("JCCIRC_PREP") {
+                script "modules/local/jccirc/prep/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'cel_N2_1', single_end:false ],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true)
+                    ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = JCCIRC_PREP.out.merged
+                    .join(TRINITY.out.transcript_fasta)
+                    .map { meta, bsjs, denovo -> [
+                        meta,
+                        [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
+                        bsjs,
+                        denovo
+                    ] }
+                input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.log[0][1]).text.contains('Completing the alignment of 1 circRNAs') },
+                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+            )
+        }
+    }
+
     test("cel_N2_1 reads - stub") {
 
         options '-stub'

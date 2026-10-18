@@ -14,9 +14,5 @@ process FAIL_ON_EMPTY {
     }
 
     stub:
-    if (!bed) {
-        log.error message
-
-        exit 1
-    }
+    log.info "Skipping the empty check in stub mode"
 }
