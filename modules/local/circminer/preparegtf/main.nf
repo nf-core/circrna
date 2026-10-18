@@ -8,7 +8,7 @@ process CIRCMINER_PREPAREGTF {
 :         'community.wave.seqera.io/library/python:3.14.5--dc8358b3c5eeb927' }"
 
     input:
-    tuple val(meta), path(gtf, stageAs: 'input.gtf')
+    tuple val(meta), path(gtf, stageAs: 'input/*')
 
     output:
     tuple val(meta), path("${prefix}.gtf"), emit: gtf

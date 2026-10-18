@@ -17,7 +17,7 @@ workflow CIRCMINER {
     PREPAREGTF(gtf.first())
     ch_versions = ch_versions.mix(PREPAREGTF.out.versions)
 
-    DETECT(reads, index.first(), PREPAREGTF.out.gtf)
+    DETECT(reads, index.first(), PREPAREGTF.out.gtf.first())
     ch_versions = ch_versions.mix(DETECT.out.versions)
 
     UNIFY(

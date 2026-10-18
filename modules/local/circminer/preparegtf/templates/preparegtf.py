@@ -7,7 +7,7 @@ import sys
 from collections import OrderedDict
 
 
-ATTRIBUTE = re.compile(r'\s*([^\s;]+)\s+"((?:[^"\\]|\\.)*)"\s*')
+ATTRIBUTE = re.compile(r'\\s*([^\\s;]+)\\s+"((?:[^"\\\\]|\\\\.)*)"\\s*')
 
 
 def fail(message):
@@ -38,7 +38,7 @@ def format_attributes(attributes):
 
 def open_gtf(filename):
     with open(filename, "rb") as handle:
-        compressed = handle.read(2) == b"\x1f\x8b"
+        compressed = handle.read(2) == b"\\x1f\\x8b"
     return gzip.open(filename, "rt") if compressed else open(filename)
 
 
@@ -49,10 +49,10 @@ exon_count = 0
 try:
     with open_gtf("${gtf}") as handle:
         for line_number, raw_line in enumerate(handle, 1):
-            line = raw_line.rstrip("\n")
+            line = raw_line.rstrip("\\r\\n")
             if not line or line.startswith("#"):
                 continue
-            fields = line.split("\t")
+            fields = line.split("\\t")
             if len(fields) != 9:
                 fail("line {} does not have 9 tab-separated fields".format(line_number))
             feature = fields[2]
@@ -66,7 +66,7 @@ try:
                 fail("line {} has invalid coordinates {}-{}".format(line_number, start, end))
             if fields[6] not in ("+", "-"):
                 fail("line {} has invalid strand '{}'".format(line_number, fields[6]))
-            attributes = parse_attributes(fields[8], line_number)
+            attributes = parse_attributes(fields[8].strip(), line_number)
             gene_id = attributes.get("gene_id")
             transcript_id = attributes.get("transcript_id")
             if not gene_id or not transcript_id:
@@ -97,19 +97,19 @@ with open("${prefix}.gtf", "w") as output:
         gene_attributes = OrderedDict([("gene_id", gene_id)])
         if gene["name"]:
             gene_attributes["gene_name"] = gene["name"]
-        output.write("\t".join([gene["chromosome"], "circminer_preparegtf", "gene", str(min(exon[0] for exon in gene_exons)), str(max(exon[1] for exon in gene_exons)), ".", gene["strand"], ".", format_attributes(gene_attributes)]) + "\n")
+        output.write("\\t".join([gene["chromosome"], "circminer_preparegtf", "gene", str(min(exon[0] for exon in gene_exons)), str(max(exon[1] for exon in gene_exons)), ".", gene["strand"], ".", format_attributes(gene_attributes)]) + "\\n")
         ordered_transcripts = sorted(transcripts.items(), key=lambda item: (min(exon[0] for exon in item[1]["exons"]), item[0]))
         for transcript_id, transcript in ordered_transcripts:
             exons = sorted(transcript["exons"], key=lambda exon: (exon[0], exon[1]), reverse=gene["strand"] == "-")
             transcript_attributes = OrderedDict([("gene_id", gene_id), ("transcript_id", transcript_id)])
             if transcript["name"] or gene["name"]:
                 transcript_attributes["gene_name"] = transcript["name"] or gene["name"]
-            output.write("\t".join([gene["chromosome"], "circminer_preparegtf", "transcript", str(min(exon[0] for exon in exons)), str(max(exon[1] for exon in exons)), ".", gene["strand"], ".", format_attributes(transcript_attributes)]) + "\n")
+            output.write("\\t".join([gene["chromosome"], "circminer_preparegtf", "transcript", str(min(exon[0] for exon in exons)), str(max(exon[1] for exon in exons)), ".", gene["strand"], ".", format_attributes(transcript_attributes)]) + "\\n")
             for exon_number, (start, end, fields, attributes) in enumerate(exons, 1):
                 attributes = OrderedDict((key, value) for key, value in attributes.items() if key != "exon_number")
                 attributes["exon_number"] = str(exon_number)
                 fields[8] = format_attributes(attributes)
-                output.write("\t".join(fields) + "\n")
+                output.write("\\t".join(fields) + "\\n")
 
 with open("versions.yml", "w") as versions:
-    versions.write('"${task.process}":\n    python: "{}"\n'.format(platform.python_version()))
+    versions.write('"${task.process}":\\n    python: "{}"\\n'.format(platform.python_version()))

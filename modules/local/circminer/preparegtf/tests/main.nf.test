@@ -20,7 +20,7 @@ nextflow_process {
 
         then {
             assert process.success
-            def source = path(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf').readLines()
+            def source = path(process.out.gtf[0][1]).parent.resolve('input/chrI_mini.gtf').readLines()
             def output = path(process.out.gtf[0][1]).readLines()
             def sourceExons = source.findAll { it.split('\t')[2] == 'exon' }
             def outputExons = output.findAll { it.split('\t')[2] == 'exon' }
@@ -30,8 +30,49 @@ nextflow_process {
             assert output.every { it.split('\t').size() == 9 }
             assert outputExons.every { it.contains('exon_number "') && it.contains('gene_name "') }
             assert outputExons.collect { it.split('\t')[3..4].join(':') }.toSet().containsAll(sourceExons.collect { it.split('\t')[3..4].join(':') })
+            def currentGene = null
+            def currentTranscript = null
+            def exonNumber = 0
+            output.each { line ->
+                def fields = line.split('\t')
+                def geneId = (fields[8] =~ /gene_id "([^"]+)"/)[0][1]
+                if (fields[2] == 'gene') {
+                    currentGene = geneId
+                    currentTranscript = null
+                } else {
+                    assert geneId == currentGene
+                    def transcriptId = (fields[8] =~ /transcript_id "([^"]+)"/)[0][1]
+                    if (fields[2] == 'transcript') {
+                        currentTranscript = transcriptId
+                        exonNumber = 0
+                    } else {
+                        assert transcriptId == currentTranscript
+                        assert (fields[8] =~ /exon_number "([0-9]+)"/)[0][1].toInteger() == ++exonNumber
+                    }
+                }
+            }
             def minusExons = outputExons.findAll { it.split('\t')[6] == '-' }
             assert minusExons.findAll { it.contains('transcript_id "NR_052813"') }*.split('\t')*.getAt(3) == ['350134', '191241', '142375', '1941', '1900', '1827']
+        }
+    }
+
+    test("prepares annotation - stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.gtf[0][1]).exists() },
+                { assert process.out.versions.size() == 1 }
+            )
         }
     }
 }
