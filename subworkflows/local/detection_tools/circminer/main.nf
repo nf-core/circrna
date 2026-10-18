@@ -13,7 +13,7 @@ workflow CIRCMINER {
     main:
     ch_versions = channel.empty()
 
-    DETECT(reads, index, gtf)
+    DETECT(reads, index.first(), gtf.first())
     ch_versions = ch_versions.mix(DETECT.out.versions)
 
     UNIFY(
@@ -23,7 +23,7 @@ workflow CIRCMINER {
     )
     ch_reference = fasta
         .join(faidx)
-        .map { meta, reference, reference_fai -> [meta, reference, reference_fai] }
+        .first()
 
     INFER_STRAND(UNIFY.out.output, ch_reference)
     ch_versions = ch_versions.mix(INFER_STRAND.out.versions)
