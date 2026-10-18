@@ -36,8 +36,11 @@ def parse_candidates(path):
 def parse_matrix(path, expected_header, candidates):
     with open(path, encoding="utf-8") as handle:
         header = handle.readline().rstrip("\\r\\n").split("\\t")
+        has_rows = bool(handle.read(1))
     if header != ["circRNA", expected_header]:
         raise ValueError(f"{path}: expected header circRNA\\t{expected_header}, got {header!r}")
+    if not has_rows:
+        return pl.DataFrame(schema={**COORDINATES, "count": pl.Int64})
     try:
         counts = pl.read_csv(
             path, separator="\\t", has_header=False, skip_rows=1,
