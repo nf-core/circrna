@@ -9,6 +9,34 @@ nextflow_workflow {
     tag "subworkflows_local"
     tag "prepare_genome"
 
+    test("build circMiner index only when selected") {
+        when {
+            workflow {
+                """
+                input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[2] = ['circminer']
+                input[3] = []
+                input[4] = null
+                input[5] = null
+                input[6] = null
+                input[7] = null
+                input[8] = null
+                input[9] = []
+                input[10] = null
+                """
+            }
+        }
+        then {
+            def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
+            def circminerIndices = workflow.out.circminer.collect { meta, index -> [meta, path(index).exists()] }
+            assert workflow.success
+            assert tasks.contains('PREPARE_GENOME:CIRCMINER_INDEX')
+            assert circminerIndices.size() == 1
+            assert circminerIndices[0][1]
+        }
+    }
+
     test("build all indices") {
 
         when {
@@ -27,6 +55,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -82,6 +111,7 @@ nextflow_workflow {
                 input[7] = prebuilt('hisat2')
                 input[8] = prebuilt('star')
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -127,6 +157,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -172,6 +203,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -216,6 +248,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -252,6 +285,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -281,6 +315,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = []
+                input[10] = null
                 """
             }
         }
@@ -312,6 +347,7 @@ nextflow_workflow {
                 input[7] = null
                 input[8] = null
                 input[9] = ['circtools']
+                input[10] = null
                 """
             }
         }

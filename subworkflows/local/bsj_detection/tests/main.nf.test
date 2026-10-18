@@ -35,6 +35,23 @@ nextflow_workflow {
                 """
             }
         }
+        run("CIRCMINER_INDEX") {
+            script "modules/local/circminer/index/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                """
+            }
+        }
+        run("SAMTOOLS_FAIDX") {
+            script "modules/nf-core/samtools/faidx/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true), []])
+                input[1] = false
+                """
+            }
+        }
         run("UCSC_GTFTOGENEPRED") {
             script "modules/nf-core/ucsc/gtftogenepred/main.nf"
             process {
@@ -51,6 +68,47 @@ nextflow_workflow {
                 input[1] = []
                 input[2] = false
                 """
+            }
+        }
+    }
+
+    test("circMiner dispatch emits a unified per-sample BED") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = channel.empty()
+                input[9] = channel.empty()
+                input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
+                input[11] = channel.empty()
+                input[12] = 1
+                input[13] = ['circminer']
+                input[14] = []
+                input[15] = channel.empty()
+                input[16] = 0
+                input[17] = true
+                input[18] = 1
+                input[19] = 1
+                input[20] = true
+                input[21] = SAMTOOLS_FAIDX.out.fai
+                input[22] = CIRCMINER_INDEX.out.index
+                """
+            }
+        }
+        then {
+            def toolBeds = workflow.out.bed_per_sample_tool.findAll { meta, _bed -> meta.tool == 'circminer' }
+            assert workflow.success
+            assert toolBeds.size() == 1
+            assert toolBeds.every { meta, bed ->
+                def rows = path(bed).readLines()
+                meta.tool == 'circminer' && rows.every { it.tokenize('\t').size() >= 6 }
             }
         }
     }
@@ -102,6 +160,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -186,6 +245,7 @@ nextflow_workflow {
                 input[19] = 2
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -256,6 +316,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -333,6 +394,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -412,6 +474,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -492,6 +555,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -547,6 +611,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -606,6 +671,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }
@@ -669,6 +735,7 @@ nextflow_workflow {
                 input[19] = 1
                 input[20] = true
                 input[21] = channel.empty()
+                input[22] = channel.empty()
                 """
             }
         }

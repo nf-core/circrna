@@ -105,6 +105,7 @@ The FastQC plots in this directory are generated relative to the raw, input read
     - `fasta`: Directory containing FASTA index (`.fai`).
     - `hisat2`: Directory containing `HISAT2` indices.
     - `segemehl`: Directory containing `Segemehl` index file.
+    - `circminer`: Directory containing the circMiner reference and generated index (when `--save_reference` is enabled).
     - `star`: Directory containing `STAR` indices.
   - `genome`
     - `clean_fasta`: Directory containing a FASTA file with reduced headers, since MapSplice has problems with multiple header fields.
@@ -146,6 +147,10 @@ The rough workflow for the BSJ detection looks like this:
 6. Merge all samples into a single file. This now represents the "circular transcriptome"
 
 ### Per tool
+
+#### circMiner
+
+circMiner's unmodified per-sample report is published under `3_bsj_detection/tools/circminer/raw/`; the pipeline-normalized BED is published under `3_bsj_detection/tools/circminer/unified/`. The BED includes circMiner calls that pass its report filter, with strand inferred from canonical splice signals where possible.
 
 <details markdown="1">
 <summary>Output files available for all tools</summary>

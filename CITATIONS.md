@@ -34,6 +34,10 @@
 
   > Westholm, J.O., Lai, E.C., et al. (2016). Genome-wide Analysis of Drosophila Circular RNAs Reveals Their Structural and Sequence Properties and Age-Dependent Neural Accumulation Westholm et al. Cell Reports.
 
+- [circMiner](https://github.com/vpc-ccg/circminer)
+
+  > circMiner software, available at https://github.com/vpc-ccg/circminer.
+
 - [CIRIquant](https://doi.org/10.1038/s41467-019-13840-9)
 
   > Zhang, J., Chen, S., Yang, J. et al. (2020). Accurate quantification of circular RNAs identifies extensive circular isoform switching events. Nat Commun 11, 90.

@@ -20,6 +20,7 @@ include { CIRI                                           } from '../detection_to
 include { CIRCTOOLS                                      } from '../detection_tools/circtools'
 include { MAPSPLICE                                      } from '../detection_tools/mapsplice'
 include { PSIRC                                          } from '../detection_tools/psirc'
+include { CIRCMINER                                      } from '../detection_tools/circminer'
 include { ANNOTATION as ANNOTATE_COMBINED                } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE              } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL         } from '../annotation'
@@ -50,6 +51,7 @@ workflow BSJ_DETECTION {
     min_samples
     exons_only
     ch_faidx
+    circminer_index
 
     main:
     ch_versions = channel.empty()
@@ -158,6 +160,12 @@ workflow BSJ_DETECTION {
     }
     else {
         ch_psirc_bsj = channel.empty()
+    }
+
+    if (tools.contains('circminer')) {
+        CIRCMINER(reads, circminer_index, ch_gtf, ch_fasta, ch_faidx)
+        ch_versions = ch_versions.mix(CIRCMINER.out.versions)
+        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCMINER.out.bed)
     }
 
     ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.filter { _meta, bed -> !bed.isEmpty() }

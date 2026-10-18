@@ -269,6 +269,7 @@ def validateInputSamplesheet(input) {
     }
 
     def fli_tools = parseToolList(params.fli_tools)
+    def circminer_tools = parseToolList(params.tools)
 
     if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }
@@ -282,6 +283,10 @@ def validateInputSamplesheet(input) {
         if (!all_single_end) {
             error("Please check input samplesheet -> All samples must be single-end when longread is true.")
         }
+    }
+
+    if (circminer_tools.contains('circminer') && metas.any{ meta -> meta.single_end == true }) {
+        error("Please check input samplesheet -> All samples must be paired-end when circminer is selected.")
     }
 
     return [ metas[0], fastqs ]

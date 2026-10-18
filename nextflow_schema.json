@@ -82,9 +82,9 @@
                 "tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
-                    "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciri, circexplorer2, find_circ, circrna_finder, mapsplice, circtools, segemehl",
-                    "pattern": "^(ciri|circexplorer2|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri|circexplorer2|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
-                    "help_text": "Select one or a combination of circRNA quantification tools for the pipeline e.g:\n--tool 'circexplorer2, ciriquant, find_circ'\n\nN.B: Selecting more than one circRNA quantification tool will trigger the circRNA filtering parameter --min_tools",
+                    "description": "Comma separated list of circRNA back-splice junction detection tools to use. Supported tools include ciri, circexplorer2, circminer, find_circ, circrna_finder, mapsplice, circtools, segemehl, and psirc.",
+                    "pattern": "^(ciri|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
+                    "help_text": "Select one or a combination of circRNA back-splice junction detection tools, e.g. --tools 'circexplorer2,circminer,find_circ'. Selecting more than one tool enables consensus filtering with --min_tools. circMiner requires paired-end reads.",
                     "default": "circexplorer2"
                 },
                 "bsj_reads": {
@@ -115,7 +115,7 @@
                     "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--min_tools` to 1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--min_tools` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
                     "default": 1,
                     "minimum": 1,
-                    "maximum": 7
+                    "maximum": 9
                 },
                 "min_samples": {
                     "type": "integer",
@@ -388,6 +388,12 @@
                     "default": null,
                     "fa_icon": "fab fa-stripe-s",
                     "description": "Path to Segemehl Index **file**."
+                },
+                "circminer": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-circle-notch",
+                    "description": "Path to a prebuilt circMiner index directory. If omitted, the pipeline builds the index when circMiner is selected."
                 },
                 "star": {
                     "type": "string",

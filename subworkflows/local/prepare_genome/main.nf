@@ -14,6 +14,7 @@ include { GFFREAD                         } from '../../../modules/nf-core/gffre
 include { PSIRC_TRANSCRIPTOME             } from '../../../modules/local/psirc/transcriptome'
 include { PSIRC_INDEX                     } from '../../../modules/local/psirc/index'
 include { starBasedTools                  } from '../utils_nfcore_circrna_pipeline'
+include { CIRCMINER_INDEX                  } from '../../../modules/local/circminer/index'
 
 workflow PREPARE_GENOME {
     take:
@@ -27,6 +28,7 @@ workflow PREPARE_GENOME {
     hisat2
     star
     fli_tools
+    circminer
 
     main:
     fli_tools = fli_tools ?: []
@@ -126,6 +128,16 @@ workflow PREPARE_GENOME {
         ).collect()
     }
 
+    if (circminer) {
+        ch_circminer = channel.value([[id: "circminer"], circminer])
+    } else if (tools.contains('circminer')) {
+        CIRCMINER_INDEX(ch_fasta)
+        ch_versions = ch_versions.mix(CIRCMINER_INDEX.out.versions)
+        ch_circminer = CIRCMINER_INDEX.out.index
+    } else {
+        ch_circminer = channel.empty()
+    }
+
     emit:
     gtf           = ch_gtf
     faidx         = SAMTOOLS_FAIDX.out.fai
@@ -136,6 +148,7 @@ workflow PREPARE_GENOME {
     star          = ch_star
     circexplorer2 = ch_circexplorer2_reference
     psirc         = ch_psirc_index
+    circminer     = ch_circminer
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions

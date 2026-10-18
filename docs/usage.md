@@ -61,6 +61,7 @@ This part of the pipeline is responsible for the detection of back-splice juncti
 - `circRNA finder`
 - `CIRI`
 - `circtools`
+- `circMiner` (paired-end reads only; accepts a prebuilt index via `--circminer` or builds one automatically)
 - `find circ`
 - `MapSplice`
 - `psirc`

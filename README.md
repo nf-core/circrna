@@ -43,6 +43,7 @@ If you want to contribute, feel free to create an issue or pull request on the [
     - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
     - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)
     - [`circtools`](https://github.com/dieterich-lab/circtools)
+  - [`circMiner`](https://github.com/vpc-ccg/circminer) (paired-end reads)
   - [`find circ`](https://github.com/marvin-jens/find_circ)
   - [`MapSplice`](http://www.netlab.uky.edu/p/bioinfo/MapSplice2)
   - [`psirc`](https://github.com/Christina-hshi/psirc)
