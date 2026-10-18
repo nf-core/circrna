@@ -1,0 +1,88 @@
+nextflow_process {
+    name 'Test Process CIRI3_UC_LIST'
+    script '../main.nf'
+    process 'CIRI3_UC_LIST'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3'
+    tag 'ciri3_uc_list'
+
+    test('converts all consensus BED12 intervals to 1-based CIRI3 coordinates') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def bed = file("\$outputDir/input/consensus.bed12")
+                bed.text = [
+                    'chr1\\t0\\t100\\tcircA\\t5\\t+\\t0\\t100\\t0\\t2\\t50,50,\\t0,50,',
+                    'chr2\\t199\\t300\\tcircB\\t2\\t-\\t199\\t300\\t0\\t2\\t40,61,\\t0,40,'
+                ].join('\\n') + '\\n'
+                input[0] = [[id: 'sample_1'], bed]
+                """
+            }
+        }
+        then {
+            def list = path(process.out.list[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert list == ['chr1\\t1\\t100', 'chr2\\t200\\t300'] },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+    }
+
+    test('rejects malformed BED12 input') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def bed = file("\$outputDir/input/bad.bed")
+                bed.text = 'chr1\\t0\\t100\\tonly-four-columns\\n'
+                input[0] = [[id: 'bad'], bed]
+                """
+            }
+        }
+        then {
+            assert process.failed
+        }
+    }
+
+    test('rejects empty candidate universe') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def bed = file("\$outputDir/input/empty.bed12")
+                bed.text = ''
+                input[0] = [[id: 'empty'], bed]
+                """
+            }
+        }
+        then {
+            assert process.failed
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                def bed = file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                input[0] = [[id: 'sample_1'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.list.size() == 1 },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+    }
+}

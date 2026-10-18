@@ -1,0 +1,5 @@
+name: ciri3_uc_matrix
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.8

@@ -1,0 +1,111 @@
+nextflow_process {
+    name 'Test Process CIRI3_UC_MATRIX'
+    script '../main.nf'
+    process 'CIRI3_UC_MATRIX'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3'
+    tag 'ciri3_uc_matrix'
+
+    test('zero-fills the complete candidate set and retains sample ID') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def circ = file("\$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\nchr1\\t30\\t40\\nchr2\\t50\\t70\\n'
+                def bsj = file("\$outputDir/input/sample.ciri3.txt.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\t7\\n'
+                def fsj = file("\$outputDir/input/sample.ciri3.txt.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\nchr1\\t10\\t20\\t19\\nchr2\\t50\\t70\\t3\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'sample_9'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            def bsj = path(process.out.bsj[0][1]).readLines()
+            def fsj = path(process.out.fsj[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert process.out.bsj[0][0].id == 'sample_9' },
+                { assert bsj == ['circRNA_ID\\tcount', 'chr1:10|20\\t7', 'chr1:30|40\\t0', 'chr2:50|70\\t0'] },
+                { assert fsj == ['circRNA_ID\\tcount', 'chr1:10|20\\t19', 'chr1:30|40\\t0', 'chr2:50|70\\t3'] },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+    }
+
+    test('rejects malformed count instead of treating it as absent') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def circ = file("\$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("\$outputDir/input/bad.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\tNaN\\n'
+                def fsj = file("\$outputDir/input/bad.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'bad_count'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assert process.failed
+        }
+    }
+
+    test('rejects missing or malformed matrix header') {
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def circ = file("\$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("\$outputDir/input/missing.BSJ_Matrix")
+                bsj.text = ''
+                def fsj = file("\$outputDir/input/missing.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'missing_matrix'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assert process.failed
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                def input = file("\$outputDir/input")
+                input.mkdirs()
+                def circ = file("\$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("\$outputDir/input/sample.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\n'
+                def fsj = file("\$outputDir/input/sample.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'sample_9'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.bsj.size() == 1 },
+                { assert process.out.fsj.size() == 1 }
+            )
+        }
+    }
+}
