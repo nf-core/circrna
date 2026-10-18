@@ -10,6 +10,11 @@
                         "git_sha": "d32242b309862f5ac37022bf30d9b907e0ee4751",
                         "installed_by": ["modules"]
                     },
+                    "agat/convertspgff2gtf": {
+                        "branch": "master",
+                        "git_sha": "22505bcc6251fe1fc8f784d10cdffd761e5a69c2",
+                        "installed_by": ["modules"]
+                    },
                     "agat/spaddintrons": {
                         "branch": "master",
                         "git_sha": "d32242b309862f5ac37022bf30d9b907e0ee4751",

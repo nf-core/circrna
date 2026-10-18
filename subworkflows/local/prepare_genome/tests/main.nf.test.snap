@@ -21,18 +21,27 @@
                 "10": [
                     [
                         {
+                            "id": "fasta"
+                        },
+                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "11": [
+                    [
+                        {
                             "id": "gtf"
                         },
                         "gtf.filtered.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "11": [
+                "12": [
                     "versions.yml:md5,0ef1455f33951e8b66782a671e8213e5",
                     "versions.yml:md5,0f716c4a747b3c98786cd74818a3b55d",
                     "versions.yml:md5,f48c2580b91bfa51defc7ec157600e8b",
                     "versions.yml:md5,f55334c247ef6e4a510ef45e1eb3c921",
                     "versions.yml:md5,f56661fed4a9723e2f866e609363893e"
                 ],
+                "13": [],
                 "2": [
                     [
                         {
@@ -82,9 +91,7 @@
                         {
                             "id": "fasta"
                         },
-                        [
-                            
-                        ]
+                        []
                     ]
                 ],
                 "6": [
@@ -129,14 +136,7 @@
                         ]
                     ]
                 ],
-                "9": [
-                    [
-                        {
-                            "id": "fasta"
-                        },
-                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
+                "9": [],
                 "bowtie": [
                     [
                         {
@@ -194,6 +194,8 @@
                         "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
+                "circminer": [],
+                "circminer_gtf": [],
                 "faidx": [
                     [
                         {
@@ -215,9 +217,7 @@
                         {
                             "id": "fasta"
                         },
-                        [
-                            
-                        ]
+                        []
                     ]
                 ],
                 "psirc": [
@@ -278,7 +278,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T12:49:12.131297551"
+        "timestamp": "2026-10-18T15:22:08.786505617"
     },
     "build all indices": {
         "content": [
@@ -514,12 +514,8 @@
                     ]
                 ]
             ],
-            [
-                
-            ],
-            [
-                
-            ]
+            [],
+            []
         ],
         "meta": {
             "nf-test": "0.9.2",

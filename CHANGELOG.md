@@ -9,6 +9,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
+- [#249](https://github.com/nf-core/circrna/pull/249) - circMiner 0.4.2 BSJ detection for paired-end reads, automatic or prebuilt indices, genomic strand inference and supporting-read agreement (@nictru)
 - Multiple methods for BSJ detection (CIRIquant, find_circ, segemehl, mapsplice, circexplorer2, circrna_finder, DCC)
 - Multiple methods for circRNA quantification (psirc-quant, CIRIquant, sum and max aggregations)
 - DB and GTF-based circRNA annotation
@@ -32,6 +33,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Fixed`
 
+- [#249](https://github.com/nf-core/circrna/pull/249) - Prepare circMiner's required annotation in `PREPARE_GENOME` with the nf-core AGAT module and a small exon-ordering step, avoiding a GTF-loading segmentation fault without changing other tools' annotations (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - Build the STAR index for circtools discovery and FLI detection. Infer psirc strand from supporting transcripts, with canonical genomic splice motifs as a fallback (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - `exons_only = false` was treated as `true` in `ANNOTATION` (`bed2gtf`) (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - `BSJ_DETECTION` failed when no STAR-based detection tool was selected (@nictru)

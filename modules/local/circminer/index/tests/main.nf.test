@@ -1,0 +1,45 @@
+nextflow_process {
+
+    name "Test Process CIRCMINER_INDEX"
+    script "../main.nf"
+    process "CIRCMINER_INDEX"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circminer"
+    tag "circminer_index"
+
+    test("builds a self-contained index from mini reference") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            def index = path(process.out.index[0][1])
+            assert index.resolve('reference.fa').exists()
+            assert index.list().any { it.fileName.toString().endsWith('.packed.fa.index') }
+        }
+    }
+
+    test("builds a self-contained index - stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert path(process.out.index[0][1]).resolve('reference.fa').exists()
+        }
+    }
+}

@@ -86,6 +86,7 @@ workflow NFCORE_CIRCRNA {
         params.hisat2 ? file(params.hisat2, checkIfExists: true) : null,
         params.star ? file(params.star, checkIfExists: true) : null,
         params.segemehl ? file(params.segemehl, checkIfExists: true) : null,
+        params.circminer ? file(params.circminer, checkIfExists: true) : null,
         params.longread,
         params.skip_fastqc,
         params.skip_trimming,

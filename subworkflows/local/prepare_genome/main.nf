@@ -1,19 +1,22 @@
-include { CUSTOM_GTFFILTER as GTFFILTER   } from '../../../modules/nf-core/custom/gtffilter'
-include { SEQKIT_SPLIT                    } from '../../../modules/local/seqkit/split'
-include { BOWTIE_BUILD                    } from '../../../modules/nf-core/bowtie/build'
-include { BOWTIE2_BUILD                   } from '../../../modules/nf-core/bowtie2/build'
-include { BWA_INDEX                       } from '../../../modules/nf-core/bwa/index'
-include { HISAT2_EXTRACTSPLICESITES       } from '../../../modules/nf-core/hisat2/extractsplicesites'
-include { HISAT2_BUILD                    } from '../../../modules/nf-core/hisat2/build'
-include { STAR_GENOMEGENERATE             } from '../../../modules/nf-core/star/genomegenerate'
-include { GAWK as CLEAN_FASTA             } from '../../../modules/nf-core/gawk'
-include { SAMTOOLS_FAIDX                  } from '../../../modules/nf-core/samtools/faidx'
-include { UCSC_GTFTOGENEPRED              } from '../../../modules/nf-core/ucsc/gtftogenepred'
-include { GAWK as CIRCEXPLORER2_REFERENCE } from '../../../modules/nf-core/gawk'
-include { GFFREAD                         } from '../../../modules/nf-core/gffread'
-include { PSIRC_TRANSCRIPTOME             } from '../../../modules/local/psirc/transcriptome'
-include { PSIRC_INDEX                     } from '../../../modules/local/psirc/index'
-include { starBasedTools                  } from '../utils_nfcore_circrna_pipeline'
+include { CUSTOM_GTFFILTER          as GTFFILTER                 } from '../../../modules/nf-core/custom/gtffilter'
+include { SEQKIT_SPLIT                                           } from '../../../modules/local/seqkit/split'
+include { BOWTIE_BUILD                                           } from '../../../modules/nf-core/bowtie/build'
+include { BOWTIE2_BUILD                                          } from '../../../modules/nf-core/bowtie2/build'
+include { BWA_INDEX                                              } from '../../../modules/nf-core/bwa/index'
+include { HISAT2_EXTRACTSPLICESITES                              } from '../../../modules/nf-core/hisat2/extractsplicesites'
+include { HISAT2_BUILD                                           } from '../../../modules/nf-core/hisat2/build'
+include { STAR_GENOMEGENERATE                                    } from '../../../modules/nf-core/star/genomegenerate'
+include { GAWK                      as CLEAN_FASTA               } from '../../../modules/nf-core/gawk'
+include { SAMTOOLS_FAIDX                                         } from '../../../modules/nf-core/samtools/faidx'
+include { UCSC_GTFTOGENEPRED                                     } from '../../../modules/nf-core/ucsc/gtftogenepred'
+include { GAWK                      as CIRCEXPLORER2_REFERENCE   } from '../../../modules/nf-core/gawk'
+include { GFFREAD                                                } from '../../../modules/nf-core/gffread'
+include { PSIRC_TRANSCRIPTOME                                    } from '../../../modules/local/psirc/transcriptome'
+include { PSIRC_INDEX                                            } from '../../../modules/local/psirc/index'
+include { starBasedTools                                         } from '../utils_nfcore_circrna_pipeline'
+include { CIRCMINER_INDEX                                        } from '../../../modules/local/circminer/index'
+include { AGAT_CONVERTSPGFF2GTF     as CIRCMINER_STANDARDIZE_GTF } from '../../../modules/nf-core/agat/convertspgff2gtf'
+include { CIRCMINER_ORDERGTF                                     } from '../../../modules/local/circminer/ordergtf'
 
 workflow PREPARE_GENOME {
     take:
@@ -27,6 +30,7 @@ workflow PREPARE_GENOME {
     hisat2
     star
     fli_tools
+    circminer
 
     main:
     fli_tools = fli_tools ?: []
@@ -42,6 +46,16 @@ workflow PREPARE_GENOME {
     GTFFILTER(ch_gtf, ch_fasta)
     ch_gtf = GTFFILTER.out.gtf
     ch_versions = ch_versions.mix(GTFFILTER.out.versions)
+
+    // circMiner needs parent records and transcript-direction exon ordering.
+    // Keep this annotation separate: AGAT repairs must not alter other callers' inputs.
+    ch_circminer_gtf = channel.empty()
+    if (tools.contains('circminer')) {
+        CIRCMINER_STANDARDIZE_GTF(ch_gtf)
+        CIRCMINER_ORDERGTF(CIRCMINER_STANDARDIZE_GTF.out.output_gtf)
+        ch_circminer_gtf = CIRCMINER_ORDERGTF.out.gtf
+        ch_versions = ch_versions.mix(CIRCMINER_ORDERGTF.out.versions)
+    }
 
     UCSC_GTFTOGENEPRED(ch_gtf)
 
@@ -126,6 +140,16 @@ workflow PREPARE_GENOME {
         ).collect()
     }
 
+    if (circminer) {
+        ch_circminer = channel.value([[id: "circminer"], circminer])
+    } else if (tools.contains('circminer')) {
+        CIRCMINER_INDEX(ch_fasta)
+        ch_versions = ch_versions.mix(CIRCMINER_INDEX.out.versions)
+        ch_circminer = CIRCMINER_INDEX.out.index
+    } else {
+        ch_circminer = channel.empty()
+    }
+
     emit:
     gtf           = ch_gtf
     faidx         = SAMTOOLS_FAIDX.out.fai
@@ -136,7 +160,9 @@ workflow PREPARE_GENOME {
     star          = ch_star
     circexplorer2 = ch_circexplorer2_reference
     psirc         = ch_psirc_index
+    circminer     = ch_circminer
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
     versions      = ch_versions
+    circminer_gtf = ch_circminer_gtf
 }

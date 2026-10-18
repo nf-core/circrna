@@ -60,6 +60,7 @@ workflow CIRCRNA {
     hisat2
     star
     segemehl
+    circminer
 
     // settings
     longread
@@ -121,7 +122,8 @@ workflow CIRCRNA {
         bwa,
         hisat2,
         star,
-        fli_tools
+        fli_tools,
+        circminer
     )
 
     ch_gtf              = PREPARE_GENOME.out.gtf
@@ -132,6 +134,7 @@ workflow CIRCRNA {
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
     star_index          = PREPARE_GENOME.out.star
     psirc_index         = PREPARE_GENOME.out.psirc
+    circminer_index     = PREPARE_GENOME.out.circminer
     ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
 
 
@@ -179,7 +182,9 @@ workflow CIRCRNA {
             min_tools,
             min_samples,
             exons_only,
-            PREPARE_GENOME.out.faidx
+            PREPARE_GENOME.out.faidx,
+            circminer_index,
+            PREPARE_GENOME.out.circminer_gtf
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
