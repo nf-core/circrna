@@ -1,4 +1,4 @@
-process CIRCMINER_PREPAREGTF {
+process CIRCMINER_ORDERGTF {
     tag "$meta.id"
     label 'process_medium'
 
@@ -19,7 +19,7 @@ process CIRCMINER_PREPAREGTF {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"
-    template 'preparegtf.py'
+    template 'ordergtf.py'
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"

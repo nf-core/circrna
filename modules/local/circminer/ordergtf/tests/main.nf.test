@@ -1,68 +1,79 @@
 nextflow_process {
 
-    name "Test Process CIRCMINER_PREPAREGTF"
+    name "Test Process CIRCMINER_ORDERGTF"
     script "../main.nf"
-    process "CIRCMINER_PREPAREGTF"
+    process "CIRCMINER_ORDERGTF"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"
     tag "circminer"
-    tag "circminer_preparegtf"
+    tag "circminer_ordergtf"
 
-    test("normalizes an exon-only GTF with coding features") {
-        when {
+    setup {
+        run("AGAT_CONVERTSPGFF2GTF") {
+            script "modules/nf-core/agat/convertspgff2gtf/main.nf"
             process {
                 """
                 input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+    }
+
+    test("orders AGAT GTF exons for circMiner") {
+        when {
+            process {
+                """
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
                 """
             }
         }
 
         then {
             assert process.success
-            def source = path(process.out.gtf[0][1]).parent.resolve('input/chrI_mini.gtf').readLines()
-            def output = path(process.out.gtf[0][1]).readLines()
+            def outputPath = path(process.out.gtf[0][1])
+            def source = outputPath.parent.resolve('input/chrI_mini.agat.gtf').readLines()
+            def output = outputPath.readLines()
+            def selected = ['gene', 'transcript', 'exon']
+            def sourceRows = source.findAll { it.split('\t')[2] in selected }.sort()
+            def outputRows = output.findAll { it.split('\t')[2] in selected }.sort()
             def sourceExons = source.findAll { it.split('\t')[2] == 'exon' }
             def outputExons = output.findAll { it.split('\t')[2] == 'exon' }
-            assert outputExons.size() == sourceExons.size()
-            assert output.count { it.split('\t')[2] == 'gene' } > 0
-            assert output.count { it.split('\t')[2] == 'transcript' } > 0
-            assert output.every { it.split('\t').size() == 9 }
-            assert outputExons.every { it.contains('exon_number "') && it.contains('gene_name "') }
-            assert outputExons.collect { it.split('\t')[3..4].join(':') }.toSet().containsAll(sourceExons.collect { it.split('\t')[3..4].join(':') })
+
+            assert output.every { it.split('\t')[2] in selected }
+            assert outputRows == sourceRows
+            assert outputExons.findAll { it.contains('exon_number "') }.sort() == sourceExons.findAll { it.contains('exon_number "') }.sort()
+
             def currentGene = null
             def currentTranscript = null
-            def exonNumber = 0
             output.each { line ->
                 def fields = line.split('\t')
                 def geneId = (fields[8] =~ /gene_id "([^"]+)"/)[0][1]
                 if (fields[2] == 'gene') {
                     currentGene = geneId
                     currentTranscript = null
+                } else if (fields[2] == 'transcript') {
+                    assert geneId == currentGene
+                    currentTranscript = (fields[8] =~ /transcript_id "([^"]+)"/)[0][1]
                 } else {
                     assert geneId == currentGene
-                    def transcriptId = (fields[8] =~ /transcript_id "([^"]+)"/)[0][1]
-                    if (fields[2] == 'transcript') {
-                        currentTranscript = transcriptId
-                        exonNumber = 0
-                    } else {
-                        assert transcriptId == currentTranscript
-                        assert (fields[8] =~ /exon_number "([0-9]+)"/)[0][1].toInteger() == ++exonNumber
-                    }
+                    assert (fields[8] =~ /transcript_id "([^"]+)"/)[0][1] == currentTranscript
                 }
             }
+
             def minusExons = outputExons.findAll { it.split('\t')[6] == '-' }
             assert minusExons.findAll { it.contains('transcript_id "NR_052813"') }*.split('\t')*.getAt(3) == ['350134', '191241', '142375', '1941', '1900', '1827']
         }
     }
 
-    test("prepares annotation - stub") {
+    test("orders AGAT GTF - stub") {
         options '-stub'
 
         when {
             process {
                 """
-                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
                 """
             }
         }
