@@ -18,7 +18,9 @@ workflow CIRI3_QUANT {
     ch_versions = ch_versions.mix(CIRI3_UC_LIST.out.versions)
 
     ch_ciri_list = CIRI3_UC_LIST.out.list.first()
-    CIRI3(sam, ch_fasta, ch_gtf, ch_ciri_list.map { _meta, list -> list })
+    ch_fasta_value = ch_fasta.first()
+    ch_gtf_value = ch_gtf.first()
+    CIRI3(sam, ch_fasta_value, ch_gtf_value, ch_ciri_list.map { _meta, list -> list })
     ch_versions = ch_versions.mix(CIRI3.out.versions)
 
     // Preserve sample association; CIRI3's txt result is optional in -UC mode.
