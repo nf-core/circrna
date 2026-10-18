@@ -16,7 +16,7 @@ nextflow_process {
             }
             process {
                 """
-                def tools = ['ciri', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
+                def tools = ['ciri2', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
                 def base = params.pipelines_testdata_base_path + 'mini/intermediates/'
                 input[0] = [
                     [ id:'all' ],
@@ -74,7 +74,7 @@ nextflow_process {
             }
             process {
                 """
-                def tools = ['ciri', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
+                def tools = ['ciri2', 'circexplorer2', 'find_circ', 'circrna_finder', 'mapsplice', 'circtools', 'segemehl']
                 def base = params.pipelines_testdata_base_path + 'mini/intermediates/'
                 input[0] = [
                     [ id:'all' ],

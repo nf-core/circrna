@@ -189,7 +189,8 @@ def parseToolList(String tools) {
 // cannot silently drift apart.
 def bsjToolProperties() {
     return [
-        ciri            : [reads: true,  star: false],
+        ciri2           : [reads: true,  star: false],
+        ciri3           : [reads: true,  star: false],
         circminer       : [reads: true,  star: false],
         circexplorer2   : [reads: false, star: true],
         circrna_finder  : [reads: false, star: true],
@@ -229,8 +230,8 @@ def validateInputParameters() {
         error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
     }
 
-    if (fli_tools.contains('cirifull') && !bsj_tools.contains('ciri')) {
-        error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI must also be selected for BSJ detection.")
+    if (fli_tools.contains('cirifull') && !bsj_tools.contains('ciri2')) {
+        error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI2 must also be selected for BSJ detection.")
     }
 
     def tools_with_reads = readCarryingTools(bsjToolProperties().keySet() as List)

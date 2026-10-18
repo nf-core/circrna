@@ -196,7 +196,7 @@ CI runs three nf-test categories, selected by tag:
 Follow these rules when you add a module or subworkflow:
 
 - Put the test in `modules/local/<path>/tests/main.nf.test` or `subworkflows/local/<name>/tests/main.nf.test`.
-  Nested subworkflows live in nested folders, for example `subworkflows/local/detection_tools/ciri/main.nf`.
+  Nested subworkflows live in nested folders, for example `subworkflows/local/detection_tools/ciri2/main.nf`.
 - Use `script "../main.nf"` together with `process "<NAME>"` or `workflow "<NAME>"`.
 - Tag module tests with `"modules"` and `"modules_local"`, and subworkflow tests with `"subworkflows"` and `"subworkflows_local"`.
   Add the path of the module (with `/` replaced by `_`) or the name of the subworkflow as a further tag.

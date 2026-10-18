@@ -16,6 +16,7 @@ include { QUANTIFICATION                   } from '../subworkflows/local/quantif
 include { MIRNA_PREDICTION                 } from '../subworkflows/local/mirna_prediction'
 include { STATISTICAL_TESTS                } from '../subworkflows/local/statistical_tests'
 include { LONGREAD                         } from '../subworkflows/local/longread'
+include { CIRI_READS                       } from '../subworkflows/local/ciri_reads'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,6 +27,7 @@ include { LONGREAD                         } from '../subworkflows/local/longrea
 // MODULES:
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+include { BWA_MEM as CIRI_BWA_MEM     } from '../modules/nf-core/bwa/mem/main'
 
 // SUBWORKFLOWS:
 include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
@@ -160,6 +162,26 @@ workflow CIRCRNA {
         // 2. BSJ Discovery
         //
 
+        if (tools.intersect(['ciri2', 'ciri3']).size() > 0) {
+            if (fli_tools.contains('cirifull')) {
+                CIRI_READS(FASTQC_TRIMGALORE.out.reads)
+                ch_bwa_reads = CIRI_READS.out.reads
+                ch_reads_fixed_length = CIRI_READS.out.reads
+                ch_versions = ch_versions.mix(CIRI_READS.out.versions)
+            }
+            else {
+                ch_bwa_reads = FASTQC_TRIMGALORE.out.reads
+                ch_reads_fixed_length = channel.empty()
+            }
+
+            CIRI_BWA_MEM(ch_bwa_reads, bwa_index.first(), ch_fasta, true)
+            ch_bwa_sam = CIRI_BWA_MEM.out.sam
+        }
+        else {
+            ch_bwa_sam = channel.empty()
+            ch_reads_fixed_length = channel.empty()
+        }
+
         BSJ_DETECTION(
             FASTQC_TRIMGALORE.out.reads,
             ch_fasta,
@@ -168,7 +190,7 @@ workflow CIRCRNA {
             ch_annotation,
             bowtie_index,
             bowtie2_index,
-            bwa_index,
+            ch_bwa_sam,
             chromosomes,
             star_index,
             circexplorer2_index,
@@ -184,7 +206,8 @@ workflow CIRCRNA {
             exons_only,
             PREPARE_GENOME.out.faidx,
             circminer_index,
-            PREPARE_GENOME.out.circminer_gtf
+            PREPARE_GENOME.out.circminer_gtf,
+            ch_reads_fixed_length
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
@@ -200,8 +223,8 @@ workflow CIRCRNA {
             ch_fasta,
             ch_gtf,
             bwa_index,
-            BSJ_DETECTION.out.ciri_txt,
-            BSJ_DETECTION.out.ciri_sam,
+            BSJ_DETECTION.out.ciri2_txt,
+            BSJ_DETECTION.out.ciri2_sam,
             BSJ_DETECTION.out.bed12,
             BSJ_DETECTION.out.bed12_per_sample,
             BSJ_DETECTION.out.bed_reads,

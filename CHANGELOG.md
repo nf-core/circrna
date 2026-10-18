@@ -9,6 +9,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
+- [#250](https://github.com/nf-core/circrna/pull/250) - CIRI3 3.0.1 BSJ detection with a shared BWA-MEM alignment for CIRI2 and CIRI3, preserving fixed-length preparation for CIRI-full (@nictru)
 - [#249](https://github.com/nf-core/circrna/pull/249) - circMiner 0.4.2 BSJ detection for paired-end reads, automatic or prebuilt indices, genomic strand inference and supporting-read agreement (@nictru)
 - Multiple methods for BSJ detection (CIRIquant, find_circ, segemehl, mapsplice, circexplorer2, circrna_finder, DCC)
 - Multiple methods for circRNA quantification (psirc-quant, CIRIquant, sum and max aggregations)
@@ -20,6 +21,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Changed`
 
+- [#250](https://github.com/nf-core/circrna/pull/250) - Rename the legacy detector to CIRI2 throughout the pipeline, including `--tools ciri2`, module and subworkflow names, output paths and test fixtures (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - BSJ callers share one definition of STAR and read-support requirements; documentation now lists the current callers and published output paths (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - Local subworkflows now live in `subworkflows/local/<name>/main.nf` and no longer read `params` directly; only `NFCORE_CIRCRNA` in `main.nf` does (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - The pipeline test no longer runs the miRNA prediction and finishes in about half the time (@nictru)
@@ -44,7 +46,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#242](https://github.com/nf-core/circrna/pull/242) - `PYGTFTK_TABULATE` failed under docker because gtftk could not write to the home directory (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - An empty tool list (for example `--fli_tools ''`) is now parsed as an empty list. Previously it counted as one tool with an empty name, so single-end samples were rejected although no FLI tool was selected, and the check for an empty `--quantification_tools` never triggered (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - `CIRCTOOLS_DETECT` failed for single-end samples (#230, #210) (@nictru)
-- [#243](https://github.com/nf-core/circrna/pull/243) - `CIRI` BED output used a 1-based start, so CIRI BSJs were dropped during annotation (#239) (@nictru)
+- [#243](https://github.com/nf-core/circrna/pull/243) - CIRI2 BED output used a 1-based start, so CIRI2 BSJs were dropped during annotation (#239) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - The pipeline now fails with an error if none of the BSJ detection tools finds a BSJ (`FAIL_ON_EMPTY`) (#238) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - Per-tool count matrices failed when only a single sample was present (#215) (@nictru)
 - [#243](https://github.com/nf-core/circrna/pull/243) - `JCCIRC` never ran in the pipeline; it now receives its inputs correctly, its CPU request is clamped to at least 1, and `tools_with_reads` is validated (#231) (@nictru)

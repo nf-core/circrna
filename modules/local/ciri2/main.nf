@@ -1,4 +1,4 @@
-process CIRI_CIRI2 {
+process CIRI2 {
     tag "${meta.id}"
     label 'process_high'
 
@@ -25,7 +25,7 @@ process CIRI_CIRI2 {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ciri: ${VERSION}
+        ciri2: ${VERSION}
     END_VERSIONS
     """
 
@@ -37,7 +37,7 @@ process CIRI_CIRI2 {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ciri: ${VERSION}
+        ciri2: ${VERSION}
     END_VERSIONS
     """
 }

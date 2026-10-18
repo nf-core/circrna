@@ -64,7 +64,7 @@ nextflow_workflow {
                 """
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
+                input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
                 input[3] = []
                 input[4] = null
                 input[5] = null
@@ -120,7 +120,7 @@ nextflow_workflow {
                 }
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice']
+                input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice']
                 input[3] = []
                 input[4] = prebuilt('bowtie')
                 input[5] = prebuilt('bowtie2')
@@ -296,7 +296,7 @@ nextflow_workflow {
                 """
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[2] = ['ciri', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
+                input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice', 'psirc']
                 input[3] = []
                 input[4] = null
                 input[5] = null

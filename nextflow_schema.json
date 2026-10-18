@@ -82,8 +82,8 @@
                 "tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
-                    "description": "Comma separated list of circRNA back-splice junction detection tools to use. Supported tools include ciri, circexplorer2, circminer, find_circ, circrna_finder, mapsplice, circtools, segemehl, and psirc.",
-                    "pattern": "^(ciri|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
+                    "description": "Comma separated list of circRNA back-splice junction detection tools to use. Supported tools: ciri2, ciri3, circexplorer2, circminer, find_circ, circrna_finder, mapsplice, circtools, segemehl, psirc.",
+                    "pattern": "^(ciri2|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri2|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
                     "help_text": "Select one or a combination of circRNA back-splice junction detection tools, e.g. --tools 'circexplorer2,circminer,find_circ'. Selecting more than one tool enables consensus filtering with --min_tools. circMiner requires paired-end reads.",
                     "default": "circexplorer2"
                 },
@@ -115,7 +115,7 @@
                     "help_text": "When multiple circRNA quantification tools have been provided to `--tool`, set a filtering method whereby circRNAs are output if they have been called by at least *n* quantification tools.\n\nSetting `--min_tools` to 1 is the same as taking the union, all circRNAs are included in the output.\n\nSetting `--min_tools` to 2 will output circRNAs that have been called by at least 2 quantification tools and so on.",
                     "default": 1,
                     "minimum": 1,
-                    "maximum": 9
+                    "maximum": 10
                 },
                 "min_samples": {
                     "type": "integer",

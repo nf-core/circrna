@@ -134,4 +134,61 @@ nextflow_pipeline {
             )
         }
     }
+
+    test('CIRI2 and CIRI3 share one BWA-MEM task per sample') {
+        config './mini.config'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'ciri2,ciri3'
+                fli_tools = ''
+                quantification_tools = 'sum,max'
+                mature = null
+                phenotype = null
+                skip_fastqc = true
+                skip_trimming = true
+                min_tools = 1
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert tasks.count { task -> task.name.contains('CIRI3_RUN') } == 2 },
+                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } }
+            )
+        }
+    }
+
+    test('CIRI3 alone does not generate a STAR index - stub') {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'ciri3'
+                fli_tools = ''
+                quantification_tools = 'sum,max'
+                mature = null
+                phenotype = null
+                skip_fastqc = true
+                skip_trimming = true
+                min_tools = 1
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert tasks.count { task -> task.name.contains('CIRI3_RUN') } == 2 },
+                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } }
+            )
+        }
+    }
 }

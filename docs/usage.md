@@ -59,7 +59,8 @@ This part of the pipeline is responsible for the detection of back-splice juncti
 
 - `CIRCexplorer2`
 - `circRNA finder`
-- `CIRI`
+- `CIRI2`
+- `CIRI3`
 - `circtools`
 - `circMiner`
 - `find circ`

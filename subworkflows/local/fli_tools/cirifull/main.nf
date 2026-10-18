@@ -14,14 +14,14 @@ workflow CIRIFULL {
     ch_fasta
     ch_gtf
     ch_bwa_index
-    ch_ciri_txt
-    ch_ciri_sam
+    ch_ciri2_txt
+    ch_ciri2_sam
     max_shift
 
     main:
     ch_versions = channel.empty()
 
-    CIRIAS(ch_ciri_txt.join(ch_ciri_sam), ch_fasta, ch_gtf)
+    CIRIAS(ch_ciri2_txt.join(ch_ciri2_sam), ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(CIRIAS.out.versions)
 
     RO1(ch_reads)
@@ -32,7 +32,7 @@ workflow CIRIFULL {
     RO2(BWA_MEM.out.sam.map { meta, bam -> [meta, bam, meta.target_length] }, ch_fasta)
     ch_versions = ch_versions.mix(RO2.out.versions)
 
-    ch_merge = ch_ciri_txt.join(CIRIAS.out.list).join(RO2.out.list)
+    ch_merge = ch_ciri2_txt.join(CIRIAS.out.list).join(RO2.out.list)
 
     MERGE(ch_merge, ch_fasta, ch_gtf)
     ch_versions = ch_versions.mix(MERGE.out.versions)

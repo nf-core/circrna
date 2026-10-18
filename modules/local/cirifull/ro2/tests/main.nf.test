@@ -28,8 +28,8 @@ nextflow_process {
                 input[0] = [
                     [ id:'cel_N2_1', single_end:false, target_length:147 ],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true)
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true)
                     ]
                 ]
                 """

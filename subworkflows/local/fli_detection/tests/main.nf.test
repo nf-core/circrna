@@ -32,19 +32,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -114,19 +114,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -184,16 +184,16 @@ nextflow_workflow {
                     [ [ id:'cel_N2_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = channel.empty()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -261,19 +261,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -332,19 +332,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = channel.empty()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -415,19 +415,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -499,19 +499,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -591,19 +591,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(
@@ -685,19 +685,19 @@ nextflow_workflow {
                     [ [ id:'fust1_1', single_end:false ], [ file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[1] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], [ file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true) ] ]
                 )
                 input[2] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ])
                 input[3] = channel.value([ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ])
                 input[4] = BWA_INDEX.out.index.first()
                 input[5] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.txt', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.txt', checkIfExists: true) ]
                 )
                 input[6] = channel.of(
-                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true) ],
-                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true) ]
+                    [ [ id:'cel_N2_1', single_end:false, target_length:147 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true) ],
+                    [ [ id:'fust1_1', single_end:false, target_length:146 ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true) ]
                 )
                 input[7] = channel.of([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true) ])
                 input[8] = channel.of(

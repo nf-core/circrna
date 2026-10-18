@@ -18,8 +18,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1', single_end:false, target_length:147 ],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true),
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)
                 ]
                 input[1] = [
                     [ id:'chrI_mini' ],
@@ -57,8 +57,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1', single_end:false, target_length:147 ],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true),
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)
                 ]
                 input[1] = [
                     [ id:'chrI_mini' ],
