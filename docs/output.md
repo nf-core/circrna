@@ -150,7 +150,7 @@ The rough workflow for the BSJ detection looks like this:
 
 #### circMiner
 
-circMiner's unmodified per-sample report is published under `3_bsj_detection/tools/circminer/raw/`; the pipeline-normalized BED is published under `3_bsj_detection/tools/circminer/unified/`. The BED includes circMiner calls that pass its report filter, with strand inferred from canonical splice signals where possible.
+circMiner's unmodified report is published under `3_bsj_detection/tools/circminer/raw/<sample>/` with `--save_intermediates`; the pipeline-normalized BED is published under `3_bsj_detection/tools/circminer/unified/`. The BED includes passing calls, converted to 0-based starts, with counts, supporting-read IDs and strand inferred from canonical splice motifs where possible.
 
 <details markdown="1">
 <summary>Output files available for all tools</summary>

@@ -190,6 +190,7 @@ def parseToolList(String tools) {
 def bsjToolProperties() {
     return [
         ciri            : [reads: true,  star: false],
+        circminer       : [reads: true,  star: false],
         circexplorer2   : [reads: false, star: true],
         circrna_finder  : [reads: false, star: true],
         circtools       : [reads: true,  star: true],
@@ -269,7 +270,7 @@ def validateInputSamplesheet(input) {
     }
 
     def fli_tools = parseToolList(params.fli_tools)
-    def circminer_tools = parseToolList(params.tools)
+    def bsj_tools = parseToolList(params.tools)
 
     if (!params.longread && fli_tools.size() > 0) {
         def all_paired_end = metas.every{ meta -> meta.single_end == false }
@@ -285,7 +286,7 @@ def validateInputSamplesheet(input) {
         }
     }
 
-    if (circminer_tools.contains('circminer') && metas.any{ meta -> meta.single_end == true }) {
+    if (!params.longread && bsj_tools.contains('circminer') && metas.any{ meta -> meta.single_end == true }) {
         error("Please check input samplesheet -> All samples must be paired-end when circminer is selected.")
     }
 

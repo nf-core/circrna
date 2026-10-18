@@ -68,6 +68,7 @@ This part of the pipeline is responsible for the detection of back-splice juncti
 - `Segemehl`
 
 The tools to be used can be specified using the `tools` parameter.
+For circMiner, `--circminer` accepts the directory published at `1_references/index/circminer/` with `--save_reference`. It must contain `reference.fa`, `reference.fa.packed.fa`, `reference.fa.packed.fa.index` and `reference.fa.packed.fa.index.info`, built from the same genome FASTA. Omit the option to build the index automatically.
 Each tool reports supporting-read counts for each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter. psiRC strands are assigned from its supporting transcript headers where they agree; otherwise canonical genome splice motifs are used when available. Calls that remain ambiguous retain `.`.
 Additionally, the parameter `min_tools` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
 
