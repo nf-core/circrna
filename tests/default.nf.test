@@ -87,4 +87,25 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("circMiner rejects single-end input - stub") {
+        config './circminer_input.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circminer'
+                fli_tools = ''
+                mature = null
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert (workflow.stdout + workflow.stderr).join('\n').contains('All samples must be paired-end when circminer is selected.') }
+            )
+        }
+    }
 }
