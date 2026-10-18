@@ -667,6 +667,36 @@ nextflow_workflow {
 
     test("mini - all tools find nothing fails") {
 
+        setup {
+            run("BWA_INDEX") {
+                script "modules/nf-core/bwa/index/main.nf"
+                process {
+                    """
+                    input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                    """
+                }
+            }
+            run("BWA_MEM") {
+                script "modules/nf-core/bwa/mem/main.nf"
+                process {
+                    """
+                    def reads = [1, 2].collect { mate ->
+                        def rnd = new Random(mate)
+                        def records = (1..2000).collect { i ->
+                            def seq = (1..100).collect { 'ACGT'[rnd.nextInt(4)] }.join('')
+                            "@read\${i}\\n\${seq}\\n+\\n\${'I' * 100}\\n"
+                        }
+                        file("$outputDir/noise_\${mate}.fastq").with { fq -> fq.parent.mkdirs(); fq.text = records.join(''); fq }
+                    }
+                    input[0] = [[id: 'noise', single_end: false], reads]
+                    input[1] = BWA_INDEX.out.index.first()
+                    input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                    input[3] = false
+                    """
+                }
+            }
+        }
+
         when {
             params {
                 outdir = "$outputDir"
@@ -675,28 +705,14 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = channel.of(
-                    [
-                        [id: 'noise', single_end: false],
-                        [1, 2].collect { mate ->
-                            def rnd = new Random(mate)
-                            def reads = (1..2000).collect { i ->
-                                def seq = (1..100).collect { 'ACGT'[rnd.nextInt(4)] }.join('')
-                                "@read\${i}\\n\${seq}\\n+\\n\${'I' * 100}\\n"
-                            }
-                            file("$outputDir/noise_\${mate}.fastq").with { fq -> fq.parent.mkdirs(); fq.text = reads.join(''); fq }
-                        }
-                    ]
-                )
+                input[0] = channel.empty()
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
                 input[3] = null
                 input[4] = channel.empty()
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
-                input[7] = channel.of(
-                    [[id: 'noise', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)]
-                )
+                input[7] = BWA_MEM.out.sam
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
