@@ -168,6 +168,18 @@ With `--save_reference`, the circMiner-specific AGAT-standardized, strand-ordere
 
 An exemption of the above is `star`, which is not used as a standalone BSJ detection tool, but the output of a 2-pass STAR alignment is used by `CIRCexplorer2`, `circRNA finder` and `circtools`.
 
+#### CIRI3
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `3_bsj_detection/tools/ciri3/unified/*.ciri3.bed`: Per-sample unified BSJ calls (BED7); the seventh column contains comma-separated supporting read IDs.
+- `3_bsj_detection/tools/ciri3/intermediates/*.ciri3.txt`: CIRI3's raw detection result, when intermediate files are enabled.
+
+</details>
+
+[CIRI3](https://github.com/gyjames/CIRI3) detects circRNAs from the shared BWA-MEM SAM alignment. Its 1-based inclusive start coordinate is converted to a 0-based BED start; the end is unchanged.
+
 #### CIRCexplorer2
 
 <details markdown="1">

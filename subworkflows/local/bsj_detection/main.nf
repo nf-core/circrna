@@ -17,6 +17,7 @@ include { CIRCEXPLORER2                                  } from '../detection_to
 include { CIRCRNA_FINDER                                 } from '../detection_tools/circrna_finder'
 include { FIND_CIRC                                      } from '../detection_tools/find_circ'
 include { CIRI                                           } from '../detection_tools/ciri'
+include { CIRI3                                          } from '../detection_tools/ciri3'
 include { CIRCTOOLS                                      } from '../detection_tools/circtools'
 include { MAPSPLICE                                      } from '../detection_tools/mapsplice'
 include { PSIRC                                          } from '../detection_tools/psirc'
@@ -122,6 +123,12 @@ workflow BSJ_DETECTION {
     else {
         ch_ciri_txt = channel.empty()
         ch_ciri_sam = channel.empty()
+    }
+
+    if (tools.contains('ciri3')) {
+        CIRI3(ch_bwa_sam, ch_fasta, ch_gtf)
+        ch_versions = ch_versions.mix(CIRI3.out.versions)
+        ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI3.out.bed)
     }
 
     if (tools.contains('circtools')) {

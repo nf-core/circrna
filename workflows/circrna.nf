@@ -174,7 +174,7 @@ workflow CIRCRNA {
                 ch_reads_fixed_length = channel.empty()
             }
 
-            CIRI_BWA_MEM(ch_bwa_reads, bwa_index, ch_fasta, true)
+            CIRI_BWA_MEM(ch_bwa_reads, bwa_index.first(), ch_fasta, true)
             ch_bwa_sam = CIRI_BWA_MEM.out.sam
         }
         else {

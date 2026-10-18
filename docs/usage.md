@@ -59,7 +59,8 @@ This part of the pipeline is responsible for the detection of back-splice juncti
 
 - `CIRCexplorer2`
 - `circRNA finder`
-- `CIRI`
+- `CIRI` (CIRI2)
+- `CIRI3`
 - `circtools`
 - `circMiner`
 - `find circ`
@@ -71,6 +72,8 @@ The tools to be used can be specified using the `tools` parameter.
 `circMiner` and `psirc` require paired-end reads for BSJ detection.
 Each tool reports supporting-read counts for each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter. psiRC strands are assigned from its supporting transcript headers where they agree; otherwise canonical genome splice motifs are used when available. Calls that remain ambiguous retain `.`.
 Additionally, the parameter `min_tools` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
+
+CIRI3 uses the shared BWA-MEM alignment when selected with `--tools ciri3`; selecting it does not require STAR.
 
 For instructions on how to interpret the output of this section, please check out the [output documentation](https://nf-co.re/circrna/output#bsj-detection).
 

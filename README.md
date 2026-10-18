@@ -39,6 +39,7 @@ If you want to contribute, feel free to create an issue or pull request on the [
 - Adapter trimming ([`Trim Galore!`](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/))
 - BSJ detection
   - [`CIRI`](https://sourceforge.net/projects/ciri/)
+  - [`CIRI3`](https://github.com/gyjames/CIRI3)
   - [`STAR 2-Pass mode`](https://github.com/alexdobin/STAR)
     - [`CIRCexplorer2`](https://circexplorer2.readthedocs.io/en/latest/)
     - [`circRNA finder`](https://github.com/orzechoj/circRNA_finder)

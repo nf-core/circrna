@@ -42,6 +42,10 @@
 
   > Zhang, J., Chen, S., Yang, J. et al. (2020). Accurate quantification of circular RNAs identifies extensive circular isoform switching events. Nat Commun 11, 90.
 
+- [CIRI3](https://doi.org/10.1038/s41587-025-02835-1)
+
+  > CIRI3: a comprehensive analysis package for the detection and quantification of circular RNAs in RNA-Seq data. Nat Biotechnol. 2025. doi: 10.1038/s41587-025-02835-1.
+
 - [DCC](https://doi.org/10.1093/bioinformatics/btv656)
 
   > Jun Cheng, Franziska Metge, Christoph Dieterich, (2016). Specific identification and quantification of circular RNAs from sequencing data, Bioinformatics, 32(7), 1094–1096.

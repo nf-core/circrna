@@ -10,7 +10,7 @@ workflow CIRI3 {
     main:
     ch_versions = channel.empty()
 
-    CIRI3_RUN(ch_sam, ch_fasta, ch_gtf, [])
+    CIRI3_RUN(ch_sam, ch_fasta.first(), ch_gtf.first(), [])
     ch_versions = ch_versions.mix(CIRI3_RUN.out.versions)
 
     UNIFY(

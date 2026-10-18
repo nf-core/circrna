@@ -11,7 +11,7 @@ workflow CIRI {
     main:
     ch_versions = channel.empty()
 
-    CIRI2(ch_sam, ch_fasta, ch_gtf)
+    CIRI2(ch_sam, ch_fasta.first(), ch_gtf.first())
     ch_versions = ch_versions.mix(CIRI2.out.versions)
 
     UNIFY(
