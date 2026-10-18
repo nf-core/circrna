@@ -1,0 +1,72 @@
+nextflow_workflow {
+
+    name "Test Workflow CIRCMINER"
+    script "../main.nf"
+    workflow "CIRCMINER"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "circminer"
+
+    setup {
+        run("CIRCMINER_INDEX") {
+            script "modules/local/circminer/index/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("SAMTOOLS_FAIDX") {
+            script "modules/nf-core/samtools/faidx/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true), []]
+                input[1] = false
+                """
+            }
+        }
+    }
+
+    test("mini paired-end preserves the empty-result case") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
+                input[1] = CIRCMINER_INDEX.out.index
+                input[2] = channel.of([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = SAMTOOLS_FAIDX.out.fa
+                input[4] = SAMTOOLS_FAIDX.out.fai
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            assert bed.every { it.split('\t').size() == 7 }
+            assert bed.every { it.split('\t')[5] in ['+', '-', '.'] }
+        }
+    }
+
+    test("mini paired-end - stub") {
+        options '-stub'
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
+                input[1] = CIRCMINER_INDEX.out.index
+                input[2] = channel.of([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = SAMTOOLS_FAIDX.out.fa
+                input[4] = SAMTOOLS_FAIDX.out.fai
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert path(workflow.out.bed[0][1]).readLines().isEmpty()
+        }
+    }
+}
