@@ -79,7 +79,7 @@ workflow PSIRC_QUANT {
     ch_versions = ch_versions.mix(SPLIT_TYPES_TPM.out.versions)
 
     MERGE_EXPERIMENTS(
-        TXIMETA_TXIMETA.out.se.toSortedList { a, b -> a[0].id <=> b[0].id }.map { samples -> [[id: "experiments"], samples.collect { _meta, se -> se }] },
+        TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect(sort: { se -> se.name }).map { experiments -> [[id: "experiments"], experiments] },
         ch_phenotype.ifEmpty([[], []]),
         ch_transcriptome_gtf,
         JOIN_TX_TPM.out.out_file,
