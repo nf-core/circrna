@@ -12,13 +12,13 @@ nextflow_process {
         when {
             process {
                 """
-                def inputDir = file("\$outputDir/input")
+                def inputDir = file("$outputDir/input")
                 inputDir.mkdirs()
-                def circ = file("\$outputDir/input/consensus.list")
+                def circ = file("$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\nchr1\\t30\\t40\\nchr2\\t50\\t70\\n'
-                def bsj = file("\$outputDir/input/sample.ciri3.txt.BSJ_Matrix")
+                def bsj = file("$outputDir/input/sample.ciri3.txt.BSJ_Matrix")
                 bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\t7\\n'
-                def fsj = file("\$outputDir/input/sample.ciri3.txt.FSJ_Matrix")
+                def fsj = file("$outputDir/input/sample.ciri3.txt.FSJ_Matrix")
                 fsj.text = 'circRNA\\tFSJ\\nchr1\\t10\\t20\\t19\\nchr2\\t50\\t70\\t3\\n'
                 input[0] = [[id: 'consensus'], circ]
                 input[1] = [[id: 'sample_9'], bsj, fsj]
@@ -42,13 +42,13 @@ nextflow_process {
         when {
             process {
                 """
-                def inputDir = file("\$outputDir/input")
+                def inputDir = file("$outputDir/input")
                 inputDir.mkdirs()
-                def circ = file("\$outputDir/input/consensus.list")
+                def circ = file("$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
-                def bsj = file("\$outputDir/input/bad.BSJ_Matrix")
+                def bsj = file("$outputDir/input/bad.BSJ_Matrix")
                 bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\tNaN\\n'
-                def fsj = file("\$outputDir/input/bad.FSJ_Matrix")
+                def fsj = file("$outputDir/input/bad.FSJ_Matrix")
                 fsj.text = 'circRNA\\tFSJ\\n'
                 input[0] = [[id: 'consensus'], circ]
                 input[1] = [[id: 'bad_count'], bsj, fsj]
@@ -67,13 +67,13 @@ nextflow_process {
         when {
             process {
                 """
-                def inputDir = file("\$outputDir/input")
+                def inputDir = file("$outputDir/input")
                 inputDir.mkdirs()
-                def circ = file("\$outputDir/input/consensus.list")
+                def circ = file("$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
-                def bsj = file("\$outputDir/input/missing.BSJ_Matrix")
+                def bsj = file("$outputDir/input/missing.BSJ_Matrix")
                 bsj.text = ''
-                def fsj = file("\$outputDir/input/missing.FSJ_Matrix")
+                def fsj = file("$outputDir/input/missing.FSJ_Matrix")
                 fsj.text = 'circRNA\\tFSJ\\n'
                 input[0] = [[id: 'consensus'], circ]
                 input[1] = [[id: 'missing_matrix'], bsj, fsj]
@@ -93,13 +93,13 @@ nextflow_process {
         when {
             process {
                 """
-                def inputDir = file("\$outputDir/input")
+                def inputDir = file("$outputDir/input")
                 inputDir.mkdirs()
-                def circ = file("\$outputDir/input/consensus.list")
+                def circ = file("$outputDir/input/consensus.list")
                 circ.text = 'chr1\\t10\\t20\\n'
-                def bsj = file("\$outputDir/input/sample.BSJ_Matrix")
+                def bsj = file("$outputDir/input/sample.BSJ_Matrix")
                 bsj.text = 'circRNA\\tBSJ\\n'
-                def fsj = file("\$outputDir/input/sample.FSJ_Matrix")
+                def fsj = file("$outputDir/input/sample.FSJ_Matrix")
                 fsj.text = 'circRNA\\tFSJ\\n'
                 input[0] = [[id: 'consensus'], circ]
                 input[1] = [[id: 'sample_9'], bsj, fsj]
