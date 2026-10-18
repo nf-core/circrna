@@ -58,6 +58,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 - [#245](https://github.com/nf-core/circrna/pull/245) - `COMPUTE_CORRELATIONS` only ran for the first binding-site batch of `MIRNA_PREDICTION`. It now runs for all batches (#218) (@nictru)
 - [#245](https://github.com/nf-core/circrna/pull/245) - `MIRNA_FILTERING` only checked columns 5 onwards and so ignored the first three samples. All sample columns are checked now (#218) (@nictru)
 - [#245](https://github.com/nf-core/circrna/pull/245) - `CIRCTEST` mangled sample-named column headers (`check.names`). They are now read unchanged (#233, #218) (@nictru)
+- [#247](https://github.com/nf-core/circrna/pull/247) - The `library_length` output of `CIRI_CIRIAS` is no longer optional: a missing file now fails the task instead of silently dropping the sample from `CIRI_CIRIVIS`. The empty file CIRI-AS writes on small data is kept on purpose, because CIRI-vis only writes the circRNA sequences when it receives `-l` (#241) (@nictru)
 
 ### `Dependencies`
 
