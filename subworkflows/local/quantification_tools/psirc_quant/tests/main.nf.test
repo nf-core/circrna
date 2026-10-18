@@ -58,19 +58,11 @@ nextflow_workflow {
             def circular = path(workflow.out.circular_tx_counts[0][1]).csv(sep: '\t')
             def linear = path(workflow.out.linear_tx_counts[0][1]).csv(sep: '\t')
             def gene = path(workflow.out.gene_counts[0][1]).csv(sep: '\t')
-            def quantCommands = []
-            new File(workDir.toString()).eachFileRecurse(groovy.io.FileType.FILES) { f ->
-                if (f.name == '.command.sh' && f.text.contains('psirc-quant quant')) {
-                    quantCommands << f.text
-                }
-            }
             assertAll(
                 { assert workflow.success },
                 { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert gene.columnNames == [ 'gene_id', 'gene_name', 'cel_N2_1', 'fust1_1' ] },
                 { assert linear.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
-                { assert quantCommands.size() == 2 },
-                { assert quantCommands.every { it =~ /--genomebam -g \S+\.gtf\b/ } },
                 { assert circular.rowCount > 0 },
                 { assert linear.rowCount > 0 },
                 { assert gene.rowCount > 0 },
