@@ -33,6 +33,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Fixed`
 
+- [#249](https://github.com/nf-core/circrna/pull/249) - Prepare circMiner's required gene/transcript/exon hierarchy from the filtered annotation, avoiding a GTF-loading segmentation fault on exon-only annotations (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - Build the STAR index for circtools discovery and FLI detection. Infer psirc strand from supporting transcripts, with canonical genomic splice motifs as a fallback (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - `exons_only = false` was treated as `true` in `ANNOTATION` (`bed2gtf`) (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - `BSJ_DETECTION` failed when no STAR-based detection tool was selected (@nictru)
