@@ -48,6 +48,8 @@ nextflow_workflow {
         then {
             assert workflow.success
             assert workflow.out.bed.size() == 2
+            assert workflow.trace.succeeded().count { task -> task.name.contains('CIRCMINER:PREPAREGTF') } == 1
+            assert workflow.trace.succeeded().count { task -> task.name.contains('CIRCMINER:DETECT') } == 2
             def bed = workflow.out.bed.collectMany { meta, output -> path(output).readLines() }
             assert bed.every { it.split('\t').size() == 7 }
             assert bed.every { it.split('\t')[5] in ['+', '-', '.'] }

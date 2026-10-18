@@ -1,0 +1,37 @@
+nextflow_process {
+
+    name "Test Process CIRCMINER_PREPAREGTF"
+    script "../main.nf"
+    process "CIRCMINER_PREPAREGTF"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circminer"
+    tag "circminer_preparegtf"
+
+    test("normalizes an exon-only GTF with coding features") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            def source = path(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf').readLines()
+            def output = path(process.out.gtf[0][1]).readLines()
+            def sourceExons = source.findAll { it.split('\t')[2] == 'exon' }
+            def outputExons = output.findAll { it.split('\t')[2] == 'exon' }
+            assert outputExons.size() == sourceExons.size()
+            assert output.count { it.split('\t')[2] == 'gene' } > 0
+            assert output.count { it.split('\t')[2] == 'transcript' } > 0
+            assert output.every { it.split('\t').size() == 9 }
+            assert outputExons.every { it.contains('exon_number "') && it.contains('gene_name "') }
+            assert outputExons.collect { it.split('\t')[3..4].join(':') }.toSet().containsAll(sourceExons.collect { it.split('\t')[3..4].join(':') })
+            def minusExons = outputExons.findAll { it.split('\t')[6] == '-' }
+            assert minusExons.findAll { it.contains('transcript_id "NR_052813"') }*.split('\t')*.getAt(3) == ['350134', '191241', '142375', '1941', '1900', '1827']
+        }
+    }
+}
