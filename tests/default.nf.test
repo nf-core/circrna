@@ -191,4 +191,51 @@ nextflow_pipeline {
             )
         }
     }
+    test('CIRI3 quantification without CIRI3 discovery') {
+        config './mini.config'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+                quantification_tools = 'ciri3'
+                mature = null
+                bsj_reads = 1
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert workflow.trace.succeeded().every { task -> !task.name.contains('BSJ_DETECTION:CIRI3:') } },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
+            )
+        }
+    }
+
+    test('CIRI3 quantification without CIRI3 discovery - stub') {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+                quantification_tools = 'ciri3'
+                mature = null
+                bsj_reads = 1
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
+            )
+        }
+    }
 }

@@ -1,5 +1,6 @@
 include { PSIRC_QUANT                     } from '../quantification_tools/psirc_quant'
 include { CIRIQUANT                       } from '../quantification_tools/ciriquant'
+include { CIRI3_QUANT                     } from '../quantification_tools/ciri3'
 include { COMBINEBEDS_COUNTS as AGGREGATE } from '../../../modules/local/combinebeds/counts'
 
 workflow QUANTIFICATION {
@@ -20,6 +21,7 @@ workflow QUANTIFICATION {
     tools
     max_shift
     consider_strand
+    ch_bwa_sam
 
     main:
     ch_versions = channel.empty()
@@ -58,6 +60,12 @@ workflow QUANTIFICATION {
         ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
         ch_ciriquant = ch_ciriquant.mix(CIRIQUANT.out.raw)
         ch_stringtie = ch_stringtie.mix(CIRIQUANT.out.stringtie)
+    }
+
+    if (tools.contains('ciri3')) {
+        CIRI3_QUANT(ch_bwa_sam, circ_annotation_bed, ch_fasta, ch_gtf)
+        ch_circ_counts = ch_circ_counts.mix(CIRI3_QUANT.out.bsj)
+        ch_versions = ch_versions.mix(CIRI3_QUANT.out.versions)
     }
 
     aggregations = ['sum', 'max']
