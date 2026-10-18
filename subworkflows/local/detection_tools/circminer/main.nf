@@ -21,8 +21,6 @@ workflow CIRCMINER {
         [],
         false,
     )
-    ch_versions = ch_versions.mix(UNIFY.out.versions_gawk)
-
     ch_reference = fasta
         .join(faidx)
         .map { meta, reference, reference_fai -> [meta, reference, reference_fai] }

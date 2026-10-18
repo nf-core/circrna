@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow CIRCMINER"
     script "../main.nf"
     workflow "CIRCMINER"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
@@ -35,7 +36,7 @@ nextflow_workflow {
                 input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
                 input[1] = CIRCMINER_INDEX.out.index
                 input[2] = channel.of([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[3] = SAMTOOLS_FAIDX.out.fa
+                input[3] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[4] = SAMTOOLS_FAIDX.out.fai
                 """
             }
@@ -58,7 +59,7 @@ nextflow_workflow {
                 input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
                 input[1] = CIRCMINER_INDEX.out.index
                 input[2] = channel.of([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[3] = SAMTOOLS_FAIDX.out.fa
+                input[3] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[4] = SAMTOOLS_FAIDX.out.fai
                 """
             }
