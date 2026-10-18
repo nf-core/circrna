@@ -157,7 +157,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
                     "description": "Comma separated list of circRNA quantification tools to use. Supported tools: ciriquant, psirc, ciri3, sum, max",
-                    "help_text": "Select one or a combination of circRNA quantification tools, e.g. --quantification_tools 'ciriquant,psirc,ciri3,sum,max'. CIRI3 quantifies the consensus circRNAs using BWA-MEM alignments, independently of the selected BSJ detection tools, and produces BSJ and FSJ count matrices.",
+                    "help_text": "Select one or a combination of circRNA quantification tools, e.g. --quantification_tools 'ciriquant,psirc,ciri3,sum,max'.",
                     "default": "ciriquant,psirc,sum,max",
                     "pattern": "^((ciriquant|psirc|ciri3|sum|max)(,(ciriquant|psirc|ciri3|sum|max))*)+$"
                 },
