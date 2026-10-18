@@ -72,8 +72,11 @@ nextflow_workflow {
         }
     }
 
-    test("circMiner dispatch emits a unified per-sample BED") {
+    test("circMiner runs alongside a STAR-based caller") {
         when {
+            params {
+                outdir = "$outputDir"
+            }
             workflow {
                 """
                 input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
@@ -85,11 +88,11 @@ nextflow_workflow {
                 input[6] = channel.empty()
                 input[7] = channel.empty()
                 input[8] = channel.empty()
-                input[9] = channel.empty()
+                input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['circminer']
+                input[13] = ['circexplorer2', 'circminer']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -105,7 +108,7 @@ nextflow_workflow {
         then {
             def toolBeds = workflow.out.bed_per_sample_tool.findAll { meta, _bed -> meta.tool == 'circminer' }
             assert workflow.success
-            assert toolBeds.size() == 1
+            assert workflow.trace.succeeded().count { task -> task.name.contains('CIRCMINER:DETECT') } == 1
             assert toolBeds.every { meta, bed ->
                 def rows = path(bed).readLines()
                 meta.tool == 'circminer' && rows.every { it.tokenize('\t').size() >= 6 }
