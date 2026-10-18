@@ -2,7 +2,7 @@ process INFER_STRAND {
     tag "${meta.id}"
     label 'process_low'
 
-    conda "bioconda::pysam=0.22.1"
+    conda "bioconda::pysam=0.23.3"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
         ? 'https://depot.galaxyproject.org/singularity/pysam:0.23.3--py311h5f69268_3'
         : 'quay.io/biocontainers/pysam:0.23.3--py311h5f69268_3'}"
