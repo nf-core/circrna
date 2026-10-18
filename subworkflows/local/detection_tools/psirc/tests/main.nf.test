@@ -50,6 +50,12 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
+                ], [
+                    [id: 'fust1_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
                 ])
                 input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
@@ -62,9 +68,16 @@ nextflow_workflow {
             def bed = path(workflow.out.bed[0][1]).readLines()
             assertAll(
                 { assert workflow.success },
+                { assert workflow.out.bed.size() == 2 },
                 { assert bed.every { it.split('\\t').size() >= 6 } },
                 { assert workflow.out.bed.every { _meta, output -> file(output).name.endsWith('.psirc.bed') } },
-                { assert workflow.out.output.every { _meta, output -> file(output).exists() } }
+                { assert workflow.out.output.every { _meta, output -> file(output).exists() } },
+                { assert snapshot(
+                    workflow.out.bed.collect { file(it[1]).name },
+                    bed.size(),
+                    workflow.out.output.collect { file(it[1]).list().sort() },
+                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
+                ).match() }
             )
         }
     }
@@ -84,6 +97,12 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
+                ], [
+                    [id: 'fust1_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
                 ])
                 input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
@@ -95,7 +114,9 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.out.bed.every { _meta, output -> file(output).name.endsWith('.psirc.bed') } }
+                { assert workflow.out.bed.size() == 2 },
+                { assert workflow.out.bed.every { _meta, output -> file(output).name.endsWith('.psirc.bed') } },
+                { assert snapshot(workflow.out).match() }
             )
         }
     }

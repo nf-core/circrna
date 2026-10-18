@@ -15,13 +15,14 @@ workflow PSIRC {
     BSJ(ch_reads, ch_index)
     ch_versions = ch_versions.mix(BSJ.out.versions)
 
+    // These are singleton references. Convert them to value channels so every sample task receives them.
     UNIFY(
         BSJ.out.bed.map { meta, bed -> [meta + [tool: "psirc"], bed] },
-        ch_index.map { meta, transcriptome, _index -> [meta, transcriptome] },
+        ch_index.map { meta, transcriptome, _index -> [meta, transcriptome] }.first(),
     )
     ch_versions = ch_versions.mix(UNIFY.out.versions)
 
-    INFER_STRAND(UNIFY.out.bed, ch_fasta.join(ch_faidx))
+    INFER_STRAND(UNIFY.out.bed, ch_fasta.join(ch_faidx).first())
     ch_versions = ch_versions.mix(INFER_STRAND.out.versions)
 
     emit:

@@ -3,9 +3,6 @@
 
 import re
 
-import yaml
-
-
 def transcript_strands(transcriptome):
     strands = {}
     with open(transcriptome) as handle:
@@ -44,4 +41,4 @@ with open("${bed}") as source, open("${prefix}.bed", "w") as destination:
         destination.write("\t".join([fields[0], fields[1], fields[2], f"FUSIONJUNC_{number}/{score}", score, supporting_strand(names.split(":", 1)[0], strands)]) + "\n")
 
 with open("versions.yml", "w") as handle:
-    yaml.safe_dump({"${task.process}": {"python": "3"}}, handle)
+    handle.write('"${task.process}":\n    python: "3"\n')

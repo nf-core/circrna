@@ -24,7 +24,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert path(process.out.bed[0][1]).readLines() == ['chr1\t2\t4\tplus\t1\t+', 'chr1\t8\t10\tminus\t1\t-', 'chr1\t3\t5\tunknown\t1\t.', 'chr1\t2\t4\tknown\t1\t-\textra'] }
+                { assert path(process.out.bed[0][1]).readLines() == ['chr1\t2\t4\tplus\t1\t+', 'chr1\t8\t10\tminus\t1\t-', 'chr1\t3\t5\tunknown\t1\t.', 'chr1\t2\t4\tknown\t1\t-\textra'] },
+                { assert file("$outputDir/calls.bed").readLines().size() == 4 }
             )
         }
     }

@@ -8,12 +8,15 @@ process PSIRC_BSJ_UNIFY {
         : 'community.wave.seqera.io/library/pandas_pyyaml:c0acbb47d05e4f9c'}"
 
     input:
-    tuple val(meta), path(bed)
+    tuple val(meta), path(bed, stageAs: 'input/*')
     tuple val(transcriptome_meta), path(transcriptome)
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
     path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id

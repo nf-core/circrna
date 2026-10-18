@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Fill unstranded BED records from canonical genomic BSJ splice motifs."""
 
-from pathlib import Path
-
 import pysam
-import yaml
 
 
 def infer_strand(reference, fields):
@@ -34,4 +31,4 @@ with pysam.FastaFile("${fasta}") as reference, open("${bed}") as source, open("$
         destination.write("\t".join(infer_strand(reference, fields)) + "\n")
 
 with open("versions.yml", "w") as handle:
-    yaml.safe_dump({"${task.process}": {"pysam": pysam.__version__}}, handle)
+    handle.write('"${task.process}":\n    pysam: "{}"\n'.format(pysam.__version__))
