@@ -22,7 +22,7 @@ nextflow_process {
             assert process.success
             def index = path(process.out.index[0][1])
             assert index.resolve('reference.fa').exists()
-            assert index.list().any { it.name.endsWith('.packed.fa.index') }
+            assert index.list().any { it.fileName.toString().endsWith('.packed.fa.index') }
         }
     }
 

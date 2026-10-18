@@ -23,9 +23,9 @@ process CIRCMINER_CIRCMINER {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    index_file=\$(find -L ${index} -maxdepth 1 -type f -name '*.packed.fa.index' -printf '%f\\n')
-    test \$(printf '%s\\n' "\$index_file" | sed '/^\$/d' | wc -l) -eq 1
-    reference=${index}/\${index_file%.packed.fa.index}
+    set -- ${index}/*.packed.fa.index
+    test "\$#" -eq 1 && test -f "\$1"
+    reference=\${1%.packed.fa.index}
     test -f "\$reference"
 
     circminer -r "\$reference" -g ${gtf} -1 ${reads[0]} -2 ${reads[1]} -o ${prefix} -t ${task.cpus} ${args}
