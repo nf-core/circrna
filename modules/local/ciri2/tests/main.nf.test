@@ -1,12 +1,12 @@
 nextflow_process {
 
-    name "Test Process CIRI_CIRI2"
+    name "Test Process CIRI2"
     script "../main.nf"
-    process "CIRI_CIRI2"
+    process "CIRI2"
 
     tag "modules"
     tag "modules_local"
-    tag "ciri_ciri2"
+    tag "ciri2"
 
     test("cel_N2_1 BWA-MEM alignment") {
         when {
@@ -14,7 +14,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [id: 'cel_N2_1', single_end: false],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)
                 ]
                 input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
                 input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
@@ -42,7 +42,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [id: 'cel_N2_1', single_end: false],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)
                 ]
                 input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
                 input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]

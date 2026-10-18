@@ -8,7 +8,7 @@ process CIRI_CIRIAS {
         : 'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f'}"
 
     input:
-    tuple val(meta), path(ciri), path(sam)
+    tuple val(meta), path(ciri2), path(sam)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
 
@@ -22,7 +22,7 @@ process CIRI_CIRIAS {
     prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "1.0.0"
     """
-    CIRI-AS -S ${sam} -C ${ciri} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
+    CIRI-AS -S ${sam} -C ${ciri2} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
 
     # The library length file stays even if it is empty: CIRI-vis needs it via -l to write the circRNA sequences
 

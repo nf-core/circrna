@@ -9,13 +9,13 @@ nextflow_process {
     tag "modules_local"
     tag "csvtk_summary"
 
-    test("ciri table - group by type") {
+    test("ciri2 table - group by type") {
         when {
             process {
                 """
                 input[0] = [
                     [id: 'cel_N2_1'],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true)
                 ]
                 """
             }
@@ -33,7 +33,7 @@ nextflow_process {
         }
     }
 
-    test("ciri table - group by strand, tsv output") {
+    test("ciri2 table - group by strand, tsv output") {
         config "./tsv.nextflow.config"
 
         when {
@@ -41,7 +41,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [id: 'cel_N2_1'],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true)
                 ]
                 """
             }
@@ -58,7 +58,7 @@ nextflow_process {
         }
     }
 
-    test("ciri table - stub") {
+    test("ciri2 table - stub") {
         options '-stub'
 
         when {
@@ -66,7 +66,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [id: 'cel_N2_1'],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true)
                 ]
                 """
             }

@@ -40,10 +40,10 @@ nextflow_workflow {
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
@@ -146,10 +146,10 @@ nextflow_workflow {
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
@@ -237,10 +237,10 @@ nextflow_workflow {
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
@@ -311,10 +311,10 @@ nextflow_workflow {
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
                     [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2
@@ -405,10 +405,10 @@ nextflow_workflow {
                 input[6] = channel.value([ [ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.gtf', checkIfExists: true) ])
                 input[7] = channel.of(
                     [ [ id:'cel_N2_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'cel_N2_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'cel_N2_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'cel_N2_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'circexplorer2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true) ],
-                    [ [ id:'fust1_1', tool:'ciri' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true) ],
+                    [ [ id:'fust1_1', tool:'ciri2' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true) ],
                     [ [ id:'fust1_1', tool:'segemehl' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true) ]
                 )
                 input[8] = 2

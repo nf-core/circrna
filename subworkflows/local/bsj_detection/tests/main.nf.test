@@ -161,15 +161,15 @@ nextflow_workflow {
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
                 input[7] = channel.of(
-                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
-                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true)]
                 )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['circexplorer2', 'find_circ', 'ciri']
+                input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -207,8 +207,8 @@ nextflow_workflow {
                     workflow.out.gtf.collect { meta, f -> [meta, file(f).name, lines(f).size()] },
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, lines(f).findAll { it.startsWith('>') }.sort().hashCode()] },
                     summarize(workflow.out.bed_reads, [0, 1, 2, 5]),
-                    workflow.out.ciri_txt.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
-                    workflow.out.ciri_sam.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
+                    workflow.out.ciri2_txt.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
+                    workflow.out.ciri2_sam.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
                     workflow.out.star_bam.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
                     workflow.out.star_junction.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
                     workflow.out.multiqc_files.flatten().collect { file(it).name }.sort(),
@@ -251,15 +251,15 @@ nextflow_workflow {
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
                 input[7] = channel.of(
-                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
-                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true)]
                 )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['circexplorer2', 'find_circ', 'ciri']
+                input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -438,8 +438,8 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.star_bam.isEmpty() },
                 { assert workflow.out.star_junction.isEmpty() },
-                { assert workflow.out.ciri_txt.isEmpty() },
-                { assert workflow.out.ciri_sam.isEmpty() },
+                { assert workflow.out.ciri2_txt.isEmpty() },
+                { assert workflow.out.ciri2_sam.isEmpty() },
                 { assert workflow.out.psirc_bsj.isEmpty() },
                 { assert workflow.out.bed12.every { meta, f -> lines(f).size() > 0 } },
                 { assert snapshot(
@@ -456,7 +456,7 @@ nextflow_workflow {
         }
     }
 
-    test("mini - only ciri") {
+    test("mini - only ciri2") {
 
         when {
             params {
@@ -489,15 +489,15 @@ nextflow_workflow {
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
                 input[7] = channel.of(
-                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
-                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true)]
                 )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['ciri']
+                input[13] = ['ciri2']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -523,7 +523,7 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.star_bam.isEmpty() },
                 { assert workflow.out.star_junction.isEmpty() },
-                { assert !workflow.out.ciri_txt.isEmpty() },
+                { assert !workflow.out.ciri2_txt.isEmpty() },
                 { assert workflow.out.psirc_bsj.isEmpty() },
                 { assert !workflow.out.bed12.isEmpty() },
                 { assert workflow.out.bed12.every { meta, f -> lines(f).size() > 0 } },
@@ -718,7 +718,7 @@ nextflow_workflow {
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['ciri']
+                input[13] = ['ciri2']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -738,7 +738,7 @@ nextflow_workflow {
             def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
             assertAll(
                 { assert workflow.failed },
-                { assert tasks.contains("BSJ_DETECTION:CIRI:UNIFY") },
+                { assert tasks.contains("BSJ_DETECTION:CIRI2:DETECT") },
                 { assert (workflow.stdout + workflow.stderr).join('\n').contains('No circular RNAs were found by at least 1 tools and in at least 1 samples.') }
             )
         }
@@ -779,15 +779,15 @@ nextflow_workflow {
                 input[5] = channel.empty()
                 input[6] = BOWTIE2_BUILD.out.index.first()
                 input[7] = channel.of(
-                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)],
-                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.sam', checkIfExists: true)]
+                    [[id: 'cel_N2_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)],
+                    [[id: 'fust1_1', single_end: false], file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.sam', checkIfExists: true)]
                 )
                 input[8] = channel.empty()
                 input[9] = STAR_GENOMEGENERATE.out.index.first()
                 input[10] = CIRCEXPLORER2_REFERENCE.out.output.map { _meta, ref -> ref }.collect()
                 input[11] = channel.empty()
                 input[12] = 1
-                input[13] = ['circexplorer2', 'find_circ', 'ciri']
+                input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
                 input[15] = channel.empty()
                 input[16] = 0
@@ -810,7 +810,7 @@ nextflow_workflow {
                 { assert tasks.contains("BSJ_DETECTION:STAR2PASS:PASS_2") },
                 { assert tasks.contains("BSJ_DETECTION:CIRCEXPLORER2:UNIFY") },
                 { assert tasks.contains("BSJ_DETECTION:FIND_CIRC:UNIFY") },
-                { assert tasks.contains("BSJ_DETECTION:CIRI:UNIFY") },
+                { assert tasks.contains("BSJ_DETECTION:CIRI2:DETECT") },
                 { assert snapshot(workflow.out).match() }
             )
         }

@@ -2,8 +2,8 @@
     "cel_N2_1 BWA-MEM alignment": {
         "content": [
             {
-                "CIRI_CIRI2": {
-                    "ciri": "2.0.0"
+                "CIRI2": {
+                    "ciri2": "2.0.0"
                 }
             },
             "cel_N2_1.txt",
@@ -43,7 +43,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:09:55.049466008"
+        "timestamp": "2026-10-18T17:37:34.216482908"
     },
     "cel_N2_1 BWA-MEM alignment - stub": {
         "content": [
@@ -58,7 +58,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,28b3ff37016a348762e9bab202f603e6"
+                    "versions.yml:md5,bc6c8e656f939ac758159837b541299f"
                 ],
                 "txt": [
                     [
@@ -70,7 +70,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,28b3ff37016a348762e9bab202f603e6"
+                    "versions.yml:md5,bc6c8e656f939ac758159837b541299f"
                 ]
             }
         ],
@@ -78,6 +78,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:09:22.84013532"
+        "timestamp": "2026-10-18T17:37:56.179960191"
     }
 }

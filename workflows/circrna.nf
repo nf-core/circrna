@@ -162,7 +162,7 @@ workflow CIRCRNA {
         // 2. BSJ Discovery
         //
 
-        if (tools.intersect(['ciri', 'ciri3']).size() > 0) {
+        if (tools.intersect(['ciri2', 'ciri3']).size() > 0) {
             if (fli_tools.contains('cirifull')) {
                 CIRI_READS(FASTQC_TRIMGALORE.out.reads)
                 ch_bwa_reads = CIRI_READS.out.reads
@@ -223,8 +223,8 @@ workflow CIRCRNA {
             ch_fasta,
             ch_gtf,
             bwa_index,
-            BSJ_DETECTION.out.ciri_txt,
-            BSJ_DETECTION.out.ciri_sam,
+            BSJ_DETECTION.out.ciri2_txt,
+            BSJ_DETECTION.out.ciri2_sam,
             BSJ_DETECTION.out.bed12,
             BSJ_DETECTION.out.bed12_per_sample,
             BSJ_DETECTION.out.bed_reads,

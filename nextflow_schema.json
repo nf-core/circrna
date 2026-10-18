@@ -82,8 +82,8 @@
                 "tools": {
                     "type": "string",
                     "fa_icon": "fas fa-wrench",
-                    "description": "Comma separated list of circRNA back-splice junction detection tools to use. Supported tools: ciri, ciri3, circexplorer2, circminer, find_circ, circrna_finder, mapsplice, circtools, segemehl, psirc.",
-                    "pattern": "^(ciri|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
+                    "description": "Comma separated list of circRNA back-splice junction detection tools to use. Supported tools: ciri2, ciri3, circexplorer2, circminer, find_circ, circrna_finder, mapsplice, circtools, segemehl, psirc.",
+                    "pattern": "^(ciri2|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc)(,(ciri2|ciri3|circexplorer2|circminer|find_circ|circrna_finder|mapsplice|circtools|segemehl|psirc))*$",
                     "help_text": "Select one or a combination of circRNA back-splice junction detection tools, e.g. --tools 'circexplorer2,circminer,find_circ'. Selecting more than one tool enables consensus filtering with --min_tools. circMiner requires paired-end reads.",
                     "default": "circexplorer2"
                 },

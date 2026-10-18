@@ -1,151 +1,4 @@
 {
-    "mini - only ciri": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "tool": "ciri"
-                    },
-                    "cel_N2_1_ciri.meta.bed",
-                    28,
-                    891589017
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "tool": "ciri"
-                    },
-                    "fust1_1_ciri.meta.bed",
-                    35,
-                    892400346
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "cel_N2_1"
-                    },
-                    "cel_N2_1.combined.bed",
-                    28,
-                    1075928924
-                ],
-                [
-                    {
-                        "id": "fust1_1"
-                    },
-                    "fust1_1.combined.bed",
-                    35,
-                    -1928225173
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "cel_N2_1"
-                    },
-                    "cel_N2_1.annotated.bed12",
-                    19,
-                    1926771966
-                ],
-                [
-                    {
-                        "id": "fust1_1"
-                    },
-                    "fust1_1.annotated.bed12",
-                    23,
-                    -2044754120
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "all"
-                    },
-                    "all.combined.bed",
-                    45,
-                    136027012
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "all"
-                    },
-                    "all.annotated.bed12",
-                    30,
-                    -1939559830
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "cel_N2_1"
-                    },
-                    "cel_N2_1.ciri.bed",
-                    28,
-                    891589017
-                ],
-                [
-                    {
-                        "id": "fust1_1"
-                    },
-                    "fust1_1.ciri.bed",
-                    35,
-                    892400346
-                ]
-            ],
-            [
-                "n_samples.shifts_mqc.json",
-                "n_tools.shifts_mqc.json"
-            ],
-            {
-                "BSJ_DETECTION:ANNOTATE_COMBINED:BED2GTF": {
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
-                },
-                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE:BED2GTF": {
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
-                },
-                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
-                },
-                "BSJ_DETECTION:CIRI:CIRI2": {
-                    "ciri": "2.0.0"
-                },
-                "BSJ_DETECTION:COMBINE_COUNTS_PER_TOOL": {
-                    "polars": "1.5.0",
-                    "python": "3.12.5"
-                },
-                "BSJ_DETECTION:COMBINE_SAMPLES": {
-                    "python": "3.12.6",
-                    "polars": "1.8.2",
-                    "upsetplot": "0.9.0",
-                    "matplotlib": "3.9.2"
-                },
-                "BSJ_DETECTION:COMBINE_TOOLS_PER_SAMPLE": {
-                    "python": "3.12.6",
-                    "polars": "1.8.2",
-                    "upsetplot": "0.9.0",
-                    "matplotlib": "3.9.2"
-                },
-                "BSJ_DETECTION:INVESTIGATE_SHIFTS": {
-                    "altair": "5.5.0",
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
-                }
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T16:51:02.00869042"
-    },
     "mini - blacklist removes junctions": {
         "content": [
             [
@@ -235,6 +88,153 @@
         },
         "timestamp": "2026-10-16T22:57:22.063604112"
     },
+    "mini - only ciri2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri2"
+                    },
+                    "cel_N2_1_ciri2.meta.bed",
+                    28,
+                    891589017
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "ciri2"
+                    },
+                    "fust1_1_ciri2.meta.bed",
+                    35,
+                    892400346
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.combined.bed",
+                    28,
+                    1075928924
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.combined.bed",
+                    35,
+                    -1928225173
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.annotated.bed12",
+                    19,
+                    1926771966
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.annotated.bed12",
+                    23,
+                    -2044754120
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.combined.bed",
+                    45,
+                    136027012
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.annotated.bed12",
+                    30,
+                    -1939559830
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1"
+                    },
+                    "cel_N2_1.ciri2.bed",
+                    28,
+                    891589017
+                ],
+                [
+                    {
+                        "id": "fust1_1"
+                    },
+                    "fust1_1.ciri2.bed",
+                    35,
+                    892400346
+                ]
+            ],
+            [
+                "n_samples.shifts_mqc.json",
+                "n_tools.shifts_mqc.json"
+            ],
+            {
+                "BSJ_DETECTION:ANNOTATE_COMBINED:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:ANNOTATE_PER_SAMPLE_TOOL:BED2GTF": {
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                },
+                "BSJ_DETECTION:CIRI2:DETECT": {
+                    "ciri2": "2.0.0"
+                },
+                "BSJ_DETECTION:COMBINE_COUNTS_PER_TOOL": {
+                    "polars": "1.5.0",
+                    "python": "3.12.5"
+                },
+                "BSJ_DETECTION:COMBINE_SAMPLES": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:COMBINE_TOOLS_PER_SAMPLE": {
+                    "python": "3.12.6",
+                    "polars": "1.8.2",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.9.2"
+                },
+                "BSJ_DETECTION:INVESTIGATE_SHIFTS": {
+                    "altair": "5.5.0",
+                    "polars": "1.31.0",
+                    "python": "3.13.5"
+                }
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T18:04:27.436102356"
+    },
     "mini - stub": {
         "content": [
             {
@@ -294,11 +294,11 @@
                     
                 ],
                 "15": [
+                    "versions.yml:md5,01f100b20f34f271b01182680135c5b4",
+                    "versions.yml:md5,01f100b20f34f271b01182680135c5b4",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
-                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
-                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
                     "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
                     "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
                     "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372",
@@ -344,14 +344,14 @@
                             "id": "cel_N2_1",
                             "single_end": false
                         },
-                        "/nictru/test-datasets/28d67680e5622954e5c5a9ad189e47e70654f781/mini/intermediates/cel_N2_1.ciri.sam"
+                        "/nictru/test-datasets/fc66a5bace085d8be4e6ecfc57ac9b19af1dc7ba/mini/intermediates/cel_N2_1.ciri2.sam"
                     ],
                     [
                         {
                             "id": "fust1_1",
                             "single_end": false
                         },
-                        "/nictru/test-datasets/28d67680e5622954e5c5a9ad189e47e70654f781/mini/intermediates/fust1_1.ciri.sam"
+                        "/nictru/test-datasets/fc66a5bace085d8be4e6ecfc57ac9b19af1dc7ba/mini/intermediates/fust1_1.ciri2.sam"
                     ]
                 ],
                 "bed": [
@@ -372,23 +372,23 @@
                 "bed_reads": [
                     
                 ],
-                "ciri_sam": [
+                "ciri2_sam": [
                     [
                         {
                             "id": "cel_N2_1",
                             "single_end": false
                         },
-                        "/nictru/test-datasets/28d67680e5622954e5c5a9ad189e47e70654f781/mini/intermediates/cel_N2_1.ciri.sam"
+                        "/nictru/test-datasets/fc66a5bace085d8be4e6ecfc57ac9b19af1dc7ba/mini/intermediates/cel_N2_1.ciri2.sam"
                     ],
                     [
                         {
                             "id": "fust1_1",
                             "single_end": false
                         },
-                        "/nictru/test-datasets/28d67680e5622954e5c5a9ad189e47e70654f781/mini/intermediates/fust1_1.ciri.sam"
+                        "/nictru/test-datasets/fc66a5bace085d8be4e6ecfc57ac9b19af1dc7ba/mini/intermediates/fust1_1.ciri2.sam"
                     ]
                 ],
-                "ciri_txt": [
+                "ciri2_txt": [
                     [
                         {
                             "id": "cel_N2_1",
@@ -460,11 +460,11 @@
                     ]
                 ],
                 "versions": [
+                    "versions.yml:md5,01f100b20f34f271b01182680135c5b4",
+                    "versions.yml:md5,01f100b20f34f271b01182680135c5b4",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,47e8eefe9db3f99278926bab09d535e5",
                     "versions.yml:md5,5149bf40c3522fc718f850267dcd0c86",
-                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
-                    "versions.yml:md5,c73a4b1fe91bb6837c225e5c0d08c4a9",
                     "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
                     "versions.yml:md5,df4bf2e6092098fe7b872854bf73dea3",
                     "versions.yml:md5,f033e65c6ec6b8da1bcc53d9845dc372",
@@ -476,7 +476,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T14:12:41.602028288"
+        "timestamp": "2026-10-18T18:14:02.296389305"
     },
     "mini - min_tools 2 and min_samples 2": {
         "content": [
@@ -495,9 +495,9 @@
                     {
                         "id": "cel_N2_1",
                         "single_end": false,
-                        "tool": "ciri"
+                        "tool": "ciri2"
                     },
-                    "cel_N2_1_ciri.meta.bed",
+                    "cel_N2_1_ciri2.meta.bed",
                     28,
                     891589017
                 ],
@@ -525,9 +525,9 @@
                     {
                         "id": "fust1_1",
                         "single_end": false,
-                        "tool": "ciri"
+                        "tool": "ciri2"
                     },
-                    "fust1_1_ciri.meta.bed",
+                    "fust1_1_ciri2.meta.bed",
                     35,
                     892400346
                 ],
@@ -591,7 +591,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T16:59:37.570584353"
+        "timestamp": "2026-10-18T17:48:53.588284692"
     },
     "mini - STAR-based tools and non-STAR tools": {
         "content": [
@@ -610,9 +610,9 @@
                     {
                         "id": "cel_N2_1",
                         "single_end": false,
-                        "tool": "ciri"
+                        "tool": "ciri2"
                     },
-                    "cel_N2_1_ciri.meta.bed",
+                    "cel_N2_1_ciri2.meta.bed",
                     28,
                     891589017
                 ],
@@ -640,9 +640,9 @@
                     {
                         "id": "fust1_1",
                         "single_end": false,
-                        "tool": "ciri"
+                        "tool": "ciri2"
                     },
-                    "fust1_1_ciri.meta.bed",
+                    "fust1_1_ciri2.meta.bed",
                     35,
                     892400346
                 ],
@@ -771,14 +771,14 @@
                         "id": "cel_N2_1",
                         "single_end": false
                     },
-                    "cel_N2_1.ciri.sam"
+                    "cel_N2_1.ciri2.sam"
                 ],
                 [
                     {
                         "id": "fust1_1",
                         "single_end": false
                     },
-                    "fust1_1.ciri.sam"
+                    "fust1_1.ciri2.sam"
                 ]
             ],
             [
@@ -832,8 +832,8 @@
                     "polars": "1.31.0",
                     "python": "3.13.5"
                 },
-                "BSJ_DETECTION:CIRI:CIRI2": {
-                    "ciri": "2.0.0"
+                "BSJ_DETECTION:CIRI2:DETECT": {
+                    "ciri2": "2.0.0"
                 },
                 "BSJ_DETECTION:COMBINEBEDS_READS": {
                     "matplotlib": "3.10.1",
@@ -882,7 +882,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T16:58:19.24862311"
+        "timestamp": "2026-10-18T17:45:54.756316337"
     },
     "mini - only non-STAR tool": {
         "content": [

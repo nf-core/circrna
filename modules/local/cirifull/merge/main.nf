@@ -8,7 +8,7 @@ process CIRIFULL_MERGE {
         : 'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f'}"
 
     input:
-    tuple val(meta), path(ciri), path(ciri_as), path(ro2)
+    tuple val(meta), path(ciri2), path(ciri_as), path(ro2)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
 
@@ -20,7 +20,7 @@ process CIRIFULL_MERGE {
     prefix = task.ext.prefix ?: "${meta.id}"
     VERSION = "2.1.2"
     """
-    CIRI-full Merge -a ${gtf} -r ${fasta} -c ${ciri} -as ${ciri_as} -ro ${ro2} -o ${prefix}
+    CIRI-full Merge -a ${gtf} -r ${fasta} -c ${ciri2} -as ${ciri_as} -ro ${ro2} -o ${prefix}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

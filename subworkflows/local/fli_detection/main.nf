@@ -10,8 +10,8 @@ workflow FLI_DETECTION {
     ch_fasta
     ch_gtf
     ch_bwa_index
-    ch_ciri_txt
-    ch_ciri_sam
+    ch_ciri2_txt
+    ch_ciri2_sam
     ch_bsj_annotation
     ch_bsj_bed12_per_sample
     ch_bsj_reads
@@ -30,7 +30,7 @@ workflow FLI_DETECTION {
     ch_fli_fasta = channel.empty()
 
     if (fli_tools.contains('cirifull')) {
-        CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri_txt, ch_ciri_sam, max_shift)
+        CIRIFULL(ch_reads_fixed_length, ch_bsj_annotation, ch_fasta, ch_gtf, ch_bwa_index, ch_ciri2_txt, ch_ciri2_sam, max_shift)
         ch_versions = ch_versions.mix(CIRIFULL.out.versions)
         ch_bed12 = ch_bed12.mix(CIRIFULL.out.bed12)
         ch_fli_fasta = ch_fli_fasta.mix(CIRIFULL.out.fasta)

@@ -25,8 +25,8 @@ nextflow_process {
                 input[0] = [
                     [ id:'cel_N2_1', single_end:false, target_length:147 ],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_1.fastq.gz', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.fixed_length_2.fastq.gz', checkIfExists: true)
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.fixed_length_2.fastq.gz', checkIfExists: true)
                     ]
                 ]
                 """
@@ -58,8 +58,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1', single_end:false, target_length:147 ],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true),
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.sam', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)
                 ]
                 input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
                 input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
@@ -72,7 +72,7 @@ nextflow_process {
                 """
                 input[0] = CIRI_CIRIAS.out.list
                     .join(CIRIFULL_RO2.out.list)
-                    .map { meta, jav, ro2 -> [ meta, file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.txt', checkIfExists: true), jav, ro2 ] }
+                    .map { meta, jav, ro2 -> [ meta, file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.txt', checkIfExists: true), jav, ro2 ] }
                 input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
                 input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
                 """

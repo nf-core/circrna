@@ -23,10 +23,10 @@ nextflow_process {
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
                     [
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
                     ]
                 ]
@@ -67,10 +67,10 @@ nextflow_process {
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
                     [
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
                     ]
                 ]

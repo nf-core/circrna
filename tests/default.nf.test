@@ -135,13 +135,13 @@ nextflow_pipeline {
         }
     }
 
-    test('CIRI and CIRI3 share one BWA-MEM task per sample') {
+    test('CIRI2 and CIRI3 share one BWA-MEM task per sample') {
         config './mini.config'
 
         when {
             params {
                 outdir = "$outputDir"
-                tools = 'ciri,ciri3'
+                tools = 'ciri2,ciri3'
                 fli_tools = ''
                 quantification_tools = 'sum,max'
                 mature = null

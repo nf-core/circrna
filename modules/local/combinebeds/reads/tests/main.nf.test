@@ -20,9 +20,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1' ],
-                    ['ciri', 'circtools', 'find_circ', 'segemehl'],
+                    ['ciri2', 'circtools', 'find_circ', 'segemehl'],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.filtered.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circtools.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.find_circ.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
@@ -61,9 +61,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1' ],
-                    ['ciri', 'circtools', 'find_circ', 'segemehl'],
+                    ['ciri2', 'circtools', 'find_circ', 'segemehl'],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.filtered.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circtools.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.find_circ.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
@@ -102,9 +102,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'fust1_1' ],
-                    ['ciri', 'circtools', 'find_circ', 'segemehl'],
+                    ['ciri2', 'circtools', 'find_circ', 'segemehl'],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri.filtered.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circtools.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.find_circ.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.filtered.bed', checkIfExists: true)
@@ -146,9 +146,9 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'cel_N2_1' ],
-                    ['ciri', 'circtools', 'find_circ', 'segemehl'],
+                    ['ciri2', 'circtools', 'find_circ', 'segemehl'],
                     [
-                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri.filtered.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circtools.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.find_circ.filtered.bed', checkIfExists: true),
                         file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.filtered.bed', checkIfExists: true)
