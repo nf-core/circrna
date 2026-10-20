@@ -11,37 +11,37 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - sam:
+    - "sam":
         type: file
         description: Alignment SAM file
-    - length:
+    - "length":
         type: integer
         description: Library length
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
 output:
   list:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_ro2_info.list":
+      - "${prefix}_ro2_info.list":
           type: file
           description: CIRI-full candidate list
   versions_ciri_full:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri-full:
+      - "ciri-full":
           type: string
           description: Software name
-      - 2.1.2:
+      - "2.1.2":
           type: string
           description: Software version
 topics:

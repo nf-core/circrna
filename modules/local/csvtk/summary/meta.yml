@@ -19,20 +19,20 @@ input:
         description: Input CSV or TSV table
 output:
   csv:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*":
+      - "${prefix}.${out_extension}":
           type: file
           description: Summary table
   versions_csvtk:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - csvtk:
+      - "csvtk":
           type: string
           description: Software name
-      - csvtk version | sed "s/csvtk v//":
+      - 'csvtk version | sed "s/csvtk v//"':
           type: eval
           description: Software version
 topics:

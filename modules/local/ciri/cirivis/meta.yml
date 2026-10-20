@@ -11,51 +11,51 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - anno:
+    - "anno":
         type: file
         description: CIRI annotation
-    - library_length:
+    - "library_length":
         type: file
         description: Library length data
-    - list:
+    - "list":
         type: file
         description: Optional circle ID list
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
 output:
   fasta:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.list_circle.fa":
+      - "${prefix}/${prefix}.list_circle.fa":
           type: file
           description: Optional circular RNA sequences
   list:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.list":
+      - "${prefix}/${prefix}.list":
           type: file
           description: Circle list
   pdf:
-    - "*.pdf":
+    - "${prefix}/*.pdf":
         type: file
         description: Visualization PDF
   versions_ciri_vis:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri-vis:
+      - "ciri-vis":
           type: string
           description: Software name
-      - 1.4.2:
+      - "1.4.2":
           type: string
           description: Software version
 topics:

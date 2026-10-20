@@ -11,8 +11,7 @@ tools:
       licence:
         - GPL-3.0-or-later
   - coreutils:
-      description: GNU basic file
-      shell and text utilities: null
+      description: GNU basic file, shell, and text utilities
       homepage: https://www.gnu.org/software/coreutils/
       licence:
         - GPL-3.0-or-later
@@ -30,37 +29,37 @@ input:
         description: STAR alignment output
 output:
   results:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.filteredJunctions.bed":
+      - "${prefix}.filteredJunctions.bed":
           type: file
           description: Filtered STAR junctions
   versions_awk:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - awk:
+      - "awk":
           type: string
           description: Software name
-      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+      - "awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g'":
           type: eval
           description: Software version
   versions_cat:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - cat:
+      - "cat":
           type: string
           description: Software name
-      - cat --version | head -n1 | sed 's/cat (GNU coreutils) //':
+      - "cat --version | head -n1 | sed 's/cat (GNU coreutils) //'":
           type: eval
           description: Software version
   versions_circrna_finder:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - circRNA_finder:
+      - "circRNA_finder":
           type: string
           description: Software name
       - "1.2":

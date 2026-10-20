@@ -30,47 +30,47 @@ input:
         description: Gene expression matrix
 output:
   circ:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*.circ.csv":
+      - "${circ_path}":
           type: file
           description: CircRNA DE results
   gene:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*.gene.csv":
+      - "${gene_path}":
           type: file
           description: Gene DE results
   versions_ciriquant:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciriquant:
+      - "ciriquant":
           type: string
           description: Software name
-      - CIRIquant --version 2>&1 | sed "s/CIRIquant //g":
+      - 'CIRIquant --version 2>&1 | sed "s/CIRIquant //g"':
           type: eval
           description: Software version
   versions_r_base:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - r-base:
+      - "r-base":
           type: string
           description: Software name
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
+      - 'R --version | sed "1!d; s/.*version //; s/ .*//"':
           type: eval
           description: Software version
   versions_edger:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - edger:
+      - "edger":
           type: string
           description: Software name
-      - Rscript -e "cat(as.character(packageVersion('edgeR')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''edgeR'')))"':
           type: eval
           description: Software version
 topics:

@@ -23,40 +23,43 @@ input:
     - mate2:
         type: file
         description: Mate 2 STAR junction input
-  - - meta:
+  - - meta2:
         type: map
         description: Reference metadata
     - fasta:
         type: file
         description: Reference genome
         pattern: "*.{fa,fasta}"
-  - - meta:
+  - - meta3:
         type: map
         description: Annotation metadata
     - gtf:
         type: file
         description: Gene annotation
         pattern: "*.gtf"
+  - strandedness:
+      type: string
+      description: Library strandedness (`auto`, `unstranded`, `forward`, or `reverse`).
 output:
   reads:
     - - meta:
           type: map
           description: Sample metadata
-      - "*_reads.junctions":
+      - "${prefix}_reads.junctions":
           type: file
           description: Detected junction reads
   coordinates:
     - - meta:
           type: map
           description: Sample metadata
-      - "*_coordinates.tsv":
+      - "${prefix}_coordinates.tsv":
           type: file
           description: Circular RNA coordinates
   counts:
     - - meta:
           type: map
           description: Sample metadata
-      - "*_counts.tsv":
+      - "${prefix}_counts.tsv":
           type: file
           description: Circular RNA counts
   versions_circtools:

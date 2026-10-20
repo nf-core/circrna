@@ -14,60 +14,60 @@ tools:
         - BSD-2-Clause
         - LicenseRef-kallisto-b-non-commercial
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - reads:
+    - "reads":
         type: file
         description: RNA-seq reads
-  - - meta2:
+  - - "meta2":
         type: map
         description: Index metadata
-    - index:
+    - "index":
         type: file
         description: psiRC-quant index
-  - - meta3:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Transcript annotation
-  - - meta4:
+  - - "meta4":
         type: map
         description: Reference metadata
-    - chrom_sizes:
+    - "chrom_sizes":
         type: file
         description: Chromosome sizes
-  - - bootstrap_samples:
-        type: integer
-        description: Bootstrap replicates
+  - "bootstrap_samples":
+      type: integer
+      description: Bootstrap replicates
 output:
   directory:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*":
+      - "${meta.id}":
           type: directory
           description: Quantification output
   versions_psircquant:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - psirc-quant:
+      - "psirc-quant":
           type: string
           description: The name of the tool
-      - psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p":
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
           type: eval
           description: Software version
 topics:
   versions:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - psirc-quant:
+      - "psirc-quant":
           type: string
           description: Software name
-      - psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p":
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
           type: eval
           description: Software version
 authors:

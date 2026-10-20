@@ -33,31 +33,31 @@ input:
       description: Include strand in matching.
 output:
   combined:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata.
-      - "*.tsv":
+      - "${prefix}.tsv":
           type: file
           description: Aggregated count table.
           pattern: "*.tsv"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | sed 's/Python //':
+      - "python --version | sed 's/Python //'":
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - polars:
+      - "polars":
           type: string
           description: The name of the tool
-      - python -c 'import polars; print(polars.__version__)':
+      - "python -c 'import polars; print(polars.__version__)'":
           type: eval
           description: Software version
 topics:

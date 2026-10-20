@@ -21,31 +21,31 @@ input:
         pattern: "*.gtf"
 output:
   gtf:
-    - - meta:
+    - - "meta":
           type: map
           description: Reference metadata
-      - "*.gtf":
+      - "${prefix}.gtf":
           type: file
           description: Gene, transcript and exon records with minus-strand exon groups reversed
           pattern: "*.gtf"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - python:
+      - "python":
           type: string
           description: Software name
-      - python --version 2>&1 | sed "s/Python //":
+      - 'python --version 2>&1 | sed "s/Python //"':
           type: eval
           description: Software version
   versions_gffutils:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - gffutils:
+      - "gffutils":
           type: string
           description: Software name
-      - python -c "import gffutils; print(gffutils.__version__)":
+      - 'python -c "import gffutils; print(gffutils.__version__)"':
           type: eval
           description: Software version
 topics:

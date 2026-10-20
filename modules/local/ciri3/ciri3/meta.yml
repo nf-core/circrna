@@ -38,34 +38,34 @@ input:
       description: Optional CIRI3 candidate list; pass an empty list for discovery
 output:
   txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.ciri3.txt":
+      - "${prefix}.ciri3.txt":
           type: file
           description: CIRI3 result
   bsj_matrix:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.BSJ_Matrix":
+      - "${prefix}.ciri3.txt.BSJ_Matrix":
           type: file
           description: BSJ matrix
   fsj_matrix:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.FSJ_Matrix":
+      - "${prefix}.ciri3.txt.FSJ_Matrix":
           type: file
           description: FSJ matrix
   versions_ciri3:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - ciri3:
+      - "ciri3":
           type: string
           description: The name of the tool
-      - 3.0.1:
+      - "3.0.1":
           type: string
           description: Software version
 topics:

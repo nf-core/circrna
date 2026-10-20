@@ -46,15 +46,15 @@ input:
         pattern: "*.{csv,tsv}"
 output:
   summary:
-    - - meta:
+    - - "meta":
           type: map
           description: Count metadata.
-      - "*_summary.txt":
+      - "${prefix}_summary.txt":
           type: file
           description: CircTest summary.
           pattern: "*_summary.txt"
   plots:
-    - - meta:
+    - - "meta":
           type: map
           description: Count metadata.
       - "*.pdf":
@@ -62,43 +62,43 @@ output:
           description: CircTest plots.
           pattern: "*.pdf"
   versions_r_base:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - r-base:
+      - "r-base":
           type: string
           description: The name of the tool
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
+      - 'R --version | sed "1!d; s/.*version //; s/ .*//"':
           type: eval
           description: Software version
   versions_aod:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - aod:
+      - "aod":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('aod')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''aod'')))"':
           type: eval
           description: Software version
   versions_plyr:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - plyr:
+      - "plyr":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('plyr')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''plyr'')))"':
           type: eval
           description: Software version
   versions_ggplot2:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - ggplot2:
+      - "ggplot2":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('ggplot2')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''ggplot2'')))"':
           type: eval
           description: Software version
 topics:

@@ -36,37 +36,37 @@ input:
         description: psiRC index
 output:
   output:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - output:
+      - "output":
           type: directory
           description: psiRC output directory
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bed":
+      - "output/candidate_circ_junctions.bed":
           type: file
           description: Candidate junctions
   versions_psirc:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - psirc:
+      - "psirc":
           type: string
           description: The name of the tool
-      - 1.0.0:
+      - "1.0.0":
           type: string
           description: Software version
   versions_kallisto_b:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - kallisto_b:
+      - "kallisto_b":
           type: string
           description: The name of the tool
-      - kallisto_b version | sed "s/.*version //":
+      - 'kallisto_b version | sed "s/.*version //"':
           type: eval
           description: Software version
 topics:

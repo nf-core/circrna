@@ -25,12 +25,18 @@ input:
         pattern: "*.bed"
 output:
   plots:
-    - "*.png":
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - "*.png":
         type: file
         description: Coordinate-shift plots.
         pattern: "*.png"
   multiqc:
-    - "*.json":
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - "*.json":
         type: file
         description: MultiQC custom-content data.
         pattern: "*.json"

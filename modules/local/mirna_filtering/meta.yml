@@ -26,21 +26,21 @@ input:
       description: Minimum reads required in a sample.
 output:
   filtered:
-    - - meta:
+    - - "meta":
           type: map
           description: Count metadata.
-      - "*.normalized_counts_filtered.tsv":
+      - "${meta.id}.normalized_counts_filtered.tsv":
           type: file
           description: Filtered normalised count matrix.
           pattern: "*.normalized_counts_filtered.tsv"
   versions_r_base:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - r-base:
+      - "r-base":
           type: string
           description: The name of the tool
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
+      - 'R --version | sed "1!d; s/.*version //; s/ .*//"':
           type: eval
           description: Software version
 topics:

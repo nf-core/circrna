@@ -25,51 +25,51 @@ input:
         description: Conditions
 output:
   library:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*_library.tsv":
+      - "${prefix}_library.tsv":
           type: file
           description: Library table
   annotation:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*_annotation.tsv":
+      - "${prefix}_annotation.tsv":
           type: file
           description: CircRNA annotation
   expression:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*_expression.tsv":
+      - "${prefix}_expression.tsv":
           type: file
           description: BSJ expression matrix
   gene:
-    - - meta:
+    - - "meta":
           type: map
           description: Comparison metadata
-      - "*_ratio.tsv":
+      - "${prefix}_ratio.tsv":
           type: file
           description: Gene ratio matrix
   versions_ciriquant:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciriquant:
+      - "ciriquant":
           type: string
           description: Software name
-      - CIRIquant --version 2>&1 | sed "s/CIRIquant //g":
+      - 'CIRIquant --version 2>&1 | sed "s/CIRIquant //g"':
           type: eval
           description: Software version
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - python:
+      - "python":
           type: string
           description: Software name
-      - python --version | cut -d " " -f2:
+      - 'python --version | cut -d " " -f2':
           type: eval
           description: Software version
 topics:

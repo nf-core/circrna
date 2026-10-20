@@ -22,27 +22,27 @@ input:
         description: StringTie transcript assemblies
 output:
   transcript_matrix:
-    - - meta:
+    - - "meta":
           type: map
           description: Group metadata
-      - "*_transcript_count_matrix.csv":
+      - "${prefix}_transcript_count_matrix.csv":
           type: file
           description: Transcript count matrix
   gene_matrix:
-    - - meta:
+    - - "meta":
           type: map
           description: Group metadata
-      - "*_gene_count_matrix.csv":
+      - "${prefix}_gene_count_matrix.csv":
           type: file
           description: Gene count matrix
   versions_stringtie:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - stringtie:
+      - "stringtie":
           type: string
           description: Software name
-      - stringtie --version 2>&1:
+      - "stringtie --version 2>&1":
           type: eval
           description: Software version
 topics:

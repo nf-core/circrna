@@ -11,46 +11,46 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - reads:
+    - "reads":
         type: file
         description: Paired-end reads
-    - bsjs:
+    - "bsjs":
         type: file
         description: Back-splice junctions
-    - denovo:
+    - "denovo":
         type: file
         description: De novo junction evidence
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
-  - - meta:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Gene annotation
 output:
   log:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.jccirc.log":
+      - "${prefix}.jccirc.log":
           type: file
           description: JCcirc run log
   versions_jccirc:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - jccirc:
+      - "jccirc":
           type: string
           description: Software name
-      - 1.0.0:
+      - "1.0.0":
           type: string
           description: Software version
 topics:

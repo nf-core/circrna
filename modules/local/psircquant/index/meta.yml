@@ -22,31 +22,31 @@ input:
         description: Transcriptome FASTA
 output:
   index:
-    - - meta:
+    - - "meta":
           type: map
           description: Transcriptome metadata
-      - psirc.index:
+      - "psirc.index":
           type: file
           description: psiRC-quant index
   versions_psircquant:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - psirc-quant:
+      - "psirc-quant":
           type: string
           description: The name of the tool
-      - psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p":
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
           type: eval
           description: Software version
 topics:
   versions:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - psirc-quant:
+      - "psirc-quant":
           type: string
           description: Software name
-      - psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p":
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
           type: eval
           description: Software version
 authors:

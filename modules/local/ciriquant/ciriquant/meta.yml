@@ -21,9 +21,7 @@ tools:
       licence:
         - GPL-3.0-or-later
   - samtools:
-      description: Tools for manipulating SAM
-      BAM: null
-      and CRAM files: null
+      description: Tools for manipulating SAM, BAM, and CRAM files
       homepage: https://www.htslib.org/
       licence:
         - MIT
@@ -74,26 +72,29 @@ input:
     - hisat2:
         type: directory
         description: HISAT2 index
+  - strandedness:
+      type: string
+      description: Library strandedness (`auto`, `unstranded`, `forward`, or `reverse`).
 output:
   gtf:
     - - meta:
           type: map
           description: Sample metadata
-      - "*.gtf":
+      - "${prefix}/${prefix}.gtf":
           type: file
           description: CIRIquant result
   gene_list:
     - - meta:
           type: map
           description: Sample metadata
-      - "*_genes.list":
+      - "${prefix}/gene/${prefix}_genes.list":
           type: file
           description: Quantified genes
   gene_gtf:
     - - meta:
           type: map
           description: Sample metadata
-      - "*_out.gtf":
+      - "${prefix}/gene/${prefix}_out.gtf":
           type: file
           description: Gene expression annotation
   versions_bwa:

@@ -21,31 +21,31 @@ input:
         pattern: "*.{bed,bed12}"
 output:
   list:
-    - - meta:
+    - - "meta":
           type: map
           description: Annotation metadata
-      - "*.ciri3.list":
+      - "${prefix}.ciri3.list":
           type: file
           description: CIRI3 circRNA list
           pattern: "*.ciri3.list"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | cut -d " " -f2:
+      - 'python --version | cut -d " " -f2':
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - polars:
+      - "polars":
           type: string
           description: The name of the tool
-      - python -c "import polars; print(polars.__version__)":
+      - 'python -c "import polars; print(polars.__version__)"':
           type: eval
           description: Software version
 topics:

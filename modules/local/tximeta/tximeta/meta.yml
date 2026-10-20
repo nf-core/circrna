@@ -11,14 +11,14 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata.
-    - quants:
+    - "quants/*":
         type: file
         description: Quantification files staged beneath quants.
         pattern: "*"
-  - quant_type:
+  - "quant_type":
       type: string
       description: Quantification tool type.
 output:
@@ -26,7 +26,7 @@ output:
     - - meta:
           type: map
           description: Sample metadata.
-      - "*.rds":
+      - "${prefix}.rds":
           type: file
           description: tximeta SummarizedExperiment.
           pattern: "*.rds"

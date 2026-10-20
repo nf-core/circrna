@@ -25,40 +25,40 @@ input:
         pattern: "*.gtf"
 output:
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Annotation metadata
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: BED annotation
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - python:
+      - "python":
           type: string
           description: Software name
-      - python --version 2>&1 | sed "s/Python //":
+      - 'python --version 2>&1 | sed "s/Python //"':
           type: eval
           description: Software version
   versions_gtfparse:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - gtfparse:
+      - "gtfparse":
           type: string
           description: Software name
-      - python -c "import gtfparse; print(gtfparse.__version__)":
+      - 'python -c "import gtfparse; print(gtfparse.__version__)"':
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - polars:
+      - "polars":
           type: string
           description: Software name
-      - python -c "import polars; print(polars.__version__)":
+      - 'python -c "import polars; print(polars.__version__)"':
           type: eval
           description: Software version
 topics:

@@ -11,47 +11,47 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - ciri2:
+    - "ciri2":
         type: file
         description: CIRI2 calls
-    - sam:
+    - "sam":
         type: file
         description: Alignment SAM file
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
-  - - meta:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Gene annotation
 output:
   list:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_jav.list":
+      - "${prefix}_jav.list":
           type: file
           description: CIRI-AS junction list
   library_length:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_library_length.list":
+      - "${prefix}_library_length.list":
           type: file
           description: Estimated library lengths
   versions_ciri_as:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri-as:
+      - "ciri-as":
           type: string
           description: Software name
       - "1.2":

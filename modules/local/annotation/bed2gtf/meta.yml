@@ -27,31 +27,31 @@ input:
       description: Emit only exon records.
 output:
   gtf:
-    - - meta:
+    - - "meta":
           type: map
           description: Annotation metadata.
-      - "*.gtf":
+      - "${prefix}.gtf":
           type: file
           description: GTF annotation converted from BED12.
           pattern: "*.gtf"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name.
-      - python:
+      - "python":
           type: string
           description: Software name.
-      - python --version | sed 's/Python //':
+      - "python --version | sed 's/Python //'":
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name.
-      - polars:
+      - "polars":
           type: string
           description: Software name.
-      - python -c 'import polars; print(polars.__version__)':
+      - "python -c 'import polars; print(polars.__version__)'":
           type: eval
           description: Software version
 topics:

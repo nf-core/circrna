@@ -27,30 +27,30 @@ input:
         description: miRanda predictions
 output:
   results:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.mirna_targets.txt":
+      - "${prefix}.mirna_targets.txt":
           type: file
           description: Combined miRNA target predictions
   versions_awk:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - awk:
+      - "awk":
           type: string
           description: Software name
-      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+      - "awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g'":
           type: eval
           description: Software version
   versions_bedtools:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - bedtools:
+      - "bedtools":
           type: string
           description: Software name
-      - bedtools --version | sed "s/bedtools v//":
+      - 'bedtools --version | sed "s/bedtools v//"':
           type: eval
           description: Software version
 topics:

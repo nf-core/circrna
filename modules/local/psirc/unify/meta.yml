@@ -19,30 +19,30 @@ input:
         description: psiRC full-length isoform table
 output:
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: BED12 circRNA calls
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | cut -d " " -f2:
+      - 'python --version | cut -d " " -f2':
           type: eval
           description: Software version
   versions_pandas:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - pandas:
+      - "pandas":
           type: string
           description: The name of the tool
-      - python -c "import pandas as pd; print(pd.__version__)":
+      - 'python -c "import pandas as pd; print(pd.__version__)"':
           type: eval
           description: Software version
 topics:

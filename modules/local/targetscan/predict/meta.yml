@@ -16,41 +16,41 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Transcript sequences in FASTA
-  - - meta:
+  - - "meta2":
         type: map
         description: miRNA metadata
-    - mature_txt:
+    - "mature_txt":
         type: file
         description: Mature miRNA sequences
 output:
   txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Reference metadata
-      - "*.txt":
+      - "${prefix}.txt":
           type: file
           description: TargetScan predictions
   versions_awk:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - awk:
+      - "awk":
           type: string
           description: Software name
-      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+      - "awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g'":
           type: eval
           description: Software version
   versions_targetscan:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - targetscan:
+      - "targetscan":
           type: string
           description: Software name
       - "7.0":

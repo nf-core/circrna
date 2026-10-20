@@ -36,44 +36,44 @@ input:
         description: Custom transcriptome FASTA
 output:
   fasta:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.fa":
+      - "${prefix}/full_length_isoforms.fa":
           type: file
           description: Full-length isoforms
   sam:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.sam":
+      - "${prefix}/full_length_isoforms_alt_fsj_supporting_reads.sam":
           type: file
           description: Supporting alignments
   tsv:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.tsv":
+      - "${prefix}/full_length_isoforms.tsv":
           type: file
           description: Isoform table
   versions_psirc:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - psirc:
+      - "psirc":
           type: string
           description: The name of the tool
-      - 1.0.0:
+      - "1.0.0":
           type: string
           description: Software version
   versions_kallisto_b:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - kallisto_b:
+      - "kallisto_b":
           type: string
           description: The name of the tool
-      - kallisto_b version | sed "s/.*version //":
+      - 'kallisto_b version | sed "s/.*version //"':
           type: eval
           description: Software version
 topics:

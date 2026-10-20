@@ -19,27 +19,27 @@ input:
         description: Paired-end reads
 output:
   align:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_ro1_align.txt":
+      - "${prefix}_ro1_align.txt":
           type: file
           description: CIRI-full alignment report
   fastq:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_ro1.fq.gz":
+      - "${prefix}_ro1.fq.gz":
           type: file
           description: Filtered reads in compressed FASTQ format
   versions_ciri_full:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri-full:
+      - "ciri-full":
           type: string
           description: Software name
-      - 2.1.2:
+      - "2.1.2":
           type: string
           description: Software version
 topics:

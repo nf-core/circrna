@@ -20,20 +20,20 @@ input:
         pattern: "*.gtf"
 output:
   table:
-    - - meta:
+    - - "meta":
           type: map
           description: Annotation metadata
-      - "*.circ.tsv":
+      - "$outfile":
           type: file
           description: Tabulated annotation fields
   versions_gtftk:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - gtftk:
+      - "gtftk":
           type: string
           description: Software name
-      - 1.6.2:
+      - "1.6.2":
           type: string
           description: Software version
 topics:

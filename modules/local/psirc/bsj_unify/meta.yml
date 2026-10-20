@@ -25,20 +25,20 @@ input:
         description: Custom transcriptome FASTA
 output:
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: Strand-resolved junctions
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | cut -d " " -f2:
+      - 'python --version | cut -d " " -f2':
           type: eval
           description: Software version
 topics:

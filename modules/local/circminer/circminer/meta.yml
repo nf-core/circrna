@@ -11,42 +11,42 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - reads:
+    - "reads":
         type: file
         description: Paired-end reads
         pattern: "*.{fastq,fq}.gz"
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - index:
+    - "index":
         type: directory
         description: circMiner index
-  - - meta:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Gene annotation
         pattern: "*.gtf"
 output:
   report:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.circ_report":
+      - "${prefix}.circ_report":
           type: file
           description: circMiner report
   versions_circminer:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - circminer:
+      - "circminer":
           type: string
           description: Software name
-      - circminer --version | sed -E "s/^CircMiner //":
+      - 'circminer --version | sed -E "s/^CircMiner //"':
           type: eval
           description: Software version
 topics:

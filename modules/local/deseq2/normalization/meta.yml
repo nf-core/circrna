@@ -20,31 +20,31 @@ input:
         pattern: "*.{tsv,txt}"
 output:
   normalized:
-    - - meta:
+    - - "meta":
           type: map
           description: Count metadata.
-      - "*.normalized_counts.tsv":
+      - "${meta.id}.normalized_counts.tsv":
           type: file
           description: DESeq2-normalised count matrix.
           pattern: "*.normalized_counts.tsv"
-  versions_bioconductor_deseq2:
-    - - ${task.process}:
+  versions_r_base:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - bioconductor-deseq2:
+      - "r-base":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('DESeq2')))":
+      - 'R --version | sed "1!d; s/.*version //; s/ .*//"':
           type: eval
           description: Software version
-  versions_r_base:
-    - - ${task.process}:
+  versions_bioconductor_deseq2:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - r-base:
+      - "bioconductor-deseq2":
           type: string
           description: The name of the tool
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
+      - 'Rscript -e "cat(as.character(packageVersion(''DESeq2'')))"':
           type: eval
           description: Software version
 topics:

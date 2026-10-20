@@ -11,37 +11,37 @@ tools:
       licence:
         - MIT
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - bed:
+    - "bed":
         type: file
         description: BED records
-  - - meta:
+  - - "refmeta":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference FASTA
-    - fai:
+    - "fai":
         type: file
         description: FASTA index
 output:
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: Strand-annotated BED records
   versions_pysam:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - pysam:
+      - "pysam":
           type: string
           description: Software name
-      - python -c "import pysam; print(pysam.__version__)":
+      - 'python -c "import pysam; print(pysam.__version__)"':
           type: eval
           description: Software version
 topics:

@@ -46,31 +46,31 @@ input:
         pattern: "*.{tsv,txt}"
 output:
   merged:
-    - - meta:
+    - - "meta":
           type: map
           description: Experiment metadata.
-      - "*.merged.rds":
+      - "${meta.id}.merged.rds":
           type: file
           description: Merged annotated experiment.
           pattern: "*.merged.rds"
   versions_bioconductor_summarizedexperiment:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - bioconductor-summarizedexperiment:
+      - "bioconductor-summarizedexperiment":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('SummarizedExperiment')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''SummarizedExperiment'')))"':
           type: eval
           description: Software version
   versions_bioconductor_rtracklayer:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - bioconductor-rtracklayer:
+      - "bioconductor-rtracklayer":
           type: string
           description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('rtracklayer')))":
+      - 'Rscript -e "cat(as.character(packageVersion(''rtracklayer'')))"':
           type: eval
           description: Software version
 topics:

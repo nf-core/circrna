@@ -27,30 +27,30 @@ input:
         description: Supporting reads
 output:
   merged:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.txt":
+      - "${prefix}.txt":
           type: file
           description: Prepared JCcirc input table
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - python:
+      - "python":
           type: string
           description: Software name
-      - python --version 2>&1 | sed "s/Python //":
+      - 'python --version 2>&1 | sed "s/Python //"':
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - polars:
+      - "polars":
           type: string
           description: Software name
-      - python -c "import polars; print(polars.__version__)":
+      - 'python -c "import polars; print(polars.__version__)"':
           type: eval
           description: Software version
 topics:

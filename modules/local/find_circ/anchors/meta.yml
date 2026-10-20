@@ -20,17 +20,17 @@ input:
         pattern: "*.bam"
 output:
   anchors:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_anchors.qfa.gz":
+      - "${prefix}_anchors.qfa.gz":
           type: file
           description: Compressed read anchors
   versions_find_circ:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - find_circ:
+      - "find_circ":
           type: string
           description: Software name
       - "1.2":

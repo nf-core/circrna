@@ -20,17 +20,17 @@ input:
         pattern: "*.{fa,fasta}"
 output:
   split:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*":
+      - "${prefix}/*":
           type: file
           description: Split FASTA files
   versions_seqkit:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - seqkit:
+      - "seqkit":
           type: string
           description: Software name
       - "seqkit version | sed 's/^seqkit v//'":

@@ -19,20 +19,20 @@ input:
         description: CIRI-vis circle list
 output:
   bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: Unified BED records
   versions_pandas:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - pandas:
+      - "pandas":
           type: string
           description: Software name
-      - python -c "import pandas; print(pandas.__version__)":
+      - 'python -c "import pandas; print(pandas.__version__)"':
           type: eval
           description: Software version
 topics:

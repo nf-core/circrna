@@ -44,10 +44,10 @@ input:
       description: Minimum supporting tools.
 output:
   combined:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata.
-      - "*.bed":
+      - "${prefix}.bed":
           type: file
           description: Combined read BED.
           pattern: "*.bed"
@@ -62,53 +62,53 @@ output:
         description: MultiQC custom-content data.
         pattern: "*.json"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | sed 's/Python //':
+      - "python --version | sed 's/Python //'":
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - polars:
+      - "polars":
           type: string
           description: The name of the tool
-      - python -c 'import polars; print(polars.__version__)':
+      - "python -c 'import polars; print(polars.__version__)'":
           type: eval
           description: Software version
   versions_seaborn:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - seaborn:
+      - "seaborn":
           type: string
           description: The name of the tool
-      - python -c 'import seaborn; print(seaborn.__version__)':
+      - "python -c 'import seaborn; print(seaborn.__version__)'":
           type: eval
           description: Software version
   versions_matplotlib:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - matplotlib:
+      - "matplotlib":
           type: string
           description: The name of the tool
-      - python -c 'import matplotlib; print(matplotlib.__version__)':
+      - "python -c 'import matplotlib; print(matplotlib.__version__)'":
           type: eval
           description: Software version
   versions_upsetplot:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - upsetplot:
+      - "upsetplot":
           type: string
           description: The name of the tool
-      - python -c 'import upsetplot; print(upsetplot.__version__)':
+      - "python -c 'import upsetplot; print(upsetplot.__version__)'":
           type: eval
           description: Software version
 topics:

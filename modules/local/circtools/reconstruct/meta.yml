@@ -11,113 +11,113 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - bed:
+    - "bed":
         type: file
         description: Circular RNA BED
-    - bam:
+    - "bam":
         type: file
         description: Coordinate-sorted BAM
-    - bai:
+    - "bai":
         type: file
         description: BAM index
-    - junction:
+    - "junction":
         type: file
         description: STAR chimeric junctions
-  - - meta:
+  - - "meta2":
         type: map
         description: Annotation metadata
-    - annotation:
+    - "annotation":
         type: file
         description: Gene annotation
 output:
   alternative_splicing:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.alternative_splicing.txt":
+      - "${prefix}.alternative_splicing.txt":
           type: file
           description: Alternative splicing report
   exon_counts_bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.exon_counts.bed":
+      - "${prefix}.exon_counts.bed":
           type: file
           description: Exon counts BED
   exon_counts_txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.exon_counts.txt":
+      - "${prefix}.exon_counts.txt":
           type: file
           description: Exon counts table
   mate_status:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.mate_status.txt":
+      - "${prefix}.mate_status.txt":
           type: file
           description: Mate status report
   skipped_exons_bed:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.skipped_exons.bed":
+      - "${prefix}.skipped_exons.bed":
           type: file
           description: Skipped exons BED
   skipped_exons_txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.skipped_exons.txt":
+      - "${prefix}.skipped_exons.txt":
           type: file
           description: Skipped exons table
   bam:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.bam":
+      - "${prefix}/*.bam":
           type: file
           description: Optional reconstructed BAM files
   coverage_pictures:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.pdf":
+      - "${prefix}.coverage_pictures/*.pdf":
           type: file
           description: Optional coverage plots
   coverage_profiles_txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.txt":
+      - "${prefix}.coverage_profiles/*.txt":
           type: file
           description: Optional coverage profiles
   coverage_profiles_pdf:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.pdf":
+      - "${prefix}.coverage_profiles/*.pdf":
           type: file
           description: Optional coverage profile plots
   coverage_profiles_tsv:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.tsv":
+      - "${prefix}.coverage_profiles/*.tsv":
           type: file
           description: Optional coverage profile tables
   versions_circtools:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - circtools:
+      - "circtools":
           type: string
           description: Software name
-      - circtools -V:
+      - "circtools -V":
           type: eval
           description: Software version
 topics:

@@ -11,46 +11,46 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - ciri2:
+    - "ciri2":
         type: file
         description: CIRI2 result
-    - ciri_as:
+    - "ciri_as":
         type: file
         description: CIRI-AS result
-    - ro2:
+    - "ro2":
         type: file
         description: CIRI-full RO2 result
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
-  - - meta:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Gene annotation
 output:
   anno:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*_merge_circRNA_detail.anno":
+      - "${prefix}_merge_circRNA_detail.anno":
           type: file
           description: Merged circRNA annotation
   versions_ciri_full:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri-full:
+      - "ciri-full":
           type: string
           description: Software name
-      - 2.1.2:
+      - "2.1.2":
           type: string
           description: Software version
 topics:

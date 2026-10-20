@@ -11,41 +11,41 @@ tools:
       licence:
         - GPL-3.0-or-later
 input:
-  - - meta:
+  - - "meta":
         type: map
         description: Sample metadata
-    - sam:
+    - "sam":
         type: file
         description: Alignment SAM file
         pattern: "*.sam"
-  - - meta:
+  - - "meta2":
         type: map
         description: Reference metadata
-    - fasta:
+    - "fasta":
         type: file
         description: Reference genome
-  - - meta:
+  - - "meta3":
         type: map
         description: Annotation metadata
-    - gtf:
+    - "gtf":
         type: file
         description: Gene annotation
 output:
   txt:
-    - - meta:
+    - - "meta":
           type: map
           description: Sample metadata
-      - "*.txt":
+      - "${prefix}.txt":
           type: file
           description: CIRI2 circular RNA calls
   versions_ciri2:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: Process name
-      - ciri2:
+      - "ciri2":
           type: string
           description: Software name
-      - 2.0.6:
+      - "2.0.6":
           type: string
           description: Software version
 topics:

@@ -22,7 +22,7 @@ input:
     - anchors:
         type: file
         description: Compressed read anchors
-  - - meta:
+  - - meta2:
         type: map
         description: Reference metadata
     - index:
@@ -31,26 +31,29 @@ input:
   - fasta:
       type: file
       description: Reference genome
+  - strandedness:
+      type: string
+      description: Library strandedness (`auto`, `unstranded`, `forward`, or `reverse`).
 output:
   bed:
     - - meta:
           type: map
           description: Sample metadata
-      - "*.sites.bed":
+      - "${prefix}.sites.bed":
           type: file
           description: Circular RNA sites in BED format
   reads:
     - - meta:
           type: map
           description: Sample metadata
-      - "*.sites.reads":
+      - "${prefix}.sites.reads":
           type: file
           description: Supporting reads
   log:
     - - meta:
           type: map
           description: Sample metadata
-      - "*.sites.log":
+      - "${prefix}.sites.log":
           type: file
           description: find_circ log
   versions_bowtie2:

@@ -32,39 +32,39 @@ input:
         pattern: "*.FSJ_Matrix"
 output:
   bsj:
-    - - meta2:
+    - - "meta2":
           type: map
           description: Sample metadata
-      - "*.bsj.tsv":
+      - "${prefix}.bsj.tsv":
           type: file
           description: Back-splice junction counts with absent consensus candidates zero-filled
           pattern: "*.bsj.tsv"
   fsj:
-    - - meta2:
+    - - "meta2":
           type: map
           description: Sample metadata
-      - "*.fsj.tsv":
+      - "${prefix}.fsj.tsv":
           type: file
           description: Forward-splice junction counts with absent consensus candidates zero-filled
           pattern: "*.fsj.tsv"
   versions_python:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - python:
+      - "python":
           type: string
           description: The name of the tool
-      - python --version | cut -d " " -f2:
+      - 'python --version | cut -d " " -f2':
           type: eval
           description: Software version
   versions_polars:
-    - - ${task.process}:
+    - - "${task.process}":
           type: string
           description: The name of the process
-      - polars:
+      - "polars":
           type: string
           description: The name of the tool
-      - python -c "import polars; print(polars.__version__)":
+      - 'python -c "import polars; print(polars.__version__)"':
           type: eval
           description: Software version
 topics:
