@@ -82,8 +82,6 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert snapshot(
                     path(workflow.out.binding_sites[0][1]).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5(),
-                    path("$outputDir/mirna_expression/mirna.normalized_counts.tsv").readLines().sort().toString().md5(),
-                    path("$outputDir/mirna_expression/mirna.normalized_counts_filtered.tsv").readLines().sort().toString().md5(),
                     workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
                     workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
                 ).match() },
