@@ -84,7 +84,10 @@ workflow BSJ_DETECTION {
     }
 
     if (tools.contains('segemehl')) {
-        SEGEMEHL(reads, fasta, segemehl_index)
+        ch_segemehl_index = segemehl_index
+            ? channel.value([[id: 'segemehl_reference'], file(segemehl_index)])
+            : null
+        SEGEMEHL(reads, ch_fasta, ch_segemehl_index)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(SEGEMEHL.out.bed)
     }
 

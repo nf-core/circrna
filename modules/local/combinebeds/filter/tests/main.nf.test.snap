@@ -19,42 +19,16 @@
                 "all_samples.upset_mqc.json",
                 "all_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:23:45.94447208",
+        "timestamp": "2026-10-20T16:52:09.840115645",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -78,42 +52,16 @@
             [
                 "fust1_1_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:22:56.065832811",
+        "timestamp": "2026-10-20T16:51:18.828989529",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -251,42 +199,16 @@
             [
                 "cel_N2_1_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:23:11.610970778",
+        "timestamp": "2026-10-20T16:51:34.940147263",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -438,42 +360,16 @@
             [
                 "cel_N2_1_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:23:28.123703236",
+        "timestamp": "2026-10-20T16:51:52.038643167",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -499,42 +395,16 @@
                 "all_samples.upset_mqc.json",
                 "all_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:24:04.171424123",
+        "timestamp": "2026-10-20T16:52:26.473553421",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -558,42 +428,16 @@
             [
                 "cel_N2_1_tools.upset_mqc.json"
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:22:38.915950908",
+        "timestamp": "2026-10-20T16:51:03.191308356",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -652,42 +496,16 @@
             [
                 
             ],
-            [
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
-                },
-                {
-                    "COMBINEBEDS_FILTER": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0",
-                        "upsetplot": "0.9.0",
-                        "matplotlib": "3.11.2"
-                    }
+            {
+                "COMBINEBEDS_FILTER": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:24:21.121381968",
+        "timestamp": "2026-10-20T16:52:41.305522821",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

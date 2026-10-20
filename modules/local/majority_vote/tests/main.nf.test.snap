@@ -19,22 +19,14 @@
                     20
                 ]
             ],
-            [
-                {
-                    "MAJORITY_VOTE": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
-                },
-                {
-                    "MAJORITY_VOTE": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
+            {
+                "MAJORITY_VOTE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:28:15.444917831",
+        "timestamp": "2026-10-20T16:50:42.166606375",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -60,22 +52,14 @@
                     20
                 ]
             ],
-            [
-                {
-                    "MAJORITY_VOTE": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
-                },
-                {
-                    "MAJORITY_VOTE": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
+            {
+                "MAJORITY_VOTE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:27:58.985234983",
+        "timestamp": "2026-10-20T16:50:26.521927534",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

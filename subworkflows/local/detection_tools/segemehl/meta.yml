@@ -23,20 +23,18 @@ input:
       pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
   - fasta:
       type: file
-      description: "Reference FASTA channel; the pipeline supplies bare paths which
-        are tagged with synthetic reference metadata, while metadata-bearing tuples
-        are also accepted.
+      description: "Reference FASTA channel with reference metadata.
 
 
-        Structure: [ path(fasta) ] or [ val(meta), path(fasta) ]"
+        Structure: [ val(meta), path(fasta) ]"
       pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
   - index:
       type: file
-      description: "Optional prebuilt Segemehl index path; when absent, an index is
+      description: "Optional prebuilt Segemehl index channel; when null, an index is
         built from the reference FASTA.
 
 
-        Structure: [ val(index_path) ] for a supplied raw path, or [ val(meta), path(index) ] for a metadata-bearing index channel."
+        Structure: [ val(meta), path(index) ], or null to build the index."
       pattern: "*.{idx,sec}"
 output:
   - bed:

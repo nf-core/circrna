@@ -1488,22 +1488,14 @@
                     "fust1_1": 25869.175781
                 }
             ],
-            [
-                {
-                    "JOIN_SAMPLES": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
-                },
-                {
-                    "JOIN_SAMPLES": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
+            {
+                "JOIN_SAMPLES": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:28:45.962477324",
+        "timestamp": "2026-10-20T16:51:10.331852429",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

@@ -45,7 +45,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -87,7 +87,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -125,7 +125,7 @@ nextflow_process {
                     keys,
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -163,7 +163,7 @@ nextflow_process {
                     keys,
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -202,7 +202,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -241,7 +241,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -277,7 +277,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }

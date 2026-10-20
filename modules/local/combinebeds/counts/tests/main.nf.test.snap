@@ -45,22 +45,14 @@
                 "chrI:754505-757236:+\t0\t4",
                 "chrI:777511-779604:+\t0\t4"
             ],
-            [
-                {
-                    "COMBINEBEDS_COUNTS": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
-                },
-                {
-                    "COMBINEBEDS_COUNTS": {
-                        "python": "3.14.7",
-                        "polars": "2.0.0"
-                    }
+            {
+                "COMBINEBEDS_COUNTS": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
                 }
-            ]
+            }
         ],
-        "timestamp": "2026-10-20T15:21:57.457584796",
+        "timestamp": "2026-10-20T16:50:23.843799003",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

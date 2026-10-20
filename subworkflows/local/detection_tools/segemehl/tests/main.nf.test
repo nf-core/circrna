@@ -51,7 +51,7 @@ nextflow_workflow {
                 process {
                     """
                     input[0] = [
-                        [id: 'reference'],
+                        [id: 'prebuilt_reference'],
                         file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
                     ]
                     """
@@ -146,7 +146,10 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
                 ])
-                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[1] = channel.of([
+                    [id: 'reference'],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                ])
                 input[2] = null
                 """
             }

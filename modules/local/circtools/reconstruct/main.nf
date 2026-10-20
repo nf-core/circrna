@@ -31,10 +31,8 @@ process CIRCTOOLS_RECONSTRUCT {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    reconstruct_package="\$(python3 -c 'import os, circtools.reconstruct; print(os.path.dirname(circtools.reconstruct.__file__))')"
-    mkdir -p .circtools-python
-    ln -s "\$reconstruct_package" .circtools-python/reconstruct
-    export PYTHONPATH="\$PWD/.circtools-python:\$reconstruct_package:\${PYTHONPATH:-}"
+    circtools_package="\$(python3 -c 'import os, circtools; print(os.path.dirname(circtools.__file__))')"
+    export PYTHONPATH="\$(dirname "\$circtools_package"):\$circtools_package:\$circtools_package/reconstruct:\${PYTHONPATH:-}"
 
     circtools reconstruct \
         --bamfile ${bam} \
