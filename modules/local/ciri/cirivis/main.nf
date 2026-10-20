@@ -17,6 +17,9 @@ process CIRI_CIRIVIS {
     path "${prefix}/*.pdf", emit: pdf
     tuple val("${task.process}"), val('ciri-vis'), val('1.4.2'), emit: versions_ciri_vis, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"

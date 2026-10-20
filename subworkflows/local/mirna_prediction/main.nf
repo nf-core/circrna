@@ -1,5 +1,4 @@
 // MODULES
-include { BIOAWK as ADD_BACKSPLICE        } from '../../../modules/nf-core/bioawk'
 include { DESEQ2_NORMALIZATION            } from '../../../modules/local/deseq2/normalization'
 include { MIRNA_FILTERING                 } from '../../../modules/local/mirna_filtering'
 include { COMPUTE_CORRELATIONS            } from '../../../modules/local/compute_correlations'
@@ -22,6 +21,7 @@ workflow MIRNA_PREDICTION {
     mirna_min_sample_percentage
 
     main:
+    ch_correlations = channel.empty()
 
     //
     // MIRNA NORMALIZATION WORKFLOW:
@@ -71,11 +71,14 @@ workflow MIRNA_PREDICTION {
         // Value channels, so that every binding site batch is combined with the same inputs
         COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered.first(), quantification_rds.first())
 
-        COMPUTE_CORRELATIONS.out.correlations
+        ch_correlations = COMPUTE_CORRELATIONS.out.correlations
             .map{_meta, results -> results}
             .flatten().collect()
             .map{results -> [[id: 'correlation'], results]}
 
     }
 
+    emit:
+    binding_sites = MIRNA_BINDINGSITES.out.binding_sites
+    correlations  = ch_correlations
 }

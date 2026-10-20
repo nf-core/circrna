@@ -16,6 +16,9 @@ process CIRCTOOLS_ANNOTATION {
     tuple val("${task.process}"), val('gtfparse'), eval('python -c "import gtfparse; print(gtfparse.__version__)"'), emit: versions_gtfparse, topic: versions
     tuple val("${task.process}"), val('polars'), eval('python -c "import polars; print(polars.__version__)"'), emit: versions_polars, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template 'annotation.sh'

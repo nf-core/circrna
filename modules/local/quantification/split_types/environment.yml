@@ -1,4 +1,3 @@
-name: split_types
 channels:
   - conda-forge
   - bioconda

@@ -1,7 +1,6 @@
-name: join_samples
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::python=3.14.7
   - conda-forge::polars=2.0.0
+  - conda-forge::python=3.14.7

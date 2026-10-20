@@ -30,7 +30,12 @@ workflow FIND_CIRC {
 
     ANCHORS( SAMTOOLS_VIEW.out.bam )
 
-    MAIN( ANCHORS.out.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta } )
+    ch_find_circ = ANCHORS.out.anchors.multiMap { meta, anchors ->
+        anchors:      [meta, anchors]
+        strandedness: meta.strandedness ?: 'auto'
+    }
+
+    MAIN( ch_find_circ.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta }, ch_find_circ.strandedness )
 
     EXTRACT_READS( MAIN.out.reads, [], false, "fastq.gz" )
 

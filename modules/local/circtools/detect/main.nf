@@ -11,6 +11,7 @@ process CIRCTOOLS_DETECT {
     tuple val(meta), path(paired, stageAs: 'paired.junctions'), path(mate1, stageAs: 'mate1.junctions'), path(mate2, stageAs: 'mate2.junctions')
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
+    val strandedness
 
     output:
     tuple val(meta), path("${prefix}_reads.junctions"), emit: reads
@@ -19,10 +20,12 @@ process CIRCTOOLS_DETECT {
 
     tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    def strandedness = meta.strandedness ?: 'auto'
     def strand_args = strandedness == 'auto' || strandedness == 'unstranded' ? '-N' : strandedness == 'forward' ? '' : '-ss'
 
     def matefile_commands = meta.single_end

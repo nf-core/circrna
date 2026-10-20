@@ -14,6 +14,9 @@ process CIRIVIS_UNIFY {
     tuple val(meta), path("${prefix}.bed"), emit: bed
     tuple val("${task.process}"), val('pandas'), eval('python -c "import pandas; print(pandas.__version__)"'), emit: versions_pandas, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template 'cirivis_unify.sh'

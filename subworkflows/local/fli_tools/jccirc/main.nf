@@ -33,4 +33,6 @@ workflow JCCIRC {
         ch_gtf
     )
 
+    emit:
+    logs = MAIN.out.log
 }

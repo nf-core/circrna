@@ -30,7 +30,7 @@ include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 include { BWA_MEM as CIRI_BWA_MEM     } from '../modules/nf-core/bwa/mem/main'
 
 // SUBWORKFLOWS:
-include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
+include { FASTQ_FASTQC_UMITOOLS_TRIMGALORE } from '../subworkflows/nf-core/fastq_fastqc_umitools_trimgalore/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -146,13 +146,17 @@ workflow CIRCRNA {
         )
     } else {
         // MODULE: Run FastQC, trimgalore!
-        FASTQC_TRIMGALORE (
+        FASTQ_FASTQC_UMITOOLS_TRIMGALORE (
             ch_cat_fastq,
             skip_fastqc,
-            skip_trimming
+            false,
+            true,
+            skip_trimming,
+            0,
+            params.min_trimmed_reads
         )
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
+        ch_multiqc_files  = ch_multiqc_files.mix(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
 
         //
         // 2. BSJ Discovery
@@ -160,12 +164,12 @@ workflow CIRCRNA {
 
         if (tools.intersect(['ciri2', 'ciri3']).size() > 0 || quantification_tools.contains('ciri3')) {
             if (fli_tools.contains('cirifull')) {
-                CIRI_READS(FASTQC_TRIMGALORE.out.reads)
+                CIRI_READS(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads)
                 ch_bwa_reads = CIRI_READS.out.reads
                 ch_reads_fixed_length = CIRI_READS.out.reads
             }
             else {
-                ch_bwa_reads = FASTQC_TRIMGALORE.out.reads
+                ch_bwa_reads = FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads
                 ch_reads_fixed_length = channel.empty()
             }
 
@@ -178,7 +182,7 @@ workflow CIRCRNA {
         }
 
         BSJ_DETECTION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             ch_fasta,
             ch_gtf,
             blacklist,
@@ -212,7 +216,7 @@ workflow CIRCRNA {
         //
 
         FLI_DETECTION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             BSJ_DETECTION.out.reads_fixed_length,
             ch_fasta,
             ch_gtf,
@@ -243,7 +247,7 @@ workflow CIRCRNA {
         //
 
         QUANTIFICATION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             ch_gtf,
             ch_fasta,
             COMBINE_TRANSCRIPTOMES.out.fasta,
@@ -303,8 +307,8 @@ workflow CIRCRNA {
     //
     def topic_versions = channel.topic("versions")
         .distinct()
-        .branch {
-            versions_file: it instanceof Path
+        .branch { version ->
+            versions_file: version instanceof Path
             versions_tuple: true
         }
 

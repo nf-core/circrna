@@ -16,6 +16,9 @@ process CIRI2 {
     tuple val(meta), path("${prefix}.txt"), emit: txt
     tuple val("${task.process}"), val('ciri2'), val('2.0.6'), emit: versions_ciri2, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"

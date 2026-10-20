@@ -18,6 +18,9 @@ process PSIRCQUANT_QUANT {
     tuple val(meta), path("${meta.id}"), emit: directory
     tuple val("${task.process}"), val('psirc-quant'), eval('psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p"'), emit: versions_psircquant, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
     def genomebam = gtf ? "--genomebam -g $gtf" : ""

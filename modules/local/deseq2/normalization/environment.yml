@@ -1,4 +1,3 @@
-name: deseq2_normalization
 channels:
   - conda-forge
   - bioconda

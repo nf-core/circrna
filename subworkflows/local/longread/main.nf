@@ -9,4 +9,6 @@ workflow LONGREAD {
 
     CIRCTOOLS_LONGREAD(ch_reads, genome)
 
+    emit:
+    reference = CIRCTOOLS_LONGREAD.out.reference
 }

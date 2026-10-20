@@ -25,6 +25,9 @@ process COMBINEBEDS_FILTER {
     tuple val("${task.process}"), val('upsetplot'), eval("python -c 'import upsetplot; print(upsetplot.__version__)'"), emit: versions_upsetplot, topic: versions
     tuple val("${task.process}"), val('matplotlib'), eval("python -c 'import matplotlib; print(matplotlib.__version__)'"), emit: versions_matplotlib, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     template "filter.sh"

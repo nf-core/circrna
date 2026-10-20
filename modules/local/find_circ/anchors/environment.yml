@@ -1,4 +1,3 @@
-name: find_circ_anchors
 channels:
   - conda-forge
   - bioconda

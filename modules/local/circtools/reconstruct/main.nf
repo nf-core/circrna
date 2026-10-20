@@ -25,6 +25,9 @@ process CIRCTOOLS_RECONSTRUCT {
     tuple val(meta), path("${prefix}.coverage_profiles/*.tsv"), emit: coverage_profiles_tsv, optional: true
     tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """

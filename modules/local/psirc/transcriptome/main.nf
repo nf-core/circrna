@@ -15,6 +15,9 @@ process PSIRC_TRANSCRIPTOME {
     tuple val(meta), path("$prefix.$suffix"), emit: transcriptome
     tuple val("${task.process}"), val('psirc'), val('1.0.0'), emit: versions_psirc, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: meta.id
     suffix = 'fasta'

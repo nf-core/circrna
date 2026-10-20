@@ -1,8 +1,7 @@
-name: circrna_finder
 channels:
   - conda-forge
   - bioconda
 dependencies:
   - bioconda::circrna_finder=1.2
-  - conda-forge::gawk=5.4.1
   - conda-forge::coreutils=9.12
+  - conda-forge::gawk=5.4.1

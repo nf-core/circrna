@@ -14,6 +14,9 @@ process CIRIFULL_RO1 {
     tuple val(meta), path("${prefix}_ro1_align.txt"), emit: align
     tuple val(meta), path("${prefix}_ro1.fq.gz"), emit: fastq
     tuple val("${task.process}"), val('ciri-full'), val('2.1.2'), emit: versions_ciri_full, topic: versions
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"

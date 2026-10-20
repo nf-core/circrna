@@ -14,6 +14,9 @@ process PSIRCQUANT_INDEX {
     tuple val(meta), path("psirc.index"), emit: index
     tuple val("${task.process}"), val('psirc-quant'), eval('psirc-quant version | sed -n "s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p"'), emit: versions_psircquant, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     """
     psirc-quant index -i psirc.index --make-unique $fasta

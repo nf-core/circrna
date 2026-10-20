@@ -1,4 +1,3 @@
-name: mirna_targets
 channels:
   - conda-forge
   - bioconda

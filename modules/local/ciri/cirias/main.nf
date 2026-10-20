@@ -17,6 +17,9 @@ process CIRI_CIRIAS {
     tuple val(meta), path("${prefix}_library_length.list"), emit: library_length
     tuple val("${task.process}"), val('ciri-as'), val('1.2'), emit: versions_ciri_as, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"

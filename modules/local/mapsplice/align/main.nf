@@ -4,8 +4,8 @@ process MAPSPLICE_ALIGN {
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/db/dba8f89114556c2bf1fe6bb94bef5253a754ca9854306facb1755ee221ce3b1c/data'
-        : 'community.wave.seqera.io/library/mapsplice:046f5c757c7045ad'}"
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/94/947b2cdf8be956dccb34aee3d3d4e2778a015c43721fcb08268007a46542ac49/data'
+        : 'community.wave.seqera.io/library/mapsplice_python:bd8c09f1c86164f3'}"
     input:
     tuple val(meta), path(reads)
     path bowtie_index

@@ -11,6 +11,7 @@ process FIND_CIRC {
     tuple val(meta), path(anchors)
     tuple val(meta2), path(index)
     path fasta
+    val strandedness
 
     output:
     tuple val(meta), path("${prefix}.sites.bed")  , emit: bed
@@ -26,7 +27,7 @@ process FIND_CIRC {
     prefix = task.ext.prefix ?: "${meta.id}"
     args = task.ext.args ?: ""
     args2 = task.ext.args2 ?: ""
-    def strand_arg = meta.strandedness && (meta.strandedness == 'forward' || meta.strandedness == 'reverse') ? "--stranded" : ""
+    def strand_arg = strandedness == 'forward' || strandedness == 'reverse' ? "--stranded" : ""
     """
     INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/.rev.1.bt2//"`
     [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/.rev.1.bt2l//"`

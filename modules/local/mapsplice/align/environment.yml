@@ -1,6 +1,6 @@
-name: mapsplice
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::mapsplice=2.2.1=*_2
+  - bioconda::mapsplice=2.2.1
+  - conda-forge::python=2.7

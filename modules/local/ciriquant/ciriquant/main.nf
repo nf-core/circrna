@@ -13,6 +13,7 @@ process CIRIQUANT {
     tuple val(meta4), path(fasta)
     tuple val(meta5), path(bwa)
     tuple val(meta6), path(hisat2)
+    val strandedness
 
     output:
     tuple val(meta), path("${prefix}/${prefix}.gtf")            , emit: gtf
@@ -32,7 +33,6 @@ process CIRIQUANT {
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    def strandedness = meta.strandedness ?: 'auto'
     def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
     def reads_string = meta.single_end ? "-r ${reads}" : "-1 ${reads[0]} -2 ${reads[1]}"
     def bed_string = bed ? "--bed ${bed}" : ''

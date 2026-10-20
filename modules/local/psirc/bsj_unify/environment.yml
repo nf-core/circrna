@@ -1,4 +1,3 @@
-name: psirc_bsj_unify
 channels:
   - conda-forge
 dependencies:

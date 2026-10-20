@@ -19,6 +19,9 @@ process MERGE_EXPERIMENTS {
     tuple val("${task.process}"), val('bioconductor-summarizedexperiment'), eval('Rscript -e "cat(as.character(packageVersion(\'SummarizedExperiment\')))"'), emit: versions_bioconductor_summarizedexperiment, topic: versions
     tuple val("${task.process}"), val('bioconductor-rtracklayer'), eval('Rscript -e "cat(as.character(packageVersion(\'rtracklayer\')))"'), emit: versions_bioconductor_rtracklayer, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     template "merge_experiments.sh"
 

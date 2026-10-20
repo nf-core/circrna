@@ -75,4 +75,7 @@ workflow STATISTICAL_TESTS {
         )
     )
 
+    emit:
+    circ = CIRIQUANT_DE.out.circ
+    gene = CIRIQUANT_DE.out.gene
 }

@@ -16,6 +16,9 @@ process JCCIRC_JCCIRC {
     tuple val(meta), path("${prefix}.jccirc.log"), emit: log
     tuple val("${task.process}"), val('jccirc'), val('1.0.0'), emit: versions_jccirc, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """

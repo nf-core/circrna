@@ -12,14 +12,16 @@ process COMBINEBEDS_SHIFTS {
     tuple val(meta), path(beds)
 
     output:
-    path "*.png"       , emit: plots, optional: true
-    path "*.json"      , emit: multiqc, optional: true
+    tuple val(meta), path("*.png") , emit: plots, optional: true
+    tuple val(meta), path("*.json"), emit: multiqc, optional: true
     tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
     tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
     tuple val("${task.process}"), val('altair'), eval("python -c 'import altair; print(altair.__version__)'"), emit: versions_altair, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
-    prefix      = task.ext.prefix      ?: "${meta.id}"
     template "shifts.sh"
 
     stub:

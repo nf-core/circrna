@@ -244,7 +244,7 @@ workflow BSJ_DETECTION {
         .collect()
 
     INVESTIGATE_SHIFTS(ch_all_samples)
-    ch_multiqc_files = ch_multiqc_files.mix(INVESTIGATE_SHIFTS.out.multiqc)
+    ch_multiqc_files = ch_multiqc_files.mix(INVESTIGATE_SHIFTS.out.multiqc.map { _meta, multiqc -> multiqc })
 
     //
     // ANNOTATION

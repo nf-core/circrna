@@ -1,5 +1,4 @@
 include { GAWK as INGEST_DATABASE_NAMES            } from '../../../modules/nf-core/gawk'
-include { GNU_SORT as COMBINE_DATABASES            } from '../../../modules/nf-core/gnu/sort'
 include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE } from '../../../modules/nf-core/bedtools/intersect'
 include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../../modules/nf-core/circexplorer2/annotate'
 include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../../modules/nf-core/bedtools/getfasta'

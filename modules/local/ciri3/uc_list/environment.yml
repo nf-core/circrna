@@ -3,5 +3,5 @@
 channels:
   - conda-forge
 dependencies:
-  - conda-forge::python=3.14.7
   - conda-forge::polars=2.0.0
+  - conda-forge::python=3.14.7

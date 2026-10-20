@@ -15,7 +15,12 @@ workflow CIRIQUANT {
 
     main:
 
-    MAIN( reads, ch_bed, ch_gtf, ch_fasta, bwa_index, hisat2_index )
+    ch_ciriquant = reads.multiMap { meta, sample_reads ->
+        reads:        [meta, sample_reads]
+        strandedness: meta.strandedness ?: 'auto'
+    }
+
+    MAIN( ch_ciriquant.reads, ch_bed, ch_gtf, ch_fasta, bwa_index, hisat2_index, ch_ciriquant.strandedness )
 
     EXTRACT_CIRC( MAIN.out.gtf )
 

@@ -13,7 +13,7 @@ process TXIMETA_TXIMETA {
     val quant_type
 
     output:
-    tuple val(meta), path("*.rds"), emit: se
+    tuple val(meta), path("${prefix}.rds"), emit: se
     tuple val("${task.process}"), val('bioconductor-tximeta'), eval('Rscript -e "cat(as.character(packageVersion(\'tximeta\')))"'), emit: versions_bioconductor_tximeta, topic: versions
 
     when:
@@ -24,8 +24,9 @@ process TXIMETA_TXIMETA {
     template 'tximeta.sh'
 
     stub:
+    prefix = task.ext.prefix ?: meta.id
     """
-    touch ${meta.id}.rds
+    touch ${prefix}.rds
 
     """
 }

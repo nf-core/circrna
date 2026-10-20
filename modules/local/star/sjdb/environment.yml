@@ -1,4 +1,3 @@
-name: star_sjdb
 channels:
   - conda-forge
   - bioconda

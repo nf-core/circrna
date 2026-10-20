@@ -10,7 +10,6 @@ include { GAWK                      as CLEAN_FASTA               } from '../../.
 include { SAMTOOLS_FAIDX                                         } from '../../../modules/nf-core/samtools/faidx'
 include { UCSC_GTFTOGENEPRED                                     } from '../../../modules/nf-core/ucsc/gtftogenepred'
 include { GAWK                      as CIRCEXPLORER2_REFERENCE   } from '../../../modules/nf-core/gawk'
-include { GFFREAD                                                } from '../../../modules/nf-core/gffread'
 include { PSIRC_TRANSCRIPTOME                                    } from '../../../modules/local/psirc/transcriptome'
 include { PSIRC_INDEX                                            } from '../../../modules/local/psirc/index'
 include { starBasedTools                                         } from '../utils_nfcore_circrna_pipeline'
@@ -102,7 +101,7 @@ workflow PREPARE_GENOME {
         ch_hisat2_reference = ch_fasta
             .combine(ch_gtf)
             .combine(HISAT2_EXTRACTSPLICESITES.out.txt)
-            .map { meta_fasta, fasta, meta_gtf, gtf, meta_splices, splices ->
+            .map { meta_fasta, fasta, _meta_gtf, gtf, _meta_splices, splices ->
                 [meta_fasta, fasta, gtf, splices]
             }
         HISAT2_BUILD(ch_hisat2_reference, params.hisat2_build_memory)

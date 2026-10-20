@@ -14,6 +14,9 @@ process CIRCTOOLS_REFERENCE {
     path "reference", emit: reference
     tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     """
     mkdir -p temp

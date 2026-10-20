@@ -17,6 +17,9 @@ process PSIRC_BSJ {
     tuple val("${task.process}"), val('psirc'), val('1.0.0'), emit: versions_psirc, topic: versions
     tuple val("${task.process}"), val('kallisto_b'), eval('kallisto_b version | sed "s/.*version //"'), emit: versions_kallisto_b, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     """
     mkdir -p output

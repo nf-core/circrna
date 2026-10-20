@@ -12,4 +12,6 @@ workflow CIRCTOOLS_LONGREAD {
 
     CIRCTOOLS_NANOPORE(ch_reads, CIRCTOOLS_REFERENCE.out.reference, genome)
 
+    emit:
+    reference = CIRCTOOLS_REFERENCE.out.reference
 }

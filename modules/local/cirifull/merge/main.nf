@@ -16,6 +16,9 @@ process CIRIFULL_MERGE {
     tuple val(meta), path("${prefix}_merge_circRNA_detail.anno"), emit: anno
     tuple val("${task.process}"), val('ciri-full'), val('2.1.2'), emit: versions_ciri_full, topic: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """

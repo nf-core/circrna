@@ -1,4 +1,3 @@
-name: circtest_prepare
 channels:
   - conda-forge
 dependencies:

@@ -1,7 +1,6 @@
-name: find_circ
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::find_circ=1.2
   - bioconda::bowtie2=2.5.4
+  - bioconda::find_circ=1.2

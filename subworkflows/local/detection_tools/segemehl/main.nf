@@ -13,9 +13,36 @@ workflow SEGEMEHL {
 
     main:
 
-    index = index ?: INDEX( fasta ).index
+    // The workflow accepts an optional index path (as supplied by the pipeline),
+    // while the upstream module consumes metadata-bearing tuples. Normalize both
+    // reference inputs to tuples and pair by position: their metadata IDs need not match.
+    if (fasta instanceof Path || fasta instanceof String) {
+        ch_fasta = channel.value([[id: 'segemehl_reference'], file(fasta)])
+    } else {
+        ch_fasta = fasta.map { entry ->
+            if (entry instanceof List) {
+                entry
+            } else {
+                [[id: 'segemehl_reference'], entry]
+            }
+        }
+    }
 
-    ALIGN( reads, fasta, index )
+    if (index) {
+        if (index instanceof Path || index instanceof String) {
+            ch_index = channel.value([[id: 'segemehl_reference'], file(index)])
+        } else {
+            ch_index = index
+        }
+    } else {
+        ch_index = INDEX(ch_fasta).index
+    }
+
+    ch_reference = ch_fasta
+        .combine(ch_index)
+        .map { fasta_meta, reference_fasta, _index_meta, reference_index -> [fasta_meta, reference_fasta, reference_index] }
+
+    ALIGN(reads, ch_reference.first())
     EXTRACT( ALIGN.out.single_bed
         .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed, "segemehl_extracted.bed" ] }, [], false )
 
