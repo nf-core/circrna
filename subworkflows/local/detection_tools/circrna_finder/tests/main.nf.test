@@ -18,11 +18,10 @@ nextflow_workflow {
                 """
                 def dir = file("$outputDir/input")
                 dir.mkdirs()
-                def stage = { sample, suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("\${sample}.\${suffix}")) }
                 def samples = ['cel_N2_1', 'fust1_1']
-                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.sam')] })
-                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.junction')] })
-                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'SJ.out.tab')] })
+                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.Chimeric.out.sam", checkIfExists: true).copyTo(dir.resolve("\${sample}.Chimeric.out.sam"))] })
+                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.Chimeric.out.junction", checkIfExists: true).copyTo(dir.resolve("\${sample}.Chimeric.out.junction"))] })
+                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.SJ.out.tab", checkIfExists: true).copyTo(dir.resolve("\${sample}.SJ.out.tab"))] })
                 """
             }
         }
@@ -47,11 +46,10 @@ nextflow_workflow {
                 """
                 def dir = file("$outputDir/input")
                 dir.mkdirs()
-                def stage = { sample, suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("\${sample}.\${suffix}")) }
                 def samples = ['cel_N2_1', 'fust1_1']
-                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.sam')] })
-                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'Chimeric.out.junction')] })
-                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], stage(sample, 'SJ.out.tab')] })
+                input[0] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.Chimeric.out.sam", checkIfExists: true).copyTo(dir.resolve("\${sample}.Chimeric.out.sam"))] })
+                input[1] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.Chimeric.out.junction", checkIfExists: true).copyTo(dir.resolve("\${sample}.Chimeric.out.junction"))] })
+                input[2] = channel.fromList(samples.collect { sample -> [[id: sample, single_end: false], file(params.pipelines_testdata_base_path + "mini/intermediates/\${sample}.star.SJ.out.tab", checkIfExists: true).copyTo(dir.resolve("\${sample}.SJ.out.tab"))] })
                 """
             }
         }

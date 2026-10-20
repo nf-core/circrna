@@ -23,19 +23,20 @@ nextflow_process {
                     csv.text = ['Sample,Group', 'control_1,C', 'control_2,C', 'control_3,C', 'treatment_1,T', 'treatment_2,T', 'treatment_3,T'].join('\\n') + '\\n'
                     csv
                 }
-                def counts = { prefix ->
-                    (1..24).collect { index ->
+                def expression = file("$outputDir/synthetic_de/circ.csv").with { csv ->
+                    csv.text = (['circRNA'] + samples).join(',') + '\\n' + (1..24).collect { index ->
                         def baseline = 50 + index * 5
                         def treatment = index <= 12 ? baseline * 3 : baseline
-                        prefix + '_' + index + ',' + [baseline, baseline + 7, baseline - 4, treatment + 2, treatment - 5, treatment + 8].join(',')
-                    }
-                }
-                def expression = file("$outputDir/synthetic_de/circ.csv").with { csv ->
-                    csv.text = (['circRNA'] + samples).join(',') + '\\n' + counts('circ').join('\\n') + '\\n'
+                        'circ_' + index + ',' + [baseline, baseline + 7, baseline - 4, treatment + 2, treatment - 5, treatment + 8].join(',')
+                    }.join('\\n') + '\\n'
                     csv
                 }
                 def gene = file("$outputDir/synthetic_de/gene.csv").with { csv ->
-                    csv.text = (['gene_id'] + samples).join(',') + '\\n' + counts('gene').join('\\n') + '\\n'
+                    csv.text = (['gene_id'] + samples).join(',') + '\\n' + (1..24).collect { index ->
+                        def baseline = 50 + index * 5
+                        def treatment = index <= 12 ? baseline * 3 : baseline
+                        'gene_' + index + ',' + [baseline, baseline + 7, baseline - 4, treatment + 2, treatment - 5, treatment + 8].join(',')
+                    }.join('\\n') + '\\n'
                     csv
                 }
                 input[0] = [[ id:'synthetic_de' ], library, expression, gene]
