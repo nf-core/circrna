@@ -5,7 +5,7 @@
                 [
                     "CIRCTOOLS_DETECT",
                     "circtools",
-                    "2.0"
+                    "2.0.4"
                 ]
             ],
             [
@@ -21,7 +21,7 @@
             "bfde5b03a7069db354bda4d58a8cf7f8",
             "8fc5175c2b5fed87ac8f411c56456908"
         ],
-        "timestamp": "2026-10-19T00:16:40.722027189",
+        "timestamp": "2026-10-20T10:22:25.755735456",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -64,7 +64,7 @@
                     [
                         "CIRCTOOLS_DETECT",
                         "circtools",
-                        "2.0"
+                        "2.0.4"
                     ]
                 ],
                 "coordinates": [
@@ -101,12 +101,12 @@
                     [
                         "CIRCTOOLS_DETECT",
                         "circtools",
-                        "2.0"
+                        "2.0.4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-19T00:17:53.392470614",
+        "timestamp": "2026-10-20T10:22:58.866830719",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -118,7 +118,7 @@
                 [
                     "CIRCTOOLS_DETECT",
                     "circtools",
-                    "2.0"
+                    "2.0.4"
                 ]
             ],
             [
@@ -134,7 +134,7 @@
             "a7749bc6fe8e67d2688dc6716b834b70",
             "6fc94b1b88cef1627c7dc4e4c4025933"
         ],
-        "timestamp": "2026-10-19T00:17:23.921933395",
+        "timestamp": "2026-10-20T10:22:44.57887876",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -177,7 +177,7 @@
                     [
                         "CIRCTOOLS_DETECT",
                         "circtools",
-                        "2.0"
+                        "2.0.4"
                     ]
                 ],
                 "coordinates": [
@@ -214,12 +214,12 @@
                     [
                         "CIRCTOOLS_DETECT",
                         "circtools",
-                        "2.0"
+                        "2.0.4"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-19T00:18:25.008322443",
+        "timestamp": "2026-10-20T10:23:13.10722947",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

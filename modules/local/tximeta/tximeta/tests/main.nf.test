@@ -106,4 +106,34 @@ nextflow_process {
             )
         }
     }
+
+    test("psirc-quant directories - custom prefix") {
+
+        config "./custom_prefix.config"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = PSIRCQUANT_QUANT.out.directory
+                input[1] = 'kallisto'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.se.size() == 2 },
+                { assert process.out.se.every { meta, rds -> file(rds).size() > 0 } },
+                { assert process.out.se.every { meta, rds -> file(rds).name == 'custom_prefix.rds' } },
+                { assert snapshot(
+                    process.out.se.collect { meta, rds -> [ meta.id, file(rds).name ] }.sort(),
+                    process.out.versions_bioconductor_tximeta
+                ).match() }
+            )
+        }
+    }
 }

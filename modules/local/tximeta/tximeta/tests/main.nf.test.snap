@@ -1,4 +1,35 @@
 {
+    "psirc-quant directories - custom prefix": {
+        "content": [
+            [
+                [
+                    "cel_N2_1",
+                    "custom_prefix.rds"
+                ],
+                [
+                    "fust1_1",
+                    "custom_prefix.rds"
+                ]
+            ],
+            [
+                [
+                    "TXIMETA_TXIMETA",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ],
+                [
+                    "TXIMETA_TXIMETA",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T11:37:57.015381554",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
     "psirc-quant directories - stub": {
         "content": [
             {

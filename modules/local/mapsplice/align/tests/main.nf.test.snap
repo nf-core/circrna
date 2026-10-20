@@ -12,7 +12,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,759a89e3b320d8b6ba19f4d5a6175cf1"
+                    [
+                        "MAPSPLICE_ALIGN",
+                        "mapsplice",
+                        "2.2.1"
+                    ]
                 ],
                 "raw_fusions": [
                     [
@@ -23,24 +27,30 @@
                         "fusions_raw.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,759a89e3b320d8b6ba19f4d5a6175cf1"
+                "versions_mapsplice": [
+                    [
+                        "MAPSPLICE_ALIGN",
+                        "mapsplice",
+                        "2.2.1"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-20T10:58:39.505425685",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:15:40.275327025"
+        }
     },
     "cel_N2_1 paired-end": {
         "content": [
-            {
-                "MAPSPLICE_ALIGN": {
-                    "mapsplice": "v2.2.1"
-                }
-            },
+            [
+                [
+                    "MAPSPLICE_ALIGN",
+                    "mapsplice",
+                    "2.2.1"
+                ]
+            ],
             [
                 "fusions_raw.txt"
             ],
@@ -60,10 +70,10 @@
                 "chrI~chrI\t97830\t96050"
             ]
         ],
+        "timestamp": "2026-10-20T10:58:28.565221837",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:15:22.074445671"
+        }
     }
 }

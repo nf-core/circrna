@@ -74,7 +74,8 @@ nextflow_workflow {
                     summary_lines.size(),
                     summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
                     path("$outputDir/7_statistical_tests/ciriquant_de/ciriquant_prep/fust1_N2_expression.tsv").md5,
-                ).match() }
+                    workflow.out,
+                ).match() },
             )
         }
     }
@@ -124,7 +125,8 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.trace.succeeded().findAll { task -> task.name.contains('CIRCTEST_CIRCTEST') }.size() == 1 }
+                { assert workflow.trace.succeeded().findAll { task -> task.name.contains('CIRCTEST_CIRCTEST') }.size() == 1 },
+                { assert snapshot(workflow.out).match() }
             )
         }
     }

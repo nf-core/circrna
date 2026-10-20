@@ -1,55 +1,13 @@
 {
-    "without miRNA expression - stub": {
-        "content": [
-            {
-                "0": [
-                    "versions.yml:md5,4dcfa19656e09fc050f53fc4df276d4e",
-                    "versions.yml:md5,844785dbb71e30045faa8b97787bbd34",
-                    "versions.yml:md5,a005a5c8b47d70214c138f13a929bb6d",
-                    "versions.yml:md5,a3a4b1b822485e4d02d9639173e235e5"
-                ],
-                "versions": [
-                    "versions.yml:md5,4dcfa19656e09fc050f53fc4df276d4e",
-                    "versions.yml:md5,844785dbb71e30045faa8b97787bbd34",
-                    "versions.yml:md5,a005a5c8b47d70214c138f13a929bb6d",
-                    "versions.yml:md5,a3a4b1b822485e4d02d9639173e235e5"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:32:49.527680303"
-    },
-    "with miRNA expression - stub": {
-        "content": [
-            {
-                "0": [
-                    "versions.yml:md5,371a07d6f569c60300a53249728af318",
-                    "versions.yml:md5,58b6247fd3b2b3792fd6420a5f491046"
-                ],
-                "versions": [
-                    "versions.yml:md5,371a07d6f569c60300a53249728af318",
-                    "versions.yml:md5,58b6247fd3b2b3792fd6420a5f491046"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:33:21.355178855"
-    },
     "without miRNA expression": {
         "content": [
             "729ef9c831fa78f31806c2fdbf7d338e"
         ],
+        "timestamp": "2026-10-18T23:40:05.883355777",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T23:40:05.883355777"
+        }
     },
     "with miRNA expression, filtered miRNAs, correlations disabled": {
         "content": [
@@ -57,10 +15,10 @@
             "8c705596deac53cca23cba32bcce72cf",
             "6f4e2e0881faf0cc046fd88e90c1514f"
         ],
+        "timestamp": "2026-10-18T23:41:36.476644476",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T23:41:36.476644476"
+        }
     }
 }

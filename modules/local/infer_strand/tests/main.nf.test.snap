@@ -1,0 +1,125 @@
+{
+    "stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,5371765a4b6d60f61dac4c419083f4a2"
+                    ]
+                ],
+                "1": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,5371765a4b6d60f61dac4c419083f4a2"
+                    ]
+                ],
+                "versions_pysam": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:18:21.92621183",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "empty bed": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_pysam": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:18:12.01394689",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "infers canonical flanks and preserves other rows": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,dda1ea0b61051dca5eddf71a2429d512"
+                    ]
+                ],
+                "1": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,dda1ea0b61051dca5eddf71a2429d512"
+                    ]
+                ],
+                "versions_pysam": [
+                    [
+                        "INFER_STRAND",
+                        "pysam",
+                        "0.24.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:18:00.097588088",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

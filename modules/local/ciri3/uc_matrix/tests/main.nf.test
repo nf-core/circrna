@@ -30,6 +30,7 @@ nextflow_process {
             def fsj = path(process.out.fsj[0][1]).readLines()
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert process.out.bsj[0][0].id == 'sample_9' },
                 { assert bsj == ['circRNA_ID\tcount', 'chr1:10|20\t7', 'chr1:30|40\t0', 'chr2:50|70\t0'] },
                 { assert fsj == ['circRNA_ID\tcount', 'chr1:10|20\t19', 'chr1:30|40\t0', 'chr2:50|70\t3'] },
@@ -61,6 +62,7 @@ nextflow_process {
             def fsj = path(process.out.fsj[0][1]).readLines()
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert bsj == ['circRNA_ID\tcount', 'chr2:50|70\t0', 'chr1:30|40\t0', 'chr1:10|20\t0'] },
                 { assert fsj == ['circRNA_ID\tcount', 'chr2:50|70\t0', 'chr1:30|40\t0', 'chr1:10|20\t0'] }
             )
@@ -213,6 +215,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert process.out.bsj.size() == 1 },
                 { assert process.out.fsj.size() == 1 }
             )

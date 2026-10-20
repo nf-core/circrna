@@ -2,13 +2,17 @@
     "hg38 - stub": {
         "content": [
             [
-                
+                "reference"
             ],
             [
-                
+                [
+                    "CIRCTOOLS_REFERENCE",
+                    "circtools",
+                    "2.0.4"
+                ]
             ]
         ],
-        "timestamp": "2026-10-19T00:20:40.908262829",
+        "timestamp": "2026-10-20T10:42:40.030315821",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

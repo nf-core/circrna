@@ -32,6 +32,7 @@ nextflow_process {
 
         then {
             assert process.success
+            assert snapshot(process.out).match()
             assert process.out.versions_python[0][1] == 'python'
             assert process.out.versions_gffutils[0][1] == 'gffutils'
             def outputPath = path(process.out.gtf[0][1])
@@ -83,6 +84,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert path(process.out.gtf[0][1]).exists() },
                 { assert process.out.versions_python.size() == 1 },
                 { assert process.out.versions_gffutils[0][1] == 'gffutils' }

@@ -98,6 +98,7 @@ nextflow_pipeline {
                 outdir = "$outputDir"
                 mature = null
                 bootstrap_samples = 2
+                min_trimmed_reads = 0
             }
         }
 
@@ -129,6 +130,7 @@ nextflow_pipeline {
                 quantification_tools = 'sum'
                 mature = null
                 bsj_reads = 1
+                min_trimmed_reads = 0
             }
         }
 
@@ -259,6 +261,7 @@ nextflow_pipeline {
                 quantification_tools = 'ciri3'
                 mature = null
                 bsj_reads = 1
+                min_trimmed_reads = 0
             }
         }
 

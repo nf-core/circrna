@@ -1,0 +1,102 @@
+{
+    "builds a self-contained index from mini reference": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        [
+                            "reference.fa:md5,0b91223eb49d0c73d755f8108fefe831",
+                            "reference.fa.packed.fa:md5,abf33778b5bfacc3e10106204a24551b",
+                            "reference.fa.packed.fa.index:md5,511c838efa9abd35c14a9b2f01cf93f4",
+                            "reference.fa.packed.fa.index.info:md5,eb48a2ce04985643e29eb890a735806b"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_INDEX",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ],
+                "index": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        [
+                            "reference.fa:md5,0b91223eb49d0c73d755f8108fefe831",
+                            "reference.fa.packed.fa:md5,abf33778b5bfacc3e10106204a24551b",
+                            "reference.fa.packed.fa.index:md5,511c838efa9abd35c14a9b2f01cf93f4",
+                            "reference.fa.packed.fa.index.info:md5,eb48a2ce04985643e29eb890a735806b"
+                        ]
+                    ]
+                ],
+                "versions_circminer": [
+                    [
+                        "CIRCMINER_INDEX",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:29:58.505820708",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "builds a self-contained index - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        [
+                            "reference.fa:md5,0b91223eb49d0c73d755f8108fefe831",
+                            "reference.fa.packed.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "reference.fa.packed.fa.index.info:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_INDEX",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ],
+                "index": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        [
+                            "reference.fa:md5,0b91223eb49d0c73d755f8108fefe831",
+                            "reference.fa.packed.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "reference.fa.packed.fa.index.info:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions_circminer": [
+                    [
+                        "CIRCMINER_INDEX",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:13:37.342757863",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

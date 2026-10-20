@@ -1,0 +1,112 @@
+{
+    "orders AGAT GTF exons for circMiner": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,02b521d55d8b16d054f38c12b2e2ccc7"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "gffutils",
+                        "0.14"
+                    ]
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,02b521d55d8b16d054f38c12b2e2ccc7"
+                    ]
+                ],
+                "versions_gffutils": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "gffutils",
+                        "0.14"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "python",
+                        "3.14.7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:30:28.961652035",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "orders AGAT GTF - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "gffutils",
+                        "0.14"
+                    ]
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_gffutils": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "gffutils",
+                        "0.14"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "CIRCMINER_ORDERGTF",
+                        "python",
+                        "3.14.7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:14:06.288262763",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

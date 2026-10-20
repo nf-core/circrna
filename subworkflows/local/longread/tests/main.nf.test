@@ -31,7 +31,8 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.trace.succeeded().any { task -> task.name.contains('CIRCTOOLS_NANOPORE') } }
+                { assert workflow.trace.succeeded().any { task -> task.name.contains('CIRCTOOLS_NANOPORE') } },
+                { assert snapshot(workflow.out).match() }
             )
         }
     }

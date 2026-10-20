@@ -27,10 +27,11 @@ nextflow_workflow {
                 """
                 input[0] = [
                     [ id:'genome' ],
-                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true),
+                    [],
+                    []
                 ]
-                input[1] = [ [:], [] ]
-                input[2] = [ [:], [] ]
+                input[1] = '64 GB'
                 """
             }
         }

@@ -25,6 +25,7 @@ nextflow_process {
             def output = path(process.out.bed[0][1]).readLines()
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert output == ['chr1\t2\t4\tFUSIONJUNC_0/5\t5\t+', 'chr1\t5\t7\tFUSIONJUNC_1/3\t3\t.', 'chr1\t8\t10\tFUSIONJUNC_2/2\t2\t.', 'chr1\t11\t13\tFUSIONJUNC_3/1\t1\t+'] },
                 { assert file("$outputDir/calls.bed").readLines().size() == 4 }
             )
@@ -46,7 +47,8 @@ nextflow_process {
         }
 
         then {
-            assertAll({ assert process.success }, { assert path(process.out.bed[0][1]).text == '' })
+            assertAll({ assert process.success },
+                { assert snapshot(process.out).match() }, { assert path(process.out.bed[0][1]).text == '' })
         }
     }
 }

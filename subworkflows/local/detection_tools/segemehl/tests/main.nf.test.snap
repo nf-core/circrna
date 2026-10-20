@@ -98,20 +98,13 @@
                 "chrI\t99016\t100201\tFUSIONJUNC_17/1\t1\t+\t8",
                 "chrI\t99022\t99175\tFUSIONJUNC_18/1\t1\t+\t24",
                 "chrI\t99728\t100516\tFUSIONJUNC_19/1\t1\t+\t1"
-            ],
-            [
-                {
-                    "SEGEMEHL:ALIGN": {
-                        "segemehl": "0.3.4"
-                    }
-                }
             ]
         ],
+        "timestamp": "2026-10-20T10:31:07.75190637",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:17:58.717747938"
+        }
     },
     "cel_N2_1 paired-end - stub": {
         "content": [
@@ -124,11 +117,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-18T23:23:17.495785424",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T23:23:17.495785424"
+        }
     },
     "cel_N2_1 paired-end - prebuilt index": {
         "content": [
@@ -229,19 +222,12 @@
                 "chrI\t99016\t100201\tFUSIONJUNC_17/1\t1\t+\t8",
                 "chrI\t99022\t99175\tFUSIONJUNC_18/1\t1\t+\t24",
                 "chrI\t99728\t100516\tFUSIONJUNC_19/1\t1\t+\t1"
-            ],
-            [
-                {
-                    "SEGEMEHL:ALIGN": {
-                        "segemehl": "0.3.4"
-                    }
-                }
             ]
         ],
+        "timestamp": "2026-10-20T10:31:38.812961979",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:18:42.003632412"
+        }
     }
 }

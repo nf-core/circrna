@@ -1,0 +1,84 @@
+{
+    "resolves authentic psiRC transcript headers without overwriting staged calls": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,835564ec03f3acd123b5446b25d36e6f"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRC_BSJ_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,835564ec03f3acd123b5446b25d36e6f"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "PSIRC_BSJ_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:18:36.299512732",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRC_BSJ_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "PSIRC_BSJ_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:18:46.44390061",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

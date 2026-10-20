@@ -24,7 +24,7 @@
                     "gawk": "5.3.1"
                 },
                 "FASTQC": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "GTFFILTER": {
                     "python": "3.14.5"
@@ -68,10 +68,10 @@
                     "psirc-quant": 1.0
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.24
                 },
                 "SEQKIT_SPLIT": {
-                    "seqkit": "seqkit v2.14.0"
+                    "seqkit": "2.14.0"
                 },
                 "SJDB": {
                     "mawk": "mawk 1.3.4 20171017"
@@ -91,7 +91,7 @@
                     "gffread": "0.12.7"
                 },
                 "TRIMGALORE": {
-                    "trimgalore": "0.6.10"
+                    "trimgalore": "2.3.0"
                 },
                 "TXIMETA_TXIMETA": {
                     "bioconductor-tximeta": "1.28.3"
@@ -208,6 +208,7 @@
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/cel_N2_2",
                 "5_quantification/psirc/samples/cel_N2_2/psirc",
                 "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2",
@@ -225,6 +226,7 @@
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/cel_N2_3",
                 "5_quantification/psirc/samples/cel_N2_3/psirc",
                 "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3",
@@ -242,6 +244,7 @@
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_1",
                 "5_quantification/psirc/samples/fust1_1/psirc",
                 "5_quantification/psirc/samples/fust1_1/psirc/fust1_1",
@@ -259,6 +262,7 @@
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_2",
                 "5_quantification/psirc/samples/fust1_2/psirc",
                 "5_quantification/psirc/samples/fust1_2/psirc/fust1_2",
@@ -276,6 +280,7 @@
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_3",
                 "5_quantification/psirc/samples/fust1_3/psirc",
                 "5_quantification/psirc/samples/fust1_3/psirc/fust1_3",
@@ -293,6 +298,7 @@
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.tx2gene_augmented.tsv",
                 "5_quantification/psirc/transcriptome",
                 "5_quantification/psirc/transcriptome/transcriptome.combined.gtf",
                 "5_quantification/psirc/transcriptome/transcriptome.fasta",
@@ -307,7 +313,7 @@
                 "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
             ]
         ],
-        "timestamp": "2026-10-19T10:31:39.747394493",
+        "timestamp": "2026-10-20T10:47:51.436296908",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -362,7 +368,7 @@
                     "coreutils": 9.5
                 },
                 "CUSTOM_TX2GENE": {
-                    "python": "3.14.7"
+                    "python": "3.10.4"
                 },
                 "CUT_BED12": {
                     "gawk": "5.3.1"
@@ -383,7 +389,7 @@
                     "bedtools": "2.31.1"
                 },
                 "GTFFILTER": {
-                    "python": "3.14.7"
+                    "python": "3.14.5"
                 },
                 "INDEX": {
                     "psirc-quant": 1.0
@@ -461,7 +467,7 @@
                     "bioconductor-tximeta": "1.28.3"
                 },
                 "TXIMETA_TXIMPORT": {
-                    "bioconductor-tximeta": "1.28.3"
+                    "bioconductor-tximeta": "1.20.1"
                 },
                 "UCSC_GTFTOGENEPRED": {
                     "ucsc": 482
@@ -662,6 +668,7 @@
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/cel_N2_2",
                 "5_quantification/psirc/samples/cel_N2_2/psirc",
                 "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2",
@@ -681,6 +688,7 @@
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/cel_N2_3",
                 "5_quantification/psirc/samples/cel_N2_3/psirc",
                 "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3",
@@ -700,6 +708,7 @@
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_counts.tsv",
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_1",
                 "5_quantification/psirc/samples/fust1_1/psirc",
                 "5_quantification/psirc/samples/fust1_1/psirc/fust1_1",
@@ -719,6 +728,7 @@
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_2",
                 "5_quantification/psirc/samples/fust1_2/psirc",
                 "5_quantification/psirc/samples/fust1_2/psirc/fust1_2",
@@ -738,6 +748,7 @@
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.tx2gene_augmented.tsv",
                 "5_quantification/psirc/samples/fust1_3",
                 "5_quantification/psirc/samples/fust1_3/psirc",
                 "5_quantification/psirc/samples/fust1_3/psirc/fust1_3",
@@ -757,6 +768,7 @@
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_counts.tsv",
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_lengths.tsv",
                 "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.tx2gene_augmented.tsv",
                 "5_quantification/psirc/transcriptome",
                 "5_quantification/psirc/transcriptome/transcriptome.combined.gtf",
                 "5_quantification/psirc/transcriptome/transcriptome.fasta",
@@ -1388,7 +1400,7 @@
                 }
             }
         ],
-        "timestamp": "2026-10-19T22:58:53.503644303",
+        "timestamp": "2026-10-20T10:25:37.969432208",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

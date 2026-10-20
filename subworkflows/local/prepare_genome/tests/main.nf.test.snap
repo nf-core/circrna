@@ -272,11 +272,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-18T23:52:30.489694953",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T23:52:30.489694953"
+        }
     },
     "build all indices": {
         "content": [
@@ -346,16 +346,63 @@
                 ]
             ],
             [
-                
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "hisat2",
+                    [
+                        "fasta.1.ht2",
+                        "fasta.2.ht2",
+                        "fasta.3.ht2",
+                        "fasta.4.ht2",
+                        "fasta.5.ht2",
+                        "fasta.6.ht2",
+                        "fasta.7.ht2",
+                        "fasta.8.ht2"
+                    ]
+                ]
             ],
             [
-                
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "star",
+                    [
+                        "Genome",
+                        "Log.out",
+                        "SA",
+                        "SAindex",
+                        "chrLength.txt",
+                        "chrName.txt",
+                        "chrNameLength.txt",
+                        "chrStart.txt",
+                        "exonGeTrInfo.tab",
+                        "exonInfo.tab",
+                        "geneInfo.tab",
+                        "genomeParameters.txt",
+                        "sjdbInfo.txt",
+                        "sjdbList.fromGTF.out.tab",
+                        "sjdbList.out.tab",
+                        "transcriptInfo.tab"
+                    ]
+                ]
             ],
             [
-                
+                "gtf.circexplorer2.txt"
             ],
             [
-                
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.fasta",
+                    [
+                        "gtf.FirstandLastExons_entities.fa.index",
+                        "gtf.all_possible_bsj_targets.fa.index"
+                    ]
+                ]
             ],
             [
                 [
@@ -368,14 +415,19 @@
                 ]
             ],
             [
-                
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.filtered.splice_sites.txt"
+                ]
             ]
         ],
+        "timestamp": "2026-10-20T11:22:07.410242991",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T23:48:13.616853373"
+        }
     },
     "reuse prebuilt indices": {
         "content": [
@@ -450,11 +502,11 @@
                 
             ]
         ],
+        "timestamp": "2026-10-16T20:24:20.760507998",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:24:20.760507998"
+        }
     },
     "tools subset": {
         "content": [
@@ -497,11 +549,11 @@
                 ]
             ]
         ],
+        "timestamp": "2026-10-16T20:24:44.980435953",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:24:44.980435953"
+        }
     },
     "ciriquant only builds bwa and hisat2": {
         "content": [
@@ -539,10 +591,10 @@
                 ]
             ]
         ],
+        "timestamp": "2026-10-17T18:05:33.624807088",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T18:05:33.624807088"
+        }
     }
 }
