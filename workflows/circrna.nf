@@ -25,12 +25,12 @@ include { CIRI_READS                       } from '../subworkflows/local/ciri_re
 */
 
 // MODULES:
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
-include { BWA_MEM as CIRI_BWA_MEM     } from '../modules/nf-core/bwa/mem/main'
+include { MULTIQC                          } from '../modules/nf-core/multiqc/main'
+include { CAT_FASTQ                        } from '../modules/nf-core/cat/fastq/main'
+include { BWA_MEM as CIRI_BWA_MEM          } from '../modules/nf-core/bwa/mem/main'
 
 // SUBWORKFLOWS:
-include { FASTQC_TRIMGALORE } from '../subworkflows/nf-core/fastqc_trimgalore'
+include { FASTQ_FASTQC_UMITOOLS_TRIMGALORE } from '../subworkflows/nf-core/fastq_fastqc_umitools_trimgalore/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -43,19 +43,14 @@ workflow CIRCRNA {
     ch_phenotype
     ch_fasta
     ch_gtf
-    blacklist                   // path or null
-    mature                      // [meta, path] or null
+    blacklist // path or null
+    mature // [meta, path] or null
     ch_annotation
-    ch_versions
-    mirna_expression            // [meta, path] or null
-
-    // tool selection
-    tools                       // List<String>
-    fli_tools                   // List<String>
-    quantification_tools        // List<String>
-    mirna_tools                 // List<String>
-
-    // prebuilt indices (path or null)
+    mirna_expression // [meta, path] or null
+    tools // List<String>
+    fli_tools // List<String>
+    quantification_tools // List<String>
+    mirna_tools // List<String>
     bowtie
     bowtie2
     bwa
@@ -63,8 +58,6 @@ workflow CIRCRNA {
     star
     segemehl
     circminer
-
-    // settings
     longread
     skip_fastqc
     skip_trimming
@@ -78,10 +71,8 @@ workflow CIRCRNA {
     mirna_min_tools
     mirna_min_reads
     mirna_min_sample_percentage
-
-    // reporting
-    multiqc_config              // path or null
-    multiqc_logo                // path or null
+    multiqc_config // path or null
+    multiqc_logo // path or null
     outdir
 
     main:
@@ -94,19 +85,17 @@ workflow CIRCRNA {
 
     // SUBWORKFLOW:
     ch_samplesheet
-        .branch {
-            meta, fastqs ->
-                single  : fastqs.size() == 1
-                    return [ meta, fastqs.flatten() ]
-                multiple: fastqs.size() > 1
-                    return [ meta, fastqs.flatten() ]
+        .branch { meta, fastqs ->
+            single: fastqs.size() == 1
+            return [meta, fastqs.flatten()]
+            multiple: fastqs.size() > 1
+            return [meta, fastqs.flatten()]
         }
         .set { ch_fastq }
 
     // MODULE:
     // Concatenate FastQ files from same sample if required
-    CAT_FASTQ (ch_fastq.multiple)
-        .reads
+    CAT_FASTQ(ch_fastq.multiple).reads
         .mix(
             ch_fastq.single
         )
@@ -114,7 +103,7 @@ workflow CIRCRNA {
 
     // SUBORKFLOW:
     // Prepare index files &/or use iGenomes if chosen.
-    PREPARE_GENOME (
+    PREPARE_GENOME(
         ch_fasta,
         ch_gtf,
         tools,
@@ -125,38 +114,40 @@ workflow CIRCRNA {
         hisat2,
         star,
         fli_tools,
-        circminer
+        circminer,
     )
 
-    ch_gtf              = PREPARE_GENOME.out.gtf
-    bowtie_index        = PREPARE_GENOME.out.bowtie
-    bowtie2_index       = PREPARE_GENOME.out.bowtie2
-    bwa_index           = PREPARE_GENOME.out.bwa
-    chromosomes         = PREPARE_GENOME.out.chromosomes
+    ch_gtf = PREPARE_GENOME.out.gtf
+    bowtie_index = PREPARE_GENOME.out.bowtie
+    bowtie2_index = PREPARE_GENOME.out.bowtie2
+    bwa_index = PREPARE_GENOME.out.bwa
+    chromosomes = PREPARE_GENOME.out.chromosomes
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
-    star_index          = PREPARE_GENOME.out.star
-    psirc_index         = PREPARE_GENOME.out.psirc
-    circminer_index     = PREPARE_GENOME.out.circminer
-    ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
+    star_index = PREPARE_GENOME.out.star
+    psirc_index = PREPARE_GENOME.out.psirc
+    circminer_index = PREPARE_GENOME.out.circminer
 
 
 
     if (longread) {
         LONGREAD(
             ch_cat_fastq,
-            "hg38"
+            "hg38",
         )
-        ch_versions = ch_versions.mix(LONGREAD.out.versions)
-    } else {
+    }
+    else {
         // MODULE: Run FastQC, trimgalore!
-        FASTQC_TRIMGALORE (
+        FASTQ_FASTQC_UMITOOLS_TRIMGALORE(
             ch_cat_fastq,
             skip_fastqc,
-            skip_trimming
+            false,
+            true,
+            skip_trimming,
+            0,
+            params.min_trimmed_reads,
         )
-        ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
-        ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.trim_zip.collect { _meta, zip -> zip }.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.trim_log.collect { _meta, log -> log }.ifEmpty([]))
 
         //
         // 2. BSJ Discovery
@@ -164,13 +155,12 @@ workflow CIRCRNA {
 
         if (tools.intersect(['ciri2', 'ciri3']).size() > 0 || quantification_tools.contains('ciri3')) {
             if (fli_tools.contains('cirifull')) {
-                CIRI_READS(FASTQC_TRIMGALORE.out.reads)
+                CIRI_READS(FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads)
                 ch_bwa_reads = CIRI_READS.out.reads
                 ch_reads_fixed_length = CIRI_READS.out.reads
-                ch_versions = ch_versions.mix(CIRI_READS.out.versions)
             }
             else {
-                ch_bwa_reads = FASTQC_TRIMGALORE.out.reads
+                ch_bwa_reads = FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads
                 ch_reads_fixed_length = channel.empty()
             }
 
@@ -183,7 +173,7 @@ workflow CIRCRNA {
         }
 
         BSJ_DETECTION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             ch_fasta,
             ch_gtf,
             blacklist,
@@ -207,18 +197,17 @@ workflow CIRCRNA {
             PREPARE_GENOME.out.faidx,
             circminer_index,
             PREPARE_GENOME.out.circminer_gtf,
-            ch_reads_fixed_length
+            ch_reads_fixed_length,
         )
 
-        ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
-        ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
+        ch_multiqc_files = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
 
         //
         // 3. FLI Detection
         //
 
         FLI_DETECTION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             BSJ_DETECTION.out.reads_fixed_length,
             ch_fasta,
             ch_gtf,
@@ -234,24 +223,22 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.star_junction,
             BSJ_DETECTION.out.bed_per_sample,
             fli_tools,
-            max_shift
+            max_shift,
         )
-        ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
         COMBINE_TRANSCRIPTOMES(
             ch_fasta,
             ch_gtf,
-            BSJ_DETECTION.out.gtf
+            BSJ_DETECTION.out.gtf,
         )
 
-        ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
 
         //
         // 4. circRNA quantification
         //
 
         QUANTIFICATION(
-            FASTQC_TRIMGALORE.out.reads,
+            FASTQ_FASTQC_UMITOOLS_TRIMGALORE.out.reads,
             ch_gtf,
             ch_fasta,
             COMBINE_TRANSCRIPTOMES.out.fasta,
@@ -267,10 +254,9 @@ workflow CIRCRNA {
             quantification_tools,
             max_shift,
             consider_strand,
-            ch_bwa_sam
+            ch_bwa_sam,
         )
 
-        ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
         //
         // 5. miRNA prediction
@@ -287,9 +273,8 @@ workflow CIRCRNA {
                 mirna_tools,
                 mirna_min_tools,
                 mirna_min_reads,
-                mirna_min_sample_percentage
+                mirna_min_sample_percentage,
             )
-            ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
         }
 
         //
@@ -301,10 +286,8 @@ workflow CIRCRNA {
             QUANTIFICATION.out.circ,
             QUANTIFICATION.out.ciriquant,
             QUANTIFICATION.out.stringtie,
-            ch_phenotype
+            ch_phenotype,
         )
-        ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
-
     }
 
 
@@ -312,46 +295,54 @@ workflow CIRCRNA {
     //
     // Collate and save software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { version ->
+            versions_file: version instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [process[process.lastIndexOf(':') + 1..-1], "  ${tool}: ${version}"]
+        }
+        .groupTuple(by: 0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(topic_versions.versions_file)
+        .mix(topic_versions_string)
         .collectFile(storeDir: "${outdir}/pipeline_info", name: 'nf_core_circrna_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
     // MultiQC
-    ch_multiqc_config          = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_config = channel.fromPath("${projectDir}/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_custom_config = multiqc_config ? channel.fromPath(multiqc_config) : channel.empty()
-    ch_multiqc_logo          = multiqc_logo   ? channel.fromPath(multiqc_logo)   : channel.empty()
-    summary_params           = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary      = channel.value(paramsSummaryMultiqc(summary_params))
+    ch_multiqc_logo = multiqc_logo ? channel.fromPath(multiqc_logo) : channel.empty()
+    summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
 
     ch_multiqc_config_files = ch_multiqc_config
         .mix(ch_multiqc_custom_config)
         .collect()
-        .map { configs -> [configs] }   // double-wrap so combine appends [configs] as one element
+        .map { configs -> [configs] }
+    // double-wrap so combine appends [configs] as one element
 
     ch_multiqc_logo_files = ch_multiqc_logo
         .collect()
-        .map { logos -> [logos] }       // double-wrap so combine appends [logos] as one element
+        .map { logos -> [logos] }
+    // double-wrap so combine appends [logos] as one element
 
-    MULTIQC (
-        ch_multiqc_files
-            .collect()
-            .map { files -> [[id: "multiqc"], files] }
-            .combine(ch_multiqc_config_files)
-            .combine(ch_multiqc_logo_files)
-            .map { meta, files, configs, logos ->
-                [meta, files, configs, logos, [], []]
-            }
+    MULTIQC(
+        ch_multiqc_files.collect().map { files -> [[id: "multiqc"], files] }.combine(ch_multiqc_config_files).combine(ch_multiqc_logo_files).map { meta, files, configs, logos ->
+            [meta, files, configs, logos, [], []]
+        }
     )
 
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

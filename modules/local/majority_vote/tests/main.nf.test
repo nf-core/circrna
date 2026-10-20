@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process MAJORITY_VOTE"
     script "../main.nf"
     process "MAJORITY_VOTE"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"
@@ -21,7 +22,9 @@ nextflow_process {
                     [ id:'mature' ],
                     file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)
                 ]
-                input[1] = 'txt'
+                input[1] = []
+                input[2] = false
+                input[3] = 'txt'
                 """
             }
         }

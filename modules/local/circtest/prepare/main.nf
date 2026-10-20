@@ -2,7 +2,9 @@ process CIRCTEST_PREPARE {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "biocontainers/r-base:4.2.1"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/47/476ef7843285cc28e0778cb22a101abe14d3c218fb74bd881eb5fc22ceb750c9/data'
+        : 'community.wave.seqera.io/library/circtest_prepare:35adc3cf2748fa7e'}"
 
     input:
     tuple val(meta), path(gene_counts), path(circ_counts)
@@ -10,14 +12,14 @@ process CIRCTEST_PREPARE {
     output:
     tuple val(meta), path('*_genes.tsv'), path('*_circs.tsv'), emit: counts, optional: true
 
-    path "versions.yml"                 , emit: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'prepare.R'
+    template('prepare.R')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
@@ -27,7 +29,8 @@ process CIRCTEST_PREPARE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        r-base: \$(R --version | head -n1 | cut -d' ' -f3)
+        r-base: "\$(Rscript -e "cat(strsplit(R.version[['version.string']], ' ')[[1]][3])")"
     END_VERSIONS
+
     """
 }

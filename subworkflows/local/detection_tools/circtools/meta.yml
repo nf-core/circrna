@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: circtools
+description: Build Circtools reference resources and run nanopore circRNA detection.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circtools/detect
+  - unify
+  - star2pass
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - star_index:
+      type: file
+      description: "STAR genome index channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - star_junction:
+      type: file
+      description: "STAR splice-junction files used by downstream callers.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ignore_sjdbgtf:
+      type: value
+      description: "Boolean controlling whether STAR ignores the supplied GTF junction
+        database. Structure: [ val(ignore_sjdbgtf) ]"
+  - bsj_reads:
+      type: value
+      description: "Minimum read support threshold passed to STAR splice-junction database
+        generation.
+
+
+        Structure: [ val(bsj_reads) ]"
+output:
+  - bed:
+      type: file
+      description: "Per-sample Circtools back-splice junction BED calls.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

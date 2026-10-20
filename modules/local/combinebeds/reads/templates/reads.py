@@ -1,9 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+    handle.write(f'  seaborn: "{importlib.metadata.version("seaborn")}"\\n')
+    handle.write(f'  matplotlib: "{importlib.metadata.version("matplotlib")}"\\n')
+    handle.write(f'  upsetplot: "{importlib.metadata.version("upsetplot")}"\\n')
+
 import base64
 import json
-import yaml
 import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
@@ -18,15 +28,14 @@ consider_strand = "${consider_strand}" == "true"
 min_tools = int("${min_tools}")
 meta_id = "${meta.id}"
 dfs = []
+columns = ["chr", "start", "end", "name", "score", "strand", "reads"]
 
 for path, tool in zip(bed_files, tools):
-    df = pl.scan_csv(path, separator="\\t", has_header=False)
+    df = pl.scan_csv(path, separator="\\t", has_header=False, new_columns=columns)
     df = df.with_columns(tool=pl.lit(tool))
     dfs.append(df)
 
 df = pl.concat(dfs, rechunk=True)
-columns = ["chr", "start", "end", "name", "score", "strand", "reads"]
-df = df.rename({f"column_{i+1}": col for i, col in enumerate(columns)})
 df = df.with_columns(
     reads = pl.col("reads").str.split(",")
 )
@@ -39,31 +48,32 @@ bsj_columns = ["chr", "start", "end"] + (["strand"] if consider_strand else [])
 df_bsj_groups = df.group_by(*bsj_columns, "reads").agg(pl.col("tool").unique()).collect()
 
 if len(tools) > 1:
-    # Plot read-level agreement
     bsj_upset_data = from_memberships(df_bsj_groups["tool"].to_list())
-    bsj_upset = UpSet(bsj_upset_data, show_counts=True, subset_size="count")
-    bsj_upset.plot()
+    UpSet(bsj_upset_data, show_counts=True, subset_size="count").plot()
+    # Normalize UpSetPlot's one-element count-label coordinates for NumPy 2.
+    for axis in plt.gcf().axes:
+        for label in axis.texts:
+            label.set_position(tuple(value.item() if hasattr(value, "item") else value
+                                     for value in label.get_position()))
     plot_file = "${prefix}:read_agreement.png"
     plt.savefig(plot_file)
     plt.close()
 
-    # MultiQC
-    image_string = base64.b64encode(open(plot_file, "rb").read()).decode("utf-8")
+    with open(plot_file, "rb") as image:
+        image_string = base64.b64encode(image.read()).decode("utf-8")
     image_html = f'<div class="mqc-custom-content-image"><img src="data:image/png;base64,{image_string}" /></div>'
-
     multiqc = {
-        'id': f"{meta_id}_read_agreement",
-        'parent_id': "read_agreement",
-        'parent_name': 'Read agreement',
-        'parent_description': 'While different tools may agree on the presence of a BSJ, they may disagree on the reads that support it. These plots show the read-level agreement between tools for each BSJ.',
-        'section_name': meta_id,
-        'description': f'UpSet plot showing the read-level agreement between tools for each BSJ in {meta_id}',
-        'plot_type': 'image',
-        'data': image_html
+        "id": f"{meta_id}_read_agreement",
+        "parent_id": "read_agreement",
+        "parent_name": "Read agreement",
+        "parent_description": "While different tools may agree on the presence of a BSJ, they may disagree on the reads that support it. These plots show the read-level agreement between tools for each BSJ.",
+        "section_name": meta_id,
+        "description": f"UpSet plot showing the read-level agreement between tools for each BSJ in {meta_id}",
+        "plot_type": "image",
+        "data": image_html,
     }
-
-    with open(f"{meta_id}_read_agreement_mqc.json", "w") as f:
-        f.write(json.dumps(multiqc, indent=4))
+    with open(f"{meta_id}_read_agreement_mqc.json", "w") as handle:
+        json.dump(multiqc, handle, indent=4)
 
 df_bsj_groups = df_bsj_groups.with_columns(
     tool_count = pl.col("tool").list.len()
@@ -88,17 +98,3 @@ if not consider_strand:
 
 df_filtered = df_filtered.select("chr", "start", "end", "name", "score", "strand", "reads")
 df_filtered.write_csv("${prefix}.bed", separator="\\t", include_header=False)
-
-# Versions
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "seaborn": sns.__version__,
-        "matplotlib": matplotlib.__version__,
-        "upsetplot": upsetplot.__version__
-    }
-}
-
-with open("versions.yml", "w") as f:
-    yaml.dump(versions, f)

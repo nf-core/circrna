@@ -7,7 +7,6 @@ workflow CIRI_READS {
     ch_reads
 
     main:
-    ch_versions = channel.empty()
 
     // CIRI-full requires every read to have the same length.
     ch_read1 = ch_reads.map { meta, reads -> [[id: meta.id + '_r1', old_meta: meta, r: 1], reads[0]] }
@@ -28,7 +27,6 @@ workflow CIRI_READS {
 
     // The fifth percentile preserves the historical CIRI-full trimming behaviour.
     READLENGTH(ch_reads_len)
-    ch_versions = ch_versions.mix(READLENGTH.out.versions)
 
     ch_fastp = ch_reads
         .join(READLENGTH.out.length)
@@ -37,6 +35,5 @@ workflow CIRI_READS {
     FASTP(ch_fastp.map { meta, reads -> [meta, reads, []] }, false, false, false)
 
     emit:
-    reads    = FASTP.out.reads
-    versions = ch_versions
+    reads = FASTP.out.reads
 }

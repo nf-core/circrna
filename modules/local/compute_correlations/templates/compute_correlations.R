@@ -49,22 +49,8 @@ for (i in 1:nrow(interactions)) {
     write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }
 
-################################################
-################################################
-## VERSIONS FILE                              ##
-################################################
-################################################
-
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    r-base:', r.version)
-    ),
-'versions.yml')
-
-################################################
-################################################
-################################################
-################################################
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    bioconductor-fishpond: "', packageVersion("fishpond"), '"')
+), 'versions.yml')

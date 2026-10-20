@@ -98,7 +98,6 @@ nextflow_workflow {
                     workflow.out.psirc.collect { meta, fasta, index -> [meta, file(fasta).name, index.collect { file(it).name }.sort()] },
                     workflow.out.chromosomes.collect { meta, files -> [meta, [files].flatten().collect { file(it.toString()).name }.sort()] },
                     workflow.out.splice_sites.collect { meta, txt -> [meta, file(txt).name] },
-                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
                 ).match() }
             )
         }
@@ -112,21 +111,16 @@ nextflow_workflow {
             }
             workflow {
                 """
-                def prebuilt = { name ->
+                ['bowtie', 'bowtie2', 'bwa', 'hisat2', 'star'].eachWithIndex { name, index ->
                     def dir = file("$outputDir/prebuilt/" + name)
                     dir.mkdirs()
                     dir.resolve(name + '.idx').text = name
-                    return dir
+                    input[index + 4] = dir
                 }
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
                 input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice']
                 input[3] = []
-                input[4] = prebuilt('bowtie')
-                input[5] = prebuilt('bowtie2')
-                input[6] = prebuilt('bwa')
-                input[7] = prebuilt('hisat2')
-                input[8] = prebuilt('star')
                 input[9] = []
                 input[10] = null
                 """

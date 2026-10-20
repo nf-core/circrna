@@ -37,7 +37,8 @@ nextflow_process {
                 { assert joined.columnNames == ['gene_id', 'gene_name', 'cel_N2_1', 'fust1_1'] },
                 { assert joined.rowCount > 0 },
                 { assert snapshot(
-                    process.out.joined,
+                    process.out.joined.collect { meta, output -> [meta, file(output).name] },
+                    joined.rows.sort { it.toString() },
                     path(process.out.versions[0]).yaml
                 ).match() }
             )
@@ -72,8 +73,9 @@ nextflow_process {
                 { assert joined.columnNames == ['gene_id', 'gene_name', 'cel_N2_1', 'fust1_1'] },
                 { assert joined.rowCount > 0 },
                 { assert snapshot(
-                    process.out.joined,
-                    joined.columnNames
+                    process.out.joined.collect { meta, output -> [meta, file(output).name] },
+                    joined.columnNames,
+                    joined.rows.sort { it.toString() }
                 ).match() }
             )
         }

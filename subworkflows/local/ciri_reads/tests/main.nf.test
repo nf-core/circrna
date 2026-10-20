@@ -33,7 +33,7 @@ nextflow_workflow {
                 { assert workflow.out.reads[0][0].target_length == 148 },
                 { assert workflow.out.reads[0][1].size() == 2 },
                 { assert workflow.out.reads[0][1].every { file(it).exists() } },
-                { assert workflow.out.versions.size() == 1 }
+                { assert snapshot(workflow.out.reads).match() },
             )
         }
     }
@@ -64,7 +64,7 @@ nextflow_workflow {
                 { assert workflow.out.reads.size() == 1 },
                 { assert workflow.out.reads[0][0].target_length == 100 },
                 { assert workflow.out.reads[0][1].size() == 2 },
-                { assert workflow.out.versions.size() == 1 }
+                { assert snapshot(workflow.out.reads).match() },
             )
         }
     }

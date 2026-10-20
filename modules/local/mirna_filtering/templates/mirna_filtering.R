@@ -35,17 +35,7 @@ write.table(filtered_data, paste0("${meta.id}.normalized_counts_filtered.tsv"),
             quote = FALSE, sep = "\\t",
             row.names = FALSE)
 
-################################################
-################################################
-## VERSIONS FILE                              ##
-################################################
-################################################
-
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    r-base:', r.version)
-    ),
-'versions.yml')
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"')
+), 'versions.yml')

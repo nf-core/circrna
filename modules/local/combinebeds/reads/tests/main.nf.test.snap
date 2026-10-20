@@ -19,19 +19,19 @@
             ],
             {
                 "COMBINEBEDS_READS": {
-                    "matplotlib": "3.10.1",
-                    "polars": "1.27.1",
-                    "python": "3.13.3",
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
                     "seaborn": "0.13.2",
+                    "matplotlib": "3.11.2",
                     "upsetplot": "0.9.0"
                 }
             }
         ],
+        "timestamp": "2026-10-20T16:51:02.188750022",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:11:26.70190462"
+        }
     },
     "cel_N2_1 - min_tools 2, ignore strand": {
         "content": [
@@ -79,19 +79,19 @@
             ],
             {
                 "COMBINEBEDS_READS": {
-                    "matplotlib": "3.10.1",
-                    "polars": "1.27.1",
-                    "python": "3.13.3",
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
                     "seaborn": "0.13.2",
+                    "matplotlib": "3.11.2",
                     "upsetplot": "0.9.0"
                 }
             }
         ],
+        "timestamp": "2026-10-20T16:50:44.602450588",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:11:01.697894704"
+        }
     },
     "cel_N2_1 - min_tools 2, consider strand": {
         "content": [
@@ -114,19 +114,19 @@
             ],
             {
                 "COMBINEBEDS_READS": {
-                    "matplotlib": "3.10.1",
-                    "polars": "1.27.1",
-                    "python": "3.13.3",
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
                     "seaborn": "0.13.2",
+                    "matplotlib": "3.11.2",
                     "upsetplot": "0.9.0"
                 }
             }
         ],
+        "timestamp": "2026-10-20T16:50:27.991382601",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:10:37.610415598"
+        }
     },
     "cel_N2_1 - stub": {
         "content": [
@@ -146,7 +146,7 @@
                     
                 ],
                 "3": [
-                    "versions.yml:md5,4e2bdf396eac178b1d4c697a48766770"
+                    "versions.yml:md5,6c12061ba348e71dfe56aa24a1efc0aa"
                 ],
                 "combined": [
                     [
@@ -163,14 +163,14 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,4e2bdf396eac178b1d4c697a48766770"
+                    "versions.yml:md5,6c12061ba348e71dfe56aa24a1efc0aa"
                 ]
             }
         ],
+        "timestamp": "2026-10-20T15:25:54.785348859",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T09:53:14.76804746"
+        }
     }
 }

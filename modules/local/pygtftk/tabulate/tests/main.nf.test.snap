@@ -11,7 +11,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,acb7593ba05d1ee2d347e444a6d0bc99"
+                    [
+                        "PYGTFTK_TABULATE",
+                        "gtftk",
+                        "1.6.2"
+                    ]
                 ],
                 "table": [
                     [
@@ -21,16 +25,20 @@
                         "fust1_3.circ.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,acb7593ba05d1ee2d347e444a6d0bc99"
+                "versions_gtftk": [
+                    [
+                        "PYGTFTK_TABULATE",
+                        "gtftk",
+                        "1.6.2"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-20T10:41:57.870087548",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:14:51.238302824"
+        }
     },
     "ciriquant circRNA gtf": {
         "content": [
@@ -42,17 +50,19 @@
                     "fust1_3.circ.tsv:md5,103c23d72366b5faf6644f80cbb9c33c"
                 ]
             ],
-            {
-                "PYGTFTK_TABULATE": {
-                    "gtftk": "1.6.2"
-                }
-            }
+            [
+                [
+                    "PYGTFTK_TABULATE",
+                    "gtftk",
+                    "1.6.2"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-20T10:41:30.59913382",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:13:50.893431607"
+        }
     },
     "ciriquant circRNA gtf - header only": {
         "content": [
@@ -68,10 +78,10 @@
                 ]
             ]
         ],
+        "timestamp": "2026-10-16T20:14:24.91055554",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:14:24.91055554"
+        }
     }
 }

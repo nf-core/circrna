@@ -1,0 +1,56 @@
+{
+    "real CIRI3 BSJ and FSJ matrices for each sample": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "ciri3_bsj",
+                        "quantification": "ciri3"
+                    },
+                    "ciri3_bsj.joined.tsv:md5,ed9ba68bbecfbbffc0f25d885527420d"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "ciri3_fsj",
+                        "quantification": "ciri3"
+                    },
+                    "ciri3_fsj.joined.tsv:md5,2e1cb6f2123d0a6483c5b455b1d6ae34"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:45:17.522311001",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "stub CIRI3 quantification": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "ciri3_bsj",
+                        "quantification": "ciri3"
+                    },
+                    "ciri3_bsj.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "ciri3_fsj",
+                        "quantification": "ciri3"
+                    },
+                    "ciri3_fsj.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:45:36.104936954",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::stringtie=3.0.3
+  - conda-forge::python=3.15.0

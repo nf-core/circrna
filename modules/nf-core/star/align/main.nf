@@ -3,7 +3,7 @@ process STAR_ALIGN {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/26/268b4c9c6cbf8fa6606c9b7fd4fafce18bf2c931d1a809a0ce51b105ec06c89d/data' :
         'community.wave.seqera.io/library/htslib_samtools_star_gawk:ae438e9a604351a4' }"
 
@@ -48,6 +48,7 @@ process STAR_ALIGN {
     attrRG          = args.contains("--outSAMattrRGline") ? "" : "--outSAMattrRGline 'ID:$prefix' 'SM:$prefix'"
     def out_sam_type    = (args.contains('--outSAMtype')) ? '' : '--outSAMtype BAM Unsorted'
     mv_unsorted_bam = (args.contains('--outSAMtype BAM Unsorted SortedByCoordinate')) ? "mv ${prefix}.Aligned.out.bam ${prefix}.Aligned.unsort.out.bam" : ''
+    def zcat            = args.contains('--readFilesCommand') ? '' : reads1[0].getExtension() == 'gz' ? '--readFilesCommand zcat' : ''
     """
     STAR \\
         --genomeDir $index \\
@@ -56,6 +57,7 @@ process STAR_ALIGN {
         --outFileNamePrefix $prefix. \\
         $out_sam_type \\
         $ignore_gtf \\
+        $zcat \\
         $attrRG \\
         $args
 

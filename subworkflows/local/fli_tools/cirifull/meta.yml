@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: cirifull
+description: Cirifull processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - ciri/cirias
+  - cirifull/ro1
+  - bwa/mem
+  - cirifull/ro2
+  - cirifull/merge
+  - build/list
+  - ciri/cirivis
+  - cirivis/unify
+input:
+  - ch_reads:
+      type: file
+      description: "Per-sample sequencing reads, paired-end file lists where applicable.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_bsj_annotation:
+      type: file
+      description: "Collected annotated BED12 tuples used to build the CIRI-full back-splice
+        list.
+
+
+        Structure: [ val(annotation_tuples) ]; each item: [ val(meta), path(bed12) ]"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - ch_bwa_index:
+      type: file
+      description: "BWA index file bundle used to align CIRI-full reads.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - ch_ciri2_txt:
+      type: file
+      description: "CIRI2 text result channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_ciri2_sam:
+      type: file
+      description: "BWA SAM channel passed through from the CIRI2 workflow.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - max_shift:
+      type: value
+      description: "Maximum coordinate shift used to build the CIRI-full back-splice
+        list.
+
+
+        Structure: [ val(max_shift) ]"
+output:
+  - fasta:
+      type: file
+      description: "FASTA sequences extracted for the relevant circular RNA transcripts.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - bed12:
+      type: file
+      description: "Circular RNA calls annotated in BED12 format.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

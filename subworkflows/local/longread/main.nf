@@ -6,11 +6,9 @@ workflow LONGREAD {
     genome
 
     main:
-    ch_versions = channel.empty()
 
     CIRCTOOLS_LONGREAD(ch_reads, genome)
-    ch_versions = ch_versions.mix(CIRCTOOLS_LONGREAD.out.versions)
 
     emit:
-    versions = ch_versions
+    reference = CIRCTOOLS_LONGREAD.out.reference
 }

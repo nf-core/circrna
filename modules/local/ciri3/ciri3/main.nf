@@ -2,20 +2,23 @@ process CIRI3_CIRI3 {
     tag "${meta.id}"
     label 'process_high'
 
-    conda 'environment.yml'
-    container 'docker.io/cimg/openjdk@sha256:636ba84fbc06da072f6c48b0be7ef205de36eb1091f090c9b7255f6d95d8350c'
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/a6/a64fe42a183f0972414bddfa15d354a8da34b16e120ca984064d13d881aa2fbf/data'
+        : 'community.wave.seqera.io/library/ciri3:3.0.1--9d1e9d05ff71b913'}"
 
     input:
     tuple val(meta), path(sam)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
-    path(circ_list)
+    path circ_list
 
     output:
     tuple val(meta), path("${prefix}.ciri3.txt"), emit: txt, optional: true
     tuple val(meta), path("${prefix}.ciri3.txt.BSJ_Matrix"), emit: bsj_matrix, optional: true
     tuple val(meta), path("${prefix}.ciri3.txt.FSJ_Matrix"), emit: fsj_matrix, optional: true
-    path 'versions.yml', emit: versions
+    // CIRI3 has no version option; this is the pinned Bioconda package version.
+    tuple val("${task.process}"), val('ciri3'), val('3.0.1'), emit: versions_ciri3, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,9 +30,9 @@ process CIRI3_CIRI3 {
     def circListArg = hasCircList ? "-UC ${circ_list}" : ''
     // Limit the JVM heap to 80% of the task allocation to leave room for native memory.
     def heapMb = Math.max(1, (task.memory.toMega() * 0.8) as long)
-    VERSION = '3.0.1'
     """
-    java -Xmx${heapMb}m -jar "\$(command -v CIRI3_Java_1.8.0.jar)" \\
+    export JAVA_TOOL_OPTIONS="\${JAVA_TOOL_OPTIONS:+\$JAVA_TOOL_OPTIONS }-Xmx${heapMb}m"
+    ciri3 \\
         -I ${sam} -O ${prefix}.ciri3.txt -F ${fasta} -A ${gtf} -T ${task.cpus} ${circListArg} ${args}
 
     if [ ${hasCircList} = false ] && [ ! -f ${prefix}.ciri3.txt ]; then
@@ -41,22 +44,12 @@ process CIRI3_CIRI3 {
         exit 1
     fi
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri3: ${VERSION}
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = '3.0.1'
     """
     touch ${prefix}.ciri3.txt
     touch ${prefix}.ciri3.txt.BSJ_Matrix ${prefix}.ciri3.txt.FSJ_Matrix
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri3: ${VERSION}
-    END_VERSIONS
     """
 }

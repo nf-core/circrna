@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  pandas: "{importlib.metadata.version("pandas")}"\\n')
 """
 Convert PSIRC output to BED12 format
 """
 
 import pandas as pd
-import yaml
 
 
 def psirc_to_bed12(df):
@@ -97,14 +105,3 @@ print(f"- Entries with read counts: {len(df_bed12[df_bed12['score'] > 0])}")
 print(f"- Strand distribution:")
 for strand, count in df_bed12["strand"].value_counts().items():
     print(f"  {strand}: {count}")
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "pandas": pd.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))

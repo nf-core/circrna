@@ -106,12 +106,13 @@ nextflow_workflow {
                 script "modules/nf-core/hisat2/build/main.nf"
                 process {
                     """
-                    input[0] = [
-                        [ id:'genome' ],
-                        file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
-                    ]
-                    input[1] = [ [:], [] ]
-                    input[2] = [ [:], [] ]
+                input[0] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true),
+                    [],
+                    []
+                ]
+                input[1] = '64 GB'
                     """
                 }
             }
@@ -266,7 +267,6 @@ nextflow_workflow {
                 { assert workflow.out.gene.isEmpty() },
                 { assert workflow.out.circ.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
-                { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().every { it.name.startsWith('QUANTIFICATION:AGGREGATE') } },
                 { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert sum.rowCount > 0 },
@@ -341,7 +341,6 @@ nextflow_workflow {
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
-                { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().isEmpty() },
                 { assert !new File("$outputDir/5_quantification/aggregations").exists() }
             )
@@ -368,12 +367,13 @@ nextflow_workflow {
                 script "modules/nf-core/hisat2/build/main.nf"
                 process {
                     """
-                    input[0] = [
-                        [ id:'genome' ],
-                        file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
-                    ]
-                    input[1] = [ [:], [] ]
-                    input[2] = [ [:], [] ]
+                input[0] = [
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true),
+                    [],
+                    []
+                ]
+                input[1] = '64 GB'
                     """
                 }
             }

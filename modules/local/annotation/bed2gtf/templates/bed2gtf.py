@@ -1,22 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import platform
-import yaml
-
 import polars as pl
-import yaml
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))
 
 exons_only = "${exons_only}".lower() == "true"
 
@@ -31,6 +16,10 @@ try:
 except pl.exceptions.NoDataError:
     with open('${prefix}.gtf', 'w') as f:
         f.write('')
+    with open("versions.yml", "w", encoding="utf-8") as handle:
+        print("${task.process}:", file=handle)
+        print(f'    python: "{platform.python_version()}"', file=handle)
+        print(f'    polars: "{pl.__version__}"', file=handle)
     exit(0)
 
 df = df.with_columns(
@@ -77,3 +66,8 @@ df_combined = pl.concat([df_exons, df_cds])
 df_combined = df_combined.sort('chr', 'start', 'end')
 
 df_combined.collect().write_csv('${prefix}.gtf', separator='\\t', include_header=False, quote_style="never")
+
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

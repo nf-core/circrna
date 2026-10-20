@@ -2,10 +2,10 @@ process CIRI_CIRIVIS {
     tag "${meta.id}"
     label 'process_low'
 
-    conda "environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'oras://community.wave.seqera.io/library/openjdk:23.0.2--4046e6f926abce6e'
-        : 'community.wave.seqera.io/library/openjdk:23.0.2--2fd1f5d679ee38ac'}"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/a9/a9c1f8c493dc731d72213644a92370b691ae4a6baf70eed5db0a5f6627428b42/data'
+        : 'community.wave.seqera.io/library/openjdk:25.0.2--b6e848e158c9ff5b'}"
 
     input:
     tuple val(meta), path(anno), path(library_length), path(list)
@@ -15,12 +15,14 @@ process CIRI_CIRIVIS {
     tuple val(meta), path("${prefix}/${prefix}.list_circle.fa"), emit: fasta, optional: true
     tuple val(meta), path("${prefix}/${prefix}.list"), emit: list
     path "${prefix}/*.pdf", emit: pdf
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('ciri-vis'), val('1.4.2'), emit: versions_ciri_vis, topic: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.4.2"
     def has_list = list ? true : false
     """
     if [ ${has_list} == false ]; then
@@ -34,26 +36,17 @@ process CIRI_CIRIVIS {
         LIST_FILE=${list}
     fi
 
-    java -jar \$(command -v CIRI_vis_v${VERSION}.jar) -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} -list \$LIST_FILE ${args}
+    java -jar \$(command -v CIRI_vis_v1.4.2.jar) -i ${anno} -l ${library_length} -r ${fasta} -d ${prefix} -o ${prefix} -list \$LIST_FILE ${args}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri-vis: ${VERSION}
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.4.2"
     """
     mkdir -p ${prefix}
     touch ${prefix}/${prefix}.list_circle.fa
     touch ${prefix}/${prefix}.list
     touch ${prefix}/${prefix}.pdf
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri-vis: ${VERSION}
-    END_VERSIONS
     """
 }

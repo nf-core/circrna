@@ -2,10 +2,10 @@ process JCCIRC_JCCIRC {
     tag "${meta.id}"
     label 'process_high'
 
-    conda "environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'oras://community.wave.seqera.io/library/jccirc:1.0.0--49e0f586e3d6ad30'
-        : 'community.wave.seqera.io/library/jccirc:1.0.0--08c14a0bde3fbf0f'}"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/d5/d51b556a67811006e8517d14180695e4270c2b51b33b4c41682685b74a5916b2/data'
+        : 'community.wave.seqera.io/library/jccirc:1.0.0--876376ce897b1bf5'}"
 
     input:
     tuple val(meta), path(reads), path(bsjs), path(denovo)
@@ -14,11 +14,13 @@ process JCCIRC_JCCIRC {
 
     output:
     tuple val(meta), path("${prefix}.jccirc.log"), emit: log
-    path "versions.yml"                          , emit: versions
+    tuple val("${task.process}"), val('jccirc'), val('1.0.0'), emit: versions_jccirc, topic: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.0.0"
     """
     n_bsj=\$(wc -l ${bsjs} | awk '{print \$1}')
     max_allowed_cpus=${task.cpus}
@@ -37,21 +39,12 @@ process JCCIRC_JCCIRC {
         exit \$status
     fi
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        jccirc: ${VERSION}
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.0.0"
     """
     touch ${prefix}.jccirc.log
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        jccirc: ${VERSION}
-    END_VERSIONS
     """
 }

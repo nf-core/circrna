@@ -1,0 +1,100 @@
+name: psircquant_quant
+description: Quantify circular and linear transcript abundances with psiRC-quant
+keywords:
+  - psirc
+  - quantification
+  - expression
+tools:
+  - psirc-quant:
+      description: Quantify circular and linear transcripts
+      homepage: https://github.com/Christina-hshi/psirc
+      licence:
+        - MIT
+        - BSD-3-Clause
+        - BSD-2-Clause
+        - LicenseRef-kallisto-b-non-commercial
+input:
+  - - "meta":
+        type: map
+        description: Sample metadata
+    - "reads":
+        type: file
+        description: RNA-seq reads
+  - - "meta2":
+        type: map
+        description: Index metadata
+    - "index":
+        type: file
+        description: psiRC-quant index
+  - - "meta3":
+        type: map
+        description: Annotation metadata
+    - "gtf":
+        type: file
+        description: Transcript annotation
+  - - "meta4":
+        type: map
+        description: Reference metadata
+    - "chrom_sizes":
+        type: file
+        description: Chromosome sizes
+  - "bootstrap_samples":
+      type: integer
+      description: Bootstrap replicates
+output:
+  directory:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${meta.id}":
+          type: directory
+          description: Quantification output
+  versions_psircquant:
+    - - "${task.process}":
+          type: string
+          description: The name of the process
+      - "psirc-quant":
+          type: string
+          description: The name of the tool
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "psirc-quant":
+          type: string
+          description: Software name
+      - "psirc-quant version | sed -n \"s/^psirc-quant, version \\([0-9.]*\\).*$/\\1/p\"":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/psirc:1.0.0--4c24a8f727283097
+      build_id: bd-4c24a8f727283097_1
+      scan_id: sc-37c66557fca53983_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/psirc:1.0.0--2981c5b7387ff659
+      build_id: bd-2981c5b7387ff659_1
+      scan_id: sc-9ad49cf9027a04b7_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/psirc:1.0.0--fd72486cd534e374
+      build_id: bd-fd72486cd534e374_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5e/5e5afa9a01488ef93da1c7d72dfb0f0c9d885e5933aa67aa4ccb52f3c98eeb0c/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/psirc:1.0.0--a9ea6a3a66facae3
+      build_id: bd-a9ea6a3a66facae3_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f8/f82e7ee7b4150858365520038299ed2f8d4c0920871c224c163389a1d16d3f64/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/psircquant/quant/.conda-lock/linux_amd64-bd-4c24a8f727283097_1.txt
+    linux/arm64:
+      lock_file: modules/local/psircquant/quant/.conda-lock/linux_arm64-bd-2981c5b7387ff659_1.txt

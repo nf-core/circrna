@@ -36,26 +36,13 @@
                     "fust1_1.exon_counts.bed",
                     "ff1b1fc278f5840bced61e9263b34145"
                 ]
-            ],
-            [
-                {
-                    "CIRCTOOLS:ANNOTATION": {
-                        "polars": "0.20.31",
-                        "python": "3.12.10"
-                    }
-                },
-                {
-                    "CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                }
             ]
         ],
+        "timestamp": "2026-10-20T10:47:44.357797214",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T10:18:52.756722626"
+        }
     },
     "STAR alignments of two samples - stub": {
         "content": [
@@ -94,25 +81,12 @@
                     "fust1_1.exon_counts.bed",
                     "d751713988987e9331980363e24189ce"
                 ]
-            ],
-            [
-                {
-                    "CIRCTOOLS:ANNOTATION": {
-                        "python": "3.12.10",
-                        "polars": "0.20.31"
-                    }
-                },
-                {
-                    "CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                }
             ]
         ],
+        "timestamp": "2026-10-20T10:47:59.856028102",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T11:10:49.552544209"
+        }
     }
 }

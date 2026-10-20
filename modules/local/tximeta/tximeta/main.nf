@@ -1,34 +1,36 @@
 process TXIMETA_TXIMETA {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_medium"
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bioconductor-tximeta%3A1.20.1--r43hdfd78af_1' :
-        'biocontainers/bioconductor-tximeta:1.20.1--r43hdfd78af_1' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/67/676a87512baa4aa94b5e3af327d07a75b170190cca324e25d4c9aa6d9b3f2fbd/data'
+        : 'community.wave.seqera.io/library/tximeta_tximeta:91ac7b8609ffb2f2'}"
 
     input:
     tuple val(meta), path("quants/*")
     val quant_type
 
     output:
-    tuple val(meta), path("*.rds"), emit: se
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("${prefix}.rds"), emit: se
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'tximeta.r'
+    template('tximeta.r')
 
     stub:
+    prefix = task.ext.prefix ?: meta.id
     """
-    touch ${meta.id}.rds
+    touch ${prefix}.rds
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-tximeta: \$(Rscript -e "library(tximeta); cat(as.character(packageVersion('tximeta')))")
+        bioconductor-tximeta: "\$(Rscript -e "cat(as.character(packageVersion('tximeta')))")"
     END_VERSIONS
+
     """
 }

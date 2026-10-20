@@ -104,7 +104,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['circexplorer2', 'circminer']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -171,7 +171,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -190,7 +190,6 @@ nextflow_workflow {
             def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
             def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
             def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
-            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
             def bedPerSampleTool = workflow.out.bed_per_sample_tool
             def celCircexplorer2 = lines(bedPerSampleTool.find { it[0].id == 'cel_N2_1' && it[0].tool == 'circexplorer2' }[1])
             assertAll(
@@ -211,8 +210,7 @@ nextflow_workflow {
                     workflow.out.ciri2_sam.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
                     workflow.out.star_bam.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
                     workflow.out.star_junction.collect { meta, f -> [meta, file(f).name] }.sort { it[1] },
-                    workflow.out.multiqc_files.flatten().collect { file(it).name }.sort(),
-                    versions
+                    workflow.out.multiqc_files.flatten().collect { file(it).name }.sort()
                 ).match() }
             )
         }
@@ -261,7 +259,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 2
@@ -280,7 +278,6 @@ nextflow_workflow {
             def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
             def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
             def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
-            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(
@@ -334,7 +331,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['circexplorer2', 'find_circ']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -353,7 +350,6 @@ nextflow_workflow {
             def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
             def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
             def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
-            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
             def bedPerSampleTool = workflow.out.bed_per_sample_tool
             def overlapsBlacklist = { l ->
                 def f = l.tokenize('\t')
@@ -414,7 +410,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['find_circ']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -433,7 +429,6 @@ nextflow_workflow {
             def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
             def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
             def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
-            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.star_bam.isEmpty() },
@@ -449,8 +444,7 @@ nextflow_workflow {
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     summarize(workflow.out.bed_reads, [0, 1, 2, 4, 5]),
-                    workflow.out.multiqc_files.collect { file(it).name }.sort(),
-                    versions
+                    workflow.out.multiqc_files.collect { file(it).name }.sort()
                 ).match() }
             )
         }
@@ -499,7 +493,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['ciri2']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -518,7 +512,6 @@ nextflow_workflow {
             def key = { f, cols -> lines(f).collect { l -> l.tokenize('\t')[cols].join(':') }.sort() }
             def summarize = { out, cols -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), key(f, cols).hashCode()] }.sort { it[1] } }
             def summarizeLines = { out -> out.collect { meta, f -> [meta, file(f).name, lines(f).size(), lines(f).sort().hashCode()] }.sort { it[1] } }
-            def versions = workflow.out.versions.flatten().collect { path(it).yaml }.collectEntries { it }.sort()
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.star_bam.isEmpty() },
@@ -535,8 +528,7 @@ nextflow_workflow {
                     summarize(workflow.out.bed, [0, 1, 2, 5]),
                     summarizeLines(workflow.out.bed12),
                     summarize(workflow.out.bed_reads, [0, 1, 2, 4, 5]),
-                    workflow.out.multiqc_files.collect { file(it).name }.sort(),
-                    versions
+                    workflow.out.multiqc_files.collect { file(it).name }.sort()
                 ).match() }
             )
         }
@@ -582,7 +574,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['find_circ']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 2
@@ -640,7 +632,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['find_circ']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -720,7 +712,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['ciri2']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1
@@ -789,7 +781,7 @@ nextflow_workflow {
                 input[12] = 1
                 input[13] = ['circexplorer2', 'find_circ', 'ciri2']
                 input[14] = []
-                input[15] = channel.empty()
+                input[15] = null
                 input[16] = 0
                 input[17] = true
                 input[18] = 1

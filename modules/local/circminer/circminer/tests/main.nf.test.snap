@@ -1,0 +1,88 @@
+{
+    "mini paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.circ_report:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_CIRCMINER",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.circ_report:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_circminer": [
+                    [
+                        "CIRCMINER_CIRCMINER",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:13:09.648157526",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini paired-end calls or writes an empty report": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.circ_report:md5,11ae69e8115e572ae59ecc3f926f8692"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCMINER_CIRCMINER",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.circ_report:md5,11ae69e8115e572ae59ecc3f926f8692"
+                    ]
+                ],
+                "versions_circminer": [
+                    [
+                        "CIRCMINER_CIRCMINER",
+                        "circminer",
+                        "0.4.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:12:55.291870057",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

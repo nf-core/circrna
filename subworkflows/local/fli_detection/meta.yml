@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: fli_detection
+description: Fli detection processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - cirifull
+  - psirc
+  - jccirc
+  - circtools
+input:
+  - ch_reads:
+      type: file
+      description: "Per-sample sequencing reads, paired-end file lists where applicable.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_reads_fixed_length:
+      type: file
+      description: "Reads trimmed to a common target length for CIRI-full.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - ch_bwa_index:
+      type: file
+      description: "BWA index file bundle used by CIRI-full.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - ch_ciri2_txt:
+      type: file
+      description: "CIRI2 text result channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_ciri2_sam:
+      type: file
+      description: "BWA SAM channel passed through from the CIRI2 workflow.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_bsj_annotation:
+      type: file
+      description: "Collected list of annotated BED12 tuples for the cross-sample merged
+        back-splice calls.
+
+
+        Structure: [ val(annotation_tuples) ]; each item: [ val(meta), path(bed12) ]"
+  - ch_bsj_bed12_per_sample:
+      type: file
+      description: "Per-sample BED12 annotation of back-splice junctions.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_bsj_reads:
+      type: file
+      description: "Read evidence supporting back-splice junctions.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_psirc_index:
+      type: file
+      description: "Collected psirc reference bundle from PREPARE_GENOME.
+
+
+        Structure: [ val(reference_tuples) ]; each item: [ val(meta), path(transcriptome),
+        [ path(index_a), path(index_b) ] ]"
+  - ch_psirc_bsj:
+      type: file
+      description: "psirc back-splice junction output channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_star_bam:
+      type: file
+      description: "STAR-aligned BAM channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_star_junction:
+      type: file
+      description: "STAR splice-junction channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_bsj_bed_per_sample:
+      type: file
+      description: "Per-sample back-splice junction BED channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - fli_tools:
+      type: value
+      description: "Names of selected full-length isoform callers. Structure: [ val(fli_tools)
+        ]"
+  - max_shift:
+      type: value
+      description: "Maximum genomic coordinate shift allowed while merging calls. Structure:
+        [ val(max_shift) ]"
+output:
+  - bed12:
+      type: file
+      description: "Circular RNA calls annotated in BED12 format.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - fasta:
+      type: file
+      description: "FASTA sequences extracted for the relevant circular RNA transcripts.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

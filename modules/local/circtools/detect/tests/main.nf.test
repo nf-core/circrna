@@ -66,6 +66,7 @@ nextflow_process {
                     }
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 'auto'
                 """
             }
         }
@@ -74,7 +75,7 @@ nextflow_process {
             // The order of the gene names in the Gene column changes between runs, so they are sorted
             assert process.success
             assert snapshot(
-                path(process.out.versions[0]).yaml,
+                process.out.versions_circtools,
                 process.out.reads.collect { file(it[1]).name },
                 process.out.coordinates.collect { file(it[1]).name },
                 process.out.counts.collect { file(it[1]).name },
@@ -99,6 +100,7 @@ nextflow_process {
                     }
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 'auto'
                 """
             }
         }
@@ -111,7 +113,7 @@ nextflow_process {
             assert reads.every { it.size() == 15 && it[14] == 'cel_N2_1' }
             assert reads.every { !it[0].startsWith('#') && it[0] != 'chr_donorA' }
             assert snapshot(
-                path(process.out.versions[0]).yaml,
+                process.out.versions_circtools,
                 process.out.reads.collect { file(it[1]).name },
                 process.out.coordinates.collect { file(it[1]).name },
                 process.out.counts.collect { file(it[1]).name },
@@ -140,6 +142,7 @@ nextflow_process {
                 ])
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 'auto'
                 """
             }
         }
@@ -168,6 +171,7 @@ nextflow_process {
                 ])
                 input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 'auto'
                 """
             }
         }

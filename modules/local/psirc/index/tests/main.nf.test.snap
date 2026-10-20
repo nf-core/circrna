@@ -10,17 +10,19 @@
                     "transcriptome.FirstandLastExons_entities.fa.index"
                 ]
             ],
-            {
-                "PSIRC_INDEX": {
-                    "psirc": "1.0.0"
-                }
-            }
+            [
+                [
+                    "PSIRC_INDEX",
+                    "psirc",
+                    "1.0.0"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:02:38.3318014",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:05:01.037948365"
+        }
     },
     "transcriptome fasta - stub": {
         "content": [
@@ -35,7 +37,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,6a4a10cc457d94416d85549bfd916eb0"
+                    [
+                        "PSIRC_INDEX",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PSIRC_INDEX",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
                 ],
                 "index": [
                     [
@@ -46,15 +59,26 @@
                         "transcriptome.FirstandLastExons_entities.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,6a4a10cc457d94416d85549bfd916eb0"
+                "versions_kallisto_b": [
+                    [
+                        "PSIRC_INDEX",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
+                ],
+                "versions_psirc": [
+                    [
+                        "PSIRC_INDEX",
+                        "psirc",
+                        "1.0.0"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:02:51.171134968",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:05:25.90351265"
+        }
     }
 }

@@ -3,8 +3,8 @@
         "content": [
             {
                 "UNIFY": {
-                    "python": "3.13.2",
-                    "polars": "1.24.0"
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
                 }
             },
             [
@@ -23,11 +23,11 @@
             ],
             "384e1f19c1feae9a494258a77694a64b"
         ],
+        "timestamp": "2026-10-20T15:21:27.553762278",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:24:30.24884343"
+        }
     },
     "mini - circtools detect output - stub": {
         "content": [
@@ -43,7 +43,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,6521b974b625bfd5ab3cdccc67126ab7"
+                    "versions.yml:md5,862ebafbb9d1ee769816ef6493827971"
                 ],
                 "bed": [
                     [
@@ -56,14 +56,14 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,6521b974b625bfd5ab3cdccc67126ab7"
+                    "versions.yml:md5,862ebafbb9d1ee769816ef6493827971"
                 ]
             }
         ],
+        "timestamp": "2026-10-20T15:21:42.079682809",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T09:42:46.822697498"
+        }
     }
 }

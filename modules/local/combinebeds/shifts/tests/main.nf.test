@@ -30,8 +30,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    process.out.plots.flatten().collect { file(it).name }.sort(),
-                    process.out.multiqc.flatten().collect { file(it).name }.sort(),
+                    process.out.plots.collect { _meta, plots -> plots.collect { file(it).name } }.flatten().sort(),
+                    process.out.multiqc.collect { _meta, multiqc -> multiqc.collect { file(it).name } }.flatten().sort(),
                     path(process.out.versions[0]).yaml
                 ).match() }
             )

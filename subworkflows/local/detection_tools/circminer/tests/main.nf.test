@@ -70,6 +70,7 @@ nextflow_workflow {
             def bed = workflow.out.bed.collectMany { meta, output -> path(output).readLines() }
             assert bed.every { it.split('\t').size() == 7 }
             assert bed.every { it.split('\t')[5] in ['+', '-', '.'] }
+            assert snapshot(workflow.out.bed).match()
         }
     }
 
@@ -91,6 +92,7 @@ nextflow_workflow {
         then {
             assert workflow.success
             assert path(workflow.out.bed[0][1]).readLines().isEmpty()
+            assert snapshot(workflow.out.bed).match()
         }
     }
 }

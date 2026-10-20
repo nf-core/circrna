@@ -43,17 +43,19 @@
                 "cel_N2_1_8.pdf",
                 "cel_N2_1_9.pdf"
             ],
-            {
-                "CIRI_CIRIVIS": {
-                    "ciri-vis": "1.4.2"
-                }
-            }
+            [
+                [
+                    "CIRI_CIRIVIS",
+                    "ciri-vis",
+                    "1.4.2"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:50:06.689094394",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:29:49.299094716"
+        }
     },
     "cel_N2_1 merged annotation - stub": {
         "content": [
@@ -82,7 +84,11 @@
                     "cel_N2_1.pdf:md5,d41d8cd98f00b204e9800998ecf8427e"
                 ],
                 "3": [
-                    "versions.yml:md5,a0470ad5e3dd96ea5cb653d5716209ea"
+                    [
+                        "CIRI_CIRIVIS",
+                        "ciri-vis",
+                        "1.4.2"
+                    ]
                 ],
                 "fasta": [
                     [
@@ -107,15 +113,19 @@
                 "pdf": [
                     "cel_N2_1.pdf:md5,d41d8cd98f00b204e9800998ecf8427e"
                 ],
-                "versions": [
-                    "versions.yml:md5,a0470ad5e3dd96ea5cb653d5716209ea"
+                "versions_ciri_vis": [
+                    [
+                        "CIRI_CIRIVIS",
+                        "ciri-vis",
+                        "1.4.2"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T00:28:39.646625383",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:30:13.929951439"
+        }
     }
 }

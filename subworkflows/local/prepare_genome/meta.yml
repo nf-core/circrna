@@ -1,0 +1,192 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: prepare_genome
+description: Filter the reference annotation and provide or build genome and tool-specific
+  indexes required by the selected circRNA analyses.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - custom/gtffilter
+  - seqkit/split
+  - bowtie/build
+  - bowtie2/build
+  - bwa/index
+  - hisat2/extractsplicesites
+  - hisat2/build
+  - star/genomegenerate
+  - gawk
+  - samtools/faidx
+  - ucsc/gtftogenepred
+  - psirc/transcriptome
+  - psirc/index
+  - circminer/index
+  - agat/convertspgff2gtf
+  - circminer/ordergtf
+  - starbasedtools
+input:
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - tools:
+      type: value
+      description: "Names of selected analysis tools. Structure: [ val(tools) ]"
+  - quantification_tools:
+      type: value
+      description: "Names of selected quantification methods. Structure: [ val(quantification_tools)
+        ]"
+  - bowtie:
+      type: file
+      description: "Optional prebuilt Bowtie index path; null requests an index build
+        if selected tools require it.
+
+
+        Structure: [ val(index_path) ]"
+  - bowtie2:
+      type: file
+      description: "Optional prebuilt Bowtie2 index path; null requests an index build
+        if selected tools require it.
+
+
+        Structure: [ val(index_path) ]"
+  - bwa:
+      type: file
+      description: "Optional prebuilt BWA index path; null requests an index build if
+        selected tools require it.
+
+
+        Structure: [ val(index_path) ]"
+  - hisat2:
+      type: file
+      description: "Optional prebuilt HISAT2 index path; null requests an index build
+        if selected tools require it.
+
+
+        Structure: [ val(index_path) ]"
+  - star:
+      type: file
+      description: "Optional prebuilt STAR index path; null requests an index build
+        if selected tools require it.
+
+
+        Structure: [ val(index_path) ]"
+  - fli_tools:
+      type: value
+      description: "Names of selected full-length isoform callers. Structure: [ val(fli_tools)
+        ]"
+  - circminer:
+      type: file
+      description: "Optional prebuilt circMiner index path; null requests an index build
+        if circMiner is selected.
+
+
+        Structure: [ val(index_path) ]"
+output:
+  - gtf:
+      type: file
+      description: "Reference GTF after reference-aware filtering.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - faidx:
+      type: file
+      description: "FASTA index (FAI) for the reference genome.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.fai"
+  - bowtie:
+      type: file
+      description: "Bowtie index channel, either wrapped from the supplied raw path
+        or emitted by the Bowtie build module.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - bowtie2:
+      type: file
+      description: "Bowtie2 index channel, either wrapped from the supplied raw path
+        or emitted by the Bowtie2 build module.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - bwa:
+      type: file
+      description: "BWA index channel, either wrapped from the supplied raw path or
+        emitted by the BWA index module.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - hisat2:
+      type: file
+      description: "HISAT2 index channel, either wrapped from the supplied raw path
+        or emitted by the HISAT2 build module.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - star:
+      type: file
+      description: "STAR index channel, either wrapped from the supplied raw path or
+        emitted by STAR genome generation.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - circexplorer2:
+      type: file
+      description: "A collected list of Circexplorer2 reference paths after metadata
+        is stripped from the generated files.
+
+
+        Structure: [ val(reference_files) ]"
+  - psirc:
+      type: file
+      description: "A collected list of reference tuples; each tuple contains metadata,
+        the psirc transcriptome, and a two-file index list.
+
+
+        Structure: [ val(reference_tuples) ]; each item: [ val(meta), path(transcriptome),
+        [ path(index_a), path(index_b) ] ]"
+  - circminer:
+      type: file
+      description: "circMiner index channel, either wrapped from the supplied raw path
+        or emitted by the circMiner index module.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - chromosomes:
+      type: file
+      description: "Per-chromosome FASTA channel produced by seqkit split.
+
+
+        Structure: [ val(meta), path(chromosome_fasta) ]"
+  - splice_sites:
+      type: file
+      description: "A collected list of HISAT2 splice-site output tuples; empty when
+        HISAT2 index generation is not required.
+
+
+        Structure: [ val(splice_site_tuples) ]; each item: [ val(meta), path(splice_sites)
+        ]"
+  - circminer_gtf:
+      type: file
+      description: "Standardized and ordered GTF for circMiner; empty unless circMiner
+        is selected.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{gtf,gtf.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

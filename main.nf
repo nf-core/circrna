@@ -51,7 +51,6 @@ workflow NFCORE_CIRCRNA {
 
     main:
 
-    ch_versions = channel.empty()
 
     //
     // WORKFLOW: Run nf-core/circrna workflow
@@ -74,7 +73,6 @@ workflow NFCORE_CIRCRNA {
         blacklist,
         mature,
         ch_annotation,
-        ch_versions,
         mirna_expression,
         parseToolList(params.tools),
         parseToolList(params.fli_tools),

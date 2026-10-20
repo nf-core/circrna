@@ -32,9 +32,9 @@ nextflow_process {
 
         then {
             assert process.success
-            def versions = path(process.out.versions[0]).yaml.values().first()
-            assert versions.gffutils == '0.14'
-            assert versions.pyyaml == '6.0.3'
+            assert snapshot(process.out).match()
+            assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.python
+            assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.gffutils
             def outputPath = path(process.out.gtf[0][1])
             def source = outputPath.parent.resolve('input/chrI_mini.agat.gtf').readLines().findAll { it && !it.startsWith('#') }
             def output = outputPath.readLines()
@@ -84,10 +84,10 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert path(process.out.gtf[0][1]).exists() },
-                { assert process.out.versions.size() == 1 },
-                { assert path(process.out.versions[0]).yaml.values().first().gffutils == '0.14' },
-                { assert path(process.out.versions[0]).yaml.values().first().pyyaml == '6.0.3' }
+                { assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.python },
+                { assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.gffutils }
             )
         }
     }

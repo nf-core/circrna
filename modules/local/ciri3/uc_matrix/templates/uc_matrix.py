@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import platform
-
 import polars as pl
-import yaml
 
 circ_list_path = "${circ_list}"
 bsj_path = "${bsj_matrix}"
@@ -68,13 +66,7 @@ for suffix, path in (("bsj", bsj_path), ("fsj", fsj_path)):
         pl.format("{}:{}|{}", "chrom", "start", "end").alias("circRNA_ID"),
         pl.col("count").fill_null(0),
     ).write_csv(f"{prefix}.{suffix}.tsv", separator="\\t")
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "pyyaml": yaml.__version__,
-    }
-}
-with open("versions.yml", "w", encoding="utf-8") as version_file:
-    yaml.safe_dump(versions, version_file)
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

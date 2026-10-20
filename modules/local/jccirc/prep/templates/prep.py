@@ -1,7 +1,14 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
-import yaml
 import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+
 import polars as pl
 
 df_annotation = pl.scan_csv(
@@ -29,15 +36,3 @@ df_merged = df_merged.select(
 ).collect()
 
 df_merged.write_csv("${prefix}.txt", separator="\\t", include_header=False)
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))

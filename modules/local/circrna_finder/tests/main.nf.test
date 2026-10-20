@@ -18,10 +18,13 @@ nextflow_process {
                 """
                 def dir = file("$outputDir/input")
                 dir.mkdirs()
-                def stage = { suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/cel_N2_1.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("cel_N2_1.\${suffix}")) }
                 input[0] = channel.of([
                     [id: 'cel_N2_1', single_end: false],
-                    [stage('Chimeric.out.sam'), stage('Chimeric.out.junction'), stage('SJ.out.tab')]
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.sam', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.Chimeric.out.sam')),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.Chimeric.out.junction')),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.SJ.out.tab', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.SJ.out.tab'))
+                    ]
                 ])
                 """
             }
@@ -31,7 +34,9 @@ nextflow_process {
             def rows = path(process.out.results[0][1]).readLines()
             assert process.success
             assert snapshot(
-                process.out.versions.collect { path(it).yaml },
+                process.out.versions_awk,
+                process.out.versions_cat,
+                process.out.versions_circrna_finder,
                 process.out.results.collect { file(it[1]).name },
                 rows.size(),
                 rows.collect { it.split('\t').size() }.unique(),
@@ -52,10 +57,13 @@ nextflow_process {
                 """
                 def dir = file("$outputDir/input")
                 dir.mkdirs()
-                def stage = { suffix -> file(params.pipelines_testdata_base_path + "mini/intermediates/cel_N2_1.star.\${suffix}", checkIfExists: true).copyTo(dir.resolve("cel_N2_1.\${suffix}")) }
                 input[0] = channel.of([
                     [id: 'cel_N2_1', single_end: false],
-                    [stage('Chimeric.out.sam'), stage('Chimeric.out.junction'), stage('SJ.out.tab')]
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.sam', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.Chimeric.out.sam')),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.Chimeric.out.junction')),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.SJ.out.tab', checkIfExists: true).copyTo(dir.resolve('cel_N2_1.SJ.out.tab'))
+                    ]
                 ])
                 """
             }

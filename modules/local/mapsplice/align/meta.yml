@@ -1,0 +1,78 @@
+name: mapsplice_align
+description: Align RNA-seq reads and identify fusion junctions with MapSplice
+keywords:
+  - mapsplice
+  - alignment
+  - fusion
+tools:
+  - mapsplice:
+      description: RNA-seq alignment and junction detection
+      homepage: https://sourceforge.net/projects/mapsplice/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - "meta":
+        type: map
+        description: Sample metadata
+    - "reads":
+        type: file
+        description: Single- or paired-end reads
+  - "bowtie_index":
+      type: directory
+      description: Bowtie index
+  - - "meta2":
+        type: map
+        description: Reference metadata
+    - "chromosomes":
+        type: directory
+        description: Chromosome FASTA files
+  - "gtf":
+      type: file
+      description: Gene annotation
+output:
+  raw_fusions:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}/fusions_raw.txt":
+          type: file
+          description: Raw fusion junction calls
+  versions_mapsplice:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "mapsplice":
+          type: string
+          description: Software name
+      - "2.2.1":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - mapsplice:
+          type: string
+          description: Software name
+      - 2.2.1:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/mapsplice_python:bd8c09f1c86164f3
+      build_id: bd-bd8c09f1c86164f3_1
+      scan_id: sc-b6a6b5bc5566f15a_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/mapsplice_python:3368906d1e9720ea
+      build_id: bd-3368906d1e9720ea_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/94/947b2cdf8be956dccb34aee3d3d4e2778a015c43721fcb08268007a46542ac49/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/mapsplice/align/.conda-lock/linux_amd64-bd-bd8c09f1c86164f3_1.txt

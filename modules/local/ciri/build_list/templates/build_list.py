@@ -1,9 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import platform
-
 import polars as pl
-import yaml
 
 # Parameters
 
@@ -12,11 +10,12 @@ max_shift = int("${max_shift}")
 # Logic
 
 df_consensus = pl.read_csv("${consensus}", separator="\\t", has_header=False)
-df_consensus = df_consensus.select("column_1", "column_2", "column_3")
-df_consensus = df_consensus.rename({"column_1": "Chr", "column_2": "Start", "column_3": "End"})
+df_consensus = df_consensus.select("column_0", "column_1", "column_2")
+df_consensus = df_consensus.rename({"column_0": "Chr", "column_1": "Start", "column_2": "End"})
 
 df_consensus = df_consensus.with_columns(
-    Start=pl.col("Start") + 1
+    Start=pl.col("Start").cast(pl.Int64) + 1,
+    End=pl.col("End").cast(pl.Int64),
 )
 
 df_length = df_consensus.shape[0]
@@ -38,19 +37,15 @@ df_consensus = df_consensus.unique()
 
 df_anno = pl.scan_csv("${ciri_annotation}".split(), separator="\\t", has_header=True, truncate_ragged_lines=True)
 df_anno = df_anno.select("BSJ", "Chr", "Start", "End")
+df_anno = df_anno.with_columns(
+    pl.col("Start").cast(pl.Int64),
+    pl.col("End").cast(pl.Int64),
+)
 df_anno = df_anno.unique()
 
 df_joined = df_consensus.join(df_anno, on=["Chr", "Start", "End"], how="inner")
 df_joined.select("BSJ").collect().write_csv("${prefix}.txt", include_header=False)
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    yaml.dump(versions, f)
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

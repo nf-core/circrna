@@ -1,26 +1,22 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+    handle.write(f'  altair: "{importlib.metadata.version("altair")}"\\n')
+
 import base64
 import json
 from itertools import product
-import yaml
 
 import polars as pl
 import altair as alt
 
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "altair": alt.__version__
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))
 
 # Main
 
@@ -32,6 +28,7 @@ try:
                         has_header=False,
                         raise_if_empty=True,
                         new_columns=["chr", "start", "end", "name", "score", "strand", "sample", "tool"])
+    df = df.collect().lazy()
 except pl.exceptions.NoDataError:
     exit(0)
 
@@ -47,8 +44,8 @@ def get_group_sizes(df: pl.LazyFrame, max_shift: int, consider_strand: bool) -> 
     df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
     df = df.select(["chr", "start", "end", "strand", "samples_right", "tools_right"])
     df = df.group_by(["chr", "start", "end", "strand"]).agg(**{
-        "samples": pl.col("samples_right").flatten().unique(),
-        "tools": pl.col("tools_right").flatten().unique()
+        "samples": pl.col("samples_right").list.explode().unique(),
+        "tools": pl.col("tools_right").list.explode().unique()
     }).with_columns(n_samples=pl.col("samples").map_elements(lambda x: len(x), return_dtype=int),
                     n_tools=pl.col("tools").map_elements(lambda x: len(x), return_dtype=int))
 

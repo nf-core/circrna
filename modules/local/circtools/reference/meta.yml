@@ -1,0 +1,70 @@
+name: circtools_reference
+description: Build a reference database for circtools nanopore analysis
+keywords:
+  - circtools
+  - nanopore
+  - reference
+tools:
+  - circtools:
+      description: Circular RNA analysis toolkit
+      homepage: https://github.com/dieterich-lab/circtools
+      licence:
+        - GPL-3.0-or-later
+input:
+  - genome:
+      type: string
+      description: Genome identifier
+output:
+  reference:
+    - reference:
+        type: directory
+        description: circtools reference database
+  versions_circtools:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circtools:
+          type: string
+          description: Software name
+      - circtools -V:
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circtools:
+          type: string
+          description: Software name
+      - circtools -V:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/circtools:2.0.5.post2--20ffd704d69916e2
+      build_id: bd-20ffd704d69916e2_1
+      scan_id: sc-07d6b9466869e51c_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/circtools:2.0.5.post2--c25da3ad545410b6
+      build_id: bd-c25da3ad545410b6_1
+      scan_id: sc-c26da9a2597b2b0c_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/circtools:2.0.5.post2--d71692d431da9089
+      build_id: bd-d71692d431da9089_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3f/3f523ec9d03407da839bae40c76b9e49725d8b5273e9e167f7b5e081392f690d/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/circtools:2.0.5.post2--8dca398766b6ccc8
+      build_id: bd-8dca398766b6ccc8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c7/c7507707f2cc9399153baf73d550627c71af029777ff92127e136a8505f76fdf/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circtools/reference/.conda-lock/linux_amd64-bd-20ffd704d69916e2_1.txt
+    linux/arm64:
+      lock_file: modules/local/circtools/reference/.conda-lock/linux_arm64-bd-c25da3ad545410b6_1.txt

@@ -29,7 +29,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.index.collect { meta, a, b -> [meta, file(a).name, file(b).name] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_psirc
                 ).match() }
             )
         }

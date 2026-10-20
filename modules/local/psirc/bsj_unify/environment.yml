@@ -1,6 +1,4 @@
-name: psirc_bsj_unify
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
-  - pyyaml=6.0.2
+  - conda-forge::python=3.14.7

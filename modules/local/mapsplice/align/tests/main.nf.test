@@ -51,7 +51,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_mapsplice,
                     process.out.raw_fusions.collect { file(it[1]).name },
                     fusions.size(),
                     fusions.collect { it.tokenize('\t').take(3).join('\t') }.sort()

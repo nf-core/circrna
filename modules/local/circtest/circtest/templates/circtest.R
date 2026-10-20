@@ -137,7 +137,7 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
             geom_boxplot() + theme_classic() +
             theme(axis.text.x = element_blank())+
             theme(axis.text.y = element_text(size=size+4))+
-            theme(axis.ticks = element_line(colour = 'black', size = 1)) +
+            theme(axis.ticks = element_line(colour = 'black', linewidth = 1)) +
             theme(axis.ticks.x = element_blank())+
             theme(legend.title=element_blank()) +
             theme(text=element_text(size=size+4))+
@@ -147,8 +147,8 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
             ggtitle(paste("Annotation: ", genename, "\\nChr ", toString(Circ[plotrow,circle_description]),sep="")) +
             ylab("circRNA/(circRNA + Linear RNA)") +
             xlab("Sample") +
-            geom_errorbar(aes(ymin=Ratio, ymax=Ratio+se), width=.2 , size=2) +
-            geom_bar(stat="identity",aes(fill=groupindicator1), color = "black", size=2)
+            geom_errorbar(aes(ymin=Ratio, ymax=Ratio+se), width=.2 , linewidth=2) +
+            geom_bar(stat="identity",aes(fill=groupindicator1), color = "black", linewidth=2)
 
     if (colour_mode == "bw"){
             Q <- Q + scale_fill_grey(start = 0.0, end = 1)
@@ -163,7 +163,7 @@ Circ.ratioplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=2
                 panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
                 axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill=NA, size=3)) +
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=3)) +
                 guides(fill=guide_legend(
                                 keywidth=0.3,
                                 keyheight=0.3,
@@ -263,7 +263,7 @@ Circ.lineplot <- function(Circ,Linear,CircCoordinates = None,plotrow='1',size=18
         Q=ggplot(plotdat, aes(x=groupindicator1, y=Counts, group=Type,colour=Type)) +
             theme(text=element_text(size=size))+
             theme_bw()+
-            labs( list(title=paste(toString(Circ[row,circle_description]),genename,sep=" "),x=x,y=y) ) +
+            labs(title=paste(toString(Circ[row,circle_description]),genename,sep=" "),x=x,y=y) +
             ggtitle(paste(toString(Circ[row,circle_description]),genename,sep=" "))+
             geom_errorbar(aes(ymin=Counts-se, ymax=Counts+se), width=.1, position=position_dodge(.1) ) +
             xlab("Condition") +
@@ -442,7 +442,6 @@ for (i in rownames(test\$summary_table)) {
         lab_legend = 'condition', circle_description = description )
 }
 dev.off()
-
 pdf("circ_linear_line_plots.pdf", width = 8, height = 10)
 for (i in rownames(test\$summary_table)) {
     Circ.lineplot(circs, genes, plotrow=i, groupindicator1=pheno\$condition,
@@ -450,26 +449,10 @@ for (i in rownames(test\$summary_table)) {
 }
 dev.off()
 
-
-################################################
-################################################
-## VERSIONS FILE                              ##
-################################################
-################################################
-
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    r-base:', r.version),
-        paste('    aod:', packageVersion('aod')),
-        paste('    plyr:', packageVersion('plyr')),
-        paste('    ggplot2:', packageVersion('ggplot2'))
-    ),
-'versions.yml')
-
-################################################
-################################################
-################################################
-################################################
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    aod: "', packageVersion("aod"), '"'),
+    paste0('    plyr: "', packageVersion("plyr"), '"'),
+    paste0('    ggplot2: "', packageVersion("ggplot2"), '"')
+), 'versions.yml')

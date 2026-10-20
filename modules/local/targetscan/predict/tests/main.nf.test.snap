@@ -11,7 +11,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,405aa11c9f7ac6c72ee163e362a87e43"
+                    [
+                        "TARGETSCAN",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TARGETSCAN",
+                        "targetscan",
+                        "7.0"
+                    ]
                 ],
                 "txt": [
                     [
@@ -21,16 +32,27 @@
                         "batch_1.targetscan.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,405aa11c9f7ac6c72ee163e362a87e43"
+                "versions_awk": [
+                    [
+                        "TARGETSCAN",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "versions_targetscan": [
+                    [
+                        "TARGETSCAN",
+                        "targetscan",
+                        "7.0"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-20T10:41:38.344669918",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:06:23.209968429"
+        }
     },
     "mini circRNAs": {
         "content": [
@@ -43,17 +65,25 @@
                     "5d7129119bfb5deef9fe4c0f6c5b9531"
                 ]
             ],
-            {
-                "TARGETSCAN": {
-                    "awk": null,
-                    "targetscan": 7.0
-                }
-            }
+            [
+                [
+                    "TARGETSCAN",
+                    "awk",
+                    "5.4.1"
+                ]
+            ],
+            [
+                [
+                    "TARGETSCAN",
+                    "targetscan",
+                    "7.0"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-20T10:41:26.248226979",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:12:52.730699575"
+        }
     }
 }

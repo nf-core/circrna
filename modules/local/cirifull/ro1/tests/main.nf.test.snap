@@ -24,17 +24,19 @@
                     "ab1d10434fef14617d681262fc22e7ed"
                 ]
             ],
-            {
-                "CIRIFULL_RO1": {
-                    "cirifull": "2.1.2"
-                }
-            }
+            [
+                [
+                    "CIRIFULL_RO1",
+                    "ciri-full",
+                    "2.1.2"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T00:34:12.357333833",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:32:21.435528224"
+        }
     },
     "cel_N2_1 fixed-length reads - stub": {
         "content": [
@@ -60,7 +62,11 @@
                     ]
                 ],
                 "2": [
-                    "versions.yml:md5,e74149b05fbf8405243440bf1bf2a909"
+                    [
+                        "CIRIFULL_RO1",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
                 ],
                 "align": [
                     [
@@ -82,15 +88,19 @@
                         "cel_N2_1_ro1.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,e74149b05fbf8405243440bf1bf2a909"
+                "versions_ciri_full": [
+                    [
+                        "CIRIFULL_RO1",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T00:34:32.479571527",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:32:36.328926456"
+        }
     }
 }

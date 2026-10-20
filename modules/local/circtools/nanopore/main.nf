@@ -2,18 +2,21 @@ process CIRCTOOLS_NANOPORE {
     tag "${meta.id}"
     label 'process_high'
 
-    conda "environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/16/162d301bf9771dcc9bd647e7ea00cc9a959a933fc4b2bc0232fcb195acb09477/data'
-        : 'community.wave.seqera.io/library/bedtools_circtools_nanofilt_pblat_samtools:20d0bb8a94c47e28'}"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b2/b2d16e12d96fbed5965f922347a73c59232ccf4420325577e6c1a20e788f0a31/data'
+        : 'community.wave.seqera.io/library/bedtools_circtools_nanofilt_pblat_samtools:7a25c5c7268bf53b'}"
 
     input:
     tuple val(meta), path(reads)
-    path(reference)
-    val(genome)
+    path reference
+    val genome
 
     output:
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
@@ -29,18 +32,10 @@ process CIRCTOOLS_NANOPORE {
         -O ${prefix} \
         -t ${task.cpus}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        circtools: \$(circtools -V)
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        circtools: \$(circtools -V)
-    END_VERSIONS
     """
 }

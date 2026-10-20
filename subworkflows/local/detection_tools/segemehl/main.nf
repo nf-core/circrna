@@ -12,22 +12,25 @@ workflow SEGEMEHL {
     index
 
     main:
-    ch_versions = channel.empty()
 
-    index = index ?: INDEX( fasta ).index
+    ch_index = index ?: INDEX(fasta).index
 
-    ALIGN( reads, fasta, index )
-    EXTRACT( ALIGN.out.single_bed
-        .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed, "segemehl_extracted.bed" ] }, [], false )
+    // Reference metadata IDs need not match; broadcast one reference to all samples.
+    ch_reference = fasta
+        .combine(ch_index)
+        .map { fasta_meta, reference_fasta, _index_meta, reference_index -> [fasta_meta, reference_fasta, reference_index] }
 
-    SORT( EXTRACT.out.output.map{ meta, bed -> [ meta, bed, "segemehl_sorted.bed" ] } )
-    GROUP( SORT.out.sorted, 5 )
-    UNIFY( GROUP.out.bed.map{ meta, bed -> [ meta, bed, "segemehl.unified.bed" ] }, [], false )
+    ALIGN(reads, ch_reference.first())
+    EXTRACT(
+        ALIGN.out.single_bed.map { meta, bed -> [meta + [tool: "segemehl"], bed, "segemehl_extracted.bed"] },
+        [],
+        false,
+    )
 
-    ch_versions = ch_versions.mix(ALIGN.out.versions)
+    SORT(EXTRACT.out.output.map { meta, bed -> [meta, bed, "segemehl_sorted.bed"] })
+    GROUP(SORT.out.sorted, 5)
+    UNIFY(GROUP.out.bed.map { meta, bed -> [meta, bed, "segemehl.unified.bed"] }, [], false)
 
     emit:
     bed = UNIFY.out.output
-
-    versions = ch_versions
 }

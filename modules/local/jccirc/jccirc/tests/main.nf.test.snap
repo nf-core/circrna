@@ -12,7 +12,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,fdfa0f269263e739a9afe3ddc51ec8f2"
+                    [
+                        "JCCIRC_JCCIRC",
+                        "jccirc",
+                        "1.0.0"
+                    ]
                 ],
                 "log": [
                     [
@@ -23,29 +27,35 @@
                         "cel_N2_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,fdfa0f269263e739a9afe3ddc51ec8f2"
+                "versions_jccirc": [
+                    [
+                        "JCCIRC_JCCIRC",
+                        "jccirc",
+                        "1.0.0"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:43:28.690237822",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-18T09:01:16.052280111"
+        }
     },
     "cel_N2_1 reads and a single BSJ": {
         "content": [
-            {
-                "JCCIRC_JCCIRC": {
-                    "jccirc": "1.0.0"
-                }
-            }
+            [
+                [
+                    "JCCIRC_JCCIRC",
+                    "jccirc",
+                    "1.0.0"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:43:16.413736853",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T18:58:24.087839094"
+        }
     }
 }

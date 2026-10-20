@@ -1,6 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+    handle.write(f'  upsetplot: "{importlib.metadata.version("upsetplot")}"\\n')
+    handle.write(f'  matplotlib: "{importlib.metadata.version("matplotlib")}"\\n')
+
 import base64
 import json
 
@@ -9,38 +19,6 @@ import upsetplot
 import matplotlib
 import matplotlib.pyplot as plt
 
-def format_yaml_like(data: dict, indent: int = 0) -> str:
-    """Formats a dictionary to a YAML-like string.
-
-    Args:
-        data (dict): The dictionary to format.
-        indent (int): The current indentation level.
-
-    Returns:
-        str: A string formatted as YAML.
-    """
-    yaml_str = ""
-    for key, value in data.items():
-        spaces = "  " * indent
-        if isinstance(value, dict):
-            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
-        else:
-            yaml_str += f"{spaces}{key}: {value}\\n"
-    return yaml_str
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-        "upsetplot": upsetplot.__version__,
-        "matplotlib": matplotlib.__version__
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(format_yaml_like(versions))
 
 # Parameters
 
@@ -70,8 +48,8 @@ df = df.filter((pl.col("end") - pl.col("end_right")).abs() <= max_shift)
 
 df = df.select(["chr", "start", "end", "strand", "samples_right", "tools_right"])
 df = df.group_by(["chr", "start", "end", "strand"]).agg(**{
-    "samples": pl.col("samples_right").flatten().unique(),
-    "tools": pl.col("tools_right").flatten().unique()
+    "samples": pl.col("samples_right").list.explode().unique(),
+    "tools": pl.col("tools_right").list.explode().unique()
 }).with_columns(n_samples=pl.col("samples").map_elements(lambda x: len(x), return_dtype=int),
                 n_tools=pl.col("tools").map_elements(lambda x: len(x), return_dtype=int))
 
@@ -79,53 +57,53 @@ df = df.collect()
 df = df.with_columns(name=pl.lit("FUSIONJUNC_") + pl.arange(0, len(df)).cast(str) + pl.lit("/0"),
                     score=pl.lit("."))
 
-df_aggregated = df.to_pandas()
-n_bsjs = len(df_aggregated)
+df_filtered = df.filter(
+    (pl.col("n_tools") >= min_tools) & (pl.col("n_samples") >= min_samples)
+).select("chr", "start", "end", "name", "score", "strand")
 
-df_filtered = df_aggregated[(df_aggregated["n_tools"] >= min_tools) & (df_aggregated["n_samples"] >= min_samples)]
-df_filtered = df_filtered[["chr", "start", "end", "name", "score", "strand"]]
-
-if len(df_filtered) == 0:
+if df_filtered.is_empty():
     exit(0)
 
-df_filtered.to_csv("${prefix}.${suffix}", sep="\\t", header=False, index=False)
+df_filtered.write_csv("${prefix}.${suffix}", separator="\\t", include_header=False)
 
 # Plots
 
 for col in ["samples", "tools"]:
-    series = df_aggregated[col]
-    if series.explode().nunique() <= 1:
+    memberships = df[col].to_list()
+    if len({member for group in memberships for member in group}) <= 1:
         continue
-    memberships = series.to_list()
     dataset = upsetplot.from_memberships(memberships)
 
     n_combinations = 50
-
-    # Limit to top n_combinations largest combinations if there are more than n_combinations
     if len(dataset) > n_combinations:
         dataset = dataset.nlargest(n_combinations)
 
     upsetplot.plot(dataset,
-                   orientation='horizontal',
+                   orientation="horizontal",
                    show_counts=True,
                    subset_size="count")
+    # UpSetPlot uses one-element arrays for count-label margins; Matplotlib
+    # requires scalar coordinates with current NumPy releases.
+    for axis in plt.gcf().axes:
+        for label in axis.texts:
+            label.set_position(tuple(value.item() if hasattr(value, "item") else value
+                                     for value in label.get_position()))
     plot_file = f"{prefix}_{col}.upset.png"
     plt.savefig(plot_file)
     plt.close()
 
-    image_string = base64.b64encode(open(plot_file, "rb").read()).decode("utf-8")
+    with open(plot_file, "rb") as image:
+        image_string = base64.b64encode(image.read()).decode("utf-8")
     image_html = f'<div class="mqc-custom-content-image"><img src="data:image/png;base64,{image_string}" /></div>'
-
     multiqc = {
-        'id': f"{meta_id}_upset_{col}",
-        'parent_id': "upset_plots",
-        'parent_name': 'UpSet Plots',
-        'parent_description': 'UpSet plots showing the overlap between tools for each sample',
-        'section_name': f'UpSet {col}: {meta_id} ',
-        'description': f'UpSet plot showing the overlap between {col} for {meta_id}',
-        'plot_type': 'image',
-        'data': image_html
+        "id": f"{meta_id}_upset_{col}",
+        "parent_id": "upset_plots",
+        "parent_name": "UpSet Plots",
+        "parent_description": "UpSet plots showing the overlap between tools for each sample",
+        "section_name": f"UpSet {col}: {meta_id} ",
+        "description": f"UpSet plot showing the overlap between {col} for {meta_id}",
+        "plot_type": "image",
+        "data": image_html,
     }
-
-    with open(f"{prefix}_{col}.upset_mqc.json", "w") as f:
-        f.write(json.dumps(multiqc, indent=4))
+    with open(f"{prefix}_{col}.upset_mqc.json", "w") as handle:
+        json.dump(multiqc, handle, indent=4)

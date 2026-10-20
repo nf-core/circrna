@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript --vanilla
+#!/usr/bin/env Rscript
 
 library(SummarizedExperiment)
 
@@ -54,9 +54,8 @@ assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), rownames(colData(se)
 
 saveRDS(se, '${meta.id}.merged.rds')
 
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    bioconductor-summarizedexperiment:', packageVersion('SummarizedExperiment'))
-    ),
-'versions.yml')
+writeLines(c(
+    '"${task.process}":',
+    paste0('    bioconductor-summarizedexperiment: "', packageVersion("SummarizedExperiment"), '"'),
+    paste0('    bioconductor-rtracklayer: "', packageVersion("rtracklayer"), '"')
+), 'versions.yml')

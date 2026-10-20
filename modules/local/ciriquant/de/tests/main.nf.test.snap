@@ -19,7 +19,25 @@
                     ]
                 ],
                 "2": [
-                    "versions.yml:md5,3d84b85edee49906ff4e039af7c3e7b4"
+                    [
+                        "CIRIQUANT_DE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRIQUANT_DE",
+                        "r-base",
+                        "4.5.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "CIRIQUANT_DE",
+                        "edger",
+                        "4.10.6"
+                    ]
                 ],
                 "circ": [
                     [
@@ -37,15 +55,118 @@
                         "fust1_N2.gene.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,3d84b85edee49906ff4e039af7c3e7b4"
+                "versions_ciriquant": [
+                    [
+                        "CIRIQUANT_DE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "versions_edger": [
+                    [
+                        "CIRIQUANT_DE",
+                        "edger",
+                        "4.10.6"
+                    ]
+                ],
+                "versions_r_base": [
+                    [
+                        "CIRIQUANT_DE",
+                        "r-base",
+                        "4.5.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T09:56:52.941856337",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T09:47:11.810107814"
+        }
+    },
+    "synthetic counts - differential expression": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "synthetic_de"
+                        },
+                        "synthetic_de.circ.csv:md5,e80d935a875e2a4b221f4c2be5a0b50e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "synthetic_de"
+                        },
+                        "synthetic_de.gene.csv:md5,7cbdfb24278ba3bc847d2c2e67a8ff52"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRIQUANT_DE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRIQUANT_DE",
+                        "r-base",
+                        "4.5.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "CIRIQUANT_DE",
+                        "edger",
+                        "4.10.6"
+                    ]
+                ],
+                "circ": [
+                    [
+                        {
+                            "id": "synthetic_de"
+                        },
+                        "synthetic_de.circ.csv:md5,e80d935a875e2a4b221f4c2be5a0b50e"
+                    ]
+                ],
+                "gene": [
+                    [
+                        {
+                            "id": "synthetic_de"
+                        },
+                        "synthetic_de.gene.csv:md5,7cbdfb24278ba3bc847d2c2e67a8ff52"
+                    ]
+                ],
+                "versions_ciriquant": [
+                    [
+                        "CIRIQUANT_DE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "versions_edger": [
+                    [
+                        "CIRIQUANT_DE",
+                        "edger",
+                        "4.10.6"
+                    ]
+                ],
+                "versions_r_base": [
+                    [
+                        "CIRIQUANT_DE",
+                        "r-base",
+                        "4.5.3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:14:40.71149984",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }

@@ -1,0 +1,106 @@
+name: circtest_circtest
+description: Test circular-to-linear RNA ratios between experimental conditions.
+keywords:
+  - circtest
+  - circrna
+  - differential-expression
+tools:
+  - r-base:
+      description: R statistical computing environment.
+      homepage: https://www.r-project.org/
+      licence:
+        - GPL-2.0-or-later
+  - aod:
+      description: R analysis of overdispersed data package.
+      homepage: https://cran.r-project.org/package=aod
+      licence:
+        - GPL-2.0-or-later
+  - plyr:
+      description: R tools for splitting and combining data.
+      homepage: https://cran.r-project.org/package=plyr
+      licence:
+        - MIT
+  - ggplot2:
+      description: R data visualisation package.
+      homepage: https://ggplot2.tidyverse.org/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Count metadata.
+    - gene_counts:
+        type: file
+        description: Gene count matrix.
+        pattern: "*.{tsv,txt}"
+    - circ_counts:
+        type: file
+        description: CircRNA count matrix.
+        pattern: "*.{tsv,txt}"
+  - - meta2:
+        type: map
+        description: Phenotype metadata.
+    - phenotype:
+        type: file
+        description: Sample phenotype table.
+        pattern: "*.{csv,tsv}"
+output:
+  summary:
+    - - "meta":
+          type: map
+          description: Count metadata.
+      - "${prefix}_summary.txt":
+          type: file
+          description: CircTest summary.
+          pattern: "*_summary.txt"
+  plots:
+    - - "meta":
+          type: map
+          description: Count metadata.
+      - "*.pdf":
+          type: file
+          description: CircTest plots.
+          pattern: "*.pdf"
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/circtest_circtest:ff686a5b50cb6d65
+      build_id: bd-ff686a5b50cb6d65_1
+      scan_id: sc-b182d7eb65d7b91e_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/circtest_circtest:082479f101fc26c2
+      build_id: bd-082479f101fc26c2_1
+      scan_id: sc-7675f0fccf56831b_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/circtest_circtest:199749a665c8abcf
+      build_id: bd-199749a665c8abcf_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/57/57d4130df8f29abddb3f8aaf28247374451233cb7909bfacd62ff208b52038bd/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/circtest_circtest:721562b9641cedfd
+      build_id: bd-721562b9641cedfd_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/1a/1a6c264440ced99bec3c70893f1738b90421307432663d64815ea4384a0a9856/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circtest/circtest/.conda-lock/linux_amd64-bd-ff686a5b50cb6d65_1.txt
+    linux/arm64:
+      lock_file: modules/local/circtest/circtest/.conda-lock/linux_arm64-bd-082479f101fc26c2_1.txt

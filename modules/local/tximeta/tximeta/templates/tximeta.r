@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript --vanilla
+#!/usr/bin/env Rscript
 
 # Script for importing and processing transcript-level quantifications.
 # Written by Lorena Pantano, later modified by Jonathan Manning, and released
@@ -44,23 +44,7 @@ citation("tximeta")
 print(sessionInfo())
 sink()
 
-################################################
-################################################
-## VERSIONS FILE                              ##
-################################################
-################################################
-
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-tximeta.version <- as.character(packageVersion('tximeta'))
-
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    bioconductor-tximeta:', tximeta.version)
-    ),
-'versions.yml')
-
-################################################
-################################################
-################################################
-################################################
+writeLines(c(
+    '"${task.process}":',
+    paste0('    bioconductor-tximeta: "', packageVersion("tximeta"), '"')
+), 'versions.yml')

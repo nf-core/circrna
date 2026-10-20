@@ -5,7 +5,6 @@ import sys
 from itertools import groupby
 
 import gffutils
-import yaml
 from gffutils.iterators import DataIterator
 
 exon_count = 0
@@ -27,6 +26,7 @@ with open("${prefix}.gtf", "w") as output:
 
 if not exon_count:
     sys.exit("circMiner GTF ordering: no exon features were found")
-
-with open("versions.yml", "w") as versions:
-    yaml.safe_dump({"${task.process}": {"python": platform.python_version(), "gffutils": gffutils.__version__, "pyyaml": yaml.__version__}}, versions)
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    gffutils: "{gffutils.__version__}"', file=handle)

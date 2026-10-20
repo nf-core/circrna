@@ -24,7 +24,7 @@
                     ]
                 ],
                 "2": [
-                    "versions.yml:md5,bd3a020be78fdb5d0a59116bf5da3f77"
+                    "versions.yml:md5,ee4f9f166c2d9ebeeea370fb5ea2971d"
                 ],
                 "plots": [
                     [
@@ -48,15 +48,15 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,bd3a020be78fdb5d0a59116bf5da3f77"
+                    "versions.yml:md5,ee4f9f166c2d9ebeeea370fb5ea2971d"
                 ]
             }
         ],
+        "timestamp": "2026-10-20T15:23:19.474040493",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T09:38:21.808253458"
+        }
     },
     "psirc counts - 6 samples": {
         "content": [
@@ -66,19 +66,21 @@
             [
                 "\"Y47G6A.29\""
             ],
-            {
-                "CIRCTEST_CIRCTEST": {
-                    "r-base": "4.2.2",
-                    "aod": "1.3.2",
-                    "plyr": "1.8.8",
-                    "ggplot2": "3.4.0"
+            [
+                {
+                    "CIRCTEST_CIRCTEST": {
+                        "r-base": "4.5.3",
+                        "aod": "1.3.3",
+                        "plyr": "1.8.9",
+                        "ggplot2": "4.0.3"
+                    }
                 }
-            }
+            ]
         ],
+        "timestamp": "2026-10-20T14:59:48.595726716",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T08:41:31.921678469"
+        }
     }
 }

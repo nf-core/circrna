@@ -1,0 +1,107 @@
+name: ciriquant_prepde
+description: Prepare CIRIquant matrices for differential expression
+keywords:
+  - ciriquant
+  - differential-expression
+  - count-matrix
+tools:
+  - ciriquant:
+      description: CircRNA quantification from the pinned nictru fork
+      homepage: https://github.com/nictru/CIRIquant
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Comparison metadata
+    - samples:
+        type: list
+        description: Sample names
+    - gtfs:
+        type: file
+        description: CIRIquant GTF files
+    - conditions:
+        type: list
+        description: Conditions
+output:
+  library:
+    - - "meta":
+          type: map
+          description: Comparison metadata
+      - "${prefix}_library.tsv":
+          type: file
+          description: Library table
+  annotation:
+    - - "meta":
+          type: map
+          description: Comparison metadata
+      - "${prefix}_annotation.tsv":
+          type: file
+          description: CircRNA annotation
+  expression:
+    - - "meta":
+          type: map
+          description: Comparison metadata
+      - "${prefix}_expression.tsv":
+          type: file
+          description: BSJ expression matrix
+  gene:
+    - - "meta":
+          type: map
+          description: Comparison metadata
+      - "${prefix}_ratio.tsv":
+          type: file
+          description: Gene ratio matrix
+  versions_ciriquant:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "ciriquant":
+          type: string
+          description: Software name
+      - 'CIRIquant --version 2>&1 | sed "s/CIRIquant //g"':
+          type: eval
+          description: Software version
+  versions_python:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "python":
+          type: string
+          description: Software name
+      - 'python --version | cut -d " " -f2':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciriquant:
+          type: string
+          description: Software name
+      - CIRIquant --version 2>&1 | sed "s/CIRIquant //g":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | cut -d " " -f2:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: docker.io/nicotru/ciriquant@sha256:5e59c7a31355f1814a1703e9cb27d347b7bb04871606a24c1acdacfc02c627f8
+      build_id: bd-45acbdd4f4c8b517_1
+  singularity:
+    linux/amd64:
+      name: oras://docker.io/nicotru/ciriquant:35228e054dcad0b0
+      build_id: bd-35228e054dcad0b0_1

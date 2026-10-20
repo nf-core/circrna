@@ -1,0 +1,25 @@
+name: fail_on_empty
+description: Fail a workflow branch when its BED input is empty.
+keywords:
+  - validation
+  - bed
+  - circrna
+tools: []
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - bed:
+        type: file
+        description: BED input to validate.
+  - waitFor:
+      type: file
+      description: Files whose staging enforces upstream completion.
+  - message:
+      type: string
+      description: Error message reported for empty input.
+output: {}
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

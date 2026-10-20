@@ -1,0 +1,48 @@
+{
+    "two paired-end samples share one reference index": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circminer"
+                    },
+                    "cel_N2_1.circminer.bed:md5,33cbb27db564791833c5647f8ec335bc"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circminer"
+                    },
+                    "fust1_1.circminer.bed:md5,8ed148f1e97824c0e265b498b3c7772c"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:11:53.393610073",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini paired-end - stub": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circminer"
+                    },
+                    "cel_N2_1.circminer.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:12:12.024906599",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

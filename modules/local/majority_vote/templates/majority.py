@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
 import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
 
 import polars as pl
-import yaml
 
 paths = "${bindingsites}".split(" ")
 
@@ -25,17 +31,6 @@ df.write_csv('${meta.id}.majority.tsv', separator='\\t', include_header=False)
 
 # Create targets file
 
-df = df.group_by('mirna').agg(pl.col("target").str.concat(","))
+df = df.group_by('mirna').agg(pl.col("target").str.join(","))
 
 df.write_csv('${meta.id}.targets.tsv', separator='\\t', include_header=False)
-
-# Create version file
-versions = {
-    "${task.process}" : {
-        "python": platform.python_version(),
-        "polars": pl.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))

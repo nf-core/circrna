@@ -38,6 +38,13 @@ nextflow_process {
             def keys = path(process.out.combined[0][1]).readLines().collect { l -> def c = l.split('\t'); [c[0], c[1], c[2], c[4], c[5]].join(':') }.sort()
             assertAll(
                 { assert process.success },
+                { assert process.out.plots.collect { file(it).name } == ['cel_N2_1_reads:read_agreement.png'] },
+                { assert process.out.multiqc.collect { file(it).name } == ['cel_N2_1_read_agreement_mqc.json'] },
+                {
+                    def report = new groovy.json.JsonSlurper().parseText(path(process.out.multiqc[0]).readLines().join('\n'))
+                    assert report.parent_id == 'read_agreement'
+                    assert report.data.contains('data:image/png;base64,')
+                },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [meta, file(f).name] },
                     keys,

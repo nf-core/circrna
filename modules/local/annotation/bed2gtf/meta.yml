@@ -1,0 +1,76 @@
+name: annotation_bed2gtf
+description: Convert annotated circRNA BED12 records to GTF.
+keywords:
+  - annotation
+  - bed
+  - gtf
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      documentation: https://docs.pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Annotation metadata.
+    - bed12:
+        type: file
+        description: Annotated BED12 circRNA records.
+        pattern: "*.{bed,bed12}"
+    - db_intersections:
+        type: file
+        description: Optional database-intersection files.
+  - exons_only:
+      type: boolean
+      description: Emit only exon records.
+output:
+  gtf:
+    - - "meta":
+          type: map
+          description: Annotation metadata.
+      - "${prefix}.gtf":
+          type: file
+          description: GTF annotation converted from BED12.
+          pattern: "*.gtf"
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_polars:a7975bec8c9bd1e2
+      build_id: bd-a7975bec8c9bd1e2_1
+      scan_id: sc-bb7dbbd96222b3ed_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_polars:41e998f70163b376
+      build_id: bd-41e998f70163b376_1
+      scan_id: sc-314caa80fe01873c_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_polars:7f8f7e5a252c85b4
+      build_id: bd-7f8f7e5a252c85b4_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/1b/1b584f817e89b571a59ff2e6c887863e005c4ba32057e188ef2868942dc9a9a4/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars:a6b6c2ab1df638f4
+      build_id: bd-a6b6c2ab1df638f4_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/22/22acfb63b305807c46bd7a0a99037c93b8872accd1d440d14200aa7984e62d28/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/annotation/bed2gtf/.conda-lock/linux_amd64-bd-a7975bec8c9bd1e2_1.txt
+    linux/arm64:
+      lock_file: modules/local/annotation/bed2gtf/.conda-lock/linux_arm64-bd-41e998f70163b376_1.txt

@@ -1,5 +1,4 @@
 include { GAWK as INGEST_DATABASE_NAMES            } from '../../../modules/nf-core/gawk'
-include { GNU_SORT as COMBINE_DATABASES            } from '../../../modules/nf-core/gnu/sort'
 include { BEDTOOLS_INTERSECT as INTERSECT_DATABASE } from '../../../modules/nf-core/bedtools/intersect'
 include { CIRCEXPLORER2_ANNOTATE as ANNOTATE       } from '../../../modules/nf-core/circexplorer2/annotate'
 include { BEDTOOLS_GETFASTA as GET_FASTA           } from '../../../modules/nf-core/bedtools/getfasta'
@@ -16,7 +15,6 @@ workflow ANNOTATION {
     exons_only
 
     main:
-    ch_versions = channel.empty()
 
     INGEST_DATABASE_NAMES(ch_annotation.map { meta, database -> [meta, database, "named.bed"] }, [], false)
 
@@ -42,15 +40,13 @@ workflow ANNOTATION {
     RENAME(ANNOTATE.out.txt.map { meta, txt -> [meta, txt, "annotated.bed12"] }, [], false)
 
     BED2GTF(RENAME.out.output.map { meta, bed12 -> [meta, bed12, []] }, exons_only)
-    ch_versions = ch_versions.mix(BED2GTF.out.versions)
 
     CUT_BED12(RENAME.out.output.map { meta, bed12 -> [meta, bed12, "cut.bed12"] }, [], false)
 
     GET_FASTA(RENAME.out.output, fasta)
 
     emit:
-    bed12    = RENAME.out.output
-    gtf      = BED2GTF.out.gtf
-    fasta    = GET_FASTA.out.fasta
-    versions = ch_versions
+    bed12 = RENAME.out.output
+    gtf   = BED2GTF.out.gtf
+    fasta = GET_FASTA.out.fasta
 }

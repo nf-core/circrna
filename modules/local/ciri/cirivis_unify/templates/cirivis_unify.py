@@ -3,8 +3,9 @@
 Convert CIRI-vis output to BED12 format
 """
 
+import platform
+
 import pandas as pd
-import yaml
 
 
 def simple_bed12_conversion(df):
@@ -91,15 +92,7 @@ print(f"\\nBlock count distribution:")
 block_counts = df_bed12["blockCount"].value_counts().sort_index()
 for blocks, count in block_counts.items():
     print(f"  {count} circRNAs with {blocks} block(s)")
-
-
-# Versions
-
-versions = {
-    "${task.process}": {
-        "pandas": pd.__version__,
-    }
-}
-
-with open("versions.yml", "w") as f:
-    f.write(yaml.dump(versions))
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    pandas: "{pd.__version__}"', file=handle)

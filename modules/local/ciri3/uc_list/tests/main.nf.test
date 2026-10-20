@@ -27,8 +27,31 @@ nextflow_process {
             def list = path(process.out.list[0][1]).readLines()
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert list == ['chr1\t1\t100', 'chr2\t200\t300'] },
-                { assert process.out.versions.size() == 1 }
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.polars == '2.0.0' }
+            )
+        }
+    }
+
+    test('accepts annotated BED12 with trailing metadata columns') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/annotated.bed12")
+                bed.text = 'chr1\\t0\\t100\\tcircA\\t5\\t+\\t0\\t100\\t0\\t2\\t50,50,\\t0,50,\\tgeneA\\ttranscriptA\\texonic\\t100\\t+\\tsource\\n'
+                input[0] = [[id: 'annotated'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.list[0][1]).readLines() == ['chr1\t1\t100'] }
             )
         }
     }
@@ -69,6 +92,7 @@ nextflow_process {
             def list = path(process.out.list[0][1]).readLines()
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert list == ['chr2\t10\t20', 'chr1\t1\t10'] }
             )
         }
@@ -167,8 +191,10 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert process.out.list.size() == 1 },
-                { assert process.out.versions.size() == 1 }
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.polars == '2.0.0' }
             )
         }
     }

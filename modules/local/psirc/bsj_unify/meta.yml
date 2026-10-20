@@ -1,0 +1,70 @@
+name: psirc_bsj_unify
+description: Convert psiRC junction calls to BED with resolved strands
+keywords:
+  - psirc
+  - bsj
+  - bed
+tools:
+  - python:
+      description: Programming language
+      homepage: https://python.org/
+      licence:
+        - PSF-2.0
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - bed:
+        type: file
+        description: psiRC junction calls
+  - - transcriptome_meta:
+        type: map
+        description: Transcriptome metadata
+    - transcriptome:
+        type: file
+        description: Custom transcriptome FASTA
+output:
+  bed:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}.bed":
+          type: file
+          description: Strand-resolved junctions
+  versions:
+    - versions.yml:
+        type: file
+        description: YAML file containing versions of tools used in the module
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/psirc_bsj_unify:de3381de6fe68612
+      build_id: bd-de3381de6fe68612_1
+      scan_id: sc-0bd94d2e0bcbded7_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/psirc_bsj_unify:a8c5b7b17067ac40
+      build_id: bd-a8c5b7b17067ac40_1
+      scan_id: sc-6e923a2498bc1a35_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/psirc_bsj_unify:deae7987b7e1b13b
+      build_id: bd-deae7987b7e1b13b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/cf/cfe6b49a7a4833dc8bbe238178b3fb9f1171739886207d51b85d07b4b7a06a28/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/psirc_bsj_unify:e5ae2352f82e1bd6
+      build_id: bd-e5ae2352f82e1bd6_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5f/5f26bc70bd7dfff0a45e25dec0bd8f1a3dfb146aab84b68437aac652f74b7888/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/psirc/bsj_unify/.conda-lock/linux_amd64-bd-a8c5b7b17067ac40_1.txt
+    linux/arm64:
+      lock_file: modules/local/psirc/bsj_unify/.conda-lock/linux_arm64-bd-de3381de6fe68612_1.txt

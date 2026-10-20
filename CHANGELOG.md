@@ -9,6 +9,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
+- Local module metadata, declared environments, and generated architecture-specific container/Conda-lock records.
 - [#251](https://github.com/nf-core/circrna/pull/251) - CIRI3 consensus quantification with per-sample BSJ and FSJ counts, sorted sample matrices and shared BWA-MEM alignments, independently of the selected discovery tools (@nictru)
 - [#250](https://github.com/nf-core/circrna/pull/250) - CIRI3 3.0.1 BSJ detection with a shared BWA-MEM alignment for CIRI2 and CIRI3, preserving fixed-length preparation for CIRI-full (@nictru)
 - [#249](https://github.com/nf-core/circrna/pull/249) - circMiner 0.4.2 BSJ detection for paired-end reads, automatic or prebuilt indices, genomic strand inference and supporting-read agreement (@nictru)
@@ -22,6 +23,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Changed`
 
+- Collect module software versions through Nextflow topics using the nf-core template collector instead of passing version files through every subworkflow.
 - [#250](https://github.com/nf-core/circrna/pull/250) - Rename the legacy detector to CIRI2 throughout the pipeline, including `--tools ciri2`, module and subworkflow names, output paths and test fixtures (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - BSJ callers share one definition of STAR and read-support requirements; documentation now lists the current callers and published output paths (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - Local subworkflows now live in `subworkflows/local/<name>/main.nf` and no longer read `params` directly; only `NFCORE_CIRCRNA` in `main.nf` does (@nictru)
@@ -69,6 +71,9 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Dependencies`
 
+- Use Bioconda psirc 1.0.0 build 2, including its native `kallisto_b` executable, and Bioconda CIRI3 3.0.1 instead of the bundled CIRI3 JAR.
+- Upgrade local Python/R dependencies, including Polars 2, pandas 3, and current compatible R/Bioconductor packages; adapt module templates for the new interfaces.
+- Rebuild and digest-pin the CIRIquant fork runtime, retaining paired- and single-end support unavailable in the published Bioconda package.
 - [#243](https://github.com/nf-core/circrna/pull/243) - Updated the nf-core module `csvtk/join` (its stub referenced an undefined `args` variable). The output channel is now called `out_file` (@nictru)
 - [#245](https://github.com/nf-core/circrna/pull/245) - Removed the nf-core module `cat/cat`, which is no longer used (#237) (@nictru)
 

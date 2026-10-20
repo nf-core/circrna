@@ -1,8 +1,10 @@
 process CIRIQUANT_DE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
 
-    container "docker.io/nicotru/ciriquant:1.0.4"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'oras://docker.io/nicotru/ciriquant:35228e054dcad0b0'
+        : 'docker.io/nicotru/ciriquant@sha256:5e59c7a31355f1814a1703e9cb27d347b7bb04871606a24c1acdacfc02c627f8'}"
 
     input:
     tuple val(meta), path(library), path(expression), path(gene)
@@ -10,7 +12,9 @@ process CIRIQUANT_DE {
     output:
     tuple val(meta), path("${circ_path}"), emit: circ
     tuple val(meta), path("${gene_path}"), emit: gene
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('ciriquant'), eval('CIRIquant --version 2>&1 | sed "s/CIRIquant //g"'), emit: versions_ciriquant, topic: versions
+    tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
+    tuple val("${task.process}"), val('edger'), eval('Rscript -e "cat(as.character(packageVersion(\'edgeR\')))"'), emit: versions_edger, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -33,10 +37,6 @@ process CIRIQUANT_DE {
         exit 1
     fi
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-    END_VERSIONS
     """
 
     stub:
@@ -47,9 +47,5 @@ process CIRIQUANT_DE {
     touch ${circ_path}
     touch ${gene_path}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-    END_VERSIONS
     """
 }

@@ -13,64 +13,58 @@ workflow STATISTICAL_TESTS {
     ch_phenotype
 
     main:
-    ch_versions = channel.empty()
 
     ch_psirc_genes = ch_gene_counts
-        .filter{ meta, _counts -> meta.quantification == 'psirc' }
-        .map{ meta, counts -> [meta.quantification, counts] }
+        .filter { meta, _counts -> meta.quantification == 'psirc' }
+        .map { meta, counts -> [meta.quantification, counts] }
     ch_psirc_circs = ch_circ_counts
-        .filter{ meta, _counts -> meta.quantification == 'psirc' }
-        .map{ meta, counts -> [meta.quantification, counts] }
+        .filter { meta, _counts -> meta.quantification == 'psirc' }
+        .map { meta, counts -> [meta.quantification, counts] }
 
     ch_counts = ch_psirc_genes
         .join(ch_psirc_circs)
-        .map{ quantification, genes, circs -> [[id: 'counts', quantification: quantification], genes, circs] }
+        .map { quantification, genes, circs -> [[id: 'counts', quantification: quantification], genes, circs] }
 
     CIRCTEST_PREPARE(ch_counts)
-    ch_versions = ch_versions.mix(CIRCTEST_PREPARE.out.versions)
 
-    CIRCTEST_CIRCTEST(CIRCTEST_PREPARE.out.counts,
-        ch_phenotype)
-    ch_versions = ch_versions.mix(CIRCTEST_CIRCTEST.out.versions)
+    CIRCTEST_CIRCTEST(
+        CIRCTEST_PREPARE.out.counts,
+        ch_phenotype,
+    )
 
     ch_phenotype_annotations = ch_phenotype
-        .map{ _meta, table -> table.text }
-        .splitCsv( header: true )
+        .map { _meta, table -> table.text }
+        .splitCsv(header: true)
 
     ch_condition_samples = ch_phenotype_annotations
-        .map{ annotations -> [annotations.sample, annotations.condition] }
-        .join(ch_ciriquant.map{ meta, gtf -> [meta.id, gtf] })
-        .join(ch_stringtie.map{ meta, gtf -> [meta.id, gtf] })
-        .map{ sample, condition, ciriquant, stringtie -> [condition, [sample, ciriquant, stringtie]] }
+        .map { annotations -> [annotations.sample, annotations.condition] }
+        .join(ch_ciriquant.map { meta, gtf -> [meta.id, gtf] })
+        .join(ch_stringtie.map { meta, gtf -> [meta.id, gtf] })
+        .map { sample, condition, ciriquant, stringtie -> [condition, [sample, ciriquant, stringtie]] }
         .groupTuple()
-        .map{ condition, samples ->
-            [condition, samples.sort({ a, b -> a[0] <=> b[0] }).transpose()]
+        .map { condition, samples ->
+            [condition, samples.sort { a, b -> a[0] <=> b[0] }.transpose()]
         }
-        .map{ condition, samples ->
+        .map { condition, samples ->
             [condition, samples[0], samples[1], samples[2]]
         }
 
     ch_condition_pairs = ch_condition_samples
         .combine(ch_condition_samples)
-        .filter{ c_control, _s_control, _f_ciri_control, _f_stringtie_control, c_treatment, _s_treatment, _f_ciri_treatment, _f_stringtie_treatment
-            -> c_control > c_treatment }
-        .map{ c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment ->
-            [   [id: "${c_control}_${c_treatment}"],
-                s_control + s_treatment,
-                f_ciri_control + f_ciri_treatment,
-                f_stringtie_control + f_stringtie_treatment,
-                ['C'] * s_control.size() + ['T'] * s_treatment.size()
-            ]}
+        .filter { c_control, _s_control, _f_ciri_control, _f_stringtie_control, c_treatment, _s_treatment, _f_ciri_treatment, _f_stringtie_treatment ->
+            c_control > c_treatment
+        }
+        .map { c_control, s_control, f_ciri_control, f_stringtie_control, c_treatment, s_treatment, f_ciri_treatment, f_stringtie_treatment ->
+            [[id: "${c_control}_${c_treatment}"], s_control + s_treatment, f_ciri_control + f_ciri_treatment, f_stringtie_control + f_stringtie_treatment, ['C'] * s_control.size() + ['T'] * s_treatment.size()]
+        }
 
-    CIRIQUANT_PREPDE(ch_condition_pairs
-        .map{meta, samples, ciri, _stringtie, conditions -> [meta, samples, ciri, conditions]}
+    CIRIQUANT_PREPDE(
+        ch_condition_pairs.map { meta, samples, ciri, _stringtie, conditions -> [meta, samples, ciri, conditions] }
     )
-    ch_versions = ch_versions.mix(CIRIQUANT_PREPDE.out.versions)
 
-    STRINGTIE_PREPDE(ch_condition_pairs
-        .map{meta, samples, _ciri, stringtie, _conditions -> [meta, samples, stringtie]}
+    STRINGTIE_PREPDE(
+        ch_condition_pairs.map { meta, samples, _ciri, stringtie, _conditions -> [meta, samples, stringtie] }
     )
-    ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
 
     CIRIQUANT_DE(
         CIRIQUANT_PREPDE.out.library.join(
@@ -79,8 +73,8 @@ workflow STATISTICAL_TESTS {
             STRINGTIE_PREPDE.out.gene_matrix
         )
     )
-    ch_versions = ch_versions.mix(CIRIQUANT_DE.out.versions)
 
     emit:
-    versions = ch_versions
+    circ = CIRIQUANT_DE.out.circ
+    gene = CIRIQUANT_DE.out.gene
 }

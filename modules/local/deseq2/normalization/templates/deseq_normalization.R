@@ -31,20 +31,8 @@ write.table(norm_data, paste0("${meta.id}.normalized_counts.tsv"), quote = FALSE
 
 # TODO: (Can be done later) Add support for Samplesheet so that we can eliminate batch effects
 
-
-################################################
-################################################
-## VERSIONS FILE                              ##
-################################################
-################################################
-
-r.version <- strsplit(version[['version.string']], ' ')[[1]][3]
-deseq2.version <- as.character(packageVersion('DESeq2'))
-
-writeLines(
-    c(
-        '"${task.process}":',
-        paste('    r-base:', r.version),
-        paste('    bioconductor-deseq2:', deseq2.version)
-    ),
-'versions.yml')
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    bioconductor-deseq2: "', packageVersion("DESeq2"), '"')
+), 'versions.yml')

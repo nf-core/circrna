@@ -42,7 +42,7 @@ nextflow_process {
                     process.out.annotation,
                     process.out.expression,
                     process.out.gene,
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_ciriquant
                 ).match() }
             )
         }

@@ -1,13 +1,13 @@
 .DS_Store
-multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt
-multiqc/multiqc_data/multiqc.parquet
-multiqc/multiqc_data/multiqc.log
-multiqc/multiqc_data/multiqc_data.json
-multiqc/multiqc_data/multiqc_sources.txt
-multiqc/multiqc_data/multiqc_software_versions.txt
-multiqc/multiqc_data/llms-full.txt
-multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
-multiqc/multiqc_report.html
+8_multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt
+8_multiqc/multiqc_data/multiqc.parquet
+8_multiqc/multiqc_data/multiqc.log
+8_multiqc/multiqc_data/multiqc_data.json
+8_multiqc/multiqc_data/multiqc_sources.txt
+8_multiqc/multiqc_data/multiqc_software_versions.txt
+8_multiqc/multiqc_data/llms-full.txt
+8_multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
+8_multiqc/multiqc_report.html
 pipeline_info/*.{html,json,txt,yml}
 
 # FastQC outputs (zips and HTML vary by path to nested dir; hashes drift across runners)

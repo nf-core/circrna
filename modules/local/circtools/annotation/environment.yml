@@ -2,5 +2,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::gtfparse=2.5.0
-  - conda-forge::pyyaml=6.0.2
+  - bioconda::gtfparse=3.0.4
+  - conda-forge::polars=2.0.0

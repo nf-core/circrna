@@ -1,4 +1,35 @@
 {
+    "psirc-quant directories - custom prefix": {
+        "content": [
+            [
+                [
+                    "cel_N2_1",
+                    "custom_prefix.rds"
+                ],
+                [
+                    "fust1_1",
+                    "custom_prefix.rds"
+                ]
+            ],
+            [
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:06:02.882216176",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
     "psirc-quant directories - stub": {
         "content": [
             {
@@ -19,8 +50,8 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
                 ],
                 "se": [
                     [
@@ -39,16 +70,16 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
                 ]
             }
         ],
+        "timestamp": "2026-10-20T15:05:29.894133259",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:19:53.761307954"
+        }
     },
     "psirc-quant directories": {
         "content": [
@@ -62,16 +93,23 @@
                     "fust1_1.rds"
                 ]
             ],
-            {
-                "TXIMETA_TXIMETA": {
-                    "bioconductor-tximeta": "1.20.1"
+            [
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
                 }
-            }
+            ]
         ],
+        "timestamp": "2026-10-20T15:05:15.421670233",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:19:06.787316837"
+        }
     }
 }

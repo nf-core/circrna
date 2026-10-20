@@ -29,7 +29,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.reference.collect { file(it).name },
-                    process.out.versions
+                    process.out.versions_circtools
                 ).match() }
             )
         }

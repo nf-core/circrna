@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: mirna_prediction
+description: Predict miRNA binding sites and, when expression data are supplied, compute
+  miRNA/transcript correlations.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - deseq2/normalization
+  - mirna/filtering
+  - compute/correlations
+  - mirna_bindingsites
+input:
+  - transcriptome_fasta:
+      type: file
+      description: "Combined linear/circular transcriptome FASTA.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - circrna_annotation:
+      type: file
+      description: "Collected BED12 annotation tuples for the combined circular RNA
+        calls; accepted by the nested workflow but unused by prediction.
+
+
+        Structure: [ val(annotation_tuples) ]; each item: [ val(meta), path(bed12) ]"
+  - ch_mature:
+      type: file
+      description: "Mature miRNA sequence FASTA channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - mirna_expression:
+      type: file
+      description: "Optional miRNA expression table channel; enables miRNA filtering
+        and correlation analysis.
+
+
+        Structure: [ val(meta), path(expression_table) ]"
+  - _transcript_counts:
+      type: file
+      description: "Transcript-count matrix channel accepted by the interface but unused
+        by this workflow.
+
+
+        Structure: [ val(meta), path(matrix) ]"
+  - quantification_rds:
+      type: file
+      description: "Merged quantification RDS tuple channel supplied to correlation
+        analysis.
+
+
+        Structure: [ val(meta), path(rds) ]"
+  - mirna_tools:
+      type: value
+      description: "Names of selected miRNA prediction tools. Structure: [ val(mirna_tools)
+        ]"
+  - mirna_min_tools:
+      type: value
+      description: "Minimum number of prediction tools supporting a retained binding
+        site. Structure: [ val(mirna_min_tools) ]"
+  - mirna_min_reads:
+      type: value
+      description: "Minimum miRNA read count used for filtering. Structure: [ val(mirna_min_reads)
+        ]"
+  - mirna_min_sample_percentage:
+      type: value
+      description: "Minimum percentage of samples with expression required for filtering.
+        Structure: [ val(mirna_min_sample_percentage) ]"
+output:
+  - binding_sites:
+      type: file
+      description: "Consensus miRNA binding-site predictions from the selected tools.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - correlations:
+      type: file
+      description: "Collected miRNA/transcript correlation result files; empty when
+        miRNA expression is not supplied.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

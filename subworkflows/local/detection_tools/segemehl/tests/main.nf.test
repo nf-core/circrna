@@ -22,7 +22,10 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
                 ])
-                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[1] = channel.of([
+                    [id: 'reference'],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                ])
                 input[2] = null
                 """
             }
@@ -36,7 +39,6 @@ nextflow_workflow {
                     workflow.out.bed.collect { file(it[1]).name },
                     bed.size(),
                     bed.sort(),
-                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
                 ).match() }
             )
         }
@@ -48,7 +50,10 @@ nextflow_workflow {
                 script "modules/nf-core/segemehl/index/main.nf"
                 process {
                     """
-                    input[0] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                    input[0] = [
+                        [id: 'prebuilt_reference'],
+                        file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                    ]
                     """
                 }
             }
@@ -67,7 +72,10 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
                 ])
-                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[1] = channel.of([
+                    [id: 'reference'],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                ])
                 input[2] = SEGEMEHL_INDEX.out.index
                 """
             }
@@ -81,8 +89,43 @@ nextflow_workflow {
                     workflow.out.bed.collect { file(it[1]).name },
                     bed.size(),
                     bed.sort(),
-                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
                 ).match() }
+            )
+        }
+    }
+
+    test("reference tuple is reused for each sample") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def reads = [
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                ]
+                input[0] = channel.of(
+                    [[id: 'cel_N2_1', single_end: false], reads],
+                    [[id: 'cel_N2_2', single_end: false], reads]
+                )
+                input[1] = channel.of([
+                    [id: 'reference'],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                ])
+                input[2] = null
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().count { task -> task.name.contains('SEGEMEHL:ALIGN') } == 2 },
+                { assert workflow.out.bed.collect { file(it[1]).name }.sort() == [
+                    'cel_N2_1.segemehl.unified.bed',
+                    'cel_N2_2.segemehl.unified.bed'
+                ] }
             )
         }
     }
@@ -103,7 +146,10 @@ nextflow_workflow {
                         file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
                     ]
                 ])
-                input[1] = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                input[1] = channel.of([
+                    [id: 'reference'],
+                    file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                ])
                 input[2] = null
                 """
             }

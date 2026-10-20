@@ -36,6 +36,9 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert keys.size() == 196 },
+                { assert process.out.plots.collect { file(it).name } == ['cel_N2_1_tools.upset.png'] },
+                { assert process.out.multiqc.collect { file(it).name } == ['cel_N2_1_tools.upset_mqc.json'] },
+                { assert path(process.out.multiqc[0]).readLines().join('\n').contains('data:image/png;base64,') },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [meta, file(f).name] },
                     keys.size(),
@@ -76,6 +79,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert keys.size() == 197 },
+                { assert process.out.plots.collect { file(it).name } == ['fust1_1_tools.upset.png'] },
+                { assert process.out.multiqc.collect { file(it).name } == ['fust1_1_tools.upset_mqc.json'] },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [meta, file(f).name] },
                     keys.size(),

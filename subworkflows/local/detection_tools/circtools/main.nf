@@ -14,7 +14,6 @@ workflow CIRCTOOLS {
     bsj_reads
 
     main:
-    ch_versions = channel.empty()
 
     // Process mate 1
     ch_mate1 = reads
@@ -30,7 +29,6 @@ workflow CIRCTOOLS {
         bsj_reads,
         ignore_sjdbgtf,
     )
-    ch_versions = ch_versions.mix(MATE1_STAR2PASS.out.versions)
 
     // Process mate 2
     ch_mate2 = reads
@@ -46,7 +44,6 @@ workflow CIRCTOOLS {
         bsj_reads,
         ignore_sjdbgtf,
     )
-    ch_versions = ch_versions.mix(MATE2_STAR2PASS.out.versions)
 
     ch_combined_junctions = star_junction
         .map { meta, junction ->
@@ -68,16 +65,17 @@ workflow CIRCTOOLS {
             return [meta, paired, mate1 ?: [], mate2 ?: []]
         }
 
-    DETECT(ch_combined_junctions, ch_fasta, ch_gtf)
-    ch_versions = ch_versions.mix(DETECT.out.versions)
+    ch_detect = ch_combined_junctions.multiMap { meta, paired, mate1, mate2 ->
+        junctions: [meta, paired, mate1, mate2]
+        strandedness: meta.strandedness ?: 'auto'
+    }
 
-    UNIFY(DETECT.out.reads
-        .join(DETECT.out.coordinates)
-        .join(DETECT.out.counts)
+    DETECT(ch_detect.junctions, ch_fasta, ch_gtf, ch_detect.strandedness)
+
+    UNIFY(
+        DETECT.out.reads.join(DETECT.out.coordinates).join(DETECT.out.counts)
     )
-    ch_versions = ch_versions.mix(UNIFY.out.versions)
 
     emit:
-    bed      = UNIFY.out.bed.map{ meta, bed -> [meta + [tool: "circtools"], bed] }
-    versions = ch_versions
+    bed = UNIFY.out.bed.map { meta, bed -> [meta + [tool: "circtools"], bed] }
 }

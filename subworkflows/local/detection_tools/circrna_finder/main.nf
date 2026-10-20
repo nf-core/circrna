@@ -8,19 +8,18 @@ workflow CIRCRNA_FINDER {
     star_tab
 
     main:
-    ch_versions = channel.empty()
 
-    ch_joined = star_sam.join(star_junctions).join(star_tab)
-        .map{ meta, sam, junction, tab ->
-            [ meta + [tool: "circrna_finder"], [sam, junction, tab] ] }
+    ch_joined = star_sam
+        .join(star_junctions)
+        .join(star_tab)
+        .map { meta, sam, junction, tab ->
+            [meta + [tool: "circrna_finder"], [sam, junction, tab]]
+        }
 
-    MAIN( ch_joined )
-    ch_versions = ch_versions.mix(MAIN.out.versions)
+    MAIN(ch_joined)
 
-    UNIFY( MAIN.out.results.map{ meta, results -> [ meta, results, "circrna_finder.bed" ] }, [], false )
+    UNIFY(MAIN.out.results.map { meta, results -> [meta, results, "circrna_finder.bed"] }, [], false)
 
     emit:
     bed = UNIFY.out.output
-
-    versions = ch_versions
 }

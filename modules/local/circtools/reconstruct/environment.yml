@@ -2,4 +2,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::circtools=2.0
+  - bioconda::circtools=2.0.5.post2

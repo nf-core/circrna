@@ -47,8 +47,9 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert path(process.out.txt[0][1]).exists() },
-                { assert path(process.out.versions[0]).yaml.CIRI3_CIRI3.ciri3 == '3.0.1' }
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
             )
         }
     }
@@ -74,8 +75,10 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert path(process.out.bsj_matrix[0][1]).exists() },
-                { assert path(process.out.fsj_matrix[0][1]).exists() }
+                { assert path(process.out.fsj_matrix[0][1]).exists() },
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
             )
         }
     }
@@ -95,8 +98,9 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                { assert snapshot(process.out).match() },
                 { assert path(process.out.txt[0][1]).exists() },
-                { assert path(process.out.versions[0]).yaml.CIRI3_CIRI3.ciri3 == '3.0.1' }
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
             )
         }
     }
