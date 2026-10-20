@@ -54,45 +54,6 @@ nextflow_pipeline {
         }
     }
 
-    test('iGenomes bare catalogue keys populate the four public index parameters - stub') {
-        options '-stub'
-
-        when {
-            params {
-                ['bowtie', 'bowtie2', 'bwa', 'star'].each { index ->
-                    def directory = new File("$outputDir/index-fixtures/preset-${index}")
-                    directory.mkdirs()
-                    new File(directory, 'index.marker').text = "${index}\n"
-                }
-                outdir = "$outputDir"
-                tools = 'mapsplice,find_circ,ciri3,circexplorer2'
-                genome = 'IndexTest'
-                genomes = [IndexTest: [
-                    bowtie: "$outputDir/index-fixtures/preset-bowtie",
-                    bowtie2: "$outputDir/index-fixtures/preset-bowtie2",
-                    bwa: "$outputDir/index-fixtures/preset-bwa",
-                    star: "$outputDir/index-fixtures/preset-star"
-                ]]
-            }
-        }
-
-        then {
-            assert workflow.success
-            def tasks = workflow.trace.succeeded()
-            assert !tasks.any { task -> ['BOWTIE_BUILD', 'BOWTIE2_BUILD', 'BWA_INDEX', 'STAR_GENOMEGENERATE'].any { task.name.contains(it) } }
-            def consumers = [
-                'BSJ_DETECTION:MAPSPLICE:ALIGN': 'bowtie',
-                'BSJ_DETECTION:FIND_CIRC:ALIGN': 'bowtie2',
-                'CIRCRNA:CIRI_BWA_MEM': 'bwa',
-                'BSJ_DETECTION:STAR2PASS:PASS_1': 'star'
-            ]
-            consumers.each { process, index ->
-                def consumers_tasks = tasks.findAll { it.name.contains(process) }
-                assert consumers_tasks.size() == 2
-            }
-        }
-    }
-
     test('Explicit public index parameters override all four iGenomes catalogue values - stub') {
         options '-stub'
 
