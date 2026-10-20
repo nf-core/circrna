@@ -51,6 +51,9 @@ nextflow_pipeline {
             }
             // Empty discovery stubs do not schedule CIRIquant; HISAT2 must still bypass preparation.
             assert !tasks.any { it.name.contains('HISAT2_') }
+            assert snapshot(
+                removeNextflowVersion("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml")
+            ).match()
         }
     }
 
