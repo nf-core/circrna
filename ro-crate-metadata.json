@@ -121,11 +121,7 @@
         },
         {
             "@id": "main.nf",
-            "@type": [
-                "File",
-                "SoftwareSourceCode",
-                "ComputationalWorkflow"
-            ],
+            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
             "contributor": [
                 {
                     "@id": "https://orcid.org/0000-0002-8492-6585"

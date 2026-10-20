@@ -9,8 +9,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
-- Native AMD64 and ARM64 CI coverage for the packaged psirc and CIRI3 modules.
-- Local module metadata, declared environments, and generated architecture-specific container/Conda-lock records, with documented legacy and custom-runtime exceptions.
+- Local module metadata, declared environments, and generated architecture-specific container/Conda-lock records.
 - [#251](https://github.com/nf-core/circrna/pull/251) - CIRI3 consensus quantification with per-sample BSJ and FSJ counts, sorted sample matrices and shared BWA-MEM alignments, independently of the selected discovery tools (@nictru)
 - [#250](https://github.com/nf-core/circrna/pull/250) - CIRI3 3.0.1 BSJ detection with a shared BWA-MEM alignment for CIRI2 and CIRI3, preserving fixed-length preparation for CIRI-full (@nictru)
 - [#249](https://github.com/nf-core/circrna/pull/249) - circMiner 0.4.2 BSJ detection for paired-end reads, automatic or prebuilt indices, genomic strand inference and supporting-read agreement (@nictru)
