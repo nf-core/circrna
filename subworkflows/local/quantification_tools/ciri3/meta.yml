@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: ciri3_quant
+description: Ciri3 processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - ciri3/ciri3
+  - ciri3/uc/list
+  - ciri3/uc/matrix
+  - join/samples
+input:
+  - sam:
+      type: file
+      description: "BWA-aligned SAM files.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.sam"
+  - bed12:
+      type: file
+      description: "Collected BED12 annotation tuples for the combined circular RNA
+        calls, used to create the CIRI3 unstranded junction list.
+
+
+        Structure: [ val(annotation_tuples) ]; each item: [ val(meta), path(bed12) ]"
+      pattern: "*.{bed,bed.gz}"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+output:
+  - bsj:
+      type: file
+      description: "Joined CIRI3 back-splice junction count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - fsj:
+      type: file
+      description: "Joined CIRI3 forward-splice junction count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

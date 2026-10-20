@@ -1,0 +1,282 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: bsj_detection
+description: Run enabled back-splice junction callers, merge their calls across samples,
+  then annotate the combined and per-sample results.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - gawk
+  - bedtools/intersect
+  - join/samples
+  - combinebeds/reads
+  - combinebeds/filter
+  - combinebeds/shifts
+  - fail/on/empty
+  - segemehl
+  - star2pass
+  - circexplorer2
+  - circrna_finder
+  - find_circ
+  - ciri2
+  - ciri3
+  - circtools
+  - mapsplice
+  - psirc
+  - circminer
+  - annotation
+  - starbasedtools
+  - readcarryingtools
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - blacklist:
+      type: file
+      description: "Optional blacklist BED path; null disables blacklist filtering.
+        The path is wrapped as a value when combined with per-sample calls.
+
+
+        Structure: [ val(blacklist_path) ]"
+  - ch_annotation:
+      type: file
+      description: "Annotation database BED channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - bowtie_index:
+      type: file
+      description: "Bowtie index channel emitted by PREPARE_GENOME; empty when no selected
+        caller needs it.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - bowtie2_index:
+      type: file
+      description: "Bowtie2 index channel emitted by PREPARE_GENOME; empty when no selected
+        caller needs it.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - ch_bwa_sam:
+      type: file
+      description: "BWA-aligned SAM channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - chromosomes:
+      type: file
+      description: "Per-chromosome FASTA channel emitted by PREPARE_GENOME for MapSplice.
+
+
+        Structure: [ val(meta), path(chromosome_fasta) ]"
+  - star_index:
+      type: file
+      description: "STAR genome index channel emitted by PREPARE_GENOME.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - circexplorer2_index:
+      type: file
+      description: "Collected list of Circexplorer2 reference paths emitted by PREPARE_GENOME.
+
+
+        Structure: [ val(reference_files) ]"
+  - psirc_index:
+      type: file
+      description: "Collected psirc reference bundle emitted by PREPARE_GENOME.
+
+
+        Structure: [ val(reference_tuples) ]; each item: [ val(meta), path(transcriptome),
+        [ path(index_a), path(index_b) ] ]"
+  - bsj_reads:
+      type: value
+      description: "Minimum number of reads required to retain a back-splice junction.
+
+
+        Structure: [ val(bsj_reads) ]"
+  - tools:
+      type: value
+      description: "Names of selected analysis tools. Structure: [ val(tools) ]"
+  - fli_tools:
+      type: value
+      description: "Names of selected full-length isoform callers. Structure: [ val(fli_tools)
+        ]"
+  - segemehl_index:
+      type: file
+      description: "Optional raw Segemehl index path; null lets the SEGEMEHL subworkflow
+        generate its index.
+
+
+        Structure: [ val(index_path) ]"
+  - max_shift:
+      type: value
+      description: "Maximum genomic coordinate shift allowed while merging calls. Structure:
+        [ val(max_shift) ]"
+  - consider_strand:
+      type: value
+      description: "Whether strand is considered when merging calls. Structure: [ val(consider_strand)
+        ]"
+  - min_tools:
+      type: value
+      description: "Minimum number of callers supporting a retained result. Structure:
+        [ val(min_tools) ]"
+  - min_samples:
+      type: value
+      description: "Minimum number of samples supporting a retained call. Structure:
+        [ val(min_samples) ]"
+  - exons_only:
+      type: value
+      description: "Whether generated annotations should retain exons only. Structure:
+        [ val(exons_only) ]"
+  - ch_faidx:
+      type: file
+      description: "Reference FASTA index (FAI) channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.fai"
+  - circminer_index:
+      type: file
+      description: "circMiner index channel emitted by PREPARE_GENOME; empty unless
+        supplied or required.
+
+
+        Structure: [ val(meta), path(index_files) ]"
+  - circminer_gtf:
+      type: file
+      description: "circMiner-specific standardized and ordered GTF channel; empty unless
+        circMiner is selected.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - ch_reads_fixed_length:
+      type: file
+      description: "Reads trimmed to a common target length for CIRI-full.
+
+
+        Structure: [ val(meta), path(file) ]"
+output:
+  - bed:
+      type: file
+      description: "Collected list of combined back-splice BED tuples, containing the
+        cross-sample merged call set.
+
+
+        Structure: [ val(bed_tuples) ]; each item: [ val(meta), path(bed) ]"
+      pattern: "*.{bed,bed.gz}"
+  - bed12:
+      type: file
+      description: "Collected list of annotated BED12 tuples for the cross-sample merged
+        call set.
+
+
+        Structure: [ val(bed12_tuples) ]; each item: [ val(meta), path(bed12) ]"
+      pattern: "*.{bed,bed.gz}"
+  - gtf:
+      type: file
+      description: "GTF annotations for combined circular RNA calls.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - fasta:
+      type: file
+      description: "FASTA output for combined circular RNA calls.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - bed_reads:
+      type: file
+      description: "Combined reads/read evidence supporting back-splice junctions.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - bed_per_sample:
+      type: file
+      description: "Merged back-splice junction calls retained separately for each sample.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - bed12_per_sample:
+      type: file
+      description: "Annotated BED12 calls retained separately for each sample.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - bed_per_sample_tool:
+      type: file
+      description: "Per-sample calls retaining caller identity in metadata.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ciri2_txt:
+      type: file
+      description: "CIRI2 result tables used by full-length callers.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ciri2_sam:
+      type: file
+      description: "BWA SAM alignments passed through for CIRI-full.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - reads_fixed_length:
+      type: file
+      description: "CIRI-full reads trimmed to a uniform per-sample target length.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - psirc_bsj:
+      type: file
+      description: "psirc raw result files.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - star_bam:
+      type: file
+      description: "STAR-aligned BAMs used by full-length callers.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.bam"
+  - star_junction:
+      type: file
+      description: "STAR splice-junction output used by downstream callers.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - multiqc_files:
+      type: file
+      description: "Individual report paths from read-support and shift-plotting steps;
+        metadata is removed before emit.
+
+
+        Structure: [ path(report) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

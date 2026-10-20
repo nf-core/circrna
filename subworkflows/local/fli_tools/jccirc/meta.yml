@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: jccirc
+description: Assemble a transcriptome and run JCCIRC to detect full-length circular
+  RNA isoforms.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - trinity
+  - jccirc/jccirc
+  - jccirc/prep
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_bsj_annotation:
+      type: file
+      description: "Back-splice junction annotation channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_bsj_reads:
+      type: file
+      description: "Read evidence supporting back-splice junctions.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+output:
+  - logs:
+      type: file
+      description: "Per-sample JCCIRC log files.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

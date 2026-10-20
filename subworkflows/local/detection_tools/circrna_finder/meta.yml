@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: circrna_finder
+description: Circrna finder processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circrna/finder
+  - gawk
+input:
+  - star_sam:
+      type: file
+      description: "STAR SAM alignment channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - star_junctions:
+      type: file
+      description: "STAR splice-junction channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - star_tab:
+      type: file
+      description: "STAR alignment summary table channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+output:
+  - bed:
+      type: file
+      description: "Per-sample CircrnaFinder BED calls.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: circtools_longread
+description: Build and emit Circtools nanopore reference resources from the supplied
+  genome and reads.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circtools/reference
+  - circtools/nanopore
+input:
+  - ch_reads:
+      type: file
+      description: "Per-sample sequencing reads, paired-end file lists where applicable.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - genome:
+      type: value
+      description: "Genome assembly identifier passed to Circtools reference generation
+        (the pipeline currently supplies the string hg38).
+
+
+        Structure: [ val(genome) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+output:
+  - reference:
+      type: directory
+      description: "Circtools nanopore reference directory generated from the genome
+        assembly identifier.
+
+
+        Structure: [ path(reference_directory) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

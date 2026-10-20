@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: mirna_bindingsites
+description: Mirna bindingsites processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - bioawk
+  - miranda
+  - gawk
+  - targetscan
+  - mirna/targets
+  - majority/vote
+input:
+  - transcriptome_fasta:
+      type: file
+      description: "Combined linear/circular transcriptome FASTA.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - _circrna_bed12:
+      type: file
+      description: "Collected BED12 annotation tuples accepted for interface compatibility
+        but unused by this workflow.
+
+
+        Structure: [ val(annotation_tuples) ]; each item: [ val(meta), path(bed12) ]"
+  - mirna_fasta:
+      type: file
+      description: "Mature miRNA sequences in FASTA format.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - tools:
+      type: value
+      description: "Names of selected analysis tools. Structure: [ val(tools) ]"
+  - min_tools:
+      type: value
+      description: "Minimum number of callers supporting a retained result. Structure:
+        [ val(min_tools) ]"
+output:
+  - binding_sites:
+      type: file
+      description: "Consensus miRNA binding-site predictions from the selected tools.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

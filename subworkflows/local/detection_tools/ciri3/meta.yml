@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: ciri3
+description: Ciri3 processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - ciri3/ciri3
+  - gawk
+input:
+  - ch_sam:
+      type: file
+      description: "BWA-aligned SAM channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.sam"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+output:
+  - bed:
+      type: file
+      description: "Per-sample unified CIRI3 back-splice junction BED calls.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

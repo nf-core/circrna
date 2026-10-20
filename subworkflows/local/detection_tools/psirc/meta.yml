@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: psirc
+description: Psirc processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - psirc/bsj
+  - psirc/bsj/unify
+  - infer/strand
+input:
+  - ch_reads:
+      type: file
+      description: "Per-sample sequencing reads, paired-end file lists where applicable.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_index:
+      type: file
+      description: "Collected psirc reference bundle passed from PREPARE_GENOME.
+
+
+        Structure: [ val(reference_tuples) ]; each item: [ val(meta), path(transcriptome),
+        [ path(index_a), path(index_b) ] ]"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_faidx:
+      type: file
+      description: "Reference FASTA index (FAI) channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.fai"
+output:
+  - bed:
+      type: file
+      description: "Per-sample psirc calls with inferred strand.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - output:
+      type: file
+      description: "Per-sample raw psirc BSJ output files.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
