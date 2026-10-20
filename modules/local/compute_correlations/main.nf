@@ -1,7 +1,6 @@
 process COMPUTE_CORRELATIONS {
     tag "${meta.id}"
     label 'process_single'
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -15,18 +14,23 @@ process COMPUTE_CORRELATIONS {
 
     output:
     tuple val(meta), path("*.tsv"), emit: correlations, optional: true
-    tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
-    tuple val("${task.process}"), val('bioconductor-fishpond'), eval('Rscript -e "cat(as.character(packageVersion(\'fishpond\')))"'), emit: versions_bioconductor_fishpond, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template('compute_correlations.sh')
+    template('compute_correlations.R')
 
     stub:
     """
     touch ${meta.id}.circrna_correlation.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: "\$(Rscript -e "cat(strsplit(R.version[['version.string']], ' ')[[1]][3])")"
+        bioconductor-fishpond: "\$(Rscript -e "cat(as.character(packageVersion('fishpond')))")"
+    END_VERSIONS
 
     """
 }

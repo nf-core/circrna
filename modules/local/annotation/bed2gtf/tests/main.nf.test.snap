@@ -10,24 +10,14 @@
                     -1619316221
                 ]
             ],
-            [
-                [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
-            ]
+            {
+                "ANNOTATION_BED2GTF": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
         ],
-        "timestamp": "2026-10-18T22:44:48.062116353",
+        "timestamp": "2026-10-20T15:20:04.358926638",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -44,24 +34,14 @@
                     510719543
                 ]
             ],
-            [
-                [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
-            ]
+            {
+                "ANNOTATION_BED2GTF": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
         ],
-        "timestamp": "2026-10-18T22:45:14.653643289",
+        "timestamp": "2026-10-20T15:20:13.953895095",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -79,18 +59,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,ec3d61cc87b3090d0deea054527cedc1"
                 ],
                 "gtf": [
                     [
@@ -100,23 +69,12 @@
                         "all.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "ANNOTATION_BED2GTF",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,ec3d61cc87b3090d0deea054527cedc1"
                 ]
             }
         ],
-        "timestamp": "2026-10-18T22:45:39.691749075",
+        "timestamp": "2026-10-20T15:20:23.428097904",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

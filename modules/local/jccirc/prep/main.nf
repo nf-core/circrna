@@ -12,20 +12,26 @@ process JCCIRC_PREP {
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: merged
-    tuple val("${task.process}"), val('python'), eval('python --version 2>&1 | sed "s/Python //"'), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval('python -c "import polars; print(polars.__version__)"'), emit: versions_polars, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template('prep.sh')
+    template('prep.py')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.txt
 
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+        polars: "\$(python -c \'import polars; print(polars.__version__)\')"
+    END_VERSIONS
     """
 }

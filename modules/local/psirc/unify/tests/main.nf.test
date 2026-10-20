@@ -32,7 +32,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.bed.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
-                    process.out.versions_pandas
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }
@@ -56,7 +56,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.bed.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
-                    process.out.versions_pandas
+                    path(process.out.versions[0]).yaml
                 ).match() }
             )
         }

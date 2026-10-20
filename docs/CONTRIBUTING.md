@@ -212,7 +212,7 @@ Follow these rules when you add a module or subworkflow:
   Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
 - Local modules read only `ext.args`, `ext.argsN`, `ext.prefix`, `ext.prefixN` and `ext.when`.
   Any other value that changes the module's behaviour (for example an output suffix) is a `val` process input, so tests pass it with `input[N] = ...`.
-- Report each software version as a `(task.process, tool, version)` tuple with a named output and `topic: versions`, following the nf-core module template. MultiQC must not publish to that topic because its inputs depend on the collected versions.
+- Publish software versions to `topic: versions`, using either named `(task.process, tool, version)` tuple outputs or a `versions.yml` file written by a native Python/R template, following the corresponding nf-core module pattern. MultiQC must not publish to that topic because its inputs depend on the collected versions.
 - Scaffold new local modules with `nf-core modules create <module> --dir .`. Describe them in `meta.yml` and declare software dependencies in `environment.yml`. Generate containers and architecture-specific locks with `nf-core modules containers create <module> --dir .`, then regenerate the pipeline configs with `nf-core pipelines containers create-configs --dir .`.
   Dependency-free Nextflow `exec:` processes do not need a software environment.
 - Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.

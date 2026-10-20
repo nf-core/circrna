@@ -39,8 +39,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    process.out.versions_python,
-                    process.out.versions_polars,
+                    path(process.out.versions[0]).yaml,
                     file(process.out.length[0][1]).name,
                     path(process.out.length[0][1]).text
                 ).match() }

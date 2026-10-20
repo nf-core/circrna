@@ -1,24 +1,16 @@
 {
     "cel_N2_1 paired-end read lengths": {
         "content": [
-            [
-                [
-                    "CIRI_READLENGTH",
-                    "python",
-                    "3.14.8"
-                ]
-            ],
-            [
-                [
-                    "CIRI_READLENGTH",
-                    "polars",
-                    "2.0.0"
-                ]
-            ],
+            {
+                "CIRI_READLENGTH": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            },
             "cel_N2_1.txt",
             "148"
         ],
-        "timestamp": "2026-10-19T00:31:20.446980985",
+        "timestamp": "2026-10-20T15:23:25.34249663",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -36,18 +28,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRI_READLENGTH",
-                        "python",
-                        "3.14.8"
-                    ]
-                ],
-                "2": [
-                    [
-                        "CIRI_READLENGTH",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,e7dfdc1102a36c3bcaf1b391ecace36a"
                 ],
                 "length": [
                     [
@@ -57,23 +38,12 @@
                         "cel_N2_1.txt:md5,919d117956d3135c4c683ff021352f5c"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI_READLENGTH",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI_READLENGTH",
-                        "python",
-                        "3.14.8"
-                    ]
+                "versions": [
+                    "versions.yml:md5,e7dfdc1102a36c3bcaf1b391ecace36a"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T00:31:49.432690617",
+        "timestamp": "2026-10-20T15:23:37.054167407",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

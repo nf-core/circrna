@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 expression_norm <- read.table("$normalized_counts",
     sep = "\\t",
@@ -37,4 +35,7 @@ write.table(filtered_data, paste0("${meta.id}.normalized_counts_filtered.tsv"),
             quote = FALSE, sep = "\\t",
             row.names = FALSE)
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"')
+), 'versions.yml')

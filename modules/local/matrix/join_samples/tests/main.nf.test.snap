@@ -1489,23 +1489,21 @@
                 }
             ],
             [
-                [
-                    [
-                        "JOIN_SAMPLES",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "JOIN_SAMPLES",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
+                {
+                    "JOIN_SAMPLES": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                },
+                {
+                    "JOIN_SAMPLES": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:58:45.274687921",
+        "timestamp": "2026-10-20T15:28:45.962477324",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -1540,18 +1538,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "JOIN_SAMPLES",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "JOIN_SAMPLES",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,fe414b09b93d562e979ab661fe285561"
                 ],
                 "joined": [
                     [
@@ -1561,23 +1548,12 @@
                         "gene.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "JOIN_SAMPLES",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "JOIN_SAMPLES",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,fe414b09b93d562e979ab661fe285561"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T00:54:59.338470337",
+        "timestamp": "2026-10-20T15:29:23.610229898",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

@@ -33,7 +33,7 @@ output:
     - - "meta":
           type: map
           description: Annotation metadata
-      - "$prefix.$suffix":
+      - "${prefix}.${suffix}":
           type: file
           description: Custom transcriptome
   versions_psirc:

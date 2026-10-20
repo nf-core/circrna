@@ -18,44 +18,54 @@
                 "fust1_1_read_agreement_mqc.json"
             ],
             [
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "seaborn",
-                        "0.13.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "matplotlib",
-                        "3.11.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "upsetplot",
-                        "0.9.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:33:03.291714697",
+        "timestamp": "2026-10-20T15:25:33.304733725",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -106,44 +116,54 @@
                 "cel_N2_1_read_agreement_mqc.json"
             ],
             [
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "seaborn",
-                        "0.13.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "matplotlib",
-                        "3.11.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "upsetplot",
-                        "0.9.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:32:23.162468299",
+        "timestamp": "2026-10-20T15:25:15.076728638",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -169,44 +189,54 @@
                 "cel_N2_1_read_agreement_mqc.json"
             ],
             [
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "seaborn",
-                        "0.13.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "matplotlib",
-                        "3.11.2"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_READS",
-                        "upsetplot",
-                        "0.9.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_READS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "seaborn": "0.13.2",
+                        "matplotlib": "3.11.2",
+                        "upsetplot": "0.9.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:31:43.906655871",
+        "timestamp": "2026-10-20T15:24:57.060979366",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -230,39 +260,7 @@
                     
                 ],
                 "3": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "4": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "5": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "seaborn",
-                        "0.13.2"
-                    ]
-                ],
-                "6": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "matplotlib",
-                        "3.11.2"
-                    ]
-                ],
-                "7": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "upsetplot",
-                        "0.9.0"
-                    ]
+                    "versions.yml:md5,6c12061ba348e71dfe56aa24a1efc0aa"
                 ],
                 "combined": [
                     [
@@ -278,44 +276,12 @@
                 "plots": [
                     
                 ],
-                "versions_matplotlib": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "matplotlib",
-                        "3.11.2"
-                    ]
-                ],
-                "versions_polars": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "versions_seaborn": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "seaborn",
-                        "0.13.2"
-                    ]
-                ],
-                "versions_upsetplot": [
-                    [
-                        "COMBINEBEDS_READS",
-                        "upsetplot",
-                        "0.9.0"
-                    ]
+                "versions": [
+                    "versions.yml:md5,6c12061ba348e71dfe56aa24a1efc0aa"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T01:17:13.903267747",
+        "timestamp": "2026-10-20T15:25:54.785348859",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

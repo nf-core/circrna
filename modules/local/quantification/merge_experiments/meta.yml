@@ -53,46 +53,21 @@ output:
           type: file
           description: Merged annotated experiment.
           pattern: "*.merged.rds"
-  versions_bioconductor_summarizedexperiment:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "bioconductor-summarizedexperiment":
-          type: string
-          description: The name of the tool
-      - 'Rscript -e "cat(as.character(packageVersion(''SummarizedExperiment'')))"':
-          type: eval
-          description: Software version
-  versions_bioconductor_rtracklayer:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "bioconductor-rtracklayer":
-          type: string
-          description: The name of the tool
-      - 'Rscript -e "cat(as.character(packageVersion(''rtracklayer'')))"':
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - bioconductor-summarizedexperiment:
-          type: string
-          description: Software name
-      - Rscript -e "cat(as.character(packageVersion('SummarizedExperiment')))":
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - bioconductor-rtracklayer:
-          type: string
-          description: Software name
-      - Rscript -e "cat(as.character(packageVersion('rtracklayer')))":
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 authors:
   - "@nictru"
 maintainers:

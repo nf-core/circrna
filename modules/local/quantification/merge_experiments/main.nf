@@ -1,7 +1,6 @@
 process MERGE_EXPERIMENTS {
     tag "${meta.id}"
     label "process_medium"
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -16,18 +15,23 @@ process MERGE_EXPERIMENTS {
 
     output:
     tuple val(meta), path("${meta.id}.merged.rds"), emit: merged
-    tuple val("${task.process}"), val('bioconductor-summarizedexperiment'), eval('Rscript -e "cat(as.character(packageVersion(\'SummarizedExperiment\')))"'), emit: versions_bioconductor_summarizedexperiment, topic: versions
-    tuple val("${task.process}"), val('bioconductor-rtracklayer'), eval('Rscript -e "cat(as.character(packageVersion(\'rtracklayer\')))"'), emit: versions_bioconductor_rtracklayer, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template("merge_experiments.sh")
+    template("merge_experiments.r")
 
     stub:
     """
     touch ${meta.id}.merged.rds
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-summarizedexperiment: "\$(Rscript -e "cat(as.character(packageVersion('SummarizedExperiment')))")"
+        bioconductor-rtracklayer: "\$(Rscript -e "cat(as.character(packageVersion('rtracklayer')))")"
+    END_VERSIONS
 
     """
 }

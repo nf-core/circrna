@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 require(aod)
 require(plyr)
@@ -451,4 +449,10 @@ for (i in rownames(test\$summary_table)) {
 }
 dev.off()
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    aod: "', packageVersion("aod"), '"'),
+    paste0('    plyr: "', packageVersion("plyr"), '"'),
+    paste0('    ggplot2: "', packageVersion("ggplot2"), '"')
+), 'versions.yml')

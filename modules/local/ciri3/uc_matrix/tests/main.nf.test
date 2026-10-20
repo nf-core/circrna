@@ -34,8 +34,8 @@ nextflow_process {
                 { assert process.out.bsj[0][0].id == 'sample_9' },
                 { assert bsj == ['circRNA_ID\tcount', 'chr1:10|20\t7', 'chr1:30|40\t0', 'chr2:50|70\t0'] },
                 { assert fsj == ['circRNA_ID\tcount', 'chr1:10|20\t19', 'chr1:30|40\t0', 'chr2:50|70\t3'] },
-                { assert process.out.versions_python[0] == ['CIRI3_UC_MATRIX', 'python', '3.14.7'] },
-                { assert process.out.versions_polars[0] == ['CIRI3_UC_MATRIX', 'polars', '2.0.0'] }
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_MATRIX.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_MATRIX.polars == '2.0.0' }
             )
         }
     }

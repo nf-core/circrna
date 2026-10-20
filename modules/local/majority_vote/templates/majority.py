@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
 
 import polars as pl
 
@@ -27,5 +34,3 @@ df.write_csv('${meta.id}.majority.tsv', separator='\\t', include_header=False)
 df = df.group_by('mirna').agg(pl.col("target").str.join(","))
 
 df.write_csv('${meta.id}.targets.tsv', separator='\\t', include_header=False)
-
-PY

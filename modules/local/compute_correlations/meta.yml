@@ -46,46 +46,21 @@ output:
           type: file
           description: Correlation results by miRNA.
           pattern: "*.tsv"
-  versions_r_base:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - r-base:
-          type: string
-          description: The name of the tool
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
-          type: eval
-          description: Software version
-  versions_bioconductor_fishpond:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - bioconductor-fishpond:
-          type: string
-          description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('fishpond')))":
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - r-base:
-          type: string
-          description: Software name
-      - R --version | sed "1!d; s/.*version //; s/ .*//":
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - bioconductor-fishpond:
-          type: string
-          description: Software name
-      - Rscript -e "cat(as.character(packageVersion('fishpond')))":
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 authors:
   - "@nictru"
 maintainers:

@@ -13,18 +13,24 @@ process PSIRC_BSJ_UNIFY {
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
-    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f2'), emit: versions_python, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template('psirc_bsj_unify.sh')
+    template('psirc_bsj_unify.py')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     """
     touch ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+    END_VERSIONS
     """
 }

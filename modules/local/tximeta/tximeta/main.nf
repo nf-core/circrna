@@ -1,7 +1,6 @@
 process TXIMETA_TXIMETA {
     tag "${meta.id}"
     label "process_medium"
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -14,19 +13,24 @@ process TXIMETA_TXIMETA {
 
     output:
     tuple val(meta), path("${prefix}.rds"), emit: se
-    tuple val("${task.process}"), val('bioconductor-tximeta'), eval('Rscript -e "cat(as.character(packageVersion(\'tximeta\')))"'), emit: versions_bioconductor_tximeta, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template('tximeta.sh')
+    template('tximeta.r')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     """
     touch ${prefix}.rds
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-tximeta: "\$(Rscript -e "cat(as.character(packageVersion('tximeta')))")"
+    END_VERSIONS
 
     """
 }

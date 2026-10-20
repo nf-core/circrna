@@ -39,7 +39,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.joined.collect { meta, output -> [meta, file(output).name] },
                     joined.rows.sort { it.toString() },
-                    [process.out.versions_python, process.out.versions_polars]
+                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
                 ).match() }
             )
         }

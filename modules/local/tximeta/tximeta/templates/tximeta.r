@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 # Script for importing and processing transcript-level quantifications.
 # Written by Lorena Pantano, later modified by Jonathan Manning, and released
@@ -46,4 +44,7 @@ citation("tximeta")
 print(sessionInfo())
 sink()
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    bioconductor-tximeta: "', packageVersion("tximeta"), '"')
+), 'versions.yml')

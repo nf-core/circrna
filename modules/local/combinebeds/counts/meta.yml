@@ -40,46 +40,15 @@ output:
           type: file
           description: Aggregated count table.
           pattern: "*.tsv"
-  versions_python:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "python":
-          type: string
-          description: The name of the tool
-      - "python --version | sed 's/Python //'":
-          type: eval
-          description: Software version
-  versions_polars:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "polars":
-          type: string
-          description: The name of the tool
-      - "python -c 'import polars; print(polars.__version__)'":
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: YAML file containing versions of tools used in the module
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - python:
-          type: string
-          description: Software name
-      - python --version | sed 's/Python //':
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - polars:
-          type: string
-          description: Software name
-      - python -c 'import polars; print(polars.__version__)':
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: string
+        description: The name of the process
 authors:
   - "@nictru"
 maintainers:

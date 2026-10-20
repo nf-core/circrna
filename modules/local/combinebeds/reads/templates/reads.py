@@ -1,6 +1,16 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+    handle.write(f'  seaborn: "{importlib.metadata.version("seaborn")}"\\n')
+    handle.write(f'  matplotlib: "{importlib.metadata.version("matplotlib")}"\\n')
+    handle.write(f'  upsetplot: "{importlib.metadata.version("upsetplot")}"\\n')
 
 import base64
 import json
@@ -88,5 +98,3 @@ if not consider_strand:
 
 df_filtered = df_filtered.select("chr", "start", "end", "name", "score", "strand", "reads")
 df_filtered.write_csv("${prefix}.bed", separator="\\t", include_header=False)
-
-PY

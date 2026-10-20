@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
+import platform
 from io import StringIO
 
 import polars as pl
@@ -45,4 +44,8 @@ def main(bed_path, output_path):
 
 if __name__ == "__main__":
     main("${bed}", "${prefix}.ciri3.list")
-PYTHON
+
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

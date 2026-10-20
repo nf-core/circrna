@@ -13,18 +13,24 @@ process INFER_STRAND {
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
-    tuple val("${task.process}"), val('pysam'), eval('python -c "import pysam; print(pysam.__version__)"'), emit: versions_pysam, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template('infer_strand.sh')
+    template('infer_strand.py')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     """
     cp ${bed} ${prefix}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        pysam: "\$(python -c \'import pysam; print(pysam.__version__)\')"
+    END_VERSIONS
     """
 }

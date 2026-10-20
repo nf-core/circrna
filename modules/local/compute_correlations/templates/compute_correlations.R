@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 library(fishpond)
 suppressMessages(library(SummarizedExperiment))
@@ -51,4 +49,8 @@ for (i in 1:nrow(interactions)) {
     write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    bioconductor-fishpond: "', packageVersion("fishpond"), '"')
+), 'versions.yml')

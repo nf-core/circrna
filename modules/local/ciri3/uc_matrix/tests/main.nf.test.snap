@@ -19,18 +19,7 @@
                     ]
                 ],
                 "2": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "3": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ],
                 "bsj": [
                     [
@@ -48,23 +37,12 @@
                         "empty_sample.fsj.tsv:md5,cb5e000a7cb8ee6a0a083d874abfa1db"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:16:43.299320162",
+        "timestamp": "2026-10-20T15:25:20.527929572",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -90,18 +68,7 @@
                     ]
                 ],
                 "2": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "3": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ],
                 "bsj": [
                     [
@@ -119,23 +86,12 @@
                         "sample_9.fsj.tsv:md5,f4119cfd1d6a080e946f853e54ab7957"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:17:45.827778384",
+        "timestamp": "2026-10-20T15:26:17.624705032",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -161,18 +117,7 @@
                     ]
                 ],
                 "2": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "3": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ],
                 "bsj": [
                     [
@@ -190,23 +135,12 @@
                         "sample_9.fsj.tsv:md5,e3c2609deabb36866ba23842f0bb78ea"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_MATRIX",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,c8090b0524ed41c6656084540bb99bed"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:16:32.024443314",
+        "timestamp": "2026-10-20T15:25:11.28487189",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

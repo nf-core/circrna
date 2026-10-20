@@ -1,7 +1,6 @@
 process COMBINEBEDS_FILTER {
     tag "${meta.id}"
     label "process_low"
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -20,22 +19,28 @@ process COMBINEBEDS_FILTER {
     tuple val(meta), path("${prefix}.${suffix}"), emit: combined, optional: true
     path "*.png", emit: plots, optional: true
     path "*.json", emit: multiqc, optional: true
-    tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
-    tuple val("${task.process}"), val('upsetplot'), eval("python -c 'import upsetplot; print(upsetplot.__version__)'"), emit: versions_upsetplot, topic: versions
-    tuple val("${task.process}"), val('matplotlib'), eval("python -c 'import matplotlib; print(matplotlib.__version__)'"), emit: versions_matplotlib, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template("filter.sh")
+    template("filter.py")
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.${suffix}
 
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+        polars: "\$(python -c \'import polars; print(polars.__version__)\')"
+        upsetplot: "\$(python -c \'import upsetplot; print(upsetplot.__version__)\')"
+        matplotlib: "\$(python -c \'import matplotlib; print(matplotlib.__version__)\')"
+    END_VERSIONS
     """
 }

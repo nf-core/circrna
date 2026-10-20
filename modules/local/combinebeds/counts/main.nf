@@ -1,7 +1,6 @@
 process COMBINEBEDS_COUNTS {
     tag "${meta.id}"
     label "process_low"
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -15,20 +14,26 @@ process COMBINEBEDS_COUNTS {
 
     output:
     tuple val(meta), path("${prefix}.tsv"), emit: combined, optional: true
-    tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template("counts.sh")
+    template("counts.py")
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.tsv
 
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+        polars: "\$(python -c \'import polars; print(polars.__version__)\')"
+    END_VERSIONS
     """
 }

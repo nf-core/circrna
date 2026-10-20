@@ -10,22 +10,14 @@
                     "cf89f07e8a16a918ff2f13c5341af624"
                 ]
             ],
-            [
-                [
-                    "BUILD_LIST",
-                    "python",
-                    "3.14.8"
-                ]
-            ],
-            [
-                [
-                    "BUILD_LIST",
-                    "polars",
-                    "2.0.0"
-                ]
-            ]
+            {
+                "BUILD_LIST": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            }
         ],
-        "timestamp": "2026-10-19T10:48:08.748381875",
+        "timestamp": "2026-10-20T15:21:59.51946254",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -42,22 +34,14 @@
                     "cf89f07e8a16a918ff2f13c5341af624"
                 ]
             ],
-            [
-                [
-                    "BUILD_LIST",
-                    "python",
-                    "3.14.8"
-                ]
-            ],
-            [
-                [
-                    "BUILD_LIST",
-                    "polars",
-                    "2.0.0"
-                ]
-            ]
+            {
+                "BUILD_LIST": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            }
         ],
-        "timestamp": "2026-10-19T10:48:36.068563705",
+        "timestamp": "2026-10-20T15:22:17.020713039",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -75,18 +59,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "BUILD_LIST",
-                        "python",
-                        "3.14.8"
-                    ]
-                ],
-                "2": [
-                    [
-                        "BUILD_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,305bd95635cdf109e05586eb9d2398d6"
                 ],
                 "list": [
                     [
@@ -96,23 +69,12 @@
                         "cirifull.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "BUILD_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "BUILD_LIST",
-                        "python",
-                        "3.14.8"
-                    ]
+                "versions": [
+                    "versions.yml:md5,305bd95635cdf109e05586eb9d2398d6"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T00:25:53.831341914",
+        "timestamp": "2026-10-20T15:22:32.839380471",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

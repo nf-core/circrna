@@ -29,76 +29,26 @@ output:
           type: map
           description: Sample metadata.
       - "*.png":
-        type: file
-        description: Coordinate-shift plots.
-        pattern: "*.png"
+          type: file
+          description: Coordinate-shift plots.
+          pattern: "*.png"
   multiqc:
     - - meta:
           type: map
           description: Sample metadata.
       - "*.json":
+          type: file
+          description: MultiQC custom-content data.
+          pattern: "*.json"
+  versions:
+    - versions.yml:
         type: file
-        description: MultiQC custom-content data.
-        pattern: "*.json"
-  versions_python:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - python:
-          type: string
-          description: The name of the tool
-      - python --version | sed 's/Python //':
-          type: eval
-          description: Software version
-  versions_polars:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - polars:
-          type: string
-          description: The name of the tool
-      - python -c 'import polars; print(polars.__version__)':
-          type: eval
-          description: Software version
-  versions_altair:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - altair:
-          type: string
-          description: The name of the tool
-      - python -c 'import altair; print(altair.__version__)':
-          type: eval
-          description: Software version
+        description: YAML file containing versions of tools used in the module
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - python:
-          type: string
-          description: Software name
-      - python --version | sed 's/Python //':
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - polars:
-          type: string
-          description: Software name
-      - python -c 'import polars; print(polars.__version__)':
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - altair:
-          type: string
-          description: Software name
-      - python -c 'import altair; print(altair.__version__)':
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: string
+        description: The name of the process
 authors:
   - "@nictru"
 maintainers:

@@ -10,30 +10,30 @@
                 "n_tools.shifts_mqc.json"
             ],
             [
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "altair",
-                        "6.3.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T01:39:11.486249488",
+        "timestamp": "2026-10-20T15:26:16.503327888",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -42,30 +42,30 @@
     "empty bed file - no plots": {
         "content": [
             [
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "altair",
-                        "6.3.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_SHIFTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0",
+                        "altair": "6.3.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T01:39:38.760792063",
+        "timestamp": "2026-10-20T15:26:29.575644961",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -81,25 +81,7 @@
                     
                 ],
                 "2": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "3": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "4": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "altair",
-                        "6.3.0"
-                    ]
+                    "versions.yml:md5,af65c8af2a8ad685d7223f51009453f7"
                 ],
                 "multiqc": [
                     
@@ -107,30 +89,12 @@
                 "plots": [
                     
                 ],
-                "versions_altair": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "altair",
-                        "6.3.0"
-                    ]
-                ],
-                "versions_polars": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "COMBINEBEDS_SHIFTS",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,af65c8af2a8ad685d7223f51009453f7"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T01:40:09.496075174",
+        "timestamp": "2026-10-20T15:26:43.960954498",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

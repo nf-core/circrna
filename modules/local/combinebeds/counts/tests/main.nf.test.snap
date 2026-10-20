@@ -46,23 +46,21 @@
                 "chrI:777511-779604:+\t0\t4"
             ],
             [
-                [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
+                {
+                    "COMBINEBEDS_COUNTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                },
+                {
+                    "COMBINEBEDS_COUNTS": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T01:07:29.036134266",
+        "timestamp": "2026-10-20T15:21:57.457584796",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -161,18 +159,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,eaf0bf5aa10009a0211a9029652a3bde"
                 ],
                 "combined": [
                     [
@@ -182,23 +169,12 @@
                         "sum.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "COMBINEBEDS_COUNTS",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,eaf0bf5aa10009a0211a9029652a3bde"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T01:08:21.610304778",
+        "timestamp": "2026-10-20T15:22:22.168668401",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

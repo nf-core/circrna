@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 library(DESeq2)
 
@@ -33,4 +31,8 @@ write.table(norm_data, paste0("${meta.id}.normalized_counts.tsv"), quote = FALSE
 
 # TODO: (Can be done later) Add support for Samplesheet so that we can eliminate batch effects
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"'),
+    paste0('    bioconductor-deseq2: "', packageVersion("DESeq2"), '"')
+), 'versions.yml')

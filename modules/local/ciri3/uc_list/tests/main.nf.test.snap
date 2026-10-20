@@ -11,18 +11,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ],
                 "list": [
                     [
@@ -32,23 +21,12 @@
                         "annotated.ciri3.list:md5,d55b831de80ee60cf11be68085f5fdf6"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:15:10.027849243",
+        "timestamp": "2026-10-20T15:23:55.649846852",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -66,18 +44,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ],
                 "list": [
                     [
@@ -87,23 +54,12 @@
                         "sample_1.ciri3.list:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:16:17.965996339",
+        "timestamp": "2026-10-20T15:25:01.818334353",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -121,18 +77,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ],
                 "list": [
                     [
@@ -142,23 +87,12 @@
                         "ordered.ciri3.list:md5,2b70a1f675c1de0e94115b30654c8e35"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:15:30.100561633",
+        "timestamp": "2026-10-20T15:24:14.745498472",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -176,18 +110,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "2": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ],
                 "list": [
                     [
@@ -197,23 +120,12 @@
                         "sample_1.ciri3.list:md5,0b3dd6820af2d9f07f31935a470c10d3"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "CIRI3_UC_LIST",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,0ba82d4c7883229b0ed00ba20d443338"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:14:58.876394832",
+        "timestamp": "2026-10-20T15:23:46.4069534",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

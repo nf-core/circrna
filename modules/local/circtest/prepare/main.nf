@@ -1,6 +1,5 @@
 process CIRCTEST_PREPARE {
     label 'process_low'
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -13,20 +12,25 @@ process CIRCTEST_PREPARE {
     output:
     tuple val(meta), path('*_genes.tsv'), path('*_circs.tsv'), emit: counts, optional: true
 
-    tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template('prepare.sh')
+    template('prepare.R')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     """
     touch ${prefix}_genes.tsv
     touch ${prefix}_circs.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: "\$(Rscript -e "cat(strsplit(R.version[['version.string']], ' ')[[1]][3])")"
+    END_VERSIONS
 
     """
 }

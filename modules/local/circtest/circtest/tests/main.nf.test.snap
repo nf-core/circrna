@@ -24,32 +24,7 @@
                     ]
                 ],
                 "2": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "r-base",
-                        "4.5.3"
-                    ]
-                ],
-                "3": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "aod",
-                        "1.3.3"
-                    ]
-                ],
-                "4": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "plyr",
-                        "1.8.9"
-                    ]
-                ],
-                "5": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "ggplot2",
-                        "4.0.3"
-                    ]
+                    "versions.yml:md5,ee4f9f166c2d9ebeeea370fb5ea2971d"
                 ],
                 "plots": [
                     [
@@ -72,37 +47,12 @@
                         "counts_summary.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_aod": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "aod",
-                        "1.3.3"
-                    ]
-                ],
-                "versions_ggplot2": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "ggplot2",
-                        "4.0.3"
-                    ]
-                ],
-                "versions_plyr": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "plyr",
-                        "1.8.9"
-                    ]
-                ],
-                "versions_r_base": [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "r-base",
-                        "4.5.3"
-                    ]
+                "versions": [
+                    "versions.yml:md5,ee4f9f166c2d9ebeeea370fb5ea2971d"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:56:20.833652467",
+        "timestamp": "2026-10-20T15:23:19.474040493",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -117,37 +67,17 @@
                 "\"Y47G6A.29\""
             ],
             [
-                [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "r-base",
-                        "4.5.3"
-                    ]
-                ],
-                [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "aod",
-                        "1.3.3"
-                    ]
-                ],
-                [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "plyr",
-                        "1.8.9"
-                    ]
-                ],
-                [
-                    [
-                        "CIRCTEST_CIRCTEST",
-                        "ggplot2",
-                        "4.0.3"
-                    ]
-                ]
+                {
+                    "CIRCTEST_CIRCTEST": {
+                        "r-base": "4.5.3",
+                        "aod": "1.3.3",
+                        "plyr": "1.8.9",
+                        "ggplot2": "4.0.3"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:56:05.546499171",
+        "timestamp": "2026-10-20T14:59:48.595726716",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

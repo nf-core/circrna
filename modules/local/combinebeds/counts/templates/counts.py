@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
 
 import polars as pl
 
@@ -74,5 +81,3 @@ df = df.select(["id"] + samples)
 df = df.fill_null(0)
 
 df.sink_csv(f"{prefix}.tsv", separator="\\t", include_header=True)
-
-PY

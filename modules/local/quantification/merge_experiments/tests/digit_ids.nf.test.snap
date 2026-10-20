@@ -10,23 +10,15 @@
                 ]
             ],
             [
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-summarizedexperiment",
-                        "1.42.0"
-                    ]
-                ],
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-rtracklayer",
-                        "1.72.0"
-                    ]
-                ]
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:35:11.474170596",
+        "timestamp": "2026-10-20T15:03:03.208442576",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

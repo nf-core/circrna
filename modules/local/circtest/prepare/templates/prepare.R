@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 circ <- read.table("${circ_counts}", header=T, sep="\\t", check.names = FALSE)
 gene <- read.table("${gene_counts}", header=T, sep="\\t", check.names = FALSE, row.names = 1)
@@ -20,4 +18,7 @@ if (nrow(circ) > 0) {
     write.table(gene, "${prefix}_genes.tsv", sep="\\t", quote=F, row.names=T)
 }
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    r-base: "', getRversion(), '"')
+), 'versions.yml')

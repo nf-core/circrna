@@ -11,11 +11,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "PSIRC_BSJ_UNIFY",
-                        "python",
-                        "3.14.7"
-                    ]
+                    "versions.yml:md5,820f8d52ec7b13b767612e44af4264b1"
                 ],
                 "bed": [
                     [
@@ -25,16 +21,12 @@
                         "calls.bed:md5,835564ec03f3acd123b5446b25d36e6f"
                     ]
                 ],
-                "versions_python": [
-                    [
-                        "PSIRC_BSJ_UNIFY",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,820f8d52ec7b13b767612e44af4264b1"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:18:36.299512732",
+        "timestamp": "2026-10-20T15:29:34.789807868",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -52,11 +44,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "PSIRC_BSJ_UNIFY",
-                        "python",
-                        "3.14.7"
-                    ]
+                    "versions.yml:md5,e3a5087250cfd03bf926e4cff285fcdf"
                 ],
                 "bed": [
                     [
@@ -66,16 +54,12 @@
                         "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_python": [
-                    [
-                        "PSIRC_BSJ_UNIFY",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,e3a5087250cfd03bf926e4cff285fcdf"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:18:46.44390061",
+        "timestamp": "2026-10-20T15:29:44.955956025",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

@@ -31,27 +31,15 @@ output:
       - "${prefix}.bed":
           type: file
           description: Strand-resolved junctions
-  versions_python:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "python":
-          type: string
-          description: The name of the tool
-      - 'python --version | cut -d " " -f2':
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: YAML file containing versions of tools used in the module
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - python:
-          type: string
-          description: Software name
-      - python --version | cut -d " " -f2:
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: string
+        description: The name of the process
 authors:
   - "@nictru"
 maintainers:

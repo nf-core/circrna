@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
 
 import polars as pl
 from pathlib import Path
@@ -36,5 +43,3 @@ dfs_sorted = [
 df = pl.concat([df_order] + dfs_sorted, how="horizontal").fill_null(0)
 
 df.collect().write_csv("${meta.id}.joined.tsv", separator="\\t")
-
-PY

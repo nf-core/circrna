@@ -1,7 +1,6 @@
 process COMBINEBEDS_SHIFTS {
     tag "${meta.id}"
     label "process_low"
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -14,17 +13,23 @@ process COMBINEBEDS_SHIFTS {
     output:
     tuple val(meta), path("*.png"), emit: plots, optional: true
     tuple val(meta), path("*.json"), emit: multiqc, optional: true
-    tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
-    tuple val("${task.process}"), val('altair'), eval("python -c 'import altair; print(altair.__version__)'"), emit: versions_altair, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template("shifts.sh")
+    template("shifts.py")
 
     stub:
     """
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+        polars: "\$(python -c \'import polars; print(polars.__version__)\')"
+        altair: "\$(python -c \'import altair; print(altair.__version__)\')"
+    END_VERSIONS
     """
 }

@@ -25,46 +25,15 @@ output:
       - "${prefix}.bed":
           type: file
           description: BED12 circRNA calls
-  versions_python:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "python":
-          type: string
-          description: The name of the tool
-      - 'python --version | cut -d " " -f2':
-          type: eval
-          description: Software version
-  versions_pandas:
-    - - "${task.process}":
-          type: string
-          description: The name of the process
-      - "pandas":
-          type: string
-          description: The name of the tool
-      - 'python -c "import pandas as pd; print(pd.__version__)"':
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: YAML file containing versions of tools used in the module
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - python:
-          type: string
-          description: Software name
-      - python --version | cut -d " " -f2:
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - pandas:
-          type: string
-          description: Software name
-      - python -c "import pandas as pd; print(pd.__version__)":
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: string
+        description: The name of the process
 authors:
   - "@nictru"
 maintainers:

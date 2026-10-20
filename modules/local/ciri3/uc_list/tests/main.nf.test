@@ -29,8 +29,8 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(process.out).match() },
                 { assert list == ['chr1\t1\t100', 'chr2\t200\t300'] },
-                { assert process.out.versions_python[0] == ['CIRI3_UC_LIST', 'python', '3.14.7'] },
-                { assert process.out.versions_polars[0] == ['CIRI3_UC_LIST', 'polars', '2.0.0'] }
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.polars == '2.0.0' }
             )
         }
     }
@@ -193,8 +193,8 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(process.out).match() },
                 { assert process.out.list.size() == 1 },
-                { assert process.out.versions_python[0] == ['CIRI3_UC_LIST', 'python', '3.14.7'] },
-                { assert process.out.versions_polars[0] == ['CIRI3_UC_LIST', 'polars', '2.0.0'] }
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_LIST.polars == '2.0.0' }
             )
         }
     }

@@ -77,7 +77,7 @@ nextflow_process {
                 { assert process.out.se.every { meta, rds -> file(rds).size() > 0 } },
                 { assert snapshot(
                     process.out.se.collect { meta, rds -> [ meta.id, file(rds).name ] }.sort(),
-                    process.out.versions_bioconductor_tximeta
+                    process.out.versions.collect { path(it).yaml }
                 ).match() }
             )
         }
@@ -131,7 +131,7 @@ nextflow_process {
                 { assert process.out.se.every { meta, rds -> file(rds).name == 'custom_prefix.rds' } },
                 { assert snapshot(
                     process.out.se.collect { meta, rds -> [ meta.id, file(rds).name ] }.sort(),
-                    process.out.versions_bioconductor_tximeta
+                    process.out.versions.collect { path(it).yaml }
                 ).match() }
             )
         }

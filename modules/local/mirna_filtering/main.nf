@@ -1,7 +1,6 @@
 process MIRNA_FILTERING {
     tag "${meta.id}"
     label 'process_single'
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -15,17 +14,22 @@ process MIRNA_FILTERING {
 
     output:
     tuple val(meta), path("${meta.id}.normalized_counts_filtered.tsv"), emit: filtered
-    tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template('mirna_filtering.sh')
+    template('mirna_filtering.R')
 
     stub:
     """
     touch ${meta.id}.normalized_counts_filtered.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: "\$(Rscript -e "cat(strsplit(R.version[['version.string']], ' ')[[1]][3])")"
+    END_VERSIONS
 
     """
 }

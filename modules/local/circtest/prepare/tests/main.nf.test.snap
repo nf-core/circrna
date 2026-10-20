@@ -12,14 +12,14 @@
                 ]
             ],
             [
-                [
-                    "CIRCTEST_PREPARE",
-                    "r-base",
-                    "4.6.1"
-                ]
+                {
+                    "CIRCTEST_PREPARE": {
+                        "r-base": "4.6.1"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:26:59.635497241",
+        "timestamp": "2026-10-20T15:00:26.874706512",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -39,11 +39,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "CIRCTEST_PREPARE",
-                        "r-base",
-                        "4.6.1"
-                    ]
+                    "versions.yml:md5,c946d6bd7e2c84e4d145d4dfd2d2e6ad"
                 ],
                 "counts": [
                     [
@@ -55,16 +51,12 @@
                         "counts_circs.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_r_base": [
-                    [
-                        "CIRCTEST_PREPARE",
-                        "r-base",
-                        "4.6.1"
-                    ]
+                "versions": [
+                    "versions.yml:md5,c946d6bd7e2c84e4d145d4dfd2d2e6ad"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:27:13.0197135",
+        "timestamp": "2026-10-20T15:23:54.01028579",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -83,14 +75,14 @@
                 ]
             ],
             [
-                [
-                    "CIRCTEST_PREPARE",
-                    "r-base",
-                    "4.6.1"
-                ]
+                {
+                    "CIRCTEST_PREPARE": {
+                        "r-base": "4.6.1"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:26:45.048058676",
+        "timestamp": "2026-10-20T15:00:15.397612968",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

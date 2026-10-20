@@ -11,11 +11,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                    "versions.yml:md5,d01119ba2342aed0dd848264439fd241"
                 ],
                 "bed": [
                     [
@@ -25,16 +21,12 @@
                         "calls.bed:md5,5371765a4b6d60f61dac4c419083f4a2"
                     ]
                 ],
-                "versions_pysam": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                "versions": [
+                    "versions.yml:md5,d01119ba2342aed0dd848264439fd241"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:18:21.92621183",
+        "timestamp": "2026-10-20T15:21:19.091403159",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -52,11 +44,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                    "versions.yml:md5,9c329664d578aae512e5992ba5b2eea4"
                 ],
                 "bed": [
                     [
@@ -66,16 +54,12 @@
                         "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_pysam": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                "versions": [
+                    "versions.yml:md5,9c329664d578aae512e5992ba5b2eea4"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:18:12.01394689",
+        "timestamp": "2026-10-20T15:21:07.696883328",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -93,11 +77,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                    "versions.yml:md5,9c329664d578aae512e5992ba5b2eea4"
                 ],
                 "bed": [
                     [
@@ -107,16 +87,12 @@
                         "calls.bed:md5,dda1ea0b61051dca5eddf71a2429d512"
                     ]
                 ],
-                "versions_pysam": [
-                    [
-                        "INFER_STRAND",
-                        "pysam",
-                        "0.24.1"
-                    ]
+                "versions": [
+                    "versions.yml:md5,9c329664d578aae512e5992ba5b2eea4"
                 ]
             }
         ],
-        "timestamp": "2026-10-20T10:18:00.097588088",
+        "timestamp": "2026-10-20T15:20:56.073603314",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

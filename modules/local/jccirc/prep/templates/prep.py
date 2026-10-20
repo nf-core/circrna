@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
 
 import polars as pl
 
@@ -29,4 +36,3 @@ df_merged = df_merged.select(
 ).collect()
 
 df_merged.write_csv("${prefix}.txt", separator="\\t", include_header=False)
-PYTHON

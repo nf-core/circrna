@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 """
 Convert CIRI-vis output to BED12 format
 """
+
+import platform
 
 import pandas as pd
 
@@ -92,4 +92,7 @@ print(f"\\nBlock count distribution:")
 block_counts = df_bed12["blockCount"].value_counts().sort_index()
 for blocks, count in block_counts.items():
     print(f"  {count} circRNAs with {blocks} block(s)")
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    pandas: "{pd.__version__}"', file=handle)

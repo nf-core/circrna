@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
+import platform
 import gtfparse
 import polars as pl
 
@@ -51,4 +50,8 @@ bed_df = exons_pl.select([
 
 # Write to BED file
 bed_df.write_csv("${prefix}.bed", separator="\\t", include_header=False)
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    gtfparse: "{gtfparse.__version__}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

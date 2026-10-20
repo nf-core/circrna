@@ -1,7 +1,6 @@
 process MAJORITY_VOTE {
     tag "${meta.id}"
     label 'process_medium'
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -15,19 +14,25 @@ process MAJORITY_VOTE {
     output:
     tuple val(meta), path("${meta.id}.majority.tsv"), emit: tsv
     tuple val(meta), path("${meta.id}.targets.tsv"), emit: targets
-    tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
+
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template('majority.sh')
+    template('majority.py')
 
     stub:
     """
     touch ${meta.id}.majority.tsv
     touch ${meta.id}.targets.tsv
 
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: "\$(python --version 2>&1 | cut -d " " -f 2)"
+        polars: "\$(python -c \'import polars; print(polars.__version__)\')"
+    END_VERSIONS
     """
 }

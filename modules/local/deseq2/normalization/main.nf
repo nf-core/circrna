@@ -1,7 +1,6 @@
 process DESEQ2_NORMALIZATION {
     tag "${meta.id}"
     label 'process_single'
-    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -13,18 +12,23 @@ process DESEQ2_NORMALIZATION {
 
     output:
     tuple val(meta), path("${meta.id}.normalized_counts.tsv"), emit: normalized
-    tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
-    tuple val("${task.process}"), val('bioconductor-deseq2'), eval('Rscript -e "cat(as.character(packageVersion(\'DESeq2\')))"'), emit: versions_bioconductor_deseq2, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template('deseq_normalization.sh')
+    template('deseq_normalization.R')
 
     stub:
     """
     touch ${meta.id}.normalized_counts.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        r-base: "\$(Rscript -e "cat(strsplit(R.version[['version.string']], ' ')[[1]][3])")"
+        bioconductor-deseq2: "\$(Rscript -e "cat(as.character(packageVersion('DESeq2')))")"
+    END_VERSIONS
 
     """
 }

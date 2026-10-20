@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-Rscript - <<'RSCRIPT'
+#!/usr/bin/env Rscript
 
 library(SummarizedExperiment)
 
@@ -56,4 +54,8 @@ assay(se, "tpm", withDimnames = FALSE) <- tpm[rownames(se), rownames(colData(se)
 
 saveRDS(se, '${meta.id}.merged.rds')
 
-RSCRIPT
+writeLines(c(
+    '"${task.process}":',
+    paste0('    bioconductor-summarizedexperiment: "', packageVersion("SummarizedExperiment"), '"'),
+    paste0('    bioconductor-rtracklayer: "', packageVersion("rtracklayer"), '"')
+), 'versions.yml')

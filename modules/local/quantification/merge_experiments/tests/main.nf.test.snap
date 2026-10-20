@@ -11,18 +11,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-summarizedexperiment",
-                        "1.42.0"
-                    ]
-                ],
-                "2": [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-rtracklayer",
-                        "1.72.0"
-                    ]
+                    "versions.yml:md5,d64bd51ca26ad43e66e464d04884b904"
                 ],
                 "merged": [
                     [
@@ -32,23 +21,12 @@
                         "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_bioconductor_rtracklayer": [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-rtracklayer",
-                        "1.72.0"
-                    ]
-                ],
-                "versions_bioconductor_summarizedexperiment": [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-summarizedexperiment",
-                        "1.42.0"
-                    ]
+                "versions": [
+                    "versions.yml:md5,d64bd51ca26ad43e66e464d04884b904"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:37:04.263103106",
+        "timestamp": "2026-10-20T15:04:44.522595532",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -65,23 +43,15 @@
                 ]
             ],
             [
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-summarizedexperiment",
-                        "1.42.0"
-                    ]
-                ],
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-rtracklayer",
-                        "1.72.0"
-                    ]
-                ]
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:36:45.723596006",
+        "timestamp": "2026-10-20T15:04:27.341895647",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -98,23 +68,15 @@
                 ]
             ],
             [
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-summarizedexperiment",
-                        "1.42.0"
-                    ]
-                ],
-                [
-                    [
-                        "MERGE_EXPERIMENTS",
-                        "bioconductor-rtracklayer",
-                        "1.72.0"
-                    ]
-                ]
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:35:59.039486015",
+        "timestamp": "2026-10-20T15:03:45.568832185",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

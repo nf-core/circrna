@@ -23,7 +23,7 @@ output:
     - - "meta":
           type: map
           description: Annotation metadata
-      - "$outfile":
+      - "${outfile}":
           type: file
           description: Tabulated annotation fields
   versions_gtftk:

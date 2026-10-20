@@ -1,8 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
-
+import platform
 import polars as pl
 
 # Parameters
@@ -47,4 +45,7 @@ df_anno = df_anno.unique()
 
 df_joined = df_consensus.join(df_anno, on=["Chr", "Start", "End"], how="inner")
 df_joined.select("BSJ").collect().write_csv("${prefix}.txt", include_header=False)
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

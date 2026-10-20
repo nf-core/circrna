@@ -20,23 +20,21 @@
                 ]
             ],
             [
-                [
-                    [
-                        "MAJORITY_VOTE",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "MAJORITY_VOTE",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
+                {
+                    "MAJORITY_VOTE": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                },
+                {
+                    "MAJORITY_VOTE": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:58:10.246249298",
+        "timestamp": "2026-10-20T15:28:15.444917831",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -63,23 +61,21 @@
                 ]
             ],
             [
-                [
-                    [
-                        "MAJORITY_VOTE",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                [
-                    [
-                        "MAJORITY_VOTE",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ]
+                {
+                    "MAJORITY_VOTE": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                },
+                {
+                    "MAJORITY_VOTE": {
+                        "python": "3.14.7",
+                        "polars": "2.0.0"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:57:49.68508463",
+        "timestamp": "2026-10-20T15:27:58.985234983",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -105,18 +101,7 @@
                     ]
                 ],
                 "2": [
-                    [
-                        "MAJORITY_VOTE",
-                        "python",
-                        "3.14.7"
-                    ]
-                ],
-                "3": [
-                    [
-                        "MAJORITY_VOTE",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,74704a2ec736e705e8f114dc6576bb20"
                 ],
                 "targets": [
                     [
@@ -134,23 +119,12 @@
                         "mirna.majority.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "MAJORITY_VOTE",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "MAJORITY_VOTE",
-                        "python",
-                        "3.14.7"
-                    ]
+                "versions": [
+                    "versions.yml:md5,74704a2ec736e705e8f114dc6576bb20"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:58:27.645000436",
+        "timestamp": "2026-10-20T15:28:32.540754369",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

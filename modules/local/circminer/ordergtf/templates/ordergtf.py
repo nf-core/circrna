@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
+import platform
 import sys
 from itertools import groupby
 
@@ -27,4 +26,7 @@ with open("${prefix}.gtf", "w") as output:
 
 if not exon_count:
     sys.exit("circMiner GTF ordering: no exon features were found")
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    gffutils: "{gffutils.__version__}"', file=handle)

@@ -12,18 +12,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "JCCIRC_PREP",
-                        "python",
-                        "3.14.8"
-                    ]
-                ],
-                "2": [
-                    [
-                        "JCCIRC_PREP",
-                        "polars",
-                        "2.0.0"
-                    ]
+                    "versions.yml:md5,dbde3cbf7b4ced4d810785122e0dd226"
                 ],
                 "merged": [
                     [
@@ -34,23 +23,12 @@
                         "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_polars": [
-                    [
-                        "JCCIRC_PREP",
-                        "polars",
-                        "2.0.0"
-                    ]
-                ],
-                "versions_python": [
-                    [
-                        "JCCIRC_PREP",
-                        "python",
-                        "3.14.8"
-                    ]
+                "versions": [
+                    "versions.yml:md5,dbde3cbf7b4ced4d810785122e0dd226"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:44:00.804391426",
+        "timestamp": "2026-10-20T15:27:41.816556272",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -68,22 +46,20 @@
                     "bcb7ff6cf92b322496ed4ef57a19460a"
                 ]
             ],
-            [
-                [
-                    "JCCIRC_PREP",
-                    "python",
-                    "3.14.8"
-                ]
-            ],
-            [
-                [
-                    "JCCIRC_PREP",
-                    "polars",
-                    "2.0.0"
-                ]
-            ]
+            {
+                "JCCIRC_PREP": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            },
+            {
+                "JCCIRC_PREP": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            }
         ],
-        "timestamp": "2026-10-19T10:43:47.316025254",
+        "timestamp": "2026-10-20T15:27:30.324070405",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

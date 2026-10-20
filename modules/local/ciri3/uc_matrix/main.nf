@@ -14,20 +14,24 @@ process CIRI3_UC_MATRIX {
     output:
     tuple val(meta2), path("${prefix}.bsj.tsv"), emit: bsj
     tuple val(meta2), path("${prefix}.fsj.tsv"), emit: fsj
-    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f2'), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval('python -c "import polars; print(polars.__version__)"'), emit: versions_polars, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta2.id}"
-    template('uc_matrix.sh')
+    template('uc_matrix.py')
 
     stub:
     prefix = task.ext.prefix ?: "${meta2.id}"
     """
     printf 'circRNA_ID\\tcount\\n' > ${prefix}.bsj.tsv
     printf 'circRNA_ID\\tcount\\n' > ${prefix}.fsj.tsv
+    cat <<-END_VERSIONS > versions.yml
+    ${task.process}:
+        python: "\$(python3 -c 'import platform; print(platform.python_version())')"
+        polars: "\$(python3 -c 'import polars; print(polars.__version__)')"
+    END_VERSIONS
     """
 }

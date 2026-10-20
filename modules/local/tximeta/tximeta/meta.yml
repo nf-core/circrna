@@ -30,27 +30,21 @@ output:
           type: file
           description: tximeta SummarizedExperiment.
           pattern: "*.rds"
-  versions_bioconductor_tximeta:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - bioconductor-tximeta:
-          type: string
-          description: The name of the tool
-      - Rscript -e "cat(as.character(packageVersion('tximeta')))":
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - bioconductor-tximeta:
-          type: string
-          description: Software name
-      - Rscript -e "cat(as.character(packageVersion('tximeta')))":
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 authors:
   - "@nictru"
 maintainers:

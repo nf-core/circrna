@@ -32,7 +32,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.plots.collect { _meta, plots -> plots.collect { file(it).name } }.flatten().sort(),
                     process.out.multiqc.collect { _meta, multiqc -> multiqc.collect { file(it).name } }.flatten().sort(),
-                    [process.out.versions_python, process.out.versions_polars, process.out.versions_altair]
+                    [path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]
                 ).match() }
             )
         }
@@ -59,7 +59,7 @@ nextflow_process {
                 { assert process.success },
                 { assert process.out.plots.isEmpty() },
                 { assert process.out.multiqc.isEmpty() },
-                { assert snapshot([process.out.versions_python, process.out.versions_polars, process.out.versions_altair]).match() }
+                { assert snapshot([path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml, path(process.out.versions[0]).yaml]).match() }
             )
         }
     }

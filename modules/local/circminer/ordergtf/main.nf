@@ -12,20 +12,23 @@ process CIRCMINER_ORDERGTF {
 
     output:
     tuple val(meta), path("${prefix}.gtf"), emit: gtf
-    tuple val("${task.process}"), val('python'), eval('python --version 2>&1 | sed "s/Python //"'), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('gffutils'), eval('python -c "import gffutils; print(gffutils.__version__)"'), emit: versions_gffutils, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"
-    template('ordergtf.sh')
+    template('ordergtf.py')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"
     """
     touch ${prefix}.gtf
-
+    cat <<-END_VERSIONS > versions.yml
+    ${task.process}:
+        python: "\$(python3 -c 'import platform; print(platform.python_version())')"
+        gffutils: "\$(python3 -c 'import gffutils; print(gffutils.__version__)')"
+    END_VERSIONS
     """
 }

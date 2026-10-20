@@ -1,6 +1,12 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  pysam: "{importlib.metadata.version("pysam")}"\\n')
 # Fill unstranded BED records from canonical genomic BSJ splice motifs.
 
 import pysam
@@ -31,4 +37,3 @@ with pysam.FastaFile("${fasta}") as reference, open("${bed}") as source, open("$
     for line in source:
         fields = line.rstrip("\\n").split("\\t")
         destination.write("\\t".join(infer_strand(reference, fields)) + "\\n")
-PYTHON

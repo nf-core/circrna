@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
 
+import platform
 import polars as pl
 
 exons_only = "${exons_only}".lower() == "true"
@@ -17,6 +16,10 @@ try:
 except pl.exceptions.NoDataError:
     with open('${prefix}.gtf', 'w') as f:
         f.write('')
+    with open("versions.yml", "w", encoding="utf-8") as handle:
+        print("${task.process}:", file=handle)
+        print(f'    python: "{platform.python_version()}"', file=handle)
+        print(f'    polars: "{pl.__version__}"', file=handle)
     exit(0)
 
 df = df.with_columns(
@@ -64,4 +67,7 @@ df_combined = df_combined.sort('chr', 'start', 'end')
 
 df_combined.collect().write_csv('${prefix}.gtf', separator='\\t', include_header=False, quote_style="never")
 
-PY
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

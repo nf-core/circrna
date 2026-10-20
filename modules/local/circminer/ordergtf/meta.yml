@@ -28,46 +28,18 @@ output:
           type: file
           description: Gene, transcript and exon records with minus-strand exon groups reversed
           pattern: "*.gtf"
-  versions_python:
-    - - "${task.process}":
-          type: string
-          description: Process name
-      - "python":
-          type: string
-          description: Software name
-      - 'python --version 2>&1 | sed "s/Python //"':
-          type: eval
-          description: Software version
-  versions_gffutils:
-    - - "${task.process}":
-          type: string
-          description: Process name
-      - "gffutils":
-          type: string
-          description: Software name
-      - 'python -c "import gffutils; print(gffutils.__version__)"':
-          type: eval
-          description: Software version
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - python:
-          type: string
-          description: Software name
-      - python --version 2>&1 | sed "s/Python //":
-          type: eval
-          description: Software version
-    - - ${task.process}:
-          type: string
-          description: Process name
-      - gffutils:
-          type: string
-          description: Software name
-      - python -c "import gffutils; print(gffutils.__version__)":
-          type: eval
-          description: Software version
+    - versions.yml:
+        type: string
+        description: The name of the process
 authors:
   - "@nictru"
 maintainers:

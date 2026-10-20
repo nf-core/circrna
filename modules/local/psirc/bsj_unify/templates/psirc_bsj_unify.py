@@ -1,6 +1,12 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
 # Convert psiRC candidate calls and resolve strand from supporting transcripts.
 
 import re
@@ -43,4 +49,3 @@ with open("${bed}") as source, open("${prefix}.bed", "w") as destination:
         except ValueError:
             continue
         destination.write("\\t".join([fields[0], fields[1], fields[2], f"FUSIONJUNC_{number}/{score}", score, supporting_strand(names.split(":", 1)[0], strands)]) + "\\n")
-PYTHON

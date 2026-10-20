@@ -1,6 +1,14 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PY'
+#!/usr/bin/env python3
+
+import platform
+import importlib.metadata
+
+# Versions
+with open("versions.yml", "w") as handle:
+    handle.write('"${task.process}":\\n')
+    handle.write(f'  python: "{platform.python_version()}"\\n')
+    handle.write(f'  polars: "{importlib.metadata.version("polars")}"\\n')
+    handle.write(f'  altair: "{importlib.metadata.version("altair")}"\\n')
 
 import base64
 import json
@@ -95,5 +103,3 @@ for metric, title in metrics.items():
 
     with open(f"{metric}.shifts_mqc.json", "w") as f:
         f.write(json.dumps(multiqc, indent=4))
-
-PY

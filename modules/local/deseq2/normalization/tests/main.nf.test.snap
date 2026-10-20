@@ -11,18 +11,7 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "DESEQ2_NORMALIZATION",
-                        "r-base",
-                        "4.5.3"
-                    ]
-                ],
-                "2": [
-                    [
-                        "DESEQ2_NORMALIZATION",
-                        "bioconductor-deseq2",
-                        "1.50.2"
-                    ]
+                    "versions.yml:md5,3d5b7e0c71b1264df85c94ca6866bd6b"
                 ],
                 "normalized": [
                     [
@@ -32,23 +21,12 @@
                         "mirna.normalized_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_bioconductor_deseq2": [
-                    [
-                        "DESEQ2_NORMALIZATION",
-                        "bioconductor-deseq2",
-                        "1.50.2"
-                    ]
-                ],
-                "versions_r_base": [
-                    [
-                        "DESEQ2_NORMALIZATION",
-                        "r-base",
-                        "4.5.3"
-                    ]
+                "versions": [
+                    "versions.yml:md5,3d5b7e0c71b1264df85c94ca6866bd6b"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T10:57:29.138416402",
+        "timestamp": "2026-10-20T15:24:56.428066923",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -78,14 +56,15 @@
                 "8c705596deac53cca23cba32bcce72cf"
             ],
             [
-                [
-                    "DESEQ2_NORMALIZATION",
-                    "bioconductor-deseq2",
-                    "1.50.2"
-                ]
+                {
+                    "DESEQ2_NORMALIZATION": {
+                        "r-base": "4.5.3",
+                        "bioconductor-deseq2": "1.50.2"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T10:57:16.177576809",
+        "timestamp": "2026-10-20T15:01:25.8082255",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"

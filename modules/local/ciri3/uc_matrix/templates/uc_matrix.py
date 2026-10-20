@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
+import platform
 import polars as pl
 
 circ_list_path = "${circ_list}"
@@ -67,4 +66,7 @@ for suffix, path in (("bsj", bsj_path), ("fsj", fsj_path)):
         pl.format("{}:{}|{}", "chrom", "start", "end").alias("circRNA_ID"),
         pl.col("count").fill_null(0),
     ).write_csv(f"{prefix}.{suffix}.tsv", separator="\\t")
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

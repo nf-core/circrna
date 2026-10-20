@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-python3 - <<'PYTHON'
+#!/usr/bin/env python3
 
+import platform
 import polars as pl
 
 length_files = "${lengths}".split()
@@ -15,4 +14,7 @@ percentile = (df.select('length')
 # Write the result to a file
 with open('${prefix}.txt', 'w') as f:
     f.write(str(int(percentile)))
-PYTHON
+with open("versions.yml", "w", encoding="utf-8") as handle:
+    print("${task.process}:", file=handle)
+    print(f'    python: "{platform.python_version()}"', file=handle)
+    print(f'    polars: "{pl.__version__}"', file=handle)

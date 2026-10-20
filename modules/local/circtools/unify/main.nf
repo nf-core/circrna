@@ -12,20 +12,23 @@ process UNIFY {
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: bed
-    tuple val("${task.process}"), val('python'), eval('python --version 2>&1 | sed "s/Python //"'), emit: versions_python, topic: versions
-    tuple val("${task.process}"), val('polars'), eval('python -c "import polars; print(polars.__version__)"'), emit: versions_polars, topic: versions
+    path "versions.yml", emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template('unify.sh')
+    template('unify.py')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.bed
-
+    cat <<-END_VERSIONS > versions.yml
+    ${task.process}:
+        python: "\$(python3 -c 'import platform; print(platform.python_version())')"
+        polars: "\$(python3 -c 'import polars; print(polars.__version__)')"
+    END_VERSIONS
     """
 }

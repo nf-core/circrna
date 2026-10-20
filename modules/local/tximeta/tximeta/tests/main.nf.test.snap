@@ -12,19 +12,19 @@
                 ]
             ],
             [
-                [
-                    "TXIMETA_TXIMETA",
-                    "bioconductor-tximeta",
-                    "1.28.3"
-                ],
-                [
-                    "TXIMETA_TXIMETA",
-                    "bioconductor-tximeta",
-                    "1.28.3"
-                ]
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-20T11:37:57.015381554",
+        "timestamp": "2026-10-20T15:06:02.882216176",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -50,16 +50,8 @@
                     ]
                 ],
                 "1": [
-                    [
-                        "TXIMETA_TXIMETA",
-                        "bioconductor-tximeta",
-                        "1.28.3"
-                    ],
-                    [
-                        "TXIMETA_TXIMETA",
-                        "bioconductor-tximeta",
-                        "1.28.3"
-                    ]
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
                 ],
                 "se": [
                     [
@@ -77,21 +69,13 @@
                         "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions_bioconductor_tximeta": [
-                    [
-                        "TXIMETA_TXIMETA",
-                        "bioconductor-tximeta",
-                        "1.28.3"
-                    ],
-                    [
-                        "TXIMETA_TXIMETA",
-                        "bioconductor-tximeta",
-                        "1.28.3"
-                    ]
+                "versions": [
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
                 ]
             }
         ],
-        "timestamp": "2026-10-19T11:00:26.403934689",
+        "timestamp": "2026-10-20T15:05:29.894133259",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -110,19 +94,19 @@
                 ]
             ],
             [
-                [
-                    "TXIMETA_TXIMETA",
-                    "bioconductor-tximeta",
-                    "1.28.3"
-                ],
-                [
-                    "TXIMETA_TXIMETA",
-                    "bioconductor-tximeta",
-                    "1.28.3"
-                ]
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                }
             ]
         ],
-        "timestamp": "2026-10-19T11:00:10.672813369",
+        "timestamp": "2026-10-20T15:05:15.421670233",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
