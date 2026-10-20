@@ -9,11 +9,8 @@ tools:
       description: Fast DataFrame library for Python
       homepage: https://pola.rs/
       documentation: https://docs.pola.rs/
-      licence: [MIT]
-  - pyyaml:
-      description: Serialize software versions as YAML
-      homepage: https://pyyaml.org/
-      licence: [MIT]
+      licence:
+        - MIT
 input:
   - - meta:
         type: map
@@ -31,11 +28,46 @@ output:
           type: file
           description: CIRI3 circRNA list
           pattern: "*.ciri3.list"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | cut -d " " -f2:
+          type: eval
+          description: Software version
+  versions_polars:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - polars:
+          type: string
+          description: The name of the tool
+      - python -c "import polars; print(polars.__version__)":
+          type: eval
+          description: Software version
+topics:
   versions:
-    - versions.yml:
-        type: file
-        description: Python, Polars and PyYAML versions
-        pattern: versions.yml
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | cut -d " " -f2:
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - polars:
+          type: string
+          description: Software name
+      - python -c "import polars; print(polars.__version__)":
+          type: eval
+          description: Software version
 authors:
   - "@nictru"
 maintainers:
@@ -43,24 +75,24 @@ maintainers:
 containers:
   docker:
     linux/arm64:
-      name: community.wave.seqera.io/library/python_polars_pyyaml:0029aaf4a8c64f7f
-      build_id: bd-0029aaf4a8c64f7f_1
-      scan_id: sc-b9c3d8517ce74695_1
+      name: community.wave.seqera.io/library/python_polars:1b7f504ed40f3dec
+      build_id: bd-1b7f504ed40f3dec_1
+      scan_id: sc-e6254777e6066041_1
     linux/amd64:
-      name: community.wave.seqera.io/library/python_polars_pyyaml:3d5318c405239fe0
-      build_id: bd-3d5318c405239fe0_1
-      scan_id: sc-1a4cd6c4b3504beb_1
+      name: community.wave.seqera.io/library/python_polars:708bbfa3590a8658
+      build_id: bd-708bbfa3590a8658_1
+      scan_id: sc-10e65cfdc3311f6f_1
   singularity:
-    linux/arm64:
-      name: oras://community.wave.seqera.io/library/python_polars_pyyaml:5c38cd573347a19b
-      build_id: bd-5c38cd573347a19b_1
-      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/6c/6c9c9e6aed659c93b4d26fff2596b4a017f55d76b7aee7c8d852b5c4467038b4/data
     linux/amd64:
-      name: oras://community.wave.seqera.io/library/python_polars_pyyaml:92ce592761658a28
-      build_id: bd-92ce592761658a28_1
-      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/31/31cbdd6f827c754d8ebddcc66a9e50f97341b96b13c766c27cfd9c2b2f99f850/data
+      name: oras://community.wave.seqera.io/library/python_polars:289541feed6088d8
+      build_id: bd-289541feed6088d8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fc/fc24a035d2b10ae5cddc290f972da775bed663c0a9f3d046386412b2922112ad/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars:a6602ea35d60f547
+      build_id: bd-a6602ea35d60f547_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/30/305927c7781dd8df6ea9debae9d2a8ee42f86b87e94d8479729815e166932916/data
   conda:
     linux/amd64:
-      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_amd64-bd-3d5318c405239fe0_1.txt
+      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_amd64-bd-708bbfa3590a8658_1.txt
     linux/arm64:
-      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_arm64-bd-0029aaf4a8c64f7f_1.txt
+      lock_file: modules/local/ciri3/uc_list/.conda-lock/linux_arm64-bd-1b7f504ed40f3dec_1.txt

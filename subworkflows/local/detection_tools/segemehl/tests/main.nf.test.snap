@@ -119,14 +119,8 @@
                 "0": [
                     
                 ],
-                "1": [
-                    "versions.yml:md5,6368e254f07bda66cdf95c2612539a11"
-                ],
                 "bed": [
                     
-                ],
-                "versions": [
-                    "versions.yml:md5,6368e254f07bda66cdf95c2612539a11"
                 ]
             }
         ],
@@ -134,7 +128,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:18:59.693971641"
+        "timestamp": "2026-10-18T23:23:17.495785424"
     },
     "cel_N2_1 paired-end - prebuilt index": {
         "content": [

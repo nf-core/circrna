@@ -12,7 +12,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,91a05a4bf2803e9cd697f0d8e59ca0aa"
+                    [
+                        "JCCIRC_PREP",
+                        "python",
+                        "3.14.8"
+                    ]
+                ],
+                "2": [
+                    [
+                        "JCCIRC_PREP",
+                        "polars",
+                        "2.0.0"
+                    ]
                 ],
                 "merged": [
                     [
@@ -23,16 +34,27 @@
                         "cel_N2_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,91a05a4bf2803e9cd697f0d8e59ca0aa"
+                "versions_polars": [
+                    [
+                        "JCCIRC_PREP",
+                        "polars",
+                        "2.0.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "JCCIRC_PREP",
+                        "python",
+                        "3.14.8"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:44:00.804391426",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:34:17.937461157"
+        }
     },
     "cel_N2_1 annotation and BSJ reads": {
         "content": [
@@ -46,17 +68,25 @@
                     "bcb7ff6cf92b322496ed4ef57a19460a"
                 ]
             ],
-            {
-                "JCCIRC_PREP": {
-                    "polars": "1.27.1",
-                    "python": "3.13.3"
-                }
-            }
+            [
+                [
+                    "JCCIRC_PREP",
+                    "python",
+                    "3.14.8"
+                ]
+            ],
+            [
+                [
+                    "JCCIRC_PREP",
+                    "polars",
+                    "2.0.0"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:43:47.316025254",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:34:01.316728158"
+        }
     }
 }

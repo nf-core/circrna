@@ -1,0 +1,83 @@
+name: cirifull_ro1
+description: Run CIRI-full read alignment and filtering
+keywords:
+  - ciri-full
+  - alignment
+  - reads
+tools:
+  - ciri-full:
+      description: Full workflow for circular RNA identification
+      homepage: https://sourceforge.net/projects/ciri/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - reads:
+        type: file
+        description: Paired-end reads
+output:
+  align:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*_ro1_align.txt":
+          type: file
+          description: CIRI-full alignment report
+  fastq:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*_ro1.fq.gz":
+          type: file
+          description: Filtered reads in compressed FASTQ format
+  versions_ciri_full:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciri-full:
+          type: string
+          description: Software name
+      - 2.1.2:
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciri-full:
+          type: string
+          description: Software name
+      - 2.1.2:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/ciri-full:2.1.2--eca1ab13065c3c7d
+      build_id: bd-eca1ab13065c3c7d_1
+      scan_id: sc-48168e8777051b18_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/ciri-full:2.1.2--2c8740cd6c611cfd
+      build_id: bd-2c8740cd6c611cfd_1
+      scan_id: sc-aaabe3a365d0ac66_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/ciri-full:2.1.2--f4a5015a444623a0
+      build_id: bd-f4a5015a444623a0_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f9/f945f0dd8c450d3c034f23db6680a7c44e1447f790ed1cf58727cc9f1ed02e72/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/ciri-full:2.1.2--823ad4502b2571e9
+      build_id: bd-823ad4502b2571e9_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/43/4338f69a5a0e065aa6ac4c00c8df86a6e16701482ce75fbe4211d71659d210e4/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/cirifull/ro1/.conda-lock/linux_amd64-bd-eca1ab13065c3c7d_1.txt
+    linux/arm64:
+      lock_file: modules/local/cirifull/ro1/.conda-lock/linux_arm64-bd-2c8740cd6c611cfd_1.txt

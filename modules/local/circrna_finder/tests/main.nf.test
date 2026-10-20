@@ -31,7 +31,9 @@ nextflow_process {
             def rows = path(process.out.results[0][1]).readLines()
             assert process.success
             assert snapshot(
-                process.out.versions.collect { path(it).yaml },
+                process.out.versions_awk,
+                process.out.versions_cat,
+                process.out.versions_circrna_finder,
                 process.out.results.collect { file(it[1]).name },
                 rows.size(),
                 rows.collect { it.split('\t').size() }.unique(),

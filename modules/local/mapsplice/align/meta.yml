@@ -1,0 +1,88 @@
+name: mapsplice_align
+description: Align RNA-seq reads and identify fusion junctions with MapSplice
+keywords:
+  - mapsplice
+  - alignment
+  - fusion
+tools:
+  - mapsplice:
+      description: RNA-seq alignment and junction detection
+      homepage: https://sourceforge.net/projects/mapsplice/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - reads:
+        type: file
+        description: Single- or paired-end reads
+  - bowtie_index:
+      type: directory
+      description: Bowtie index
+  - - meta:
+        type: map
+        description: Reference metadata
+    - chromosomes:
+        type: directory
+        description: Chromosome FASTA files
+  - gtf:
+      type: file
+      description: Gene annotation
+output:
+  raw_fusions:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - fusions_raw.txt:
+          type: file
+          description: Raw fusion junction calls
+  versions_mapsplice:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - mapsplice:
+          type: string
+          description: Software name
+      - 2.2.1:
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - mapsplice:
+          type: string
+          description: Software name
+      - 2.2.1:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/mapsplice:046f5c757c7045ad
+      build_id: bd-046f5c757c7045ad_1
+      scan_id: sc-3b0d393a0d97bfab_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/mapsplice:0d32e5adcadd8ba5
+      build_id: bd-0d32e5adcadd8ba5_1
+      scan_id: sc-0778d18be2de9427_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/mapsplice:aebc265ebaacf090
+      build_id: bd-aebc265ebaacf090_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/66/664175dc29f9988fe89447a85589c869933d837612b2b01d66c1367d6daa290b/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/mapsplice:bef77e787f4136ea
+      build_id: bd-bef77e787f4136ea_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/db/dba8f89114556c2bf1fe6bb94bef5253a754ca9854306facb1755ee221ce3b1c/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/mapsplice/align/.conda-lock/linux_amd64-bd-046f5c757c7045ad_1.txt
+    linux/arm64:
+      lock_file: modules/local/mapsplice/align/.conda-lock/linux_arm64-bd-0d32e5adcadd8ba5_1.txt

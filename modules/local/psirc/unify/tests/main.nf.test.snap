@@ -12,7 +12,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,4edaa9092ff70f45d499afbfea1da071"
+                    [
+                        "PSIRC_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PSIRC_UNIFY",
+                        "pandas",
+                        "3.0.6"
+                    ]
                 ],
                 "bed": [
                     [
@@ -23,16 +34,27 @@
                         "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,4edaa9092ff70f45d499afbfea1da071"
+                "versions_pandas": [
+                    [
+                        "PSIRC_UNIFY",
+                        "pandas",
+                        "3.0.6"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "PSIRC_UNIFY",
+                        "python",
+                        "3.14.7"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:04:08.725637486",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:35:25.031450785"
+        }
     },
     "isoform table": {
         "content": [
@@ -46,17 +68,19 @@
                     "f241544aef8b8d4293ab68970ead8bfb"
                 ]
             ],
-            {
-                "PSIRC_UNIFY": {
-                    "pandas": "2.3.0"
-                }
-            }
+            [
+                [
+                    "PSIRC_UNIFY",
+                    "pandas",
+                    "3.0.6"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:03:33.661342525",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:34:51.583873382"
+        }
     },
     "empty isoform table": {
         "content": [
@@ -70,16 +94,18 @@
                     "d751713988987e9331980363e24189ce"
                 ]
             ],
-            {
-                "PSIRC_UNIFY": {
-                    "pandas": "2.3.0"
-                }
-            }
+            [
+                [
+                    "PSIRC_UNIFY",
+                    "pandas",
+                    "3.0.6"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:03:51.750607525",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T21:35:08.237709804"
+        }
     }
 }

@@ -31,7 +31,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().sort().hashCode()] },
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars]
                 ).match() }
             )
         }
@@ -60,7 +60,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().sort().hashCode()] },
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars]
                 ).match() }
             )
         }

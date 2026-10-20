@@ -1,0 +1,125 @@
+name: circrna_finder
+description: Filter STAR chimeric junctions with circRNA_finder
+keywords:
+  - circrna_finder
+  - star
+  - circular-rna
+tools:
+  - gawk:
+      description: Pattern scanning and processing language
+      homepage: https://www.gnu.org/software/gawk/
+      licence:
+        - GPL-3.0-or-later
+  - coreutils:
+      description: GNU basic file
+      shell and text utilities: null
+      homepage: https://www.gnu.org/software/coreutils/
+      licence:
+        - GPL-3.0-or-later
+  - circrna_finder:
+      description: Circular RNA detection workflow
+      homepage: https://github.com/marvin-jens/circrna_finder
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - star_input:
+        type: directory
+        description: STAR alignment output
+output:
+  results:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.filteredJunctions.bed":
+          type: file
+          description: Filtered STAR junctions
+  versions_awk:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - awk:
+          type: string
+          description: Software name
+      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+          type: eval
+          description: Software version
+  versions_cat:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - cat:
+          type: string
+          description: Software name
+      - cat --version | head -n1 | sed 's/cat (GNU coreutils) //':
+          type: eval
+          description: Software version
+  versions_circrna_finder:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circRNA_finder:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - awk:
+          type: string
+          description: Software name
+      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - cat:
+          type: string
+          description: Software name
+      - cat --version | head -n1 | sed 's/cat (GNU coreutils) //':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circRNA_finder:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/circrna_finder:b96e4b698e6cee7c
+      build_id: bd-b96e4b698e6cee7c_1
+      scan_id: sc-782ff8485048b4f3_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/circrna_finder:dc32769051e072ff
+      build_id: bd-dc32769051e072ff_1
+      scan_id: sc-baf4a4d9b62e7f39_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/circrna_finder:d2b305f728e13044
+      build_id: bd-d2b305f728e13044_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ee/ee41e12abc2b47b1ce60ab8b6448961c701c00582098810066b5bae2c206bf03/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/circrna_finder:8dcec2595d4fea92
+      build_id: bd-8dcec2595d4fea92_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b1/b12d1d036449d02cf9e01e1e767c20ce26775a93c307441f986466f7368dddb7/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circrna_finder/.conda-lock/linux_amd64-bd-b96e4b698e6cee7c_1.txt
+    linux/arm64:
+      lock_file: modules/local/circrna_finder/.conda-lock/linux_arm64-bd-dc32769051e072ff_1.txt

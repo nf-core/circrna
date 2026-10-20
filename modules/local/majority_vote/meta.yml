@@ -1,0 +1,108 @@
+name: majority_vote
+description: Retain miRNA target predictions supported by a minimum number of tools.
+keywords:
+  - mirna
+  - target-prediction
+  - consensus
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Binding-site metadata.
+    - bindingsites:
+        type: file
+        description: Predicted miRNA binding sites.
+        pattern: "*.{tsv,txt}"
+  - min_tools:
+      type: integer
+      description: Minimum supporting prediction tools.
+output:
+  tsv:
+    - - meta:
+          type: map
+          description: Binding-site metadata.
+      - "*.majority.tsv":
+          type: file
+          description: Consensus miRNA-target pairs.
+          pattern: "*.majority.tsv"
+  targets:
+    - - meta:
+          type: map
+          description: Binding-site metadata.
+      - "*.targets.tsv":
+          type: file
+          description: Targets grouped by miRNA.
+          pattern: "*.targets.tsv"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+  versions_polars:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - polars:
+          type: string
+          description: The name of the tool
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - polars:
+          type: string
+          description: Software name
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/majority_vote:4af2b9d45db454df
+      build_id: bd-4af2b9d45db454df_1
+      scan_id: sc-48e7d9d6b9857e36_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/majority_vote:b2b8759c58d7006a
+      build_id: bd-b2b8759c58d7006a_1
+      scan_id: sc-07b53e3fa2788762_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/majority_vote:6a9ffcdb80e9e8ee
+      build_id: bd-6a9ffcdb80e9e8ee_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c0/c0e5925c40ad9479f2280efd1f3719c4ca7e1afe35291e8aa77fa47f79ce0d1c/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/majority_vote:306217e7e7367023
+      build_id: bd-306217e7e7367023_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/89/896125a48996b568301b84b340da81782d107b68379207b9ee224b3f6a774114/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/majority_vote/.conda-lock/linux_amd64-bd-4af2b9d45db454df_1.txt
+    linux/arm64:
+      lock_file: modules/local/majority_vote/.conda-lock/linux_arm64-bd-b2b8759c58d7006a_1.txt

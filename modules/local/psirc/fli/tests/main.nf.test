@@ -8,27 +8,106 @@ nextflow_process {
     tag "modules_local"
     tag "psirc_fli"
 
-    // TODO(psirc FLI real test): blocked by psirc BSJ finding 0 junctions on the mini data (empty psirc_bsj intermediates)
-    test("cel_N2_1 reads - stub") {
-
-        options '-stub'
-
-        when {
-            params {
-                outdir = "$outputDir"
-            }
+    // Build real upstream state for a two-exon circle within a three-exon gene.
+    setup {
+        def fixture = new File(System.getenv('NFT_WORKDIR') ?: '.nf-test', 'psirc-fli-fixture').absoluteFile
+        fixture.mkdirs()
+        def random = new Random(731)
+        def dna = { int n -> (1..n).collect { 'ACGT'.charAt(random.nextInt(4)) }.join() }
+        def exon1 = dna(200)
+        def intron = dna(100)
+        def exon2 = dna(200)
+        def exon3 = dna(200)
+        def genome = exon1 + intron + exon2 + dna(100) + exon3
+        new File(fixture, 'reference.fa').text = ">chrToy\n${genome}\n"
+        new File(fixture, 'reference.gtf').text = """chrToy\ttoy\texon\t1\t200\t.\t+\t.\tgene_id \"g1\"; transcript_id \"t1\"; gene_name \"Toy\"; exon_number \"1\";
+chrToy\ttoy\texon\t301\t500\t.\t+\t.\tgene_id \"g1\"; transcript_id \"t1\"; gene_name \"Toy\"; exon_number \"2\";
+chrToy\ttoy\texon\t601\t800\t.\t+\t.\tgene_id \"g1\"; transcript_id \"t1\"; gene_name \"Toy\"; exon_number \"3\";
+"""
+        def revcomp = { String s -> s.reverse().collect { [A:'T', C:'G', G:'C', T:'A'][it.toString()] }.join() }
+        def circle = exon2 + exon3
+        def r1 = new StringBuilder()
+        def r2 = new StringBuilder()
+        (0..<400).each { i ->
+            int start = (37 * i) % circle.length()
+            String fragment = (0..<160).collect { j -> circle.charAt((start + j) % circle.length()) }.join()
+            // psirc extracts pairs using the shared read ID followed by a space.
+            r1.append("@toy${i} 1:N:0:1\n${fragment.substring(0,100)}\n+\n${'I' * 100}\n")
+            r2.append("@toy${i} 2:N:0:1\n${revcomp(fragment.substring(60,160))}\n+\n${'I' * 100}\n")
+        }
+        new File(fixture, 'reads_1.fastq').text = r1.toString()
+        new File(fixture, 'reads_2.fastq').text = r2.toString()
+        run("PSIRC_TRANSCRIPTOME") {
+            script "modules/local/psirc/transcriptome/main.nf"
             process {
                 """
-                input[0] = [
-                    [ id:'cel_N2_1', single_end:false ],
-                    [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
-                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.psirc_bsj.junction_names_output_to_raw.tsv', checkIfExists: true)
-                ]
-                input[1] = [ [ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true) ]
+                input[0] = [[id: 'toy'], file("${fixture.absolutePath}/reference.gtf")]
+                input[1] = [[id: 'toy'], file("${fixture.absolutePath}/reference.fa")]
                 """
             }
         }
+        run("PSIRC_INDEX") {
+            script "modules/local/psirc/index/main.nf"
+            process { """input[0] = PSIRC_TRANSCRIPTOME.out.transcriptome""" }
+        }
+        run("PSIRC_BSJ") {
+            script "modules/local/psirc/bsj/main.nf"
+            process {
+                """
+                input[0] = [[id: 'toy', single_end: false], [
+                    file("${fixture.absolutePath}/reads_1.fastq"),
+                    file("${fixture.absolutePath}/reads_2.fastq")
+                ]]
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
+                """
+            }
+        }
+    }
 
+    test("toy circular transcript produces full-length isoform") {
+        when {
+            def fixture = new File(System.getenv('NFT_WORKDIR') ?: '.nf-test', 'psirc-fli-fixture').absoluteFile
+            process {
+                """
+                input[0] = PSIRC_BSJ.out.output.map { meta, bsj ->
+                    [meta, [file("${fixture.absolutePath}/reads_1.fastq"), file("${fixture.absolutePath}/reads_2.fastq")], bsj]
+                }
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome
+                """
+            }
+        }
+        then {
+            def fasta = path(process.out.fasta[0][1]).readLines()
+            def table = path(process.out.tsv[0][1]).readLines()
+            def count_column = table.first().split('\t').findIndexOf { it == 'back_splice_junction_read_count' }
+            assertAll(
+                { assert process.success },
+                { assert fasta.size() >= 2 },
+                { assert fasta.any { it.startsWith('>') && it.endsWith('\tC') } },
+                { assert table.size() > 1 },
+                { assert count_column >= 0 },
+                { assert table.drop(1).any {
+                    def count = it.split('\t', -1)[count_column]
+                    count.isInteger() && count.toInteger() > 0
+                } },
+                { assert process.out.versions_psirc[0] == ['PSIRC_FLI', 'psirc', '1.0.0'] }
+            )
+        }
+    }
+
+    test("toy circular transcript - stub") {
+        options '-stub'
+        when {
+            def fixture = new File(System.getenv('NFT_WORKDIR') ?: '.nf-test', 'psirc-fli-fixture').absoluteFile
+            process {
+                """
+                input[0] = PSIRC_BSJ.out.output.map { meta, bsj ->
+                    [meta, [file("${fixture.absolutePath}/reads_1.fastq"), file("${fixture.absolutePath}/reads_2.fastq")], bsj]
+                }
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome
+                """
+            }
+        }
         then {
             assertAll(
                 { assert process.success },

@@ -6,7 +6,7 @@
                     {
                         "id": "gene"
                     },
-                    "gene.joined.tsv:md5,fc3fb421c658909ccf94e814a930f9d0"
+                    "gene.joined.tsv"
                 ]
             ],
             [
@@ -14,13 +14,741 @@
                 "gene_name",
                 "cel_N2_1",
                 "fust1_1"
+            ],
+            [
+                {
+                    "gene_name": "21ur-10404",
+                    "gene_id": "21ur-10404",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "21ur-12465",
+                    "gene_id": "21ur-12465",
+                    "cel_N2_1": 510.809387,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "21ur-13232",
+                    "gene_id": "21ur-13232",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 92.988525
+                },
+                {
+                    "gene_name": "BE10.7",
+                    "gene_id": "BE10.7",
+                    "cel_N2_1": 612.138428,
+                    "fust1_1": 268.858307
+                },
+                {
+                    "gene_name": "C53H9.2",
+                    "gene_id": "C53H9.2",
+                    "cel_N2_1": 42497.289062,
+                    "fust1_1": 40068.429688
+                },
+                {
+                    "gene_name": "C53H9.3",
+                    "gene_id": "C53H9.3",
+                    "cel_N2_1": 1163.844238,
+                    "fust1_1": 636.455383
+                },
+                {
+                    "gene_name": "F37F2.2",
+                    "gene_id": "F37F2.2",
+                    "cel_N2_1": 976.223694,
+                    "fust1_1": 1045.417603
+                },
+                {
+                    "gene_name": "F37F2.4",
+                    "gene_id": "F37F2.4",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 49.823612
+                },
+                {
+                    "gene_name": "F47G6.3",
+                    "gene_id": "F47G6.3",
+                    "cel_N2_1": 64.832642,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "F47G6.6",
+                    "gene_id": "F47G6.6",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "K12C11.1",
+                    "gene_id": "K12C11.1",
+                    "cel_N2_1": 5166.554688,
+                    "fust1_1": 5465.064453
+                },
+                {
+                    "gene_name": "K12C11.3",
+                    "gene_id": "K12C11.3",
+                    "cel_N2_1": 382.471802,
+                    "fust1_1": 262.370819
+                },
+                {
+                    "gene_name": "K12C11.5",
+                    "gene_id": "K12C11.5",
+                    "cel_N2_1": 142.033508,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "K12C11.6",
+                    "gene_id": "K12C11.6",
+                    "cel_N2_1": 933.123291,
+                    "fust1_1": 1790.16687
+                },
+                {
+                    "gene_name": "K12C11.7",
+                    "gene_id": "K12C11.7",
+                    "cel_N2_1": 995.244019,
+                    "fust1_1": 1274.989624
+                },
+                {
+                    "gene_name": "K12C11.8",
+                    "gene_id": "K12C11.8",
+                    "cel_N2_1": 208.066895,
+                    "fust1_1": 167.593323
+                },
+                {
+                    "gene_name": "M01D7.10",
+                    "gene_id": "M01D7.10",
+                    "cel_N2_1": 807.193237,
+                    "fust1_1": 317.364258
+                },
+                {
+                    "gene_name": "M01D7.11",
+                    "gene_id": "M01D7.11",
+                    "cel_N2_1": 13173.749023,
+                    "fust1_1": 11736.698242
+                },
+                {
+                    "gene_name": "M01D7.9",
+                    "gene_id": "M01D7.9",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 156.848373
+                },
+                {
+                    "gene_name": "W04A4.7",
+                    "gene_id": "W04A4.7",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.10",
+                    "gene_id": "Y48G8AL.10",
+                    "cel_N2_1": 1345.371216,
+                    "fust1_1": 1392.657715
+                },
+                {
+                    "gene_name": "Y48G8AL.12",
+                    "gene_id": "Y48G8AL.12",
+                    "cel_N2_1": 178.217453,
+                    "fust1_1": 17.394545
+                },
+                {
+                    "gene_name": "Y48G8AL.13",
+                    "gene_id": "Y48G8AL.13",
+                    "cel_N2_1": 121379.40625,
+                    "fust1_1": 116739.507812
+                },
+                {
+                    "gene_name": "Y48G8AL.15",
+                    "gene_id": "Y48G8AL.15",
+                    "cel_N2_1": 866.779907,
+                    "fust1_1": 1207.81897
+                },
+                {
+                    "gene_name": "Y48G8AL.16",
+                    "gene_id": "Y48G8AL.16",
+                    "cel_N2_1": 103.244682,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.17",
+                    "gene_id": "Y48G8AL.17",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.18",
+                    "gene_id": "Y48G8AL.18",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.20",
+                    "gene_id": "Y48G8AL.20",
+                    "cel_N2_1": 350.143311,
+                    "fust1_1": 963.906494
+                },
+                {
+                    "gene_name": "Y48G8AL.5",
+                    "gene_id": "Y48G8AL.5",
+                    "cel_N2_1": 7967.688477,
+                    "fust1_1": 8430.415039
+                },
+                {
+                    "gene_name": "Y48G8AL.7",
+                    "gene_id": "Y48G8AL.7",
+                    "cel_N2_1": 997.896484,
+                    "fust1_1": 857.346497
+                },
+                {
+                    "gene_name": "Y48G8AR.2",
+                    "gene_id": "Y48G8AR.2",
+                    "cel_N2_1": 2495.955322,
+                    "fust1_1": 2043.592163
+                },
+                {
+                    "gene_name": "Y48G8AR.3",
+                    "gene_id": "Y48G8AR.3",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 68.4842
+                },
+                {
+                    "gene_name": "Y48G8AR.4",
+                    "gene_id": "Y48G8AR.4",
+                    "cel_N2_1": 205.23587,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.5",
+                    "gene_id": "Y48G8AR.5",
+                    "cel_N2_1": 205.23587,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.6",
+                    "gene_id": "Y48G8AR.6",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.7",
+                    "gene_id": "Y48G8AR.7",
+                    "cel_N2_1": 751.270264,
+                    "fust1_1": 395.168762
+                },
+                {
+                    "gene_name": "Y51F10.7",
+                    "gene_id": "Y51F10.7",
+                    "cel_N2_1": 3748.960449,
+                    "fust1_1": 2927.619141
+                },
+                {
+                    "gene_name": "Y71G12A.4",
+                    "gene_id": "Y71G12A.4",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.10",
+                    "gene_id": "Y71G12B.10",
+                    "cel_N2_1": 2568.492188,
+                    "fust1_1": 2059.320557
+                },
+                {
+                    "gene_name": "Y71G12B.13",
+                    "gene_id": "Y71G12B.13",
+                    "cel_N2_1": 3122.268555,
+                    "fust1_1": 3078.266357
+                },
+                {
+                    "gene_name": "Y71G12B.17",
+                    "gene_id": "Y71G12B.17",
+                    "cel_N2_1": 934.573914,
+                    "fust1_1": 161.869141
+                },
+                {
+                    "gene_name": "Y71G12B.18",
+                    "gene_id": "Y71G12B.18",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 125.051346
+                },
+                {
+                    "gene_name": "Y71G12B.2",
+                    "gene_id": "Y71G12B.2",
+                    "cel_N2_1": 1586.331787,
+                    "fust1_1": 570.959106
+                },
+                {
+                    "gene_name": "Y71G12B.22",
+                    "gene_id": "Y71G12B.22",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 266.943085
+                },
+                {
+                    "gene_name": "Y71G12B.23",
+                    "gene_id": "Y71G12B.23",
+                    "cel_N2_1": 2969.057617,
+                    "fust1_1": 2479.056396
+                },
+                {
+                    "gene_name": "Y71G12B.25",
+                    "gene_id": "Y71G12B.25",
+                    "cel_N2_1": 1268.435669,
+                    "fust1_1": 1210.612061
+                },
+                {
+                    "gene_name": "Y71G12B.26",
+                    "gene_id": "Y71G12B.26",
+                    "cel_N2_1": 1007.259583,
+                    "fust1_1": 760.203125
+                },
+                {
+                    "gene_name": "Y71G12B.27",
+                    "gene_id": "Y71G12B.27",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.3",
+                    "gene_id": "Y71G12B.3",
+                    "cel_N2_1": 100.380791,
+                    "fust1_1": 114.898506
+                },
+                {
+                    "gene_name": "Y71G12B.30",
+                    "gene_id": "Y71G12B.30",
+                    "cel_N2_1": 248.99353,
+                    "fust1_1": 87.265854
+                },
+                {
+                    "gene_name": "Y71G12B.31",
+                    "gene_id": "Y71G12B.31",
+                    "cel_N2_1": 977.673828,
+                    "fust1_1": 636.731995
+                },
+                {
+                    "gene_name": "Y71G12B.32",
+                    "gene_id": "Y71G12B.32",
+                    "cel_N2_1": 346.690125,
+                    "fust1_1": 174.348801
+                },
+                {
+                    "gene_name": "Y71G12B.33",
+                    "gene_id": "Y71G12B.33",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.35",
+                    "gene_id": "Y71G12B.35",
+                    "cel_N2_1": 1530.725708,
+                    "fust1_1": 1540.718018
+                },
+                {
+                    "gene_name": "Y71G12B.36",
+                    "gene_id": "Y71G12B.36",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.37",
+                    "gene_id": "Y71G12B.37",
+                    "cel_N2_1": 1683.075073,
+                    "fust1_1": 851.033447
+                },
+                {
+                    "gene_name": "Y71G12B.41",
+                    "gene_id": "Y71G12B.41",
+                    "cel_N2_1": 56.921921,
+                    "fust1_1": 28.730757
+                },
+                {
+                    "gene_name": "Y71G12B.42",
+                    "gene_id": "Y71G12B.42",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.44",
+                    "gene_id": "Y71G12B.44",
+                    "cel_N2_1": 1159.513184,
+                    "fust1_1": 1639.109863
+                },
+                {
+                    "gene_name": "Y71G12B.5",
+                    "gene_id": "Y71G12B.5",
+                    "cel_N2_1": 115.500732,
+                    "fust1_1": 130.483063
+                },
+                {
+                    "gene_name": "Y71G12B.6",
+                    "gene_id": "Y71G12B.6",
+                    "cel_N2_1": 1000.788086,
+                    "fust1_1": 905.422852
+                },
+                {
+                    "gene_name": "Y71G12B.7",
+                    "gene_id": "Y71G12B.7",
+                    "cel_N2_1": 73.919968,
+                    "fust1_1": 136.303802
+                },
+                {
+                    "gene_name": "Y71G12B.8",
+                    "gene_id": "Y71G12B.8",
+                    "cel_N2_1": 2558.937012,
+                    "fust1_1": 2589.607422
+                },
+                {
+                    "gene_name": "Y73E7A.1",
+                    "gene_id": "Y73E7A.1",
+                    "cel_N2_1": 10042.265625,
+                    "fust1_1": 9548.320312
+                },
+                {
+                    "gene_name": "Y73E7A.2",
+                    "gene_id": "Y73E7A.2",
+                    "cel_N2_1": 4709.276855,
+                    "fust1_1": 4368.616699
+                },
+                {
+                    "gene_name": "Y73E7A.3",
+                    "gene_id": "Y73E7A.3",
+                    "cel_N2_1": 1568.539917,
+                    "fust1_1": 1343.019165
+                },
+                {
+                    "gene_name": "Y73E7A.6",
+                    "gene_id": "Y73E7A.6",
+                    "cel_N2_1": 1381.432007,
+                    "fust1_1": 1868.382446
+                },
+                {
+                    "gene_name": "Y73E7A.8",
+                    "gene_id": "Y73E7A.8",
+                    "cel_N2_1": 117.701096,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y92H12A.2",
+                    "gene_id": "Y92H12A.2",
+                    "cel_N2_1": 9988.337891,
+                    "fust1_1": 7968.04248
+                },
+                {
+                    "gene_name": "Y92H12A.4",
+                    "gene_id": "Y92H12A.4",
+                    "cel_N2_1": 2246.531738,
+                    "fust1_1": 2488.210449
+                },
+                {
+                    "gene_name": "Y92H12A.5",
+                    "gene_id": "Y92H12A.5",
+                    "cel_N2_1": 5517.369141,
+                    "fust1_1": 5316.399414
+                },
+                {
+                    "gene_name": "Y92H12A.8",
+                    "gene_id": "Y92H12A.8",
+                    "cel_N2_1": 186.232544,
+                    "fust1_1": 236.26001
+                },
+                {
+                    "gene_name": "Y92H12BL.1",
+                    "gene_id": "Y92H12BL.1",
+                    "cel_N2_1": 8390.825195,
+                    "fust1_1": 8776.068359
+                },
+                {
+                    "gene_name": "Y92H12BL.4",
+                    "gene_id": "Y92H12BL.4",
+                    "cel_N2_1": 5534.383789,
+                    "fust1_1": 5878.271973
+                },
+                {
+                    "gene_name": "Y92H12BL.5",
+                    "gene_id": "Y92H12BL.5",
+                    "cel_N2_1": 4064.557617,
+                    "fust1_1": 3276.634277
+                },
+                {
+                    "gene_name": "Y92H12BM.1",
+                    "gene_id": "Y92H12BM.1",
+                    "cel_N2_1": 4433.800293,
+                    "fust1_1": 3427.043457
+                },
+                {
+                    "gene_name": "Y92H12BR.2",
+                    "gene_id": "Y92H12BR.2",
+                    "cel_N2_1": 1126.602783,
+                    "fust1_1": 870.331787
+                },
+                {
+                    "gene_name": "Y92H12BR.3",
+                    "gene_id": "Y92H12BR.3",
+                    "cel_N2_1": 9060.362305,
+                    "fust1_1": 7453.668945
+                },
+                {
+                    "gene_name": "Y92H12BR.7",
+                    "gene_id": "Y92H12BR.7",
+                    "cel_N2_1": 1697.923218,
+                    "fust1_1": 1132.538452
+                },
+                {
+                    "gene_name": "ZK993.4",
+                    "gene_id": "ZK993.4",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "acs-16",
+                    "gene_id": "acs-16",
+                    "cel_N2_1": 1983.867432,
+                    "fust1_1": 1747.207275
+                },
+                {
+                    "gene_name": "adpr-1",
+                    "gene_id": "adpr-1",
+                    "cel_N2_1": 2464.015381,
+                    "fust1_1": 1613.898804
+                },
+                {
+                    "gene_name": "anr-19",
+                    "gene_id": "anr-19",
+                    "cel_N2_1": 167.44957,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "anr-42",
+                    "gene_id": "anr-42",
+                    "cel_N2_1": 778.736938,
+                    "fust1_1": 100.556999
+                },
+                {
+                    "gene_name": "aps-3",
+                    "gene_id": "aps-3",
+                    "cel_N2_1": 1974.258667,
+                    "fust1_1": 3176.656006
+                },
+                {
+                    "gene_name": "atg-5",
+                    "gene_id": "atg-5",
+                    "cel_N2_1": 2855.915283,
+                    "fust1_1": 2269.780029
+                },
+                {
+                    "gene_name": "bre-4",
+                    "gene_id": "bre-4",
+                    "cel_N2_1": 1952.742432,
+                    "fust1_1": 2038.576416
+                },
+                {
+                    "gene_name": "ceh-45",
+                    "gene_id": "ceh-45",
+                    "cel_N2_1": 1589.487305,
+                    "fust1_1": 2086.71875
+                },
+                {
+                    "gene_name": "chaf-2",
+                    "gene_id": "chaf-2",
+                    "cel_N2_1": 413.964722,
+                    "fust1_1": 525.533752
+                },
+                {
+                    "gene_name": "cpx-1",
+                    "gene_id": "cpx-1",
+                    "cel_N2_1": 9937.0625,
+                    "fust1_1": 9348.944336
+                },
+                {
+                    "gene_name": "dapk-1",
+                    "gene_id": "dapk-1",
+                    "cel_N2_1": 8745.521484,
+                    "fust1_1": 8066.777832
+                },
+                {
+                    "gene_name": "drag-1",
+                    "gene_id": "drag-1",
+                    "cel_N2_1": 1383.858521,
+                    "fust1_1": 1035.531006
+                },
+                {
+                    "gene_name": "dyb-1",
+                    "gene_id": "dyb-1",
+                    "cel_N2_1": 3707.405518,
+                    "fust1_1": 2867.018555
+                },
+                {
+                    "gene_name": "egl-30",
+                    "gene_id": "egl-30",
+                    "cel_N2_1": 51768.855469,
+                    "fust1_1": 42242.1875
+                },
+                {
+                    "gene_name": "emr-1",
+                    "gene_id": "emr-1",
+                    "cel_N2_1": 2334.263916,
+                    "fust1_1": 1938.036377
+                },
+                {
+                    "gene_name": "grh-1",
+                    "gene_id": "grh-1",
+                    "cel_N2_1": 6348.217285,
+                    "fust1_1": 7815.65332
+                },
+                {
+                    "gene_name": "gst-25",
+                    "gene_id": "gst-25",
+                    "cel_N2_1": 559.945312,
+                    "fust1_1": 430.14032
+                },
+                {
+                    "gene_name": "haf-6",
+                    "gene_id": "haf-6",
+                    "cel_N2_1": 814.341187,
+                    "fust1_1": 764.882202
+                },
+                {
+                    "gene_name": "herc-1",
+                    "gene_id": "herc-1",
+                    "cel_N2_1": 2932.192383,
+                    "fust1_1": 2997.553711
+                },
+                {
+                    "gene_name": "lin-65",
+                    "gene_id": "lin-65",
+                    "cel_N2_1": 2555.382812,
+                    "fust1_1": 2005.193726
+                },
+                {
+                    "gene_name": "lsm-6",
+                    "gene_id": "lsm-6",
+                    "cel_N2_1": 2189.904785,
+                    "fust1_1": 2324.583008
+                },
+                {
+                    "gene_name": "mab-20",
+                    "gene_id": "mab-20",
+                    "cel_N2_1": 3744.853516,
+                    "fust1_1": 2921.541016
+                },
+                {
+                    "gene_name": "mir-50",
+                    "gene_id": "mir-50",
+                    "cel_N2_1": 20.316265,
+                    "fust1_1": 223.548401
+                },
+                {
+                    "gene_name": "mppa-1",
+                    "gene_id": "mppa-1",
+                    "cel_N2_1": 1196.6604,
+                    "fust1_1": 1367.809082
+                },
+                {
+                    "gene_name": "mrpl-15",
+                    "gene_id": "mrpl-15",
+                    "cel_N2_1": 3228.862305,
+                    "fust1_1": 3458.99707
+                },
+                {
+                    "gene_name": "nlp-12",
+                    "gene_id": "nlp-12",
+                    "cel_N2_1": 17311.814453,
+                    "fust1_1": 14825.625977
+                },
+                {
+                    "gene_name": "pghm-1",
+                    "gene_id": "pghm-1",
+                    "cel_N2_1": 46665.65625,
+                    "fust1_1": 46199.320312
+                },
+                {
+                    "gene_name": "pqn-88",
+                    "gene_id": "pqn-88",
+                    "cel_N2_1": 924.986633,
+                    "fust1_1": 1632.207275
+                },
+                {
+                    "gene_name": "rpl-17",
+                    "gene_id": "rpl-17",
+                    "cel_N2_1": 193195.34375,
+                    "fust1_1": 215338.84375
+                },
+                {
+                    "gene_name": "rpl-27",
+                    "gene_id": "rpl-27",
+                    "cel_N2_1": 242887.03125,
+                    "fust1_1": 263712.5
+                },
+                {
+                    "gene_name": "scm-1",
+                    "gene_id": "scm-1",
+                    "cel_N2_1": 5698.810547,
+                    "fust1_1": 6157.349121
+                },
+                {
+                    "gene_name": "set-29",
+                    "gene_id": "set-29",
+                    "cel_N2_1": 214.954971,
+                    "fust1_1": 322.221832
+                },
+                {
+                    "gene_name": "smg-2",
+                    "gene_id": "smg-2",
+                    "cel_N2_1": 7241.490234,
+                    "fust1_1": 6390.848145
+                },
+                {
+                    "gene_name": "smo-1",
+                    "gene_id": "smo-1",
+                    "cel_N2_1": 4571.605957,
+                    "fust1_1": 5372.451172
+                },
+                {
+                    "gene_name": "spe-15",
+                    "gene_id": "spe-15",
+                    "cel_N2_1": 1301.992798,
+                    "fust1_1": 778.961365
+                },
+                {
+                    "gene_name": "src-1",
+                    "gene_id": "src-1",
+                    "cel_N2_1": 5204.159668,
+                    "fust1_1": 4916.40332
+                },
+                {
+                    "gene_name": "tag-96",
+                    "gene_id": "tag-96",
+                    "cel_N2_1": 723.001953,
+                    "fust1_1": 471.331207
+                },
+                {
+                    "gene_name": "tln-1",
+                    "gene_id": "tln-1",
+                    "cel_N2_1": 10510.138672,
+                    "fust1_1": 8432.197266
+                },
+                {
+                    "gene_name": "trpp-10",
+                    "gene_id": "trpp-10",
+                    "cel_N2_1": 1741.275269,
+                    "fust1_1": 1161.343018
+                },
+                {
+                    "gene_name": "tub-2",
+                    "gene_id": "tub-2",
+                    "cel_N2_1": 15908.498047,
+                    "fust1_1": 13176.209961
+                },
+                {
+                    "gene_name": "ubc-3",
+                    "gene_id": "ubc-3",
+                    "cel_N2_1": 27752.599609,
+                    "fust1_1": 25869.175781
+                }
             ]
         ],
+        "timestamp": "2026-10-19T10:59:01.668948054",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T18:19:29.336731597"
+        }
     },
     "ciriquant gene tables": {
         "content": [
@@ -29,21 +757,759 @@
                     {
                         "id": "gene"
                     },
-                    "gene.joined.tsv:md5,fc3fb421c658909ccf94e814a930f9d0"
+                    "gene.joined.tsv"
                 ]
             ],
-            {
-                "JOIN_SAMPLES": {
-                    "polars": "1.5.0",
-                    "python": "3.12.5"
+            [
+                {
+                    "gene_name": "21ur-10404",
+                    "gene_id": "21ur-10404",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "21ur-12465",
+                    "gene_id": "21ur-12465",
+                    "cel_N2_1": 510.809387,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "21ur-13232",
+                    "gene_id": "21ur-13232",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 92.988525
+                },
+                {
+                    "gene_name": "BE10.7",
+                    "gene_id": "BE10.7",
+                    "cel_N2_1": 612.138428,
+                    "fust1_1": 268.858307
+                },
+                {
+                    "gene_name": "C53H9.2",
+                    "gene_id": "C53H9.2",
+                    "cel_N2_1": 42497.289062,
+                    "fust1_1": 40068.429688
+                },
+                {
+                    "gene_name": "C53H9.3",
+                    "gene_id": "C53H9.3",
+                    "cel_N2_1": 1163.844238,
+                    "fust1_1": 636.455383
+                },
+                {
+                    "gene_name": "F37F2.2",
+                    "gene_id": "F37F2.2",
+                    "cel_N2_1": 976.223694,
+                    "fust1_1": 1045.417603
+                },
+                {
+                    "gene_name": "F37F2.4",
+                    "gene_id": "F37F2.4",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 49.823612
+                },
+                {
+                    "gene_name": "F47G6.3",
+                    "gene_id": "F47G6.3",
+                    "cel_N2_1": 64.832642,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "F47G6.6",
+                    "gene_id": "F47G6.6",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "K12C11.1",
+                    "gene_id": "K12C11.1",
+                    "cel_N2_1": 5166.554688,
+                    "fust1_1": 5465.064453
+                },
+                {
+                    "gene_name": "K12C11.3",
+                    "gene_id": "K12C11.3",
+                    "cel_N2_1": 382.471802,
+                    "fust1_1": 262.370819
+                },
+                {
+                    "gene_name": "K12C11.5",
+                    "gene_id": "K12C11.5",
+                    "cel_N2_1": 142.033508,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "K12C11.6",
+                    "gene_id": "K12C11.6",
+                    "cel_N2_1": 933.123291,
+                    "fust1_1": 1790.16687
+                },
+                {
+                    "gene_name": "K12C11.7",
+                    "gene_id": "K12C11.7",
+                    "cel_N2_1": 995.244019,
+                    "fust1_1": 1274.989624
+                },
+                {
+                    "gene_name": "K12C11.8",
+                    "gene_id": "K12C11.8",
+                    "cel_N2_1": 208.066895,
+                    "fust1_1": 167.593323
+                },
+                {
+                    "gene_name": "M01D7.10",
+                    "gene_id": "M01D7.10",
+                    "cel_N2_1": 807.193237,
+                    "fust1_1": 317.364258
+                },
+                {
+                    "gene_name": "M01D7.11",
+                    "gene_id": "M01D7.11",
+                    "cel_N2_1": 13173.749023,
+                    "fust1_1": 11736.698242
+                },
+                {
+                    "gene_name": "M01D7.9",
+                    "gene_id": "M01D7.9",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 156.848373
+                },
+                {
+                    "gene_name": "W04A4.7",
+                    "gene_id": "W04A4.7",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.10",
+                    "gene_id": "Y48G8AL.10",
+                    "cel_N2_1": 1345.371216,
+                    "fust1_1": 1392.657715
+                },
+                {
+                    "gene_name": "Y48G8AL.12",
+                    "gene_id": "Y48G8AL.12",
+                    "cel_N2_1": 178.217453,
+                    "fust1_1": 17.394545
+                },
+                {
+                    "gene_name": "Y48G8AL.13",
+                    "gene_id": "Y48G8AL.13",
+                    "cel_N2_1": 121379.40625,
+                    "fust1_1": 116739.507812
+                },
+                {
+                    "gene_name": "Y48G8AL.15",
+                    "gene_id": "Y48G8AL.15",
+                    "cel_N2_1": 866.779907,
+                    "fust1_1": 1207.81897
+                },
+                {
+                    "gene_name": "Y48G8AL.16",
+                    "gene_id": "Y48G8AL.16",
+                    "cel_N2_1": 103.244682,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.17",
+                    "gene_id": "Y48G8AL.17",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.18",
+                    "gene_id": "Y48G8AL.18",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AL.20",
+                    "gene_id": "Y48G8AL.20",
+                    "cel_N2_1": 350.143311,
+                    "fust1_1": 963.906494
+                },
+                {
+                    "gene_name": "Y48G8AL.5",
+                    "gene_id": "Y48G8AL.5",
+                    "cel_N2_1": 7967.688477,
+                    "fust1_1": 8430.415039
+                },
+                {
+                    "gene_name": "Y48G8AL.7",
+                    "gene_id": "Y48G8AL.7",
+                    "cel_N2_1": 997.896484,
+                    "fust1_1": 857.346497
+                },
+                {
+                    "gene_name": "Y48G8AR.2",
+                    "gene_id": "Y48G8AR.2",
+                    "cel_N2_1": 2495.955322,
+                    "fust1_1": 2043.592163
+                },
+                {
+                    "gene_name": "Y48G8AR.3",
+                    "gene_id": "Y48G8AR.3",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 68.4842
+                },
+                {
+                    "gene_name": "Y48G8AR.4",
+                    "gene_id": "Y48G8AR.4",
+                    "cel_N2_1": 205.23587,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.5",
+                    "gene_id": "Y48G8AR.5",
+                    "cel_N2_1": 205.23587,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.6",
+                    "gene_id": "Y48G8AR.6",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y48G8AR.7",
+                    "gene_id": "Y48G8AR.7",
+                    "cel_N2_1": 751.270264,
+                    "fust1_1": 395.168762
+                },
+                {
+                    "gene_name": "Y51F10.7",
+                    "gene_id": "Y51F10.7",
+                    "cel_N2_1": 3748.960449,
+                    "fust1_1": 2927.619141
+                },
+                {
+                    "gene_name": "Y71G12A.4",
+                    "gene_id": "Y71G12A.4",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.10",
+                    "gene_id": "Y71G12B.10",
+                    "cel_N2_1": 2568.492188,
+                    "fust1_1": 2059.320557
+                },
+                {
+                    "gene_name": "Y71G12B.13",
+                    "gene_id": "Y71G12B.13",
+                    "cel_N2_1": 3122.268555,
+                    "fust1_1": 3078.266357
+                },
+                {
+                    "gene_name": "Y71G12B.17",
+                    "gene_id": "Y71G12B.17",
+                    "cel_N2_1": 934.573914,
+                    "fust1_1": 161.869141
+                },
+                {
+                    "gene_name": "Y71G12B.18",
+                    "gene_id": "Y71G12B.18",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 125.051346
+                },
+                {
+                    "gene_name": "Y71G12B.2",
+                    "gene_id": "Y71G12B.2",
+                    "cel_N2_1": 1586.331787,
+                    "fust1_1": 570.959106
+                },
+                {
+                    "gene_name": "Y71G12B.22",
+                    "gene_id": "Y71G12B.22",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 266.943085
+                },
+                {
+                    "gene_name": "Y71G12B.23",
+                    "gene_id": "Y71G12B.23",
+                    "cel_N2_1": 2969.057617,
+                    "fust1_1": 2479.056396
+                },
+                {
+                    "gene_name": "Y71G12B.25",
+                    "gene_id": "Y71G12B.25",
+                    "cel_N2_1": 1268.435669,
+                    "fust1_1": 1210.612061
+                },
+                {
+                    "gene_name": "Y71G12B.26",
+                    "gene_id": "Y71G12B.26",
+                    "cel_N2_1": 1007.259583,
+                    "fust1_1": 760.203125
+                },
+                {
+                    "gene_name": "Y71G12B.27",
+                    "gene_id": "Y71G12B.27",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.3",
+                    "gene_id": "Y71G12B.3",
+                    "cel_N2_1": 100.380791,
+                    "fust1_1": 114.898506
+                },
+                {
+                    "gene_name": "Y71G12B.30",
+                    "gene_id": "Y71G12B.30",
+                    "cel_N2_1": 248.99353,
+                    "fust1_1": 87.265854
+                },
+                {
+                    "gene_name": "Y71G12B.31",
+                    "gene_id": "Y71G12B.31",
+                    "cel_N2_1": 977.673828,
+                    "fust1_1": 636.731995
+                },
+                {
+                    "gene_name": "Y71G12B.32",
+                    "gene_id": "Y71G12B.32",
+                    "cel_N2_1": 346.690125,
+                    "fust1_1": 174.348801
+                },
+                {
+                    "gene_name": "Y71G12B.33",
+                    "gene_id": "Y71G12B.33",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.35",
+                    "gene_id": "Y71G12B.35",
+                    "cel_N2_1": 1530.725708,
+                    "fust1_1": 1540.718018
+                },
+                {
+                    "gene_name": "Y71G12B.36",
+                    "gene_id": "Y71G12B.36",
+                    "cel_N2_1": 0.0,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.37",
+                    "gene_id": "Y71G12B.37",
+                    "cel_N2_1": 1683.075073,
+                    "fust1_1": 851.033447
+                },
+                {
+                    "gene_name": "Y71G12B.41",
+                    "gene_id": "Y71G12B.41",
+                    "cel_N2_1": 56.921921,
+                    "fust1_1": 28.730757
+                },
+                {
+                    "gene_name": "Y71G12B.42",
+                    "gene_id": "Y71G12B.42",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y71G12B.44",
+                    "gene_id": "Y71G12B.44",
+                    "cel_N2_1": 1159.513184,
+                    "fust1_1": 1639.109863
+                },
+                {
+                    "gene_name": "Y71G12B.5",
+                    "gene_id": "Y71G12B.5",
+                    "cel_N2_1": 115.500732,
+                    "fust1_1": 130.483063
+                },
+                {
+                    "gene_name": "Y71G12B.6",
+                    "gene_id": "Y71G12B.6",
+                    "cel_N2_1": 1000.788086,
+                    "fust1_1": 905.422852
+                },
+                {
+                    "gene_name": "Y71G12B.7",
+                    "gene_id": "Y71G12B.7",
+                    "cel_N2_1": 73.919968,
+                    "fust1_1": 136.303802
+                },
+                {
+                    "gene_name": "Y71G12B.8",
+                    "gene_id": "Y71G12B.8",
+                    "cel_N2_1": 2558.937012,
+                    "fust1_1": 2589.607422
+                },
+                {
+                    "gene_name": "Y73E7A.1",
+                    "gene_id": "Y73E7A.1",
+                    "cel_N2_1": 10042.265625,
+                    "fust1_1": 9548.320312
+                },
+                {
+                    "gene_name": "Y73E7A.2",
+                    "gene_id": "Y73E7A.2",
+                    "cel_N2_1": 4709.276855,
+                    "fust1_1": 4368.616699
+                },
+                {
+                    "gene_name": "Y73E7A.3",
+                    "gene_id": "Y73E7A.3",
+                    "cel_N2_1": 1568.539917,
+                    "fust1_1": 1343.019165
+                },
+                {
+                    "gene_name": "Y73E7A.6",
+                    "gene_id": "Y73E7A.6",
+                    "cel_N2_1": 1381.432007,
+                    "fust1_1": 1868.382446
+                },
+                {
+                    "gene_name": "Y73E7A.8",
+                    "gene_id": "Y73E7A.8",
+                    "cel_N2_1": 117.701096,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "Y92H12A.2",
+                    "gene_id": "Y92H12A.2",
+                    "cel_N2_1": 9988.337891,
+                    "fust1_1": 7968.04248
+                },
+                {
+                    "gene_name": "Y92H12A.4",
+                    "gene_id": "Y92H12A.4",
+                    "cel_N2_1": 2246.531738,
+                    "fust1_1": 2488.210449
+                },
+                {
+                    "gene_name": "Y92H12A.5",
+                    "gene_id": "Y92H12A.5",
+                    "cel_N2_1": 5517.369141,
+                    "fust1_1": 5316.399414
+                },
+                {
+                    "gene_name": "Y92H12A.8",
+                    "gene_id": "Y92H12A.8",
+                    "cel_N2_1": 186.232544,
+                    "fust1_1": 236.26001
+                },
+                {
+                    "gene_name": "Y92H12BL.1",
+                    "gene_id": "Y92H12BL.1",
+                    "cel_N2_1": 8390.825195,
+                    "fust1_1": 8776.068359
+                },
+                {
+                    "gene_name": "Y92H12BL.4",
+                    "gene_id": "Y92H12BL.4",
+                    "cel_N2_1": 5534.383789,
+                    "fust1_1": 5878.271973
+                },
+                {
+                    "gene_name": "Y92H12BL.5",
+                    "gene_id": "Y92H12BL.5",
+                    "cel_N2_1": 4064.557617,
+                    "fust1_1": 3276.634277
+                },
+                {
+                    "gene_name": "Y92H12BM.1",
+                    "gene_id": "Y92H12BM.1",
+                    "cel_N2_1": 4433.800293,
+                    "fust1_1": 3427.043457
+                },
+                {
+                    "gene_name": "Y92H12BR.2",
+                    "gene_id": "Y92H12BR.2",
+                    "cel_N2_1": 1126.602783,
+                    "fust1_1": 870.331787
+                },
+                {
+                    "gene_name": "Y92H12BR.3",
+                    "gene_id": "Y92H12BR.3",
+                    "cel_N2_1": 9060.362305,
+                    "fust1_1": 7453.668945
+                },
+                {
+                    "gene_name": "Y92H12BR.7",
+                    "gene_id": "Y92H12BR.7",
+                    "cel_N2_1": 1697.923218,
+                    "fust1_1": 1132.538452
+                },
+                {
+                    "gene_name": "ZK993.4",
+                    "gene_id": "ZK993.4",
+                    "cel_N2_1": 223.479141,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "acs-16",
+                    "gene_id": "acs-16",
+                    "cel_N2_1": 1983.867432,
+                    "fust1_1": 1747.207275
+                },
+                {
+                    "gene_name": "adpr-1",
+                    "gene_id": "adpr-1",
+                    "cel_N2_1": 2464.015381,
+                    "fust1_1": 1613.898804
+                },
+                {
+                    "gene_name": "anr-19",
+                    "gene_id": "anr-19",
+                    "cel_N2_1": 167.44957,
+                    "fust1_1": 0.0
+                },
+                {
+                    "gene_name": "anr-42",
+                    "gene_id": "anr-42",
+                    "cel_N2_1": 778.736938,
+                    "fust1_1": 100.556999
+                },
+                {
+                    "gene_name": "aps-3",
+                    "gene_id": "aps-3",
+                    "cel_N2_1": 1974.258667,
+                    "fust1_1": 3176.656006
+                },
+                {
+                    "gene_name": "atg-5",
+                    "gene_id": "atg-5",
+                    "cel_N2_1": 2855.915283,
+                    "fust1_1": 2269.780029
+                },
+                {
+                    "gene_name": "bre-4",
+                    "gene_id": "bre-4",
+                    "cel_N2_1": 1952.742432,
+                    "fust1_1": 2038.576416
+                },
+                {
+                    "gene_name": "ceh-45",
+                    "gene_id": "ceh-45",
+                    "cel_N2_1": 1589.487305,
+                    "fust1_1": 2086.71875
+                },
+                {
+                    "gene_name": "chaf-2",
+                    "gene_id": "chaf-2",
+                    "cel_N2_1": 413.964722,
+                    "fust1_1": 525.533752
+                },
+                {
+                    "gene_name": "cpx-1",
+                    "gene_id": "cpx-1",
+                    "cel_N2_1": 9937.0625,
+                    "fust1_1": 9348.944336
+                },
+                {
+                    "gene_name": "dapk-1",
+                    "gene_id": "dapk-1",
+                    "cel_N2_1": 8745.521484,
+                    "fust1_1": 8066.777832
+                },
+                {
+                    "gene_name": "drag-1",
+                    "gene_id": "drag-1",
+                    "cel_N2_1": 1383.858521,
+                    "fust1_1": 1035.531006
+                },
+                {
+                    "gene_name": "dyb-1",
+                    "gene_id": "dyb-1",
+                    "cel_N2_1": 3707.405518,
+                    "fust1_1": 2867.018555
+                },
+                {
+                    "gene_name": "egl-30",
+                    "gene_id": "egl-30",
+                    "cel_N2_1": 51768.855469,
+                    "fust1_1": 42242.1875
+                },
+                {
+                    "gene_name": "emr-1",
+                    "gene_id": "emr-1",
+                    "cel_N2_1": 2334.263916,
+                    "fust1_1": 1938.036377
+                },
+                {
+                    "gene_name": "grh-1",
+                    "gene_id": "grh-1",
+                    "cel_N2_1": 6348.217285,
+                    "fust1_1": 7815.65332
+                },
+                {
+                    "gene_name": "gst-25",
+                    "gene_id": "gst-25",
+                    "cel_N2_1": 559.945312,
+                    "fust1_1": 430.14032
+                },
+                {
+                    "gene_name": "haf-6",
+                    "gene_id": "haf-6",
+                    "cel_N2_1": 814.341187,
+                    "fust1_1": 764.882202
+                },
+                {
+                    "gene_name": "herc-1",
+                    "gene_id": "herc-1",
+                    "cel_N2_1": 2932.192383,
+                    "fust1_1": 2997.553711
+                },
+                {
+                    "gene_name": "lin-65",
+                    "gene_id": "lin-65",
+                    "cel_N2_1": 2555.382812,
+                    "fust1_1": 2005.193726
+                },
+                {
+                    "gene_name": "lsm-6",
+                    "gene_id": "lsm-6",
+                    "cel_N2_1": 2189.904785,
+                    "fust1_1": 2324.583008
+                },
+                {
+                    "gene_name": "mab-20",
+                    "gene_id": "mab-20",
+                    "cel_N2_1": 3744.853516,
+                    "fust1_1": 2921.541016
+                },
+                {
+                    "gene_name": "mir-50",
+                    "gene_id": "mir-50",
+                    "cel_N2_1": 20.316265,
+                    "fust1_1": 223.548401
+                },
+                {
+                    "gene_name": "mppa-1",
+                    "gene_id": "mppa-1",
+                    "cel_N2_1": 1196.6604,
+                    "fust1_1": 1367.809082
+                },
+                {
+                    "gene_name": "mrpl-15",
+                    "gene_id": "mrpl-15",
+                    "cel_N2_1": 3228.862305,
+                    "fust1_1": 3458.99707
+                },
+                {
+                    "gene_name": "nlp-12",
+                    "gene_id": "nlp-12",
+                    "cel_N2_1": 17311.814453,
+                    "fust1_1": 14825.625977
+                },
+                {
+                    "gene_name": "pghm-1",
+                    "gene_id": "pghm-1",
+                    "cel_N2_1": 46665.65625,
+                    "fust1_1": 46199.320312
+                },
+                {
+                    "gene_name": "pqn-88",
+                    "gene_id": "pqn-88",
+                    "cel_N2_1": 924.986633,
+                    "fust1_1": 1632.207275
+                },
+                {
+                    "gene_name": "rpl-17",
+                    "gene_id": "rpl-17",
+                    "cel_N2_1": 193195.34375,
+                    "fust1_1": 215338.84375
+                },
+                {
+                    "gene_name": "rpl-27",
+                    "gene_id": "rpl-27",
+                    "cel_N2_1": 242887.03125,
+                    "fust1_1": 263712.5
+                },
+                {
+                    "gene_name": "scm-1",
+                    "gene_id": "scm-1",
+                    "cel_N2_1": 5698.810547,
+                    "fust1_1": 6157.349121
+                },
+                {
+                    "gene_name": "set-29",
+                    "gene_id": "set-29",
+                    "cel_N2_1": 214.954971,
+                    "fust1_1": 322.221832
+                },
+                {
+                    "gene_name": "smg-2",
+                    "gene_id": "smg-2",
+                    "cel_N2_1": 7241.490234,
+                    "fust1_1": 6390.848145
+                },
+                {
+                    "gene_name": "smo-1",
+                    "gene_id": "smo-1",
+                    "cel_N2_1": 4571.605957,
+                    "fust1_1": 5372.451172
+                },
+                {
+                    "gene_name": "spe-15",
+                    "gene_id": "spe-15",
+                    "cel_N2_1": 1301.992798,
+                    "fust1_1": 778.961365
+                },
+                {
+                    "gene_name": "src-1",
+                    "gene_id": "src-1",
+                    "cel_N2_1": 5204.159668,
+                    "fust1_1": 4916.40332
+                },
+                {
+                    "gene_name": "tag-96",
+                    "gene_id": "tag-96",
+                    "cel_N2_1": 723.001953,
+                    "fust1_1": 471.331207
+                },
+                {
+                    "gene_name": "tln-1",
+                    "gene_id": "tln-1",
+                    "cel_N2_1": 10510.138672,
+                    "fust1_1": 8432.197266
+                },
+                {
+                    "gene_name": "trpp-10",
+                    "gene_id": "trpp-10",
+                    "cel_N2_1": 1741.275269,
+                    "fust1_1": 1161.343018
+                },
+                {
+                    "gene_name": "tub-2",
+                    "gene_id": "tub-2",
+                    "cel_N2_1": 15908.498047,
+                    "fust1_1": 13176.209961
+                },
+                {
+                    "gene_name": "ubc-3",
+                    "gene_id": "ubc-3",
+                    "cel_N2_1": 27752.599609,
+                    "fust1_1": 25869.175781
                 }
-            }
+            ],
+            [
+                [
+                    [
+                        "JOIN_SAMPLES",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                [
+                    [
+                        "JOIN_SAMPLES",
+                        "polars",
+                        "2.0.0"
+                    ]
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T10:58:45.274687921",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:10:14.641657751"
+        }
     },
     "ciriquant circ tables - header only": {
         "content": [
@@ -56,11 +1522,11 @@
                 ]
             ]
         ],
+        "timestamp": "2026-10-16T20:10:36.123921303",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:10:36.123921303"
+        }
     },
     "ciriquant gene tables - stub": {
         "content": [
@@ -74,7 +1540,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,5d1d612867d4e66939c2e203718b35cb"
+                    [
+                        "JOIN_SAMPLES",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "2": [
+                    [
+                        "JOIN_SAMPLES",
+                        "polars",
+                        "2.0.0"
+                    ]
                 ],
                 "joined": [
                     [
@@ -84,15 +1561,26 @@
                         "gene.joined.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,5d1d612867d4e66939c2e203718b35cb"
+                "versions_polars": [
+                    [
+                        "JOIN_SAMPLES",
+                        "polars",
+                        "2.0.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "JOIN_SAMPLES",
+                        "python",
+                        "3.14.7"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T00:54:59.338470337",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:10:57.66993317"
+        }
     }
 }

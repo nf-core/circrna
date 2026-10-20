@@ -11,7 +11,6 @@ workflow JCCIRC {
     ch_gtf
 
     main:
-    ch_versions = channel.empty()
 
     ch_trinity = reads
         .map{ _meta, r -> [[id: 'all_samples'], r] }
@@ -22,7 +21,6 @@ workflow JCCIRC {
     PREP(
         ch_bsj_annotation.join(ch_bsj_reads)
     )
-    ch_versions = ch_versions.mix(PREP.out.versions)
 
     MAIN(
         reads.map{ meta, r -> [meta.id, meta, r]}
@@ -34,8 +32,5 @@ workflow JCCIRC {
         ch_fasta,
         ch_gtf
     )
-    ch_versions = ch_versions.mix(MAIN.out.versions)
 
-    emit:
-    versions = ch_versions
 }

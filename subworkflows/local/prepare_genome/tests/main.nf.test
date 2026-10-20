@@ -98,7 +98,6 @@ nextflow_workflow {
                     workflow.out.psirc.collect { meta, fasta, index -> [meta, file(fasta).name, index.collect { file(it).name }.sort()] },
                     workflow.out.chromosomes.collect { meta, files -> [meta, [files].flatten().collect { file(it.toString()).name }.sort()] },
                     workflow.out.splice_sites.collect { meta, txt -> [meta, file(txt).name] },
-                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
                 ).match() }
             )
         }

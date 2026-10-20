@@ -54,7 +54,6 @@ nextflow_workflow {
                     workflow.out.bed12.collect { meta, bed -> [meta, file(bed).name, path(bed).readLines().size(), path(bed).readLines().sort().hashCode()] },
                     workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size(), path(gtf).readLines().sort().hashCode()] },
                     workflow.out.fasta.collect { meta, fa -> [meta, file(fa).name, path(fa).readLines().size()] },
-                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
                 ).match() }
             )
         }
@@ -85,7 +84,6 @@ nextflow_workflow {
                     workflow.out.bed12.collect { meta, bed -> [meta, file(bed).name, path(bed).readLines().size(), path(bed).readLines().sort().hashCode()] },
                     workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size(), path(gtf).readLines().sort().hashCode()] },
                     workflow.out.fasta.collect { meta, fa -> [meta, file(fa).name, path(fa).readLines().size()] },
-                    workflow.out.versions.collect { path(it).yaml }.collectEntries { it }.sort()
                 ).match() }
             )
         }

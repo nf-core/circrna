@@ -1,0 +1,77 @@
+name: seqkit_split
+description: Split a FASTA file into smaller files with SeqKit
+keywords:
+  - seqkit
+  - fasta
+  - split
+tools:
+  - seqkit:
+      description: Sequence toolkit
+      homepage: https://bioinf.shenwei.me/seqkit/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - fasta:
+        type: file
+        description: Input FASTA file
+        pattern: "*.{fa,fasta}"
+output:
+  split:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*":
+          type: file
+          description: Split FASTA files
+  versions_seqkit:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - seqkit:
+          type: string
+          description: Software name
+      - "seqkit version | sed 's/^seqkit v//'":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - seqkit:
+          type: string
+          description: Software name
+      - "seqkit version | sed 's/^seqkit v//'":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/seqkit_split:b24e98aca17fcd40
+      build_id: bd-b24e98aca17fcd40_1
+      scan_id: sc-b5c8bf851f72230e_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/seqkit_split:61e7ac15b23ab0d5
+      build_id: bd-61e7ac15b23ab0d5_1
+      scan_id: sc-e74f42c96d048400_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/seqkit_split:e9391619b1f2ea3f
+      build_id: bd-e9391619b1f2ea3f_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/33/33f109ecbc99240187397497136a734c7bcf6c996eb37223100a1d4c92524d00/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/seqkit_split:71fcf4241c2adf65
+      build_id: bd-71fcf4241c2adf65_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/52/5266dd21f30e777f3b05d029e5b523e5a3f78ff2659cc23d58f2175700c20815/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/seqkit/split/.conda-lock/linux_amd64-bd-b24e98aca17fcd40_1.txt
+    linux/arm64:
+      lock_file: modules/local/seqkit/split/.conda-lock/linux_arm64-bd-61e7ac15b23ab0d5_1.txt

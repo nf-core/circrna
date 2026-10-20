@@ -16,7 +16,6 @@ workflow MIRNA_BINDINGSITES {
     min_tools
 
     main:
-    ch_versions = channel.empty()
     ch_predictions = channel.empty()
 
     // miRNAs can potentially bind to circRNAs right at the backsplice site
@@ -44,7 +43,6 @@ workflow MIRNA_BINDINGSITES {
         TARGETSCAN( ch_transcriptome_batches, FORMAT_TARGETSCAN.out.output.collect() )
         UNIFY_TARGETSCAN( TARGETSCAN.out.txt.map { meta, txt -> [meta, txt, 'targetscan.tsv'] }, [], false )
 
-        ch_versions = ch_versions.mix(TARGETSCAN.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_TARGETSCAN.out.output)
     }
 
@@ -55,7 +53,6 @@ workflow MIRNA_BINDINGSITES {
         MIRANDA( ch_transcriptome_batches, mirna_fasta.map{_meta, mature -> mature}.collect() )
         UNIFY_MIRANDA( MIRANDA.out.txt.map { meta, txt -> [meta, txt, 'miranda.tsv'] }, [], false )
 
-        ch_versions = ch_versions.mix(MIRANDA.out.versions)
         ch_predictions = ch_predictions.mix(UNIFY_MIRANDA.out.output)
     }
 
@@ -70,17 +67,14 @@ workflow MIRNA_BINDINGSITES {
 
         MIRNA_TARGETS( consolidate_targets )
 
-        ch_versions = ch_versions.mix(MIRNA_TARGETS.out.versions)
     }
 
     //
     // MAJORITY VOTING:
     //
     MAJORITY_VOTE( ch_predictions.map{ _meta, file -> file }.collect().map{ files -> [[id: "mirna"], files] }, min_tools )
-    ch_versions = ch_versions.mix(MAJORITY_VOTE.out.versions)
 
     emit:
     binding_sites = MAJORITY_VOTE.out.targets
 
-    versions = ch_versions
 }

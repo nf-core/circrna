@@ -29,7 +29,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.split.collect { meta, files -> [meta, [files].flatten().collect { file(it.toString()).name }] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_seqkit
                 ).match() }
             )
         }

@@ -2,7 +2,9 @@ process CIRIQUANT_PREPDE {
     tag "$meta.id"
     label 'process_high'
 
-    container "docker.io/nicotru/ciriquant:1.0.4"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'oras://docker.io/nicotru/ciriquant:35228e054dcad0b0'
+        : 'docker.io/nicotru/ciriquant@sha256:5e59c7a31355f1814a1703e9cb27d347b7bb04871606a24c1acdacfc02c627f8'}"
 
     input:
     tuple val(meta), val(samples), path(gtfs), val(conditions)
@@ -12,7 +14,8 @@ process CIRIQUANT_PREPDE {
     tuple val(meta), path("${prefix}_annotation.tsv"), emit: annotation
     tuple val(meta), path("${prefix}_expression.tsv"), emit: expression
     tuple val(meta), path("${prefix}_ratio.tsv")     , emit: gene
-    path "versions.yml"                              , emit: versions
+    tuple val("${task.process}"), val('ciriquant'), eval('CIRIquant --version 2>&1 | sed "s/CIRIquant //g"'), emit: versions_ciriquant, topic: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f2'), emit: versions_python, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -34,10 +37,6 @@ process CIRIQUANT_PREPDE {
         --ratio ${prefix}_ratio.tsv \\
         ${args}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-    END_VERSIONS
     """
 
     stub:
@@ -48,9 +47,5 @@ process CIRIQUANT_PREPDE {
     touch ${prefix}_expression.tsv
     touch ${prefix}_ratio.tsv
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-    END_VERSIONS
     """
 }

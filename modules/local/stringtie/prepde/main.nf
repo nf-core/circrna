@@ -2,10 +2,10 @@ process STRINGTIE_PREPDE {
     tag "$meta.id"
     label 'process_low'
 
-    conda "bioconda::stringtie=2.2.1"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/stringtie:2.2.1--hecb563c_2' :
-        'biocontainers/stringtie:2.2.1--hecb563c_2' }"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/94/947b71729159919828a9d6560230b09524109152ed5edcc786e6f320ed368406/data'
+        : 'community.wave.seqera.io/library/stringtie_prepde:bc1d541780932433'}"
 
     input:
     tuple val(meta), val(samples), path(gtfs)
@@ -14,7 +14,7 @@ process STRINGTIE_PREPDE {
     tuple val(meta), path("${prefix}_transcript_count_matrix.csv") , emit: transcript_matrix
     tuple val(meta), path("${prefix}_gene_count_matrix.csv")       , emit: gene_matrix
 
-    path "versions.yml"                                            , emit: versions
+    tuple val("${task.process}"), val('stringtie'), eval('stringtie --version 2>&1'), emit: versions_stringtie, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -36,10 +36,6 @@ process STRINGTIE_PREPDE {
         -t ${transcript_path} \\
         ${args}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        stringtie: \$(stringtie --version 2>&1)
-    END_VERSIONS
     """
 
     stub:
@@ -48,9 +44,5 @@ process STRINGTIE_PREPDE {
     touch ${prefix}_transcript_count_matrix.csv
     touch ${prefix}_gene_count_matrix.csv
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        stringtie: \$(stringtie --version 2>&1)
-    END_VERSIONS
     """
 }

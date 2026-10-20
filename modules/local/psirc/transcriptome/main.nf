@@ -2,7 +2,10 @@ process PSIRC_TRANSCRIPTOME {
     tag "${meta.id}"
     label 'process_medium'
 
-    container 'docker.io/nicotru/psirc'
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5e/5e5afa9a01488ef93da1c7d72dfb0f0c9d885e5933aa67aa4ccb52f3c98eeb0c/data'
+        : 'community.wave.seqera.io/library/psirc:1.0.0--4c24a8f727283097'}"
 
     input:
     tuple val(meta) , path(gtf)
@@ -10,31 +13,17 @@ process PSIRC_TRANSCRIPTOME {
 
     output:
     tuple val(meta), path("$prefix.$suffix"), emit: transcriptome
-    path "versions.yml"                     , emit: versions
+    tuple val("${task.process}"), val('psirc'), val('1.0.0'), emit: versions_psirc, topic: versions
 
     script:
     prefix = task.ext.prefix ?: meta.id
     suffix = 'fasta'
-    VERSION = "1.0.0"
-    """
-    create_custom_transcriptome_fa.pl $fasta $gtf $prefix.$suffix
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        psirc-quant: $VERSION
-    END_VERSIONS
-    """
+    template 'transcriptome.sh'
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     suffix = 'fasta'
-    VERSION = "1.0.0"
     """
     touch $prefix.$suffix
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        psirc-quant: $VERSION
-    END_VERSIONS
     """
 }

@@ -48,7 +48,6 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.bed.size() == 1 },
                 { assert path(workflow.out.bed[0][1]).readLines().every { it.split('\\t').length == 7 } },
-                { assert workflow.out.versions.size() == 1 }
             )
         }
     }

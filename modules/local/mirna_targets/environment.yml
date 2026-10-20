@@ -1,0 +1,7 @@
+name: mirna_targets
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::bedtools=2.31.1
+  - conda-forge::gawk=5.4.1

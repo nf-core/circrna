@@ -1,0 +1,188 @@
+name: combinebeds_reads
+description: Combine read-level circRNA BED evidence across tools.
+keywords:
+  - circrna
+  - bed
+  - reads
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+  - seaborn:
+      description: Statistical data visualisation library.
+      homepage: https://seaborn.pydata.org/
+      licence:
+        - BSD-3-Clause
+  - matplotlib:
+      description: Python plotting library.
+      homepage: https://matplotlib.org/
+      licence:
+        - PSF-2.0
+  - upsetplot:
+      description: Set visualisation library.
+      homepage: https://upsetplot.readthedocs.io/
+      licence:
+        - BSD-3-Clause
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - tools:
+        type: list
+        description: Tool names matching BED inputs.
+    - beds:
+        type: file
+        description: Tool BED files.
+        pattern: "*.bed"
+  - consider_strand:
+      type: boolean
+      description: Include strand in matching.
+  - min_tools:
+      type: integer
+      description: Minimum supporting tools.
+output:
+  combined:
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - "*.bed":
+          type: file
+          description: Combined read BED.
+          pattern: "*.bed"
+  plots:
+    - "*.png":
+        type: file
+        description: Agreement plots.
+        pattern: "*.png"
+  multiqc:
+    - "*.json":
+        type: file
+        description: MultiQC custom-content data.
+        pattern: "*.json"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+  versions_polars:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - polars:
+          type: string
+          description: The name of the tool
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+  versions_seaborn:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - seaborn:
+          type: string
+          description: The name of the tool
+      - python -c 'import seaborn; print(seaborn.__version__)':
+          type: eval
+          description: Software version
+  versions_matplotlib:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - matplotlib:
+          type: string
+          description: The name of the tool
+      - python -c 'import matplotlib; print(matplotlib.__version__)':
+          type: eval
+          description: Software version
+  versions_upsetplot:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - upsetplot:
+          type: string
+          description: The name of the tool
+      - python -c 'import upsetplot; print(upsetplot.__version__)':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - polars:
+          type: string
+          description: Software name
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - seaborn:
+          type: string
+          description: Software name
+      - python -c 'import seaborn; print(seaborn.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - matplotlib:
+          type: string
+          description: Software name
+      - python -c 'import matplotlib; print(matplotlib.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - upsetplot:
+          type: string
+          description: Software name
+      - python -c 'import upsetplot; print(upsetplot.__version__)':
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_polars_seaborn_upsetplot_pruned:9bdb89c6afa3ce51
+      build_id: bd-9bdb89c6afa3ce51_1
+      scan_id: sc-5bef4c42d861684f_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_polars_seaborn_upsetplot_pruned:fc7d260ef74d64c7
+      build_id: bd-fc7d260ef74d64c7_1
+      scan_id: sc-5c55b3dfa7dac6c9_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars_seaborn_upsetplot_pruned:962b9120b0d82bb7
+      build_id: bd-962b9120b0d82bb7_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/9e/9e7c43b958a1886405c196ebc335181b3de713529f32af53a04eab4d40f8d274/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_polars_seaborn_upsetplot_pruned:27a3977c3a9299b1
+      build_id: bd-27a3977c3a9299b1_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/79/79a97132a439345fb983e26a8f44ffe1837a594eda02820d050b61bc02b8a96f/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/combinebeds/reads/.conda-lock/linux_amd64-bd-9bdb89c6afa3ce51_1.txt
+    linux/arm64:
+      lock_file: modules/local/combinebeds/reads/.conda-lock/linux_arm64-bd-fc7d260ef74d64c7_1.txt

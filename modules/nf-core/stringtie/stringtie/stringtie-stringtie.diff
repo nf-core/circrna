@@ -1,0 +1,1474 @@
+Changes in component 'nf-core/stringtie/stringtie'
+Changes in 'stringtie/stringtie/meta.yml':
+--- modules/nf-core/stringtie/stringtie/meta.yml
++++ modules/nf-core/stringtie/stringtie/meta.yml
+@@ -1,103 +1,127 @@
+ name: stringtie_stringtie
+ description: Transcript assembly and quantification for RNA-Se
+ keywords:
+-  - transcript
+-  - assembly
+-  - quantification
+-  - gtf
++- transcript
++- assembly
++- quantification
++- gtf
+ tools:
+-  - stringtie2:
++- stringtie2:
++    description: |
++      Transcript assembly and quantification for RNA-Seq
++    homepage: https://ccb.jhu.edu/software/stringtie/index.shtml
++    documentation: https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual
++    licence: ["MIT"]
++    identifier: biotools:stringtie
++input:
++- - meta:
++      type: map
+       description: |
+-        Transcript assembly and quantification for RNA-Seq
+-      homepage: https://ccb.jhu.edu/software/stringtie/index.shtml
+-      documentation: https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual
+-      licence: ["MIT"]
+-      identifier: biotools:stringtie
+-input:
++        Groovy Map containing sample information
++        e.g. [ id:'test', single_end:false ]
++  - bam:
++      type: file
++      description: |
++        Stringtie transcript gtf output(s).
++      ontologies: []
++- annotation_gtf:
++    type: file
++    description: |
++      Annotation gtf file (optional).
++    ontologies: []
++output:
++  transcript_gtf:
+   - - meta:
+         type: map
+         description: |
+           Groovy Map containing sample information
+           e.g. [ id:'test', single_end:false ]
+-    - bam:
++    - "*.transcripts.gtf":
+         type: file
++        description: transcript gtf
++        pattern: "*.{transcripts.gtf}"
++        ontologies: []
++  abundance:
++  - - meta:
++        type: map
+         description: |
+-          Stringtie transcript gtf output(s).
++          Groovy Map containing sample information
++          e.g. [ id:'test', single_end:false ]
++    - "*.abundance.txt":
++        type: file
++        description: abundance
++        pattern: "*.{abundance.txt}"
+         ontologies: []
+-  - annotation_gtf:
+-      type: file
+-      description: |
+-        Annotation gtf file (optional).
+-      ontologies: []
+-output:
+-  transcript_gtf:
+-    - - meta:
+-          type: map
+-          description: |
+-            Groovy Map containing sample information
+-            e.g. [ id:'test', single_end:false ]
+-      - "*.transcripts.gtf":
+-          type: file
+-          description: transcript gtf
+-          pattern: "*.{transcripts.gtf}"
+-          ontologies: []
+-  abundance:
+-    - - meta:
+-          type: map
+-          description: |
+-            Groovy Map containing sample information
+-            e.g. [ id:'test', single_end:false ]
+-      - "*.abundance.txt":
+-          type: file
+-          description: abundance
+-          pattern: "*.{abundance.txt}"
+-          ontologies: []
+   coverage_gtf:
+-    - - meta:
+-          type: map
+-          description: |
+-            Groovy Map containing sample information
+-            e.g. [ id:'test', single_end:false ]
+-      - "*.coverage.gtf":
+-          type: file
+-          description: coverage gtf
+-          pattern: "*.{coverage.gtf}"
+-          ontologies: []
++  - - meta:
++        type: map
++        description: |
++          Groovy Map containing sample information
++          e.g. [ id:'test', single_end:false ]
++    - "*.coverage.gtf":
++        type: file
++        description: coverage gtf
++        pattern: "*.{coverage.gtf}"
++        ontologies: []
+   ballgown:
+-    - - meta:
+-          type: map
+-          description: |
+-            Groovy Map containing sample information
+-            e.g. [ id:'test', single_end:false ]
+-      - "*.ballgown":
+-          type: file
+-          description: for running ballgown
+-          pattern: "*.{ballgown}"
+-          ontologies: []
++  - - meta:
++        type: map
++        description: |
++          Groovy Map containing sample information
++          e.g. [ id:'test', single_end:false ]
++    - "*.ballgown/*.ctab":
++        type: file
++        description: Ballgown expression and transcript mapping tables
++        pattern: "*.ballgown/*.ctab"
++        ontologies: []
+   versions_stringtie:
+-    - - ${task.process}:
+-          type: string
+-          description: The name of the process
+-      - stringtie:
+-          type: string
+-          description: The name of the tool
+-      - "stringtie --version":
+-          type: eval
+-          description: The expression to obtain the version of the tool
++  - - ${task.process}:
++        type: string
++        description: The name of the process
++    - stringtie:
++        type: string
++        description: The name of the tool
++    - "stringtie --version":
++        type: eval
++        description: The expression to obtain the version of the tool
+ 
+ topics:
+   versions:
+-    - - ${task.process}:
+-          type: string
+-          description: The name of the process
+-      - stringtie:
+-          type: string
+-          description: The name of the tool
+-      - "stringtie --version":
+-          type: eval
+-          description: The expression to obtain the version of the tool
++  - - ${task.process}:
++        type: string
++        description: The name of the process
++    - stringtie:
++        type: string
++        description: The name of the tool
++    - "stringtie --version":
++        type: eval
++        description: The expression to obtain the version of the tool
+ 
+ authors:
+-  - "@drpatelh"
++- "@drpatelh"
+ maintainers:
+-  - "@drpatelh"
++- "@drpatelh"
++containers:
++  docker:
++    linux/arm64:
++      name: community.wave.seqera.io/library/stringtie:3.0.3--ff28090391cc81cd
++      build_id: bd-ff28090391cc81cd_1
++      scan_id: sc-d65ce39873a3b362_1
++    linux/amd64:
++      name: community.wave.seqera.io/library/stringtie:3.0.3--f9bc4844393ae0fa
++      build_id: bd-f9bc4844393ae0fa_1
++      scan_id: sc-65a18ee86327c67d_1
++  singularity:
++    linux/arm64:
++      name: oras://community.wave.seqera.io/library/stringtie:3.0.3--7fa4d671a69c970d
++      build_id: bd-7fa4d671a69c970d_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/71/7190a03a8068be06142374673cd7245a79353d77a8dc5b02f6cfbd750e845344/data
++    linux/amd64:
++      name: oras://community.wave.seqera.io/library/stringtie:3.0.3--5f86b3c1c3b6d9b4
++      build_id: bd-5f86b3c1c3b6d9b4_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/56/56eda015168efa0a6b6c814ae70827d2a05906d8f6e21450d6ccad05b29c7437/data
++  conda:
++    linux/amd64:
++      lock_file: modules/nf-core/stringtie/stringtie/.conda-lock/linux_amd64-bd-f9bc4844393ae0fa_1.txt
++    linux/arm64:
++      lock_file: modules/nf-core/stringtie/stringtie/.conda-lock/linux_arm64-bd-ff28090391cc81cd_1.txt
+
+Changes in 'stringtie/stringtie/environment.yml':
+--- modules/nf-core/stringtie/stringtie/environment.yml
++++ modules/nf-core/stringtie/stringtie/environment.yml
+@@ -1,7 +1,7 @@
+ ---
+ # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
+ channels:
+   - conda-forge
+   - bioconda
+ dependencies:
+-  - bioconda::stringtie=2.2.3
++  - bioconda::stringtie=3.0.3
+
+Changes in 'stringtie/stringtie/main.nf':
+--- modules/nf-core/stringtie/stringtie/main.nf
++++ modules/nf-core/stringtie/stringtie/main.nf
+@@ -1,58 +1,59 @@
+ process STRINGTIE_STRINGTIE {
+     tag "$meta.id"
+     label 'process_medium'
+ 
+     conda "${moduleDir}/environment.yml"
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://depot.galaxyproject.org/singularity/stringtie:2.2.3--h43eeafb_0' :
+-        'biocontainers/stringtie:2.2.3--h43eeafb_0' }"
++    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
++        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/56/56eda015168efa0a6b6c814ae70827d2a05906d8f6e21450d6ccad05b29c7437/data'
++        : 'community.wave.seqera.io/library/stringtie:3.0.3--f9bc4844393ae0fa'}"
+ 
+     input:
+     tuple val(meta), path(bam)
+     path  annotation_gtf
+ 
+     output:
+     tuple val(meta), path("*.transcripts.gtf"), emit: transcript_gtf
+     tuple val(meta), path("*.abundance.txt")  , emit: abundance
+     tuple val(meta), path("*.coverage.gtf")   , optional: true, emit: coverage_gtf
+-    tuple val(meta), path("*.ballgown")       , optional: true, emit: ballgown
++    tuple val(meta), path("*.ballgown/*.ctab"), optional: true, emit: ballgown
+     tuple val("${task.process}"), val('stringtie'), eval("stringtie --version"), emit: versions_stringtie, topic: versions
+ 
+     when:
+     task.ext.when == null || task.ext.when
+ 
+     script:
+     def args      = task.ext.args ?: ''
+     def prefix    = task.ext.prefix ?: "${meta.id}"
+     def reference = annotation_gtf ? "-G $annotation_gtf" : ""
+     def ballgown  = annotation_gtf ? "-b ${prefix}.ballgown" : ""
+     def coverage  = annotation_gtf ? "-C ${prefix}.coverage.gtf" : ""
+ 
+     def strandedness = ''
+     if (meta.strandedness == 'forward') {
+         strandedness = '--fr'
+     } else if (meta.strandedness == 'reverse') {
+         strandedness = '--rf'
+     }
+     """
+     stringtie \\
+         $bam \\
+         $strandedness \\
+         $reference \\
+         -o ${prefix}.transcripts.gtf \\
+         -A ${prefix}.gene.abundance.txt \\
+         $coverage \\
+         $ballgown \\
+         -p $task.cpus \\
+         $args
+     """
+ 
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     """
+     touch ${prefix}.transcripts.gtf
+     touch ${prefix}.gene.abundance.txt
+     touch ${prefix}.coverage.gtf
+-    touch ${prefix}.ballgown
++    mkdir -p ${prefix}.ballgown
++    touch ${prefix}.ballgown/e_data.ctab ${prefix}.ballgown/i_data.ctab ${prefix}.ballgown/t_data.ctab ${prefix}.ballgown/e2t.ctab ${prefix}.ballgown/i2t.ctab
+     """
+ }
+
+'modules/nf-core/stringtie/stringtie/tests/main.nf.test.snap' is unchanged
+Changes in 'stringtie/stringtie/tests/main.nf.test':
+--- modules/nf-core/stringtie/stringtie/tests/main.nf.test
++++ modules/nf-core/stringtie/stringtie/tests/main.nf.test
+@@ -1,213 +1,215 @@
+ nextflow_process {
+ 
+     name "Test Process STRINGTIE_STRINGTIE"
+     script "../main.nf"
+     process "STRINGTIE_STRINGTIE"
+     config "./nextflow.config"
+     tag "modules"
+     tag "modules_nfcore"
+     tag "stringtie"
+     tag "stringtie/stringtie"
+ 
+     test("sarscov2 [bam] - forward strandedness") {
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                             [ id:'test', strandedness:'forward' ], // meta map
+                             [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                         ]
+                 input[1] = []
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(
+                     process.out.abundance,
+-                    process.out.transcript_gtf,
++                    // The command header records the host-dependent CPU allocation.
++                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
+                     process.out.findAll { key, val -> key.startsWith('versions') }
+                 ).match() }
+             )
+         }
+     }
+ 
+     test("sarscov2 [bam] - forward strandedness + reference annotation") {
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                     [ id:'test', strandedness:'forward' ], // meta map
+                     [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                 ]
+                 input[1] = file(params.modules_testdata_base_path + "genomics/sarscov2/genome/genome.gtf", checkIfExists: true)
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+             { assert process.success },
+                 { assert snapshot(
+                     process.out.abundance,
+                     process.out.ballgown,
+-                    process.out.transcript_gtf,
++                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
++                    process.out.findAll { key, val -> key.startsWith('versions') }
++                ).match() },
++                { assert process.out.ballgown[0][1].collect { it.toString().tokenize('/').last() }.sort() == ['e2t.ctab', 'e_data.ctab', 'i2t.ctab', 'i_data.ctab', 't_data.ctab'] }
++            )
++        }
++    }
++
++    test("sarscov2 [bam] - reverse strandedness") {
++
++        when {
++            process {
++                """
++                input[0] = [
++                            [ id:'test', strandedness:'reverse' ], // meta map
++                            [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
++                        ]
++                input[1] = []
++                """
++            }
++        }
++
++        then {
++            assertAll(
++                { assert process.success },
++                { assert snapshot(
++                    process.out.abundance,
++                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
+                     process.out.findAll { key, val -> key.startsWith('versions') }
+                 ).match() }
+             )
+         }
+     }
+ 
+-    test("sarscov2 [bam] - reverse strandedness") {
+-
+-        when {
+-            process {
+-                """
+-                input[0] = [
+-                            [ id:'test', strandedness:'reverse' ], // meta map
+-                            [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+-                        ]
+-                input[1] = []
+-                """
+-            }
+-        }
+-
+-        then {
+-            assertAll(
+-                { assert process.success },
+-                { assert snapshot(
+-                    process.out.abundance,
+-                    process.out.transcript_gtf,
+-                    process.out.findAll { key, val -> key.startsWith('versions') }
+-                ).match() }
+-            )
+-        }
+-    }
+-
+     test("sarscov2 [bam] - reverse strandedness + reference annotation") {
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                             [ id:'test', strandedness:'reverse' ], // meta map
+                             [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                         ]
+                 input[1] = file(params.modules_testdata_base_path + "genomics/sarscov2/genome/genome.gtf", checkIfExists: true)
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(
+                     process.out.abundance,
+                     process.out.ballgown,
+-                    process.out.transcript_gtf,
++                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
+                     process.out.findAll { key, val -> key.startsWith('versions') }
+                 ).match() }
+             )
+         }
+     }
+ 
+     test("sarscov2 [bam] - forward strandedness - stub") {
+ 
+         options "-stub"
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                             [ id:'test', strandedness:'forward' ], // meta map
+                             [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                         ]
+                 input[1] = []
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(process.out).match() }
+             )
+         }
+     }
+ 
+     test("sarscov2 [bam] - forward strandedness + reference annotation - stub") {
+ 
+         options "-stub"
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                     [ id:'test', strandedness:'forward' ], // meta map
+                     [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                 ]
+                 input[1] = file(params.modules_testdata_base_path + "genomics/sarscov2/genome/genome.gtf", checkIfExists: true)
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(process.out).match() }
+             )
+         }
+     }
+ 
+     test("sarscov2 [bam] - reverse strandedness - stub") {
+ 
+         options "-stub"
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                             [ id:'test', strandedness:'reverse' ], // meta map
+                             [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                         ]
+                 input[1] = []
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(process.out).match() }
+             )
+         }
+     }
+ 
+     test("sarscov2 [bam] - reverse strandedness + reference annotation - stub") {
+ 
+         options "-stub"
+ 
+         when {
+             process {
+                 """
+                 input[0] = [
+                             [ id:'test', strandedness:'reverse' ], // meta map
+                             [ file(params.modules_testdata_base_path + "genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam", checkIfExists: true) ]
+                         ]
+                 input[1] = file(params.modules_testdata_base_path + "genomics/sarscov2/genome/genome.gtf", checkIfExists: true)
+                 """
+             }
+         }
+ 
+         then {
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(process.out).match() }
+             )
+         }
+     }
+ }
+
+'modules/nf-core/stringtie/stringtie/tests/nextflow.config' is unchanged
+'modules/nf-core/stringtie/stringtie/.conda-lock/linux_amd64-bd-f9bc4844393ae0fa_1.txt' was created
+'modules/nf-core/stringtie/stringtie/.conda-lock/linux_arm64-bd-ff28090391cc81cd_1.txt' was created
+Changes in 'stringtie/stringtie/.conda-lock/linux_amd64-bd-f9bc4844393ae0fa_1.txt':
+--- /dev/null
++++ modules/nf-core/stringtie/stringtie/.conda-lock/linux_amd64-bd-f9bc4844393ae0fa_1.txt
+@@ -0,0 +1,474 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/bioconda/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-64:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_10.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/c-ares-1.34.8-hebe6cf0_2.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++- conda: https://conda.anaconda.org/bioconda/linux-64/htslib-1.24-ha79157c_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/icu-78.3-py310h44b86e0_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/keyutils-1.6.3-h7cc23a3_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/krb5-1.22.2-hbc21106_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libcurl-8.23.0-ha042cf0_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libdeflate-1.26-h351257e_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libedit-3.1.20260512-pl5321h373387f_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libev-4.33-h280c20c_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libexpat-2.8.5-hd2095e1_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libffi-3.7.0-h81df57d_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libmpdec-4.0.0-hb03c661_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libnghttp2-1.68.1-h74cf4be_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libpsl-0.23.1-hd9e3e90_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.54.1-h13e7031_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libssh2-1.11.1-h6154650_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.42.4-hcfc3c73_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.15.0-h6e52b48_101_cp315.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.15-9_cp315.conda
++- conda: https://conda.anaconda.org/bioconda/linux-64/stringtie-3.0.3-h29c0135_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h1df4ec4_4.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: 1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9
++md5: a9f577daf3de00bca7c3c76c0ecbd1de
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28948
++timestamp: 1770939786096
++- conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_10.conda
++sha256: 1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96
++md5: e675fabcf81499adc7edf58124fb1e01
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: bzip2-1.0.6
++license_family: BSD
++size: 257808
++timestamp: 1785906269155
++- conda: https://conda.anaconda.org/conda-forge/linux-64/c-ares-1.34.8-hebe6cf0_2.conda
++sha256: 9c37cc233238adf366ea75b0e845662a5be07ceadf62e458183516369340274b
++md5: 3ad2b403be8fc5612b9159e2ce621f69
++depends:
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++license: MIT
++license_family: MIT
++size: 228700
++timestamp: 1787169971173
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++sha256: d65aa0c8990f34e1e86e6b505c8a149fea6cfbfcccef087a77c0bcb0b4fbe159
++md5: f9f6a9cf041f31438b034dac016e6429
++depends:
++- __unix
++license: ISC
++size: 129191
++timestamp: 1792347285941
++- conda: https://conda.anaconda.org/bioconda/linux-64/htslib-1.24-ha79157c_0.conda
++sha256: 97e0f0b8700f56b1ade3034f81070ede705fce3ef9a1b5f15e79e3eb9997ac17
++md5: 232775112c6fea38e9e7c25d2a58d7d2
++depends:
++- __glibc >=2.17,<3.0.a0
++- bzip2 >=1.0.8,<2.0a0
++- libcurl >=8.21.0,<9.0a0
++- libdeflate >=1.25,<1.27.0a0
++- libgcc >=14
++- liblzma >=5.8.3,<6.0a0
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.7,<4.0a0
++license: MIT
++license_family: MIT
++size: 1166222
++timestamp: 1783611817902
++- conda: https://conda.anaconda.org/conda-forge/linux-64/icu-78.3-py310h44b86e0_2.conda
++sha256: 9f07834f0c546ab14d885ce0366285f61f44e326c0edd1fc63b8294e113ae432
++md5: 72a381cbad04f24b1c2a43ef707f45b4
++depends:
++- __glibc >=2.17,<3.0.a0
++- libstdcxx >=14
++- libgcc >=14
++license: MIT
++license_family: MIT
++size: 14459115
++timestamp: 1786545741408
++- conda: https://conda.anaconda.org/conda-forge/linux-64/keyutils-1.6.3-h7cc23a3_1.conda
++sha256: dd053c96dcb0dcfd59422aefea9d2fe937a190167f34fba7893ec1e10a7e8963
++md5: ba55d1b89fd7775e67de8291029b4059
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++license: LGPL-2.1-or-later
++size: 135295
++timestamp: 1786739238128
++- conda: https://conda.anaconda.org/conda-forge/linux-64/krb5-1.22.2-hbc21106_2.conda
++sha256: 2a5c38c85e63df84c4e69ee71439841ce570d259ae3060627bb9a49a938d66f4
++md5: 53318d715316929a574f83591308b1f8
++depends:
++- __glibc >=2.17,<3.0.a0
++- keyutils >=1.6.3,<2.0a0
++- libedit >=3.1.20250104,<3.2.0a0
++- libedit >=3.1.20250104,<4.0a0
++- libgcc >=15
++- libstdcxx >=15
++- openssl >=3.5.7,<4.0a0
++license: MIT
++license_family: MIT
++size: 1394333
++timestamp: 1786762112514
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda
++sha256: 901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28
++md5: 2362c70e7e79827c32db35547d9c179b
++depends:
++- __glibc >=2.17,<3.0.a0
++- zstd >=1.5.7,<1.6.0a0
++constrains:
++- binutils_impl_linux-64 2.46.1
++license: GPL-3.0-only
++license_family: GPL
++size: 742109
++timestamp: 1791565468810
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libcurl-8.23.0-ha042cf0_0.conda
++sha256: d2db14d80efb4f2e76e76561c633f1767f7543987f2bcb54a067a9d264d432ab
++md5: 0ad16151226df493aed967f0efce0e80
++depends:
++- __glibc >=2.17,<3.0.a0
++- krb5 >=1.22.2,<1.23.0a0
++- libgcc >=15
++- libnghttp2 >=1.68.1,<2.0a0
++- libpsl >=0.23.1,<0.24.0a0
++- libssh2 >=1.11.1,<2.0a0
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.9,<4.0a0
++- zstd >=1.5.7,<1.6.0a0
++license: curl
++license_family: MIT
++size: 505683
++timestamp: 1791990900844
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libdeflate-1.26-h351257e_0.conda
++sha256: f437f68abb1fa1dededd082a0c2800bec40495e01cf9ec46f4e693e34d60b644
++md5: d0c17fc12939a990f0865b7a14b49cfe
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 74338
++timestamp: 1787442593524
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libedit-3.1.20260512-pl5321h373387f_0.conda
++sha256: 45301f14f4eb66da57cfaf2d265f3eeee73f8b07e99614ee3afc5b26eea91126
++md5: 27dbd7e2984b8fe48e069379636ccfdd
++depends:
++- ncurses
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++- ncurses >=6.6,<7.0a0
++license: BSD-2-Clause
++license_family: BSD
++size: 135877
++timestamp: 1791327370514
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libev-4.33-h280c20c_3.conda
++sha256: e4418f68d01a6307c4431b585c71b584f40189877364e542ee87deb777f5e85b
++md5: 7bc31538d6e3fb349e897353969237ec
++depends:
++- libgcc >=14
++- __glibc >=2.17,<3.0.a0
++license: BSD-2-Clause OR GPL-2.0-or-later
++license_family: GPL
++size: 43220
++timestamp: 1785917328200
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libexpat-2.8.5-hd2095e1_0.conda
++sha256: 6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0
++md5: 72cfd2b95b0540247220b42f58a148d7
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++constrains:
++- expat 2.8.5.*
++license: MIT
++license_family: MIT
++size: 77893
++timestamp: 1790346247149
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libffi-3.7.0-h81df57d_1.conda
++sha256: c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106
++md5: 6525a0b06aa4fd390795f0740636a9dd
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 68004
++timestamp: 1787753412298
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++sha256: e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea
++md5: 735629b400b70eeab21a2ba8f5b1c2ce
++depends:
++- __glibc >=2.17,<3.0.a0
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 he0feb66_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 1058444
++timestamp: 1790303109576
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++sha256: 92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758
++md5: d904c7ddd95e026254b4b80808ee9e12
++depends:
++- __glibc >=2.17,<3.0.a0
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 640566
++timestamp: 1790303046034
++- conda: https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_1.conda
++sha256: 9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab
++md5: 1390b7c5ac0b1d8e447bc5efa6d3c8c2
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++constrains:
++- xz 5.8.3.*
++license: 0BSD
++size: 112995
++timestamp: 1786348617826
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libmpdec-4.0.0-hb03c661_2.conda
++sha256: 46820b4a835e175940ae20bec00fdddaff804cda27a1408ab1b95e77a2196437
++md5: fcfed1dc5053eb1901b66e7b1fc32588
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: BSD-2-Clause
++license_family: BSD
++size: 92759
++timestamp: 1786650399772
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libnghttp2-1.68.1-h74cf4be_1.conda
++sha256: 11a2f54a6f391e25738bce0023e6ef499600147bbcf21c1fa69d2e251b03cc6a
++md5: 75d211f04ac87506f1f43420712a69fe
++depends:
++- __glibc >=2.17,<3.0.a0
++- c-ares >=1.34.8,<2.0a0
++- libev >=4.33,<4.34.0a0
++- libev >=4.33,<5.0a0
++- libgcc >=15
++- libstdcxx >=15
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.7,<4.0a0
++license: MIT
++license_family: MIT
++size: 649974
++timestamp: 1787177490105
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libpsl-0.23.1-hd9e3e90_1.conda
++sha256: 09e8effdc89bc5d021349318d32b85594f5b8d8e3ab8f90a85b81f8fe695a566
++md5: 77be60417aa572afcb48cbe0f967401d
++depends:
++- libstdcxx >=15
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++- icu >=78.3,<79.0a0
++license: MIT
++license_family: MIT
++size: 72519
++timestamp: 1786970753847
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.54.1-h13e7031_0.conda
++sha256: 07b3c98282022f05781122d073f84e944bfb4299946e8457ece3ce6c384ff78e
++md5: 8f15f0ec9b69344df5c3bb5cce1751a1
++depends:
++- __glibc >=2.17,<3.0.a0
++- icu >=78.3,<79.0a0
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++license: blessing
++size: 983668
++timestamp: 1792175587601
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libssh2-1.11.1-h6154650_1.conda
++sha256: 7e463000fa1cba3f3a6597b776f6ab301d425a96e3bc20d0d9d76a3b9f237aa3
++md5: 5c526561e1d2a2e071941174eae84557
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.7,<4.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 306045
++timestamp: 1786713107897
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++sha256: fa7018298629fc429971fffd6ecba3d27a7b02e4e890d6a93ea01ffebe8cb745
++md5: 9b6707e0caca917fa6ea9ee473f37a5d
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc 16.2.0 ha9f2e26_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6615436
++timestamp: 1790303132935
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.42.4-hcfc3c73_0.conda
++sha256: f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041
++md5: 54a948337e66706380ff24d6b5fde63f
++depends:
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++license: BSD-3-Clause
++license_family: BSD
++size: 34442
++timestamp: 1790121449161
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
++sha256: eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736
++md5: 0de0122d9570a8ab637c6b73db268389
++depends:
++- __glibc >=2.17,<3.0.a0
++constrains:
++- zlib 1.3.2 *_3
++license: Zlib
++license_family: Other
++size: 63713
++timestamp: 1785362952714
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++sha256: 5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3
++md5: ee6c0cd80a60961a1f48aa3e0b91f986
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 911196
++timestamp: 1786355078102
++- conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
++sha256: 9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c
++md5: 5a51a2ea653f120240b1a9bf76e0aae9
++depends:
++- __glibc >=2.17,<3.0.a0
++- ca-certificates
++- libgcc >=15
++license: Apache-2.0
++license_family: Apache
++size: 3195299
++timestamp: 1791098052301
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++sha256: 4ce2e1ee31a6217998f78c31ce7dc0a3e0557d9238b51d49dd20c52d467a126d
++md5: f2c23a77b25efcad57d377b34bd84941
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 593603
++timestamp: 1769710381284
++- conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.15.0-h6e52b48_101_cp315.conda
++build_number: 101
++sha256: cc0ffb9c7f141f4fb5e0dda57f10bad49bb222b30f39f400c1d84f2dd9733d06
++md5: dd71852d6d8f54a925029fed1dff8c61
++depends:
++- __glibc >=2.17,<3.0.a0
++- bzip2 >=1.0.8,<2.0a0
++- ld_impl_linux-64 >=2.36.1
++- libedit >=3.1.20260512,<3.2.0a0
++- libexpat >=2.8.5,<3.0a0
++- libffi >=3.7.0,<3.8.0a0
++- libgcc >=15
++- liblzma >=5.8.3,<6.0a0
++- libmpdec >=4.0.0,<5.0a0
++- libsqlite >=3.54.0,<4.0a0
++- libuuid >=2.42.4,<3.0a0
++- libzlib >=1.3.2,<2.0a0
++- ncurses >=6.6,<7.0a0
++- openssl >=3.5.9,<4.0a0
++- python_abi 3.15.* *_cp315
++- tk >=8.6.13,<8.7.0a0
++- tzdata
++- zstd >=1.5.7,<1.6.0a0
++license: Python-2.0
++size: 29084368
++timestamp: 1791827503430
++python_site_packages_path: lib/python3.15/site-packages
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.15-9_cp315.conda
++build_number: 9
++sha256: 976c4a6db967a62385aa633daaab19a929f986b979a7ad836b8b70e15ca7aefd
++md5: b23461631fe2abdbade0cb64babe7344
++constrains:
++- python 3.15.* *_cp315
++license: BSD-3-Clause
++license_family: BSD
++size: 6800
++timestamp: 1788302827589
++- conda: https://conda.anaconda.org/bioconda/linux-64/stringtie-3.0.3-h29c0135_0.conda
++sha256: 7b0eda3cd9f8ccb90b62a395313f2d32feb8b8233d04cf080ea497397a4488c9
++md5: d57b81115202d818874da6aff3b096df
++depends:
++- bzip2 >=1.0.8,<2.0a0
++- htslib >=1.22.1,<1.25.0a0
++- libgcc >=13
++- liblzma >=5.8.1,<6.0a0
++- libstdcxx >=13
++- libzlib >=1.3.1,<2.0a0
++- python
++license: MIT
++license_family: MIT
++size: 402270
++timestamp: 1763076434464
++- conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h1df4ec4_4.conda
++build_number: 104
++sha256: a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1
++md5: 676a2f9b1c4fcf57b70aa5c65f6c60d0
++depends:
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- xorg-libx11 >=1.8.13,<2.0a0
++license: TCL
++size: 3566806
++timestamp: 1787272857910
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++sha256: b928c30ddcb0e3f544c6eade8352737e6e610e263276b90232db6a578ef899d8
++md5: fcb489df604d100968b737f2cb6076c6
++license: LicenseRef-Public-Domain
++size: 118849
++timestamp: 1784250406640
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++sha256: 2bf9a40d86d29fd5c30d0febec99d06398143ddeece9ebb175cc5a6d20279943
++md5: f16d4aec5e8135e8e7bba02ef600149e
++depends:
++- __glibc >=2.17,<3.0.a0
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 38560
++timestamp: 1779439547766
++- conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
++sha256: 47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60
++md5: aa459086047c0e5e27023ab19f8cb86a
++depends:
++- __glibc >=2.17,<3.0.a0
++- libzlib >=1.3.2,<2.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 601301
++timestamp: 1786599621503
+
+Changes in 'stringtie/stringtie/.conda-lock/linux_arm64-bd-ff28090391cc81cd_1.txt':
+--- /dev/null
++++ modules/nf-core/stringtie/stringtie/.conda-lock/linux_arm64-bd-ff28090391cc81cd_1.txt
+@@ -0,0 +1,440 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/bioconda/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-aarch64:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/bzip2-1.0.8-h4777abc_10.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/c-ares-1.34.8-h29ee22c_2.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/htslib-1.22.1-h7068f72_0.tar.bz2
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/icu-78.3-py311h3512406_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/keyutils-1.6.3-h5bc82ec_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/krb5-1.22.2-h095d8e5_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ld_impl_linux-aarch64-2.46.1-default_h1979696_103.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libcurl-8.23.0-h86273da_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libdeflate-1.22-h86ecc28_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libedit-3.1.20260512-pl5321hc48eb74_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libev-4.33-h80f16a2_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libexpat-2.8.5-h4154aff_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libffi-3.7.0-hdaad0be_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/liblzma-5.8.3-he30d5cf_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libmpdec-4.0.0-he30d5cf_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libnghttp2-1.68.1-ha4b982d_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libpsl-0.23.1-hb8431ed_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libsqlite-3.54.1-h399dd60_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libssh2-1.11.1-h7572e3e_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libuuid-2.42.4-hd6fdeab_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libzlib-1.3.2-hdc9db2a_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/openssl-3.6.5-he6ad1d5_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/python-3.15.0-h0c7c799_101_cp315.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.15-9_cp315.conda
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/stringtie-3.0.3-hac7b671_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/tk-8.6.13-noxft_hf03c496_4.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/zstd-1.5.7-h9d15635_7.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: a2527b1d81792a0ccd2c05850960df119c2b6d8f5fdec97f2db7d25dc23b1068
++md5: 468fd3bb9e1f671d36c2cbc677e56f1d
++depends:
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28926
++timestamp: 1770939656741
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/bzip2-1.0.8-h4777abc_10.conda
++sha256: 24eacc8a20fd7c4616566178562bef7f9344eb4a8700cfc3180fa75a6ff9d39f
++md5: fd544ef1c672d645bf78e5819cbb8f91
++depends:
++- libgcc >=14
++license: bzip2-1.0.6
++license_family: BSD
++size: 194694
++timestamp: 1785906301397
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/c-ares-1.34.8-h29ee22c_2.conda
++sha256: 3838d10a78c206a1a4ec7ff041880b4f9b8ecde3520c911daae9e06baeb8858e
++md5: eb80eb38625b8552a099aa88f8ba5db7
++depends:
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 241210
++timestamp: 1787169968125
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++sha256: d65aa0c8990f34e1e86e6b505c8a149fea6cfbfcccef087a77c0bcb0b4fbe159
++md5: f9f6a9cf041f31438b034dac016e6429
++depends:
++- __unix
++license: ISC
++size: 129191
++timestamp: 1792347285941
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/htslib-1.22.1-h7068f72_0.tar.bz2
++sha256: 555d286c069018fa20ceacd009fabc86b6ed2698d3bcd02ebf62cd53fc4e4c74
++md5: 68bb149f35d3c924e77e93555221ef0c
++depends:
++- bzip2 >=1.0.8,<2.0a0
++- libcurl >=8.14.1,<9.0a0
++- libdeflate >=1.22,<1.23.0a0
++- libgcc >=13
++- liblzma >=5.8.1,<6.0a0
++- libzlib >=1.3.1,<2.0a0
++- openssl >=3.5.1,<4.0a0
++license: MIT
++license_family: MIT
++size: 3104298
++timestamp: 1752522627023
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/icu-78.3-py311h3512406_2.conda
++sha256: 54d921defd947adb58a90e10203d3bfe6c1f209f5f1a1ad2c6a9f7617f2fb59e
++md5: b35bbb1b957440ed742f35fb96eb7f1c
++depends:
++- libgcc >=14
++- libstdcxx >=14
++license: MIT
++license_family: MIT
++size: 14688525
++timestamp: 1786545779464
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/keyutils-1.6.3-h5bc82ec_1.conda
++sha256: 3999b1472f1e549a0b766428e2823abf20626aac5314b474c9b76bf6eb679def
++md5: 6d9be306ecb8dfc9ff46f02cb367d5c2
++depends:
++- libgcc >=15
++license: LGPL-2.1-or-later
++size: 129546
++timestamp: 1786739205968
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/krb5-1.22.2-h095d8e5_2.conda
++sha256: 601d79af94d9562ba70e2d4947034ba159aae293a3c860855335a7c76c14400e
++md5: a4d0da122ba952abf76981e76d0d283c
++depends:
++- keyutils >=1.6.3,<2.0a0
++- libedit >=3.1.20250104,<3.2.0a0
++- libedit >=3.1.20250104,<4.0a0
++- libgcc >=15
++- libstdcxx >=15
++- openssl >=3.5.7,<4.0a0
++license: MIT
++license_family: MIT
++size: 1538590
++timestamp: 1786762058856
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ld_impl_linux-aarch64-2.46.1-default_h1979696_103.conda
++sha256: 516808982ad26ebdc4a9d8f71ee86ea55d0bc95382b7bca80620e0ac220971f3
++md5: ca781d8b499c39ddfe10e55a0347d6d9
++depends:
++- zstd >=1.5.7,<1.6.0a0
++constrains:
++- binutils_impl_linux-aarch64 2.46.1
++license: GPL-3.0-only
++license_family: GPL
++size: 905349
++timestamp: 1791565559147
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libcurl-8.23.0-h86273da_0.conda
++sha256: 4a9bc4ef7f6ddaef61a900d360214fb285c6aa474a3d7e1c5e4e42b4b2e36697
++md5: 23729bcd7d0045ad537a9cfa6329ac51
++depends:
++- krb5 >=1.22.2,<1.23.0a0
++- libgcc >=15
++- libnghttp2 >=1.68.1,<2.0a0
++- libpsl >=0.23.1,<0.24.0a0
++- libssh2 >=1.11.1,<2.0a0
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.9,<4.0a0
++- zstd >=1.5.7,<1.6.0a0
++license: curl
++license_family: MIT
++size: 529565
++timestamp: 1791990806492
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libdeflate-1.22-h86ecc28_0.conda
++sha256: 986207f130703897300ddc3637c52e86a5b21c735fe384bf48554d9a6d91c56d
++md5: ff6a44e8b1707d02be2fe9a36ea88d4a
++depends:
++- libgcc >=13
++license: MIT
++license_family: MIT
++size: 69601
++timestamp: 1728177137503
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libedit-3.1.20260512-pl5321hc48eb74_0.conda
++sha256: 58fd637d0219016bb69edf2973b089975de283e8a38149d69ef586b8fc4ad90b
++md5: 3ffb447961508502fc81e063ca2071cb
++depends:
++- ncurses
++- libgcc >=14
++- ncurses >=6.6,<7.0a0
++license: BSD-2-Clause
++license_family: BSD
++size: 149680
++timestamp: 1791327362947
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libev-4.33-h80f16a2_3.conda
++sha256: 4475f79a020e9ff2a5a0308c48cb2970a25d55c3dd724a97ab28bfac3be6cd49
++md5: f679b30a53d410d0b5ae0cb8f5b7397e
++depends:
++- libgcc >=14
++license: BSD-2-Clause OR GPL-2.0-or-later
++license_family: GPL
++size: 45746
++timestamp: 1785917328690
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libexpat-2.8.5-h4154aff_0.conda
++sha256: d155b9ee74abac0865095a66ebb008be967937a6deea6e7666ba01ead4a155fc
++md5: e5a973222327d9183c25eddfc3a80828
++depends:
++- libgcc >=15
++constrains:
++- expat 2.8.5.*
++license: MIT
++license_family: MIT
++size: 79463
++timestamp: 1790346233159
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libffi-3.7.0-hdaad0be_1.conda
++sha256: b1879d78b622c5f4817fd6d77fe7ae3ab7b501542e3c2f4ac77198c54c62c189
++md5: f9e5b3e446b526b34a7e25ecec08efd9
++depends:
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 63137
++timestamp: 1787753382033
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++sha256: eae7a3449d5a3b5351c5427137c076cc3fc826645c7bfc42dc10772b783826f1
++md5: 489d5c9dc62265b3f6a57f9a106f1caf
++depends:
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 h8acb6b2_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 627793
++timestamp: 1790302345214
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++sha256: 4406fd67c5beeb99b9372f9bf07aa3e40ca141e337eceebac3ff64aa72799494
++md5: 259ded79ac497cfbcf5434540e8b81b6
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 617342
++timestamp: 1790302273072
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/liblzma-5.8.3-he30d5cf_1.conda
++sha256: f760669fd1cea27f689f411c0d5488e26ce50e382c9b63e4ad348f959850124a
++md5: e0e6411a60d00186eec7c73f4118ab67
++depends:
++- libgcc >=14
++constrains:
++- xz 5.8.3.*
++license: 0BSD
++size: 125578
++timestamp: 1786348561649
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libmpdec-4.0.0-he30d5cf_2.conda
++sha256: 5d6621a2229777824386164b40c67ff804fe98dd4165354cf73ee73e282a2adf
++md5: eaaaec4776cd8a7b987c4b1782220141
++depends:
++- libgcc >=14
++license: BSD-2-Clause
++license_family: BSD
++size: 113885
++timestamp: 1786650485380
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libnghttp2-1.68.1-ha4b982d_1.conda
++sha256: 0c28d734512fa2c66a232b2f3968eae7124dbd6ad42c594c752f1d08dfb86195
++md5: ff4b2b7c169c438bf648fb14f369c3b9
++depends:
++- c-ares >=1.34.8,<2.0a0
++- libev >=4.33,<4.34.0a0
++- libev >=4.33,<5.0a0
++- libgcc >=15
++- libstdcxx >=15
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.7,<4.0a0
++license: MIT
++license_family: MIT
++size: 734829
++timestamp: 1787177407983
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libpsl-0.23.1-hb8431ed_1.conda
++sha256: 757f79c182ac3080cf416acd91c7643b8074b8b2e5c1eba0ffc5a16897feb84b
++md5: 5ab41e5e70b78eb00ef62cdaa35cd86f
++depends:
++- libgcc >=15
++- libstdcxx >=15
++- icu >=78.3,<79.0a0
++license: MIT
++license_family: MIT
++size: 73118
++timestamp: 1786970733378
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libsqlite-3.54.1-h399dd60_0.conda
++sha256: 6ac4bef81dc57000d16f6e230f4157e2d054189800346b59f3613c07b249dceb
++md5: d1e0812292cb0f17e574dfe63eb69971
++depends:
++- icu >=78.3,<79.0a0
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++license: blessing
++size: 982114
++timestamp: 1792175598077
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libssh2-1.11.1-h7572e3e_1.conda
++sha256: f6fef76c1c8899d7976030871b8cd8016b0a306d2b8519834cd6491d6a42fb82
++md5: 833be3f226277d894df3c7a7131d9532
++depends:
++- libgcc >=14
++- libzlib >=1.3.2,<2.0a0
++- openssl >=3.5.7,<4.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 315682
++timestamp: 1786713068743
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++sha256: b241a3acfa9cdb1359112864a1241225533c92642de3000d52ae65ef5d3a9786
++md5: 6c823668e78160957d1b061ceec15c2c
++depends:
++- libgcc 16.2.0 h205dda4_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6236630
++timestamp: 1790302364054
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libuuid-2.42.4-hd6fdeab_0.conda
++sha256: 4d94770cc7c47eb4a0d7b92f16d7a450506d1a82406d63c987d6208ab2fb8a16
++md5: 9d63e86dc027166aaaeb0c99a0a90fd7
++depends:
++- libgcc >=15
++license: BSD-3-Clause
++license_family: BSD
++size: 36296
++timestamp: 1790121454455
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libzlib-1.3.2-hdc9db2a_3.conda
++sha256: 76efa6cc9d7e6f5ee3bbca0939f64054af2bdfb3c3632531f8e633cf6c2ea41e
++md5: bd534c2fbe56d8c2ea3b2d8f5e12bca8
++constrains:
++- zlib 1.3.2 *_3
++license: Zlib
++license_family: Other
++size: 70108
++timestamp: 1785276540870
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++sha256: d69a04914139627f0a6bfd19412d6c7f1e37edc896af84a6011e07e8bc1e69fa
++md5: c3b4349171ca987ff33a1de61f7b3f96
++depends:
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 955422
++timestamp: 1786355019431
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/openssl-3.6.5-he6ad1d5_0.conda
++sha256: 238136f1df197ecd89bafd728a34d0642176f3170423d13d8276746d675a9485
++md5: 92aec5ec417d2ce9ae109e6c5ad377ff
++depends:
++- ca-certificates
++- libgcc >=15
++license: Apache-2.0
++license_family: Apache
++size: 3716078
++timestamp: 1791097887829
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++sha256: e9cbcbc94e151ada3d6dc365380aaaf591f65012c16d9a2abaea4b9b90adc402
++md5: ab7288cc39545556d1bc5e71ab2df9a9
++depends:
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 636733
++timestamp: 1769712412683
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/python-3.15.0-h0c7c799_101_cp315.conda
++build_number: 101
++sha256: a7a55e46ed50dac58ce101580d17466919f70b60e7b020c87b5918ca95ff0873
++md5: b7cd3585cfbac87e7607fd79719df86a
++depends:
++- bzip2 >=1.0.8,<2.0a0
++- ld_impl_linux-aarch64 >=2.36.1
++- libedit >=3.1.20260512,<3.2.0a0
++- libexpat >=2.8.5,<3.0a0
++- libffi >=3.7.0,<3.8.0a0
++- libgcc >=15
++- liblzma >=5.8.3,<6.0a0
++- libmpdec >=4.0.0,<5.0a0
++- libsqlite >=3.54.0,<4.0a0
++- libuuid >=2.42.4,<3.0a0
++- libzlib >=1.3.2,<2.0a0
++- ncurses >=6.6,<7.0a0
++- openssl >=3.5.9,<4.0a0
++- python_abi 3.15.* *_cp315
++- tk >=8.6.13,<8.7.0a0
++- tzdata
++- zstd >=1.5.7,<1.6.0a0
++license: Python-2.0
++size: 27724246
++timestamp: 1791827112935
++python_site_packages_path: lib/python3.15/site-packages
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.15-9_cp315.conda
++build_number: 9
++sha256: 976c4a6db967a62385aa633daaab19a929f986b979a7ad836b8b70e15ca7aefd
++md5: b23461631fe2abdbade0cb64babe7344
++constrains:
++- python 3.15.* *_cp315
++license: BSD-3-Clause
++license_family: BSD
++size: 6800
++timestamp: 1788302827589
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/stringtie-3.0.3-hac7b671_0.conda
++sha256: 74f45416e9d23743c833f502343fd575316d54610b68481a69a7219845625034
++md5: be416bf213c4cd47b14d46683f4eada4
++depends:
++- bzip2 >=1.0.8,<2.0a0
++- htslib >=1.22.1,<1.23.0a0
++- libgcc >=13
++- liblzma >=5.8.1,<6.0a0
++- libstdcxx >=13
++- libzlib >=1.3.1,<2.0a0
++- python
++license: MIT
++license_family: MIT
++size: 445052
++timestamp: 1763076306455
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/tk-8.6.13-noxft_hf03c496_4.conda
++build_number: 104
++sha256: a1aa0d0f0b3d539644ff992e6dd0facf950c79df58fc37590ce5be84ff5e3f22
++md5: ebaded4b4b74c2cc43a754ded4eed76f
++depends:
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- xorg-libx11 >=1.8.13,<2.0a0
++license: TCL
++size: 3664220
++timestamp: 1787272859143
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++sha256: b928c30ddcb0e3f544c6eade8352737e6e610e263276b90232db6a578ef899d8
++md5: fcb489df604d100968b737f2cb6076c6
++license: LicenseRef-Public-Domain
++size: 118849
++timestamp: 1784250406640
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++sha256: 720691eb59b86f11ceb21b236b9402d59c47d156183375d2b24c53a201dd874b
++md5: 6dc4b55fc391a3d51ff12a6fed979562
++depends:
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 40249
++timestamp: 1779439555623
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/zstd-1.5.7-h9d15635_7.conda
++sha256: 427fd14bcb3b8659796fecc682716617409350fb5a98e5b7b47558a10d1a2fc7
++md5: d942e34ac3920ba83f8b2d0169570187
++depends:
++- libzlib >=1.3.2,<2.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 615477
++timestamp: 1786599613561
+
+************************************************************

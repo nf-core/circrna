@@ -15,7 +15,6 @@ workflow FIND_CIRC {
     ch_fasta
 
     main:
-    ch_versions = channel.empty()
 
     ALIGN( reads, bowtie2_index, ch_fasta, false, true )
 
@@ -30,15 +29,12 @@ workflow FIND_CIRC {
     )
 
     ANCHORS( SAMTOOLS_VIEW.out.bam )
-    ch_versions = ch_versions.mix(ANCHORS.out.versions)
 
     MAIN( ANCHORS.out.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta } )
-    ch_versions = ch_versions.mix(MAIN.out.versions)
 
     EXTRACT_READS( MAIN.out.reads, "fastq.gz" )
 
     GROUP_READS( EXTRACT_READS.out.output )
-    ch_versions = ch_versions.mix(GROUP_READS.out.versions)
 
     JOIN_READS( MAIN.out.bed.join(GROUP_READS.out.csv)
         .map{ meta, bed, _reads -> [ meta, [bed, _reads]] }
@@ -50,5 +46,4 @@ workflow FIND_CIRC {
     emit:
     bed = UNIFY.out.output
 
-    versions = ch_versions
 }

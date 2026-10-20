@@ -1,0 +1,384 @@
+Changes in component 'nf-core/seqkit/fx2tab'
+Changes in 'seqkit/fx2tab/meta.yml':
+--- modules/nf-core/seqkit/fx2tab/meta.yml
++++ modules/nf-core/seqkit/fx2tab/meta.yml
+@@ -1,70 +1,94 @@
+ name: seqkit_fx2tab
+ description: Convert FASTA/Q to tabular format, and provide various information, like
+   sequence length, GC content/GC skew.
+ keywords:
+   - fasta
+   - fastq
+   - text
+   - tabular
+   - convert
+ tools:
+   - seqkit:
+       description: |
+         Cross-platform and ultrafast toolkit for FASTA/Q file manipulation, written by Wei Shen.
+       homepage: https://github.com/shenwei356/seqkit
+       documentation: https://bioinf.shenwei.me/seqkit/
+       doi: 10.1371/journal.pone.0163962
+       licence: ["MIT"]
+       identifier: biotools:seqkit
+ input:
+   - - meta:
+         type: map
+         description: |
+           Groovy Map containing sample information
+           e.g. [ id:'test', single_end:false ]
+     - fastx:
+         type: file
+         description: Sequence file in fasta/q format
+         pattern: "*.{fasta,fastq,fa,fq,fas,fna,faa}[.gz,.zst]"
+         ontologies:
+           - edam: http://edamontology.org/format_1930 # FASTQ
+   - out_ext:
+       type: string
+       description: Output file extension (for example `txt.zst`)
+ output:
+   text:
+     - - meta:
+           type: map
+           description: |
+             Groovy Map containing sample information
+             e.g. [ id:'test', single_end:false ]
+       - "*.txt*":
+           type: file
+           description: Text file in tabular format
+           pattern: "*.txt[.gz,.zstd,.zst]"
+           ontologies: []
+   versions_seqkit:
+     - - ${task.process}:
+           type: string
+           description: The name of the process
+       - seqkit:
+           type: string
+           description: The name of the tool
+       - seqkit version | sed 's/^.*v//':
+           type: eval
+           description: The expression to obtain the version of the tool
+ topics:
+   versions:
+     - - ${task.process}:
+           type: string
+           description: The name of the process
+       - seqkit:
+           type: string
+           description: The name of the tool
+       - seqkit version | sed 's/^.*v//':
+           type: eval
+           description: The expression to obtain the version of the tool
+ authors:
+   - "@heuermh"
+ maintainers:
+   - "@heuermh"
++containers:
++  docker:
++    linux/amd64:
++      name: community.wave.seqera.io/library/seqkit:2.14.0--fe9cf2addeefb114
++      build_id: bd-fe9cf2addeefb114_1
++      scan_id: sc-caf06af3f926ccbf_1
++    linux/arm64:
++      name: community.wave.seqera.io/library/seqkit:2.14.0--a2aeaac885a79b29
++      build_id: bd-a2aeaac885a79b29_1
++      scan_id: sc-e815034f129d48f1_1
++  singularity:
++    linux/amd64:
++      name: oras://community.wave.seqera.io/library/seqkit:2.14.0--d8014b304447358d
++      build_id: bd-d8014b304447358d_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c854c28b0f0a7a895f283f230367875922689c9b20fa1bca5474bc9999e56ff2/data
++    linux/arm64:
++      name: oras://community.wave.seqera.io/library/seqkit:2.14.0--b7bb1318f8fd92d5
++      build_id: bd-b7bb1318f8fd92d5_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/29/29b53cea1003016018851588f2fb88f31575b093a9b56655eac1cf5f48e85180/data
++  conda:
++    linux/amd64:
++      lock_file: modules/nf-core/seqkit/fx2tab/.conda-lock/linux_amd64-bd-fe9cf2addeefb114_1.txt
++    linux/arm64:
++      lock_file: modules/nf-core/seqkit/fx2tab/.conda-lock/linux_arm64-bd-a2aeaac885a79b29_1.txt
+
+Changes in 'seqkit/fx2tab/environment.yml':
+--- modules/nf-core/seqkit/fx2tab/environment.yml
++++ modules/nf-core/seqkit/fx2tab/environment.yml
+@@ -1,7 +1,7 @@
+ ---
+ # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
+ channels:
+   - conda-forge
+   - bioconda
+ dependencies:
+-  - bioconda::seqkit=2.13.0
++  - bioconda::seqkit=2.14.0
+
+Changes in 'seqkit/fx2tab/main.nf':
+--- modules/nf-core/seqkit/fx2tab/main.nf
++++ modules/nf-core/seqkit/fx2tab/main.nf
+@@ -1,43 +1,43 @@
+ process SEQKIT_FX2TAB {
+     tag "${meta.id}"
+     label 'process_medium'
+ 
+     conda "${moduleDir}/environment.yml"
+     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4f/4fe272ab9a519cf418160471a485b5ef50ea3f571a8e4555a826f70a4d8243ae/data'
+-        : 'community.wave.seqera.io/library/seqkit:2.13.0--05c0a96bf9fb2751'}"
++        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c854c28b0f0a7a895f283f230367875922689c9b20fa1bca5474bc9999e56ff2/data'
++        : 'community.wave.seqera.io/library/seqkit:2.14.0--fe9cf2addeefb114'}"
+ 
+     input:
+     tuple val(meta), path(fastx)
+     val out_ext
+ 
+     output:
+     tuple val(meta), path("*.txt*"), emit: text
+     tuple val("${task.process}"), val('seqkit'), eval("seqkit version | sed 's/^.*v//'"), emit: versions_seqkit, topic: versions
+ 
+     when:
+     task.ext.when == null || task.ext.when
+ 
+     script:
+     def args = task.ext.args ?: ''
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def suffix = out_ext ?: "txt.zst"
+     """
+     seqkit \\
+         fx2tab \\
+         ${args} \\
+         --threads ${task.cpus} \\
+         ${fastx} \\
+         -o ${prefix}.${suffix}
+     """
+ 
+     stub:
+     def args = task.ext.args ?: ''
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def suffix = out_ext ?: "txt.zst"
+     """
+     echo ${args}
+ 
+     touch ${prefix}.${suffix}
+     """
+ }
+
+'modules/nf-core/seqkit/fx2tab/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/seqkit/fx2tab/tests/main.nf.test' is unchanged
+'modules/nf-core/seqkit/fx2tab/.conda-lock/linux_arm64-bd-a2aeaac885a79b29_1.txt' was created
+'modules/nf-core/seqkit/fx2tab/.conda-lock/linux_amd64-bd-fe9cf2addeefb114_1.txt' was created
+Changes in 'seqkit/fx2tab/.conda-lock/linux_arm64-bd-a2aeaac885a79b29_1.txt':
+--- /dev/null
++++ modules/nf-core/seqkit/fx2tab/.conda-lock/linux_arm64-bd-a2aeaac885a79b29_1.txt
+@@ -0,0 +1,98 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/bioconda/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-aarch64:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/seqkit-2.14.0-h07adaa6_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: a2527b1d81792a0ccd2c05850960df119c2b6d8f5fdec97f2db7d25dc23b1068
++md5: 468fd3bb9e1f671d36c2cbc677e56f1d
++depends:
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28926
++timestamp: 1770939656741
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++sha256: eae7a3449d5a3b5351c5427137c076cc3fc826645c7bfc42dc10772b783826f1
++md5: 489d5c9dc62265b3f6a57f9a106f1caf
++depends:
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 h8acb6b2_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 627793
++timestamp: 1790302345214
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++sha256: 4406fd67c5beeb99b9372f9bf07aa3e40ca141e337eceebac3ff64aa72799494
++md5: 259ded79ac497cfbcf5434540e8b81b6
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 617342
++timestamp: 1790302273072
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++sha256: b241a3acfa9cdb1359112864a1241225533c92642de3000d52ae65ef5d3a9786
++md5: 6c823668e78160957d1b061ceec15c2c
++depends:
++- libgcc 16.2.0 h205dda4_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6236630
++timestamp: 1790302364054
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++sha256: d69a04914139627f0a6bfd19412d6c7f1e37edc896af84a6011e07e8bc1e69fa
++md5: c3b4349171ca987ff33a1de61f7b3f96
++depends:
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 955422
++timestamp: 1786355019431
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++sha256: e9cbcbc94e151ada3d6dc365380aaaf591f65012c16d9a2abaea4b9b90adc402
++md5: ab7288cc39545556d1bc5e71ab2df9a9
++depends:
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 636733
++timestamp: 1769712412683
++- conda: https://conda.anaconda.org/bioconda/linux-aarch64/seqkit-2.14.0-h07adaa6_0.conda
++sha256: e7d2ffe350c390649de975334c0325f9c5f35dcaae7cfd36d613f14bd7c30fef
++md5: 57992d2049b257f911f8f7b2987953fd
++license: MIT
++license_family: MIT
++size: 6539745
++timestamp: 1790239342082
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++sha256: 720691eb59b86f11ceb21b236b9402d59c47d156183375d2b24c53a201dd874b
++md5: 6dc4b55fc391a3d51ff12a6fed979562
++depends:
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 40249
++timestamp: 1779439555623
+
+Changes in 'seqkit/fx2tab/.conda-lock/linux_amd64-bd-fe9cf2addeefb114_1.txt':
+--- /dev/null
++++ modules/nf-core/seqkit/fx2tab/.conda-lock/linux_amd64-bd-fe9cf2addeefb114_1.txt
+@@ -0,0 +1,108 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/bioconda/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-64:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++- conda: https://conda.anaconda.org/bioconda/linux-64/seqkit-2.14.0-hb192632_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: 1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9
++md5: a9f577daf3de00bca7c3c76c0ecbd1de
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28948
++timestamp: 1770939786096
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++sha256: e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea
++md5: 735629b400b70eeab21a2ba8f5b1c2ce
++depends:
++- __glibc >=2.17,<3.0.a0
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 he0feb66_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 1058444
++timestamp: 1790303109576
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++sha256: 92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758
++md5: d904c7ddd95e026254b4b80808ee9e12
++depends:
++- __glibc >=2.17,<3.0.a0
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 640566
++timestamp: 1790303046034
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++sha256: fa7018298629fc429971fffd6ecba3d27a7b02e4e890d6a93ea01ffebe8cb745
++md5: 9b6707e0caca917fa6ea9ee473f37a5d
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc 16.2.0 ha9f2e26_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6615436
++timestamp: 1790303132935
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++sha256: 5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3
++md5: ee6c0cd80a60961a1f48aa3e0b91f986
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 911196
++timestamp: 1786355078102
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++sha256: 4ce2e1ee31a6217998f78c31ce7dc0a3e0557d9238b51d49dd20c52d467a126d
++md5: f2c23a77b25efcad57d377b34bd84941
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 593603
++timestamp: 1769710381284
++- conda: https://conda.anaconda.org/bioconda/linux-64/seqkit-2.14.0-hb192632_0.conda
++sha256: bd686974e40f8e2c60717f0ac517123a646c652fa704003c5205fbc4f328b72d
++md5: e9381a1fb56f6b7397d4a2213113206d
++depends:
++- __glibc >=2.17,<3.0.a0
++license: MIT
++license_family: MIT
++size: 7146960
++timestamp: 1790239594415
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++sha256: 2bf9a40d86d29fd5c30d0febec99d06398143ddeece9ebb175cc5a6d20279943
++md5: f16d4aec5e8135e8e7bba02ef600149e
++depends:
++- __glibc >=2.17,<3.0.a0
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 38560
++timestamp: 1779439547766
+
+************************************************************

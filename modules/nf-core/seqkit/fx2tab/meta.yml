@@ -68,3 +68,27 @@ authors:
   - "@heuermh"
 maintainers:
   - "@heuermh"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/seqkit:2.14.0--fe9cf2addeefb114
+      build_id: bd-fe9cf2addeefb114_1
+      scan_id: sc-caf06af3f926ccbf_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/seqkit:2.14.0--a2aeaac885a79b29
+      build_id: bd-a2aeaac885a79b29_1
+      scan_id: sc-e815034f129d48f1_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/seqkit:2.14.0--d8014b304447358d
+      build_id: bd-d8014b304447358d_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c854c28b0f0a7a895f283f230367875922689c9b20fa1bca5474bc9999e56ff2/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/seqkit:2.14.0--b7bb1318f8fd92d5
+      build_id: bd-b7bb1318f8fd92d5_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/29/29b53cea1003016018851588f2fb88f31575b093a9b56655eac1cf5f48e85180/data
+  conda:
+    linux/amd64:
+      lock_file: modules/nf-core/seqkit/fx2tab/.conda-lock/linux_amd64-bd-fe9cf2addeefb114_1.txt
+    linux/arm64:
+      lock_file: modules/nf-core/seqkit/fx2tab/.conda-lock/linux_arm64-bd-a2aeaac885a79b29_1.txt

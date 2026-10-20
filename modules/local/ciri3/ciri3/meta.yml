@@ -1,0 +1,109 @@
+name: ciri3_ciri3
+description: Detect circRNAs or quantify a supplied circRNA candidate list with CIRI3
+keywords:
+  - ciri3
+  - circrna
+  - detection
+  - quantification
+tools:
+  - ciri3:
+      description: CircRNA identification and quantification
+      homepage: https://github.com/gyjames/CIRI3
+      licence:
+        - GPL-2.0-only
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - sam:
+        type: file
+        description: Alignment SAM file
+        pattern: "*.sam"
+  - - meta2:
+        type: map
+        description: Reference metadata
+    - fasta:
+        type: file
+        description: Reference FASTA
+        pattern: "*.{fa,fasta}"
+  - - meta3:
+        type: map
+        description: Annotation metadata
+    - gtf:
+        type: file
+        description: Gene annotation
+        pattern: "*.gtf"
+  - circ_list:
+      type: file
+      description: Optional CIRI3 candidate list; pass an empty list for discovery
+output:
+  txt:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.ciri3.txt":
+          type: file
+          description: CIRI3 result
+  bsj_matrix:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.BSJ_Matrix":
+          type: file
+          description: BSJ matrix
+  fsj_matrix:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.FSJ_Matrix":
+          type: file
+          description: FSJ matrix
+  versions_ciri3:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - ciri3:
+          type: string
+          description: The name of the tool
+      - 3.0.1:
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciri3:
+          type: string
+          description: Software name
+      - 3.0.1:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/ciri3:3.0.1--9d1e9d05ff71b913
+      build_id: bd-9d1e9d05ff71b913_1
+      scan_id: sc-cdb6945c3dab8e88_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/ciri3:3.0.1--e1770472e7dfddc1
+      build_id: bd-e1770472e7dfddc1_1
+      scan_id: sc-789bc68c48faade1_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/ciri3:3.0.1--afe87733c003ed92
+      build_id: bd-afe87733c003ed92_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/6a/6adec8cc48b3b093e126e8474db0cb9ea72bebe4041753c8413d98b809f711be/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/ciri3:3.0.1--a16105f6e82f4f3b
+      build_id: bd-a16105f6e82f4f3b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/a6/a64fe42a183f0972414bddfa15d354a8da34b16e120ca984064d13d881aa2fbf/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri3/ciri3/.conda-lock/linux_amd64-bd-9d1e9d05ff71b913_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri3/ciri3/.conda-lock/linux_arm64-bd-e1770472e7dfddc1_1.txt

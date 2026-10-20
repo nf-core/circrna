@@ -2,10 +2,10 @@ process TARGETSCAN {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::targetscan=7.0"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/targetscan:7.0--pl5321hdfd78af_0' :
-        'biocontainers/targetscan:7.0--pl5321hdfd78af_0' }"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/28/2854bd21d12ba23d6df21cbda53ec46f5c5b860720ef48bf4ae3b16c8a97e92b/data'
+        : 'community.wave.seqera.io/library/targetscan:9c82f6ff6777613b'}"
 
     input:
     tuple val(meta), path(fasta)
@@ -13,14 +13,14 @@ process TARGETSCAN {
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: txt
-    path "versions.yml"                   , emit: versions
+    tuple val("${task.process}"), val('awk'), eval('awk --version | head -n1 | cut -d\' \' -f3 | sed \'s/,//g\''), emit: versions_awk, topic: versions
+    tuple val("${task.process}"), val('targetscan'), val('7.0'), emit: versions_targetscan, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = "7.0"
     """
     ##format for targetscan
     cat $fasta | grep ">" | sed 's/>//g' > id
@@ -29,23 +29,12 @@ process TARGETSCAN {
     # run targetscan
     targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.txt
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
-        targetscan: $VERSION
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = "7.0"
     """
     touch ${prefix}.txt
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
-        targetscan: $VERSION
-    END_VERSIONS
     """
 }

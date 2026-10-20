@@ -84,7 +84,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -166,7 +165,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -231,7 +229,6 @@ nextflow_workflow {
                 { assert workflow.out.fasta.isEmpty() },
                 { assert workflow.out.bed12.isEmpty() },
                 { assert snapshot(
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -313,7 +310,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(4).join('\t') }.sort().toString().md5()] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -383,7 +379,6 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.fasta.isEmpty() },
                 { assert workflow.out.bed12.isEmpty() },
-                { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().isEmpty() }
             )
         }
@@ -467,7 +462,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -551,7 +545,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -645,7 +638,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }
@@ -742,7 +734,6 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name] }.sort { it[0].toString() },
-                    workflow.out.versions.collect { path(it).yaml }.unique().sort { it.toString() }
                 ).match() }
             )
         }

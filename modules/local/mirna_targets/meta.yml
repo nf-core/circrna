@@ -1,0 +1,103 @@
+name: mirna_targets
+description: Combine miRanda and TargetScan miRNA target predictions
+keywords:
+  - mirna
+  - target
+  - bedtools
+tools:
+  - gawk:
+      description: Pattern scanning and processing language
+      homepage: https://www.gnu.org/software/gawk/
+      licence:
+        - GPL-3.0-or-later
+  - bedtools:
+      description: Utilities for genome arithmetic
+      homepage: https://bedtools.readthedocs.io/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - targetscan:
+        type: file
+        description: TargetScan predictions
+    - miranda:
+        type: file
+        description: miRanda predictions
+output:
+  results:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.mirna_targets.txt":
+          type: file
+          description: Combined miRNA target predictions
+  versions_awk:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - awk:
+          type: string
+          description: Software name
+      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+          type: eval
+          description: Software version
+  versions_bedtools:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bedtools:
+          type: string
+          description: Software name
+      - bedtools --version | sed "s/bedtools v//":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - awk:
+          type: string
+          description: Software name
+      - awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bedtools:
+          type: string
+          description: Software name
+      - bedtools --version | sed "s/bedtools v//":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/mirna_targets:c3f44220b2c18d92
+      build_id: bd-c3f44220b2c18d92_1
+      scan_id: sc-a4430e8a27c646e1_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/mirna_targets:f0ede764f11e5da4
+      build_id: bd-f0ede764f11e5da4_1
+      scan_id: sc-8f37bde09ec73856_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/mirna_targets:221daf53e9510134
+      build_id: bd-221daf53e9510134_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/36/36dcc9054fa4a4d366be5665430b8d3c61b9eb949653fafbc243d055f627bba4/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/mirna_targets:2fc1ceb90cdb55a7
+      build_id: bd-2fc1ceb90cdb55a7_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0fe4b456eec44998f3e0e4f59d113ad363a83676f99ad92a4aafc8d8a2223f6e/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/mirna_targets/.conda-lock/linux_amd64-bd-f0ede764f11e5da4_1.txt
+    linux/arm64:
+      lock_file: modules/local/mirna_targets/.conda-lock/linux_arm64-bd-c3f44220b2c18d92_1.txt

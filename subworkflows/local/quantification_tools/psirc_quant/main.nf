@@ -22,15 +22,12 @@ workflow PSIRC_QUANT {
     ch_faidx
 
     main:
-    ch_versions = channel.empty()
 
     MARK_CIRCULAR(ch_transcriptome_fasta.map { meta, fasta -> [meta, fasta, 'marked.fasta'] }, [], false)
 
     INDEX(MARK_CIRCULAR.out.output)
-    ch_versions = ch_versions.mix(INDEX.out.versions)
 
     QUANT(reads, INDEX.out.index.collect(), ch_transcriptome_gtf, ch_faidx, bootstrap_samples)
-    ch_versions = ch_versions.mix(QUANT.out.versions)
 
     CUSTOM_TX2GENE(
         ch_transcriptome_gtf,
@@ -44,7 +41,6 @@ workflow PSIRC_QUANT {
         QUANT.out.directory,
         "kallisto",
     )
-    ch_versions = ch_versions.mix(TXIMETA_TXIMETA.out.versions)
 
     TXIMETA_TXIMPORT(
         QUANT.out.directory,
@@ -71,12 +67,10 @@ workflow PSIRC_QUANT {
     SPLIT_TYPES_COUNTS(
         JOIN_TX_COUNTS.out.out_file
     )
-    ch_versions = ch_versions.mix(SPLIT_TYPES_COUNTS.out.versions)
 
     SPLIT_TYPES_TPM(
         JOIN_TX_TPM.out.out_file
     )
-    ch_versions = ch_versions.mix(SPLIT_TYPES_TPM.out.versions)
 
     MERGE_EXPERIMENTS(
         TXIMETA_TXIMETA.out.se.map { _meta, se -> se }.collect(sort: { se -> se.name }).map { experiments -> [[id: "experiments"], experiments] },
@@ -84,7 +78,6 @@ workflow PSIRC_QUANT {
         ch_transcriptome_gtf,
         JOIN_TX_TPM.out.out_file,
     )
-    ch_versions = ch_versions.mix(MERGE_EXPERIMENTS.out.versions)
 
     emit:
     se                 = MERGE_EXPERIMENTS.out.merged
@@ -97,5 +90,4 @@ workflow PSIRC_QUANT {
     linear_tx_tpm      = SPLIT_TYPES_TPM.out.linear
     circular_tx_counts = SPLIT_TYPES_COUNTS.out.circular
     circular_tx_tpm    = SPLIT_TYPES_TPM.out.circular
-    versions           = ch_versions
 }

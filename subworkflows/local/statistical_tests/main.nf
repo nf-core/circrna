@@ -13,7 +13,6 @@ workflow STATISTICAL_TESTS {
     ch_phenotype
 
     main:
-    ch_versions = channel.empty()
 
     ch_psirc_genes = ch_gene_counts
         .filter{ meta, _counts -> meta.quantification == 'psirc' }
@@ -27,11 +26,9 @@ workflow STATISTICAL_TESTS {
         .map{ quantification, genes, circs -> [[id: 'counts', quantification: quantification], genes, circs] }
 
     CIRCTEST_PREPARE(ch_counts)
-    ch_versions = ch_versions.mix(CIRCTEST_PREPARE.out.versions)
 
     CIRCTEST_CIRCTEST(CIRCTEST_PREPARE.out.counts,
         ch_phenotype)
-    ch_versions = ch_versions.mix(CIRCTEST_CIRCTEST.out.versions)
 
     ch_phenotype_annotations = ch_phenotype
         .map{ _meta, table -> table.text }
@@ -65,12 +62,10 @@ workflow STATISTICAL_TESTS {
     CIRIQUANT_PREPDE(ch_condition_pairs
         .map{meta, samples, ciri, _stringtie, conditions -> [meta, samples, ciri, conditions]}
     )
-    ch_versions = ch_versions.mix(CIRIQUANT_PREPDE.out.versions)
 
     STRINGTIE_PREPDE(ch_condition_pairs
         .map{meta, samples, _ciri, stringtie, _conditions -> [meta, samples, stringtie]}
     )
-    ch_versions = ch_versions.mix(STRINGTIE_PREPDE.out.versions)
 
     CIRIQUANT_DE(
         CIRIQUANT_PREPDE.out.library.join(
@@ -79,8 +74,5 @@ workflow STATISTICAL_TESTS {
             STRINGTIE_PREPDE.out.gene_matrix
         )
     )
-    ch_versions = ch_versions.mix(CIRIQUANT_DE.out.versions)
 
-    emit:
-    versions = ch_versions
 }

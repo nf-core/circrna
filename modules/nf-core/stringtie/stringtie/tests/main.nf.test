@@ -28,7 +28,8 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.abundance,
-                    process.out.transcript_gtf,
+                    // The command header records the host-dependent CPU allocation.
+                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
                     process.out.findAll { key, val -> key.startsWith('versions') }
                 ).match() }
             )
@@ -55,9 +56,10 @@ nextflow_process {
                 { assert snapshot(
                     process.out.abundance,
                     process.out.ballgown,
-                    process.out.transcript_gtf,
+                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
                     process.out.findAll { key, val -> key.startsWith('versions') }
-                ).match() }
+                ).match() },
+                { assert process.out.ballgown[0][1].collect { it.toString().tokenize('/').last() }.sort() == ['e2t.ctab', 'e_data.ctab', 'i2t.ctab', 'i_data.ctab', 't_data.ctab'] }
             )
         }
     }
@@ -81,7 +83,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.abundance,
-                    process.out.transcript_gtf,
+                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
                     process.out.findAll { key, val -> key.startsWith('versions') }
                 ).match() }
             )
@@ -108,7 +110,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.abundance,
                     process.out.ballgown,
-                    process.out.transcript_gtf,
+                    process.out.transcript_gtf.collect { meta, gtf -> [meta, path(gtf).text.replaceAll(/(?m)(^# stringtie .* -p )\d+/, '$1<cpus>')] },
                     process.out.findAll { key, val -> key.startsWith('versions') }
                 ).match() }
             )

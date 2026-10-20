@@ -1,0 +1,113 @@
+name: find_circ
+description: Identify circular RNAs from anchors with Bowtie2 and find_circ
+keywords:
+  - find_circ
+  - bowtie2
+  - circular-rna
+tools:
+  - find_circ:
+      description: Circular RNA detection pipeline
+      homepage: https://github.com/marvin-jens/find_circ
+      licence:
+        - GPL-3.0-or-later
+  - bowtie2:
+      description: Fast gapped-read aligner
+      homepage: https://bowtie-bio.sourceforge.net/bowtie2/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - anchors:
+        type: file
+        description: Compressed read anchors
+  - - meta:
+        type: map
+        description: Reference metadata
+    - index:
+        type: directory
+        description: Bowtie2 index
+  - fasta:
+      type: file
+      description: Reference genome
+output:
+  bed:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.sites.bed":
+          type: file
+          description: Circular RNA sites in BED format
+  reads:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.sites.reads":
+          type: file
+          description: Supporting reads
+  log:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.sites.log":
+          type: file
+          description: find_circ log
+  versions_bowtie2:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bowtie2:
+          type: string
+          description: Software name
+      - bowtie2 --version 2>&1 | sed -n 's/^bowtie2-align-s version //p' | head -n 1:
+          type: eval
+          description: Software version
+  versions_find_circ:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - find_circ:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bowtie2:
+          type: string
+          description: Software name
+      - bowtie2 --version 2>&1 | sed -n 's/^bowtie2-align-s version //p' | head -n 1:
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - find_circ:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/find_circ:afd6068f3366fc58
+      build_id: bd-afd6068f3366fc58_1
+      scan_id: sc-3a6bd28f4e0b7bc9_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/find_circ:9e3a34ad587b527b
+      build_id: bd-9e3a34ad587b527b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/eb/ebc79c1656071bb656528ff16510f3a9afb3dedffd14a08fd456a6c0ca19fd1f/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/find_circ/find_circ/.conda-lock/linux_amd64-bd-afd6068f3366fc58_1.txt

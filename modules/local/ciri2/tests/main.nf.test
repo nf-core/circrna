@@ -26,7 +26,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_ciri2,
                     file(process.out.txt[0][1]).name,
                     path(process.out.txt[0][1]).readLines().collect { it.tokenize('\t').take(11).join('\t') }.sort()
                 ).match() }

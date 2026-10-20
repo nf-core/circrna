@@ -1,0 +1,170 @@
+name: combinebeds_filter
+description: Filter combined circRNA BED records by tool and sample support.
+keywords:
+  - circrna
+  - bed
+  - filtering
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+  - upsetplot:
+      description: Set visualisation library.
+      homepage: https://upsetplot.readthedocs.io/
+      licence:
+        - BSD-3-Clause
+  - matplotlib:
+      description: Python plotting library.
+      homepage: https://matplotlib.org/
+      licence:
+        - PSF-2.0
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - beds:
+        type: file
+        description: Combined BED records.
+        pattern: "*.bed"
+  - max_shift:
+      type: integer
+      description: Maximum junction-coordinate shift.
+  - consider_strand:
+      type: boolean
+      description: Include strand in matching.
+  - min_tools:
+      type: integer
+      description: Minimum supporting tools.
+  - min_samples:
+      type: integer
+      description: Minimum supporting samples.
+  - suffix:
+      type: string
+      description: Output filename suffix.
+output:
+  combined:
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - combined:
+          type: file
+          description: Filtered BED records.
+          pattern: "*.bed"
+  plots:
+    - "*.png":
+        type: file
+        description: Support plots.
+        pattern: "*.png"
+  multiqc:
+    - "*.json":
+        type: file
+        description: MultiQC custom-content data.
+        pattern: "*.json"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+  versions_polars:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - polars:
+          type: string
+          description: The name of the tool
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+  versions_upsetplot:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - upsetplot:
+          type: string
+          description: The name of the tool
+      - python -c 'import upsetplot; print(upsetplot.__version__)':
+          type: eval
+          description: Software version
+  versions_matplotlib:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - matplotlib:
+          type: string
+          description: The name of the tool
+      - python -c 'import matplotlib; print(matplotlib.__version__)':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - polars:
+          type: string
+          description: Software name
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - upsetplot:
+          type: string
+          description: Software name
+      - python -c 'import upsetplot; print(upsetplot.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - matplotlib:
+          type: string
+          description: Software name
+      - python -c 'import matplotlib; print(matplotlib.__version__)':
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_polars_upsetplot_pandas_matplotlib:a16ba3398a0ae7a3
+      build_id: bd-a16ba3398a0ae7a3_1
+      scan_id: sc-f9201279b226698d_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_polars_upsetplot_pandas_matplotlib:7a392bb912707929
+      build_id: bd-7a392bb912707929_1
+      scan_id: sc-0bc4684601d44382_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars_upsetplot_pandas_matplotlib:19ce78a23d04fa82
+      build_id: bd-19ce78a23d04fa82_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/10/1013272af38159767dd5762af1d5e9f0f0d1024683624851dc21579daad7d20d/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_polars_upsetplot_pandas_matplotlib:d31028b796224dec
+      build_id: bd-d31028b796224dec_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/48/48af262bc66e75295b1a314cbf45b01bded343911ffeaa0357009f7370cb4573/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/combinebeds/filter/.conda-lock/linux_amd64-bd-a16ba3398a0ae7a3_1.txt
+    linux/arm64:
+      lock_file: modules/local/combinebeds/filter/.conda-lock/linux_arm64-bd-7a392bb912707929_1.txt

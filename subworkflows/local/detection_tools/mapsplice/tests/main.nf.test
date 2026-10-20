@@ -59,7 +59,6 @@ nextflow_workflow {
                     workflow.out.bed.collect { file(it[1]).name },
                     bed.size(),
                     bed.sort(),
-                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
                 ).match() }
             )
         }

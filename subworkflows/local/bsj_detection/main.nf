@@ -57,7 +57,6 @@ workflow BSJ_DETECTION {
     ch_reads_fixed_length
 
     main:
-    ch_versions = channel.empty()
     ch_bsj_bed_per_sample_tool = channel.empty()
     ch_multiqc_files = channel.empty()
     fasta = ch_fasta.map { _meta, fasta -> fasta }
@@ -68,7 +67,6 @@ workflow BSJ_DETECTION {
 
     if (starBasedTools(tools).size() > 0 || fli_tools.contains('circtools')) {
         STAR2PASS(reads, star_index, ch_gtf, bsj_reads, star_ignore_sjdbgtf)
-        ch_versions = ch_versions.mix(STAR2PASS.out.versions)
         ch_star_bam = STAR2PASS.out.bam
         ch_star_junction = STAR2PASS.out.junction
     }
@@ -87,13 +85,11 @@ workflow BSJ_DETECTION {
 
     if (tools.contains('segemehl')) {
         SEGEMEHL(reads, fasta, segemehl_index)
-        ch_versions = ch_versions.mix(SEGEMEHL.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(SEGEMEHL.out.bed)
     }
 
     if (tools.contains('circexplorer2')) {
         CIRCEXPLORER2(fasta, STAR2PASS.out.junction, circexplorer2_index)
-        ch_versions = ch_versions.mix(CIRCEXPLORER2.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCEXPLORER2.out.bed)
     }
 
@@ -103,19 +99,16 @@ workflow BSJ_DETECTION {
             STAR2PASS.out.junction,
             STAR2PASS.out.tab,
         )
-        ch_versions = ch_versions.mix(CIRCRNA_FINDER.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCRNA_FINDER.out.bed)
     }
 
     if (tools.contains('find_circ')) {
         FIND_CIRC(reads, bowtie2_index, ch_fasta)
-        ch_versions = ch_versions.mix(FIND_CIRC.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(FIND_CIRC.out.bed)
     }
 
     if (tools.contains('ciri2')) {
         CIRI2(ch_bwa_sam, ch_fasta, ch_gtf)
-        ch_versions = ch_versions.mix(CIRI2.out.versions)
         ch_ciri2_txt = CIRI2.out.ciri2_txt
         ch_ciri2_sam = CIRI2.out.ciri2_sam
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI2.out.bed)
@@ -127,7 +120,6 @@ workflow BSJ_DETECTION {
 
     if (tools.contains('ciri3')) {
         CIRI3(ch_bwa_sam, ch_fasta, ch_gtf)
-        ch_versions = ch_versions.mix(CIRI3.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRI3.out.bed)
     }
 
@@ -141,7 +133,6 @@ workflow BSJ_DETECTION {
             star_ignore_sjdbgtf,
             bsj_reads,
         )
-        ch_versions = ch_versions.mix(CIRCTOOLS.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCTOOLS.out.bed)
     }
 
@@ -155,13 +146,11 @@ workflow BSJ_DETECTION {
             STAR2PASS.out.junction,
             circexplorer2_index,
         )
-        ch_versions = ch_versions.mix(MAPSPLICE.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(MAPSPLICE.out.bed)
     }
 
     if (tools.contains('psirc')) {
         PSIRC(reads, psirc_index, ch_fasta, ch_faidx)
-        ch_versions = ch_versions.mix(PSIRC.out.versions)
         ch_psirc_bsj = PSIRC.out.output
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(PSIRC.out.bed)
     }
@@ -171,7 +160,6 @@ workflow BSJ_DETECTION {
 
     if (tools.contains('circminer')) {
         CIRCMINER(reads, circminer_index, circminer_gtf, ch_fasta, ch_faidx)
-        ch_versions = ch_versions.mix(CIRCMINER.out.versions)
         ch_bsj_bed_per_sample_tool = ch_bsj_bed_per_sample_tool.mix(CIRCMINER.out.bed)
     }
 
@@ -196,7 +184,6 @@ workflow BSJ_DETECTION {
             consider_strand,
             2,
         )
-        ch_versions = ch_versions.mix(COMBINEBEDS_READS.out.versions)
         ch_multiqc_files = ch_multiqc_files.mix(COMBINEBEDS_READS.out.multiqc)
         ch_bsj_reads = COMBINEBEDS_READS.out.combined
     }
@@ -216,7 +203,6 @@ workflow BSJ_DETECTION {
             .groupTuple(),
         "id",
     )
-    ch_versions = ch_versions.mix(COMBINE_COUNTS_PER_TOOL.out.versions)
 
     //
     // APPLY bsj_reads FILTER
@@ -239,7 +225,6 @@ workflow BSJ_DETECTION {
         1,
         "combined.bed",
     )
-    ch_versions = ch_versions.mix(COMBINE_TOOLS_PER_SAMPLE.out.versions)
     ch_bsj_bed_per_sample = COMBINE_TOOLS_PER_SAMPLE.out.combined.filter { _meta, bed -> !bed.isEmpty() }
 
     ch_all_samples = ch_bsj_bed_per_sample_tool_meta
@@ -254,13 +239,11 @@ workflow BSJ_DETECTION {
         min_samples,
         "combined.bed",
     )
-    ch_versions = ch_versions.mix(COMBINE_SAMPLES.out.versions)
     ch_bsj_bed_combined = COMBINE_SAMPLES.out.combined
         .filter { _meta, bed -> !bed.isEmpty() }
         .collect()
 
     INVESTIGATE_SHIFTS(ch_all_samples)
-    ch_versions = ch_versions.mix(INVESTIGATE_SHIFTS.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(INVESTIGATE_SHIFTS.out.multiqc)
 
     //
@@ -268,18 +251,15 @@ workflow BSJ_DETECTION {
     //
 
     ANNOTATE_COMBINED(ch_bsj_bed_combined, ch_annotation, fasta, circexplorer2_index, exons_only)
-    ch_versions = ch_versions.mix(ANNOTATE_COMBINED.out.versions)
     ch_bsj_bed12_combined = ANNOTATE_COMBINED.out.bed12.collect()
     ch_bsj_gtf_combined = ANNOTATE_COMBINED.out.gtf
     ch_bsj_fasta_combined = ANNOTATE_COMBINED.out.fasta
 
     ANNOTATE_PER_SAMPLE(ch_bsj_bed_per_sample, ch_annotation, fasta, circexplorer2_index, exons_only)
-    ch_versions = ch_versions.mix(ANNOTATE_PER_SAMPLE.out.versions)
     ch_bsj_bed12_per_sample = ANNOTATE_PER_SAMPLE.out.bed12
     ch_bsj_fasta_per_sample = ANNOTATE_PER_SAMPLE.out.fasta
 
     ANNOTATE_PER_SAMPLE_TOOL(ch_bsj_bed_per_sample_tool, ch_annotation, fasta, circexplorer2_index, exons_only)
-    ch_versions = ch_versions.mix(ANNOTATE_PER_SAMPLE_TOOL.out.versions)
     ch_bsj_bed12_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.bed12
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
@@ -310,5 +290,4 @@ workflow BSJ_DETECTION {
     star_bam            = ch_star_bam
     star_junction       = ch_star_junction
     multiqc_files       = ch_multiqc_files.flatten()
-    versions            = ch_versions
 }

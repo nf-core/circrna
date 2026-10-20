@@ -1,0 +1,5 @@
+name: mirna_filtering
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::r-base=4.6.1

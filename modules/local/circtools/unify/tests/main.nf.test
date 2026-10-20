@@ -86,7 +86,8 @@ nextflow_process {
             def rows = path(process.out.bed[0][1]).readLines()
             assert process.success
             assert snapshot(
-                path(process.out.versions[0]).yaml,
+                process.out.versions_python,
+                process.out.versions_polars,
                 process.out.bed.collect { [it[0], file(it[1]).name] },
                 rows.size(),
                 rows.collect { it.split('\t').size() }.unique(),

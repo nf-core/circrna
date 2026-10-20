@@ -1,7 +1,6 @@
-name: "compute_correlations"
+name: compute_correlations
 channels:
   - conda-forge
-  - defaults
   - bioconda
 dependencies:
-  - "bioconda::bioconductor-fishpond=2.8.0--r43hdfd78af_0"
+  - bioconda::bioconductor-fishpond=2.16.0

@@ -16,7 +16,6 @@ workflow ANNOTATION {
     exons_only
 
     main:
-    ch_versions = channel.empty()
 
     INGEST_DATABASE_NAMES(ch_annotation.map { meta, database -> [meta, database, "named.bed"] }, [], false)
 
@@ -42,7 +41,6 @@ workflow ANNOTATION {
     RENAME(ANNOTATE.out.txt.map { meta, txt -> [meta, txt, "annotated.bed12"] }, [], false)
 
     BED2GTF(RENAME.out.output.map { meta, bed12 -> [meta, bed12, []] }, exons_only)
-    ch_versions = ch_versions.mix(BED2GTF.out.versions)
 
     CUT_BED12(RENAME.out.output.map { meta, bed12 -> [meta, bed12, "cut.bed12"] }, [], false)
 
@@ -52,5 +50,4 @@ workflow ANNOTATION {
     bed12    = RENAME.out.output
     gtf      = BED2GTF.out.gtf
     fasta    = GET_FASTA.out.fasta
-    versions = ch_versions
 }

@@ -34,7 +34,6 @@ nextflow_workflow {
                 { assert path(workflow.out.binding_sites[0][1]).readLines().size() > 0 },
                 { assert snapshot(
                     workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
-                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
                 ).match() }
             )
         }
@@ -60,7 +59,6 @@ nextflow_workflow {
                 { assert path(workflow.out.binding_sites[0][1]).readLines().size() > 0 },
                 { assert snapshot(
                     workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
-                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
                 ).match() }
             )
         }
@@ -86,7 +84,6 @@ nextflow_workflow {
                 { assert path(workflow.out.binding_sites[0][1]).readLines().size() > 0 },
                 { assert snapshot(
                     workflow.out.binding_sites.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()] },
-                    workflow.out.versions.collect { path(it).yaml.toString() }.sort()
                 ).match() }
             )
         }

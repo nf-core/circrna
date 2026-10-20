@@ -74,7 +74,6 @@ nextflow_workflow {
                     def rows = path(bed).readLines().collect { line -> def f = line.split('\t'); [f[0], f[1], f[2], f[4], f[5]].join('\t') }
                     [meta.id, rows.size(), rows.sort(false).join('\n').md5()]
                 }.sort { it[0] },
-                workflow.out.versions.collect { path(it).yaml }.unique().sort { it.keySet()[0] }
             ).match()
         }
     }
@@ -124,7 +123,6 @@ nextflow_workflow {
                     def coords = path(bed).readLines().collect { line -> def f = line.split('\t'); [f[0], f[1], f[2], f[4], f[5]].join('\t') }
                     [meta.id, coords.size(), coords.sort(false).join('\n').md5()]
                 },
-                workflow.out.versions.collect { path(it).yaml }.unique().sort { it.keySet()[0] }
             ).match()
         }
     }

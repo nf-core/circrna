@@ -73,7 +73,7 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.list.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_ciri_full
                 ).match() }
             )
         }

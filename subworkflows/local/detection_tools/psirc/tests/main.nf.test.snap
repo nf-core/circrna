@@ -40,14 +40,6 @@
                         ]
                     ]
                 ],
-                "2": [
-                    "versions.yml:md5,3fd12fa745bed8022160cfa1f7fed43d",
-                    "versions.yml:md5,3fd12fa745bed8022160cfa1f7fed43d",
-                    "versions.yml:md5,816dfce65313abf0b6ad4cd36d69125f",
-                    "versions.yml:md5,816dfce65313abf0b6ad4cd36d69125f",
-                    "versions.yml:md5,b145b4540c07fc051d2dd85fb17e0c05",
-                    "versions.yml:md5,b145b4540c07fc051d2dd85fb17e0c05"
-                ],
                 "bed": [
                     [
                         {
@@ -85,14 +77,6 @@
                             "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                         ]
                     ]
-                ],
-                "versions": [
-                    "versions.yml:md5,3fd12fa745bed8022160cfa1f7fed43d",
-                    "versions.yml:md5,3fd12fa745bed8022160cfa1f7fed43d",
-                    "versions.yml:md5,816dfce65313abf0b6ad4cd36d69125f",
-                    "versions.yml:md5,816dfce65313abf0b6ad4cd36d69125f",
-                    "versions.yml:md5,b145b4540c07fc051d2dd85fb17e0c05",
-                    "versions.yml:md5,b145b4540c07fc051d2dd85fb17e0c05"
                 ]
             }
         ],
@@ -100,83 +84,24 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T13:56:59.351951398"
+        "timestamp": "2026-10-18T23:22:18.392795764"
     },
     "cel_N2_1 paired-end": {
         "content": [
             [
-                "cel_N2_1.psirc.bed",
-                "fust1_1.psirc.bed"
+                
             ],
             [
-                [
-                    "cel_N2_1",
-                    0
-                ],
-                [
-                    "fust1_1",
-                    0
-                ]
+                
             ],
             [
-                [
-                    "cel_N2_1",
-                    [
-                        "candidate_circ_junctions.bed",
-                        "candidate_circ_junctions.fa",
-                        "candidate_circ_supporting_reads.sam",
-                        "junction_names_output_to_raw.tsv",
-                        "mapping"
-                    ]
-                ],
-                [
-                    "fust1_1",
-                    [
-                        "candidate_circ_junctions.bed",
-                        "candidate_circ_junctions.fa",
-                        "candidate_circ_supporting_reads.sam",
-                        "junction_names_output_to_raw.tsv",
-                        "mapping"
-                    ]
-                ]
-            ],
-            [
-                {
-                    "PSIRC:BSJ": {
-                        "psirc": "1.0.0"
-                    }
-                },
-                {
-                    "PSIRC:BSJ": {
-                        "psirc": "1.0.0"
-                    }
-                },
-                {
-                    "PSIRC:INFER_STRAND": {
-                        "pysam": "0.23.3"
-                    }
-                },
-                {
-                    "PSIRC:INFER_STRAND": {
-                        "pysam": "0.23.3"
-                    }
-                },
-                {
-                    "PSIRC:UNIFY": {
-                        "python": "3"
-                    }
-                },
-                {
-                    "PSIRC:UNIFY": {
-                        "python": "3"
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-18T13:56:36.968972708"
+        "timestamp": "2026-10-18T23:21:22.569010903"
     }
 }

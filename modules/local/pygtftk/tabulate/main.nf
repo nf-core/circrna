@@ -3,16 +3,16 @@ process PYGTFTK_TABULATE {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pygtftk:1.6.2--py39h4e691d4_2' :
-        'biocontainers/pygtftk:1.6.2--py39h4e691d4_2' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/1e/1e3b69f00edfd9e23a400689d62645ed0588d0f0504cc589536df8bab2ded673/data'
+        : 'community.wave.seqera.io/library/pygtftk_tabulate:db1d4cb61817f9b1'}"
 
     input:
     tuple val(meta), path(gtf)
 
     output:
     tuple val(meta), path("$outfile"), emit: table
-    path "versions.yml"              , emit: versions
+    tuple val("${task.process}"), val('gtftk'), val('1.6.2'), emit: versions_gtftk, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,10 +29,6 @@ process PYGTFTK_TABULATE {
         -i $gtf | \\
         grep -v '^tabulate()' > ${outfile}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
-    END_VERSIONS
     """
 
     stub:
@@ -43,9 +39,5 @@ process PYGTFTK_TABULATE {
 
     touch ${outfile}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        gtftk: \$(gtftk -v | awk '{print substr(\$2, 2)}')
-    END_VERSIONS
     """
 }

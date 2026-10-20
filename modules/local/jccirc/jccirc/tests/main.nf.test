@@ -60,7 +60,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert path(process.out.log[0][1]).text.contains('Completing the alignment of 1 circRNAs') },
-                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+                { assert snapshot(process.out.versions_jccirc).match() }
             )
         }
     }

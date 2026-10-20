@@ -48,7 +48,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_psirc,
                     file(process.out.bed[0][1]).name,
                     file(process.out.bed[0][1]).size()
                 ).match() }

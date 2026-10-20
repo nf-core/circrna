@@ -1,0 +1,123 @@
+name: merge_experiments
+description: Merge transcript quantification experiments and annotate their rows.
+keywords:
+  - quantification
+  - summarizedexperiment
+  - rtracklayer
+tools:
+  - summarizedexperiment:
+      description: Bioconductor container for experimental assays.
+      homepage: https://bioconductor.org/packages/SummarizedExperiment/
+      licence:
+        - Artistic-2.0
+  - rtracklayer:
+      description: R interface to genome browsers and annotations.
+      homepage: https://bioconductor.org/packages/rtracklayer/
+      licence:
+        - Artistic-2.0
+input:
+  - - meta:
+        type: map
+        description: Experiment metadata.
+    - experiments:
+        type: file
+        description: Quantification experiment RDS files.
+        pattern: "*.rds"
+  - - meta2:
+        type: map
+        description: Phenotype metadata.
+    - phenotype:
+        type: file
+        description: Sample phenotype table.
+        pattern: "*.{csv,tsv}"
+  - - meta3:
+        type: map
+        description: Annotation metadata.
+    - gtf:
+        type: file
+        description: Transcript annotation GTF.
+        pattern: "*.gtf"
+  - - meta4:
+        type: map
+        description: TPM metadata.
+    - tpm:
+        type: file
+        description: Transcript TPM matrix.
+        pattern: "*.{tsv,txt}"
+output:
+  merged:
+    - - meta:
+          type: map
+          description: Experiment metadata.
+      - "*.merged.rds":
+          type: file
+          description: Merged annotated experiment.
+          pattern: "*.merged.rds"
+  versions_bioconductor_summarizedexperiment:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bioconductor-summarizedexperiment:
+          type: string
+          description: The name of the tool
+      - Rscript -e "cat(as.character(packageVersion('SummarizedExperiment')))":
+          type: eval
+          description: Software version
+  versions_bioconductor_rtracklayer:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bioconductor-rtracklayer:
+          type: string
+          description: The name of the tool
+      - Rscript -e "cat(as.character(packageVersion('rtracklayer')))":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bioconductor-summarizedexperiment:
+          type: string
+          description: Software name
+      - Rscript -e "cat(as.character(packageVersion('SummarizedExperiment')))":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bioconductor-rtracklayer:
+          type: string
+          description: Software name
+      - Rscript -e "cat(as.character(packageVersion('rtracklayer')))":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/merge_experiments:3b714002bc318da0
+      build_id: bd-3b714002bc318da0_1
+      scan_id: sc-824d3af78f7f7f5b_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/merge_experiments:85f748798d2b090d
+      build_id: bd-85f748798d2b090d_1
+      scan_id: sc-7220db16968c603e_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/merge_experiments:7b7668743fddec62
+      build_id: bd-7b7668743fddec62_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/97/977ddc3fc2f76cea932128e531ea45d946cff097ba7ff317509f187a7dbea52a/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/merge_experiments:36b32c03a416c3f8
+      build_id: bd-36b32c03a416c3f8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ee/ee16c4b13326f90cb63ced65618276af1f4dd061f0d405ce87d9c78c863e4c75/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/quantification/merge_experiments/.conda-lock/linux_amd64-bd-85f748798d2b090d_1.txt
+    linux/arm64:
+      lock_file: modules/local/quantification/merge_experiments/.conda-lock/linux_arm64-bd-3b714002bc318da0_1.txt

@@ -3,9 +3,9 @@ process CUSTOM_GTFFILTER {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-?         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/18/1841daa69f98a0b0ffcb8f545070c8350a75febb167202136eab0990131d31c0/data'
-:         'community.wave.seqera.io/library/python:3.14.5--dc8358b3c5eeb927' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/13/1340bf9bd68b2760272dfa0f7d62b3d6703505fd6899fd98407f2225e3917213/data'
+        : 'community.wave.seqera.io/library/python:3.14.5--de7566bbce1bfa41'}"
 
     input:
     tuple val(meta), path(gtf)
@@ -13,7 +13,7 @@ process CUSTOM_GTFFILTER {
 
     output:
     tuple val(meta), path("${prefix}.${suffix}"), emit: gtf
-    path "versions.yml"                         , emit: versions, topic: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f 2'), emit: versions_python, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,17 +27,12 @@ process CUSTOM_GTFFILTER {
     echo $args
     """
 
-    template 'gtffilter.py'
+    template 'gtffilter.sh'
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     suffix = "gtf" + (gtf.extension == 'gz' ? '.gz' : '')
     """
     touch ${prefix}.${suffix}
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version 2>&1 | cut -d ' ' -f 2)
-    END_VERSIONS
     """
 }

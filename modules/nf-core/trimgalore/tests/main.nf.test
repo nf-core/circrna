@@ -24,10 +24,11 @@ nextflow_process {
         then {
             assertAll (
                 { assert process.success },
+                { def report = new groovy.json.JsonSlurper().parse(path(process.out.json[0][1]).toFile()); assert report.read_processing.total_reads == 100 && report.read_processing.reads_with_adapter == 31 && report.read_processing.reads_written == 100 },
                 { assert snapshot(
                     process.out.reads,
-                    file(process.out.log[0][1]).readLines()[0..9], // line 11 changes
-                    file(process.out.log[0][1]).readLines()[11..59],
+                    process.out.json,
+                    file(process.out.log[0][1]).readLines(),
                     process.out.findAll { key, val -> key.startsWith("versions")}
                 ).match() }
             )
@@ -52,13 +53,13 @@ nextflow_process {
         then {
             assertAll (
                 { assert process.success },
+                { def reports = process.out.json[0][1].collect { new groovy.json.JsonSlurper().parse(path(it).toFile()) }; assert reports.collect { it.read_processing.total_reads }.sort() == [100, 100] && reports.collect { it.read_processing.reads_with_adapter }.sort() == [31, 40] && reports.collect { it.read_processing.reads_written }.sort() == [100, 100] },
                 { assert snapshot(
                     process.out.reads[0][1][0],
                     process.out.reads[0][1][1],
-                    file(process.out.log[0][1][0]).readLines()[0..9], // line 11 changes
-                    file(process.out.log[0][1][0]).readLines()[11..58],
-                    file(process.out.log[0][1][1]).readLines()[0..9], // line 11 changes
-                    file(process.out.log[0][1][1]).readLines()[11..60],
+                    process.out.json,
+                    file(process.out.log[0][1][0]).readLines(),
+                    file(process.out.log[0][1][1]).readLines(),
                     process.out.findAll { key, val -> key.startsWith("versions")}
                 ).match() }
             )
@@ -70,10 +71,6 @@ nextflow_process {
         config "./nextflow.config"
 
         when {
-            params {
-                module_args = '--retain_unpaired --length 150'
-            }
-
             process {
                 """
                 input[0] = [ [ id:'test', single_end:false ],
@@ -89,15 +86,15 @@ nextflow_process {
         then {
             assertAll (
                 { assert process.success },
+                { def reports = process.out.json[0][1].collect { new groovy.json.JsonSlurper().parse(path(it).toFile()) }; assert reports.collect { it.read_processing.total_reads }.sort() == [100, 100] },
                 { assert snapshot(
                     process.out.reads[0][1][0],
                     process.out.reads[0][1][1],
                     process.out.unpaired[0][1][0],
                     process.out.unpaired[0][1][1],
-                    file(process.out.log[0][1][0]).readLines()[0..9], // line 11 changes
-                    file(process.out.log[0][1][0]).readLines()[11..59],
-                    file(process.out.log[0][1][1]).readLines()[0..9], // line 11 changes
-                    file(process.out.log[0][1][1]).readLines()[11..63],
+                    process.out.json,
+                    file(process.out.log[0][1][0]).readLines(),
+                    file(process.out.log[0][1][1]).readLines(),
                     process.out.findAll { key, val -> key.startsWith("versions")}
                 ).match() }
             )

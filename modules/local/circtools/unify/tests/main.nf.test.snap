@@ -1,12 +1,20 @@
 {
     "mini - circtools detect output": {
         "content": [
-            {
-                "UNIFY": {
-                    "python": "3.13.2",
-                    "polars": "1.24.0"
-                }
-            },
+            [
+                [
+                    "UNIFY",
+                    "python",
+                    "3.13.2"
+                ]
+            ],
+            [
+                [
+                    "UNIFY",
+                    "polars",
+                    "1.24.0"
+                ]
+            ],
             [
                 [
                     {
@@ -23,11 +31,11 @@
             ],
             "384e1f19c1feae9a494258a77694a64b"
         ],
+        "timestamp": "2026-10-19T00:22:21.451903603",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:24:30.24884343"
+        }
     },
     "mini - circtools detect output - stub": {
         "content": [
@@ -43,7 +51,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,6521b974b625bfd5ab3cdccc67126ab7"
+                    [
+                        "UNIFY",
+                        "python",
+                        "3.13.2"
+                    ]
+                ],
+                "2": [
+                    [
+                        "UNIFY",
+                        "polars",
+                        "1.24.0"
+                    ]
                 ],
                 "bed": [
                     [
@@ -55,15 +74,26 @@
                         "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,6521b974b625bfd5ab3cdccc67126ab7"
+                "versions_polars": [
+                    [
+                        "UNIFY",
+                        "polars",
+                        "1.24.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "UNIFY",
+                        "python",
+                        "3.13.2"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T00:23:08.970222581",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T09:42:46.822697498"
+        }
     }
 }

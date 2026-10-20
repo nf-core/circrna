@@ -1,0 +1,123 @@
+name: combinebeds_shifts
+description: Visualise coordinate shifts among combined circRNA BED records.
+keywords:
+  - circrna
+  - bed
+  - visualisation
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+  - altair:
+      description: Declarative statistical visualisation library.
+      homepage: https://altair-viz.github.io/
+      licence:
+        - BSD-3-Clause
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - beds:
+        type: file
+        description: Combined BED records.
+        pattern: "*.bed"
+output:
+  plots:
+    - "*.png":
+        type: file
+        description: Coordinate-shift plots.
+        pattern: "*.png"
+  multiqc:
+    - "*.json":
+        type: file
+        description: MultiQC custom-content data.
+        pattern: "*.json"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+  versions_polars:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - polars:
+          type: string
+          description: The name of the tool
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+  versions_altair:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - altair:
+          type: string
+          description: The name of the tool
+      - python -c 'import altair; print(altair.__version__)':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | sed 's/Python //':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - polars:
+          type: string
+          description: Software name
+      - python -c 'import polars; print(polars.__version__)':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - altair:
+          type: string
+          description: Software name
+      - python -c 'import altair; print(altair.__version__)':
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_altair_polars_vl-convert-python:e89a98d23b1c0b8f
+      build_id: bd-e89a98d23b1c0b8f_1
+      scan_id: sc-56e1e519e617e29e_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_altair_polars_vl-convert-python:bdb8533c65c6fe0b
+      build_id: bd-bdb8533c65c6fe0b_1
+      scan_id: sc-730ab35b694598e9_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_altair_polars_vl-convert-python:47ad6afaeb912263
+      build_id: bd-47ad6afaeb912263_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e2/e241c2eab59c2ecaa0d7f44ad1441798cf129cb1ac178e492dd970c7fab8decb/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_altair_polars_vl-convert-python:04f07773e77296e0
+      build_id: bd-04f07773e77296e0_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fe/fe8dae128be887a74b068636fe8c29bea345783c90ea7aa230c9bb89c3b3766b/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/combinebeds/shifts/.conda-lock/linux_amd64-bd-bdb8533c65c6fe0b_1.txt
+    linux/arm64:
+      lock_file: modules/local/combinebeds/shifts/.conda-lock/linux_arm64-bd-e89a98d23b1c0b8f_1.txt

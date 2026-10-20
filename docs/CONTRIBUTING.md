@@ -121,7 +121,7 @@ Please also refer to the [pipeline-specific contribution guidelines](#pipeline-s
 
 - [ ] Define the corresponding [input channel](#channel-naming-schemes) into your new process from the expected previous process channel.
 - [ ] Install a module with nf-core/tools, or write a local module (see [default processes resource requirements](#default-processes-resource-requirements)), and add it to the target `<workflow>.nf`.
-- [ ] Define the output channel if needed. Mix the version output channel into `ch_versions` and relevant files into `ch_multiqc`.
+- [ ] Define the output channel if needed and mix relevant report files into `ch_multiqc`. Publish software versions to the `versions` topic instead of passing version channels through subworkflows.
 - [ ] Add new or updated parameters to `nextflow.config` with a [default value](#default-parameter-values).
 - [ ] Add new or updated parameters and relevant help text to `nextflow_schema.json` with [nf-core/tools](#default-parameter-values).
 - [ ] Add validation for relevant parameters to the pipeline utilisation section of `utils_nfcore_\_pipeline/main.nf` subworkflow.
@@ -212,8 +212,11 @@ Follow these rules when you add a module or subworkflow:
   Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
 - Local modules read only `ext.args`, `ext.argsN`, `ext.prefix`, `ext.prefixN` and `ext.when`.
   Any other value that changes the module's behaviour (for example an output suffix) is a `val` process input, so tests pass it with `input[N] = ...`.
+- Report each software version as a `(task.process, tool, version)` tuple with a named output and `topic: versions`, following the nf-core module template. MultiQC must not publish to that topic because its inputs depend on the collected versions.
+- Scaffold new local modules with `nf-core modules create <module> --dir .`. Describe them in `meta.yml` and declare software dependencies in `environment.yml`. Generate containers and architecture-specific locks with `nf-core modules containers create <module> --dir .`, then regenerate the pipeline configs with `nf-core pipelines containers create-configs --dir .`.
+  Dependency-free Nextflow `exec:` processes do not need a software environment. Keep required custom-build exceptions explicit in the module documentation.
 - Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.
-- Snapshot only stable content: `process.out.versions` (or the parsed versions file), file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
+- Snapshot only stable content: software-version tuple outputs, file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
   For files that change between runs, use `path(f).readLines().size()` or `.text.contains(...)`.
   Use the md5 of a whole file only if two consecutive runs give identical results.
 - Never edit snapshots by hand.

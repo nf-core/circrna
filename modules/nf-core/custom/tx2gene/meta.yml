@@ -1,75 +1,107 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "custom_tx2gene"
-description: Make a transcript/gene mapping from a GTF and cross-reference with transcript
-  quantifications.
+description: Make a transcript/gene mapping from a GTF and cross-reference with transcript quantifications.
 keywords:
-  - gene
-  - gtf
-  - pseudoalignment
-  - rsem
-  - transcript
+- gene
+- gtf
+- pseudoalignment
+- rsem
+- transcript
 tools:
-  - "custom":
-      description: |
-        "Custom module to create a transcript to gene mapping from a GTF and
-        check it against transcript quantifications"
-      tool_dev_url: "https://github.com/nf-core/modules/blob/master/modules/nf-core/custom/tx2gene/main.nf"
-      licence: ["MIT"]
-      identifier: ""
+- "custom":
+    description: |
+      "Custom module to create a transcript to gene mapping from a GTF and
+      check it against transcript quantifications"
+    tool_dev_url: "https://github.com/nf-core/modules/blob/master/modules/nf-core/custom/tx2gene/main.nf"
+    licence: ["MIT"]
+    identifier: ""
 
 input:
+- - meta:
+      type: map
+      description: |
+        Groovy Map containing reference information related to the GTF file
+        e.g. `[ id:'yeast' ]`
+  - gtf:
+      type: file
+      description: An annotation file of the reference genome in GTF format
+      pattern: "*.gtf"
+      ontologies: []
+- - meta2:
+      type: map
+      description: |
+        Groovy Map containing information related to the experiment as a whole
+        e.g. `[ id:'SRP123456' ]`
+  - quants/*:
+      type: file
+      description: quants file
+- quant_type:
+    type: string
+    description: Quantification type, 'kallisto', 'salmon', or 'rsem'
+- id:
+    type: string
+    description: Gene ID attribute in the GTF file (default= gene_id)
+- extra:
+    type: string
+    description: Extra gene attribute(s) in the GTF file, comma-separated for multiple (default= gene_name)
+output:
+  tx2gene:
   - - meta:
         type: map
         description: |
           Groovy Map containing reference information related to the GTF file
           e.g. `[ id:'yeast' ]`
-    - gtf:
+    - "*tx2gene.tsv":
         type: file
-        description: An annotation file of the reference genome in GTF format
-        pattern: "*.gtf"
-        ontologies: []
-  - - meta2:
-        type: map
-        description: |
-          Groovy Map containing information related to the experiment as a whole
-          e.g. `[ id:'SRP123456' ]`
-    - quants/*:
-        type: file
-        description: quants file
-  - quant_type:
-      type: string
-      description: Quantification type, 'kallisto', 'salmon', or 'rsem'
-  - id:
-      type: string
-      description: Gene ID attribute in the GTF file (default= gene_id)
-  - extra:
-      type: string
-      description: Extra gene attribute(s) in the GTF file, comma-separated for multiple (default= gene_name)
-output:
-  tx2gene:
-    - - meta:
-          type: map
-          description: |
-            Groovy Map containing reference information related to the GTF file
-            e.g. `[ id:'yeast' ]`
-      - "*tx2gene.tsv":
-          type: file
-          description: A transcript/ gene mapping table in TSV format
-          pattern: "*.tx2gene.tsv"
-          ontologies:
-            - edam: http://edamontology.org/format_3475 # TSV
-  versions:
-    - versions.yml:
-        type: file
-        description: YAML file containing versions of tools used in the module
+        description: A transcript/ gene mapping table in TSV format
+        pattern: "*.tx2gene.tsv"
         ontologies:
-          - edam: http://edamontology.org/format_3750 # YAML
-topics:
-  versions:
-    - versions.yml:
+        - edam: http://edamontology.org/format_3475     # TSV
+  versions_python:
+  - - ${task.process}:
         type: string
         description: The name of the process
+    - python:
+        type: string
+        description: The name of the tool
+    - python --version | cut -d " " -f 2:
+        type: eval
+        description: Software version
+topics:
+  versions:
+  - - ${task.process}:
+        type: string
+        description: Process name
+    - python:
+        type: string
+        description: Software name
+    - python --version | cut -d " " -f 2:
+        type: eval
+        description: Software version
 authors:
-  - "@pinin4fjords"
+- "@pinin4fjords"
 maintainers:
-  - "@pinin4fjords"
+- "@pinin4fjords"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python:3.14.7--92bcd7a06268d464
+      build_id: bd-92bcd7a06268d464_1
+      scan_id: sc-db7e9b8feb072a7d_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python:3.14.7--00971c9535835747
+      build_id: bd-00971c9535835747_1
+      scan_id: sc-e004701c763ffe42_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python:3.14.7--478f5d019aa2d7bf
+      build_id: bd-478f5d019aa2d7bf_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2b/2b13e6b2babbdaa79992cf41bcd809ac9efd862069ee60e9215aaac6e222f452/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python:3.14.7--a82871ac261818f0
+      build_id: bd-a82871ac261818f0_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5c/5ce43c6bfb1120fe0a53ef6ca35b1a17597ef51ce071ae27cf5b68aa577c90b9/data
+  conda:
+    linux/amd64:
+      lock_file: modules/nf-core/custom/tx2gene/.conda-lock/linux_amd64-bd-92bcd7a06268d464_1.txt
+    linux/arm64:
+      lock_file: modules/nf-core/custom/tx2gene/.conda-lock/linux_arm64-bd-00971c9535835747_1.txt

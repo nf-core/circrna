@@ -72,7 +72,7 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_find_circ,
                     file(process.out.anchors[0][1]).name,
                     anchors.size(),
                     anchors.sort().toString().md5()

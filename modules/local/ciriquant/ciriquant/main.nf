@@ -2,7 +2,9 @@ process CIRIQUANT {
     tag "$meta.id"
     label 'process_high'
 
-    container "docker.io/nicotru/ciriquant:1.0.4"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'oras://docker.io/nicotru/ciriquant:35228e054dcad0b0'
+        : 'docker.io/nicotru/ciriquant@sha256:5e59c7a31355f1814a1703e9cb27d347b7bb04871606a24c1acdacfc02c627f8'}"
 
     input:
     tuple val(meta), path(reads)
@@ -16,7 +18,13 @@ process CIRIQUANT {
     tuple val(meta), path("${prefix}/${prefix}.gtf")            , emit: gtf
     tuple val(meta), path("${prefix}/gene/${prefix}_genes.list"), emit: gene_list, optional: true
     tuple val(meta), path("${prefix}/gene/${prefix}_out.gtf")   , emit: gene_gtf, optional: true
-    path "versions.yml"                                         , emit: versions
+    tuple val("${task.process}"), val('bwa'), eval("bwa 2>&1 | sed -n 's/.*Version: //p' | head -n 1"), emit: versions_bwa, topic: versions
+    tuple val("${task.process}"), val('ciriquant'), eval('CIRIquant --version 2>&1 | sed "s/CIRIquant //g"'), emit: versions_ciriquant, topic: versions
+    tuple val("${task.process}"), val('hisat2'), eval("hisat2 --version 2>&1 | sed -n '1{s/.* version //p}'"), emit: versions_hisat2, topic: versions
+    tuple val("${task.process}"), val('pysam'), eval('python -c "import pysam; print(pysam.__version__)"'), emit: versions_pysam, topic: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f2'), emit: versions_python, topic: versions
+    tuple val("${task.process}"), val('samtools'), eval("samtools --version 2>&1 | sed -n '1{s/^samtools //p}'"), emit: versions_samtools, topic: versions
+    tuple val("${task.process}"), val('stringtie'), eval('stringtie --version 2>&1'), emit: versions_stringtie, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,7 +32,6 @@ process CIRIQUANT {
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '2.1.0'
     def strandedness = meta.strandedness ?: 'auto'
     def library_type = strandedness == 'auto' ? '' : strandedness == 'unstranded' ? '-l 0' : strandedness == 'forward' ? '-l 1' : '-l 2'
     def reads_string = meta.single_end ? "-r ${reads}" : "-1 ${reads[0]} -2 ${reads[1]}"
@@ -53,32 +60,15 @@ process CIRIQUANT {
         ${library_type} \\
         ${args}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-        stringtie: \$(stringtie --version 2>&1)
-        hisat2: $VERSION
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '2.1.0'
     """
     mkdir -p ${prefix}/gene
     touch ${prefix}/${prefix}.gtf
     touch ${prefix}/gene/${prefix}_genes.list
     touch ${prefix}/gene/${prefix}_out.gtf
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
-        ciriquant: \$(echo \$(CIRIquant --version 2>&1) | sed 's/CIRIquant //g' )
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-        stringtie: \$(stringtie --version 2>&1)
-        hisat2: $VERSION
-    END_VERSIONS
     """
 }

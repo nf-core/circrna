@@ -40,7 +40,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out.versions,
+                { assert snapshot(process.out.versions_bowtie,
+                                  process.out.versions_samtools,
                                   process.out.bam.collect { bam(it[1]).getReadsMD5() },
                                   process.out.fastq,
                                   process.out.log
@@ -93,7 +94,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out.versions,
+                { assert snapshot(process.out.versions_bowtie,
+                                  process.out.versions_samtools,
                                   process.out.bam.collect { bam(it[1]).getReads(2) },
                                   process.out.log
                                   ).match() }

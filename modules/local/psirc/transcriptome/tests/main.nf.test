@@ -8,7 +8,7 @@ nextflow_process {
     tag "modules_local"
     tag "psirc_transcriptome"
 
-    test("chrI_mini gtf + fasta") {
+    test("chrI_mini original gtf + fasta") {
 
         when {
             params {
@@ -33,14 +33,14 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.transcriptome.collect { meta, fasta -> [meta, file(fasta).name] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_psirc
                 ).match() },
-                { assert path(process.out.transcriptome[0][1]).readLines().size() > 0 }
+                { assert path(process.out.transcriptome[0][1]).readLines().count { it.startsWith('>') } > 0 }
             )
         }
     }
 
-    test("chrI_mini gtf + fasta - stub") {
+    test("chrI_mini original gtf + fasta - stub") {
 
         options '-stub'
 

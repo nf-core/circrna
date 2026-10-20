@@ -13,7 +13,7 @@ process MIRANDA {
 
     output:
     tuple val(meta), path("*.txt"), emit: txt
-    path "versions.yml"           , emit: versions
+    tuple val("${task.process}"), val('miranda'), eval("miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*\$//'"), topic: versions, emit: versions_miranda
 
     when:
     task.ext.when == null || task.ext.when
@@ -31,10 +31,6 @@ process MIRANDA {
     echo "miRNA\tTarget\tScore\tEnergy_KcalMol\tQuery_Start\tQuery_End\tSubject_Start\tSubject_End\tAln_len\tSubject_Identity\tQuery_Identity" > ${prefix}.txt
     grep -A 1 "Scores for this hit:" ${prefix}.out | sort | grep ">"  | cut -c 2- | tr ' ' '\t' >> ${prefix}.txt
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        miranda: \$(echo \$(miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*\$//' ))
-    END_VERSIONS
     """
 
     stub:
@@ -42,9 +38,5 @@ process MIRANDA {
     """
     touch ${prefix}.txt
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        miranda: \$(echo \$(miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*\$//' ))
-    END_VERSIONS
     """
 }

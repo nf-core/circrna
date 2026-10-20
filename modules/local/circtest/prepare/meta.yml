@@ -1,0 +1,86 @@
+name: circtest_prepare
+description: Prepare gene and circRNA count matrices for CircTest.
+keywords:
+  - circtest
+  - circrna
+  - normalization
+tools:
+  - r-base:
+      description: R statistical computing environment.
+      homepage: https://www.r-project.org/
+      licence:
+        - GPL-2.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - gene_counts:
+        type: file
+        description: Gene count matrix.
+        pattern: "*.{tsv,txt}"
+    - circ_counts:
+        type: file
+        description: CircRNA count matrix.
+        pattern: "*.{tsv,txt}"
+output:
+  counts:
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - genes:
+          type: file
+          description: Prepared gene counts.
+          pattern: "*_genes.tsv"
+      - circs:
+          type: file
+          description: Prepared circRNA counts.
+          pattern: "*_circs.tsv"
+  versions_r_base:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - r-base:
+          type: string
+          description: The name of the tool
+      - R --version | sed "1!d; s/.*version //; s/ .*//":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - r-base:
+          type: string
+          description: Software name
+      - R --version | sed "1!d; s/.*version //; s/ .*//":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/circtest_prepare:ccbc3d0ff39b32ec
+      build_id: bd-ccbc3d0ff39b32ec_1
+      scan_id: sc-1f51c2d119130589_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/circtest_prepare:35adc3cf2748fa7e
+      build_id: bd-35adc3cf2748fa7e_1
+      scan_id: sc-7b05f8328b302e15_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/circtest_prepare:cf9bbe0639e6f327
+      build_id: bd-cf9bbe0639e6f327_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/47/476ef7843285cc28e0778cb22a101abe14d3c218fb74bd881eb5fc22ceb750c9/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/circtest_prepare:8bb0556c0d2d4cc8
+      build_id: bd-8bb0556c0d2d4cc8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/51/5146c8a4f0be4757369d45f28a6db79c5ec345d29b1339e3f877e794c79ae22d/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circtest/prepare/.conda-lock/linux_amd64-bd-35adc3cf2748fa7e_1.txt
+    linux/arm64:
+      lock_file: modules/local/circtest/prepare/.conda-lock/linux_arm64-bd-ccbc3d0ff39b32ec_1.txt

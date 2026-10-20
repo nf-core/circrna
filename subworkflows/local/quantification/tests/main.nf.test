@@ -266,7 +266,6 @@ nextflow_workflow {
                 { assert workflow.out.gene.isEmpty() },
                 { assert workflow.out.circ.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
-                { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().every { it.name.startsWith('QUANTIFICATION:AGGREGATE') } },
                 { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
                 { assert sum.rowCount > 0 },
@@ -341,7 +340,6 @@ nextflow_workflow {
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
-                { assert workflow.out.versions.isEmpty() },
                 { assert workflow.trace.tasks().isEmpty() },
                 { assert !new File("$outputDir/5_quantification/aggregations").exists() }
             )

@@ -34,7 +34,6 @@ workflow PREPARE_GENOME {
 
     main:
     fli_tools = fli_tools ?: []
-    ch_versions = channel.empty()
 
     // MapSplice cannot deal with extra field in the fasta headers
     // this removes all additional fields in the headers of the input fasta file
@@ -45,7 +44,6 @@ workflow PREPARE_GENOME {
 
     GTFFILTER(ch_gtf, ch_fasta)
     ch_gtf = GTFFILTER.out.gtf
-    ch_versions = ch_versions.mix(GTFFILTER.out.versions)
 
     // circMiner needs parent records and transcript-direction exon ordering.
     // Keep this annotation separate: AGAT repairs must not alter other callers' inputs.
@@ -54,20 +52,17 @@ workflow PREPARE_GENOME {
         CIRCMINER_STANDARDIZE_GTF(ch_gtf)
         CIRCMINER_ORDERGTF(CIRCMINER_STANDARDIZE_GTF.out.output_gtf)
         ch_circminer_gtf = CIRCMINER_ORDERGTF.out.gtf
-        ch_versions = ch_versions.mix(CIRCMINER_ORDERGTF.out.versions)
     }
 
     UCSC_GTFTOGENEPRED(ch_gtf)
 
     SEQKIT_SPLIT(ch_fasta)
-    ch_versions = ch_versions.mix(SEQKIT_SPLIT.out.versions)
 
     if (bowtie) {
         ch_bowtie = channel.value([[id: "bowtie"], bowtie])
     }
     else if (tools.contains('mapsplice')) {
         BOWTIE_BUILD(ch_fasta)
-        ch_versions = ch_versions.mix(BOWTIE_BUILD.out.versions)
         ch_bowtie = BOWTIE_BUILD.out.index
     }
     else {
@@ -131,10 +126,8 @@ workflow PREPARE_GENOME {
     ch_psirc_index = channel.empty()
     if (tools.contains('psirc')) {
         PSIRC_TRANSCRIPTOME(ch_gtf, ch_fasta)
-        ch_versions = ch_versions.mix(PSIRC_TRANSCRIPTOME.out.versions)
 
         PSIRC_INDEX(PSIRC_TRANSCRIPTOME.out.transcriptome)
-        ch_versions = ch_versions.mix(PSIRC_INDEX.out.versions)
         ch_psirc_index = PSIRC_TRANSCRIPTOME.out.transcriptome.join(
             PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]]}
         ).collect()
@@ -144,7 +137,6 @@ workflow PREPARE_GENOME {
         ch_circminer = channel.value([[id: "circminer"], circminer])
     } else if (tools.contains('circminer')) {
         CIRCMINER_INDEX(ch_fasta)
-        ch_versions = ch_versions.mix(CIRCMINER_INDEX.out.versions)
         ch_circminer = CIRCMINER_INDEX.out.index
     } else {
         ch_circminer = channel.empty()
@@ -163,6 +155,5 @@ workflow PREPARE_GENOME {
     circminer     = ch_circminer
     chromosomes   = SEQKIT_SPLIT.out.split
     splice_sites  = ch_hisat2_splice_sites.collect()
-    versions      = ch_versions
     circminer_gtf = ch_circminer_gtf
 }

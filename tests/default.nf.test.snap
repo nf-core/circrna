@@ -2,14 +2,29 @@
     "-profile test - stub": {
         "content": [
             {
+                "CIRCEXPLORER2_REFERENCE": {
+                    "gawk": "5.3.1"
+                },
                 "CIRCTEST_CIRCTEST": {
-                    "r-base": "4.2.2",
-                    "aod": "1.3.2",
-                    "plyr": "1.8.8",
-                    "ggplot2": "3.4.0"
+                    "aod": "1.3.3",
+                    "ggplot2": "4.0.3",
+                    "plyr": "1.8.9",
+                    "r-base": "4.5.3"
                 },
                 "CIRCTEST_PREPARE": {
-                    "r-base": "4.2.1"
+                    "r-base": "4.6.1"
+                },
+                "COMBINE_TRANSCRIPTOME_GTFS": {
+                    "coreutils": 9.5
+                },
+                "CUSTOM_TX2GENE": {
+                    "python": "3.10.4"
+                },
+                "EXCLUDE_OVERLONG_TRANSCRIPTS": {
+                    "gawk": "5.3.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.12.1"
                 },
                 "GTFFILTER": {
                     "python": "3.14.5"
@@ -17,26 +32,78 @@
                 "INDEX": {
                     "psirc-quant": 1.0
                 },
+                "JOIN_GENE_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_GENE_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "MARK_CIRCULAR": {
+                    "gawk": "5.3.1"
+                },
                 "MERGE_EXPERIMENTS": {
-                    "bioconductor-summarizedexperiment": "1.32.0"
+                    "bioconductor-rtracklayer": "1.72.0",
+                    "bioconductor-summarizedexperiment": "1.42.0"
+                },
+                "PARSE": {
+                    "circexplorer2": "2.3.8"
+                },
+                "PASS_1": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "PASS_2": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
                 },
                 "QUANT": {
                     "psirc-quant": 1.0
                 },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.23.1"
+                },
                 "SEQKIT_SPLIT": {
-                    "seqkit": "2.8.0"
+                    "seqkit": "seqkit v2.14.0"
                 },
                 "SJDB": {
-                    "mawk": "1.3.4"
+                    "mawk": "mawk 1.3.4 20171017"
                 },
                 "SPLIT_TYPES_COUNTS": {
-                    "gawk": "5.1.0"
+                    "gawk": "5.4.1"
                 },
                 "SPLIT_TYPES_TPM": {
-                    "gawk": "5.1.0"
+                    "gawk": "5.4.1"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "TRANSCRIPTOME": {
+                    "gffread": "0.12.7"
+                },
+                "TRIMGALORE": {
+                    "trimgalore": "0.6.10"
                 },
                 "TXIMETA_TXIMETA": {
+                    "bioconductor-tximeta": "1.28.3"
+                },
+                "TXIMETA_TXIMPORT": {
                     "bioconductor-tximeta": "1.20.1"
+                },
+                "UCSC_GTFTOGENEPRED": {
+                    "ucsc": 482
+                },
+                "UNIFY": {
+                    "gawk": "5.3.1"
                 },
                 "Workflow": {
                     "nf-core/circrna": "v0.0.1dev"
@@ -240,75 +307,167 @@
                 "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
             ]
         ],
+        "timestamp": "2026-10-19T10:31:39.747394493",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T22:59:44.848591413"
+        }
     },
     "-profile test": {
         "content": [
             {
+                "AGGREGATE": {
+                    "polars": "2.0.0",
+                    "python": "3.14.7"
+                },
+                "ANNOTATE": {
+                    "circexplorer2": "2.3.8"
+                },
                 "BED2GTF": {
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
+                    "polars": "2.0.0",
+                    "python": "3.14.7"
+                },
+                "BED_ADD_SAMPLE_TOOL": {
+                    "gawk": "5.3.1"
+                },
+                "CIRCEXPLORER2_REFERENCE": {
+                    "gawk": "5.3.1"
                 },
                 "CIRCTEST_CIRCTEST": {
-                    "r-base": "4.2.2",
-                    "aod": "1.3.2",
-                    "plyr": "1.8.8",
-                    "ggplot2": "3.4.0"
+                    "aod": "1.3.3",
+                    "ggplot2": "4.0.3",
+                    "plyr": "1.8.9",
+                    "r-base": "4.5.3"
                 },
                 "CIRCTEST_PREPARE": {
-                    "r-base": "4.2.1"
+                    "r-base": "4.6.1"
                 },
                 "COMBINE_COUNTS_PER_TOOL": {
-                    "polars": "1.5.0",
-                    "python": "3.12.5"
+                    "polars": "2.0.0",
+                    "python": "3.14.7"
                 },
                 "COMBINE_SAMPLES": {
-                    "python": "3.12.6",
-                    "polars": "1.8.2",
-                    "upsetplot": "0.9.0",
-                    "matplotlib": "3.9.2"
+                    "matplotlib": "3.11.2",
+                    "polars": "2.0.0",
+                    "python": "3.14.7",
+                    "upsetplot": "0.9.0"
                 },
                 "COMBINE_TOOLS_PER_SAMPLE": {
-                    "python": "3.12.6",
-                    "polars": "1.8.2",
-                    "upsetplot": "0.9.0",
-                    "matplotlib": "3.9.2"
+                    "matplotlib": "3.11.2",
+                    "polars": "2.0.0",
+                    "python": "3.14.7",
+                    "upsetplot": "0.9.0"
+                },
+                "COMBINE_TRANSCRIPTOME_GTFS": {
+                    "coreutils": 9.5
+                },
+                "CUSTOM_TX2GENE": {
+                    "python": "3.14.7"
+                },
+                "CUT_BED12": {
+                    "gawk": "5.3.1"
+                },
+                "EXCLUDE_OVERLONG_TRANSCRIPTS": {
+                    "gawk": "5.3.1"
+                },
+                "EXTRACT_COUNTS": {
+                    "gawk": "5.3.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.13.0"
+                },
+                "FILTER_BSJS": {
+                    "gawk": "5.3.1"
+                },
+                "GET_FASTA": {
+                    "bedtools": "2.31.1"
                 },
                 "GTFFILTER": {
-                    "python": "3.14.5"
+                    "python": "3.14.7"
                 },
                 "INDEX": {
                     "psirc-quant": 1.0
                 },
                 "INVESTIGATE_SHIFTS": {
-                    "altair": "5.5.0",
-                    "polars": "1.31.0",
-                    "python": "3.13.5"
+                    "altair": "6.3.0",
+                    "polars": "2.0.0",
+                    "python": "3.14.7"
+                },
+                "JOIN_GENE_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_GENE_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "MARK_CIRCULAR": {
+                    "gawk": "5.3.1"
                 },
                 "MERGE_EXPERIMENTS": {
-                    "bioconductor-summarizedexperiment": "1.32.0"
+                    "bioconductor-rtracklayer": "1.72.0",
+                    "bioconductor-summarizedexperiment": "1.42.0"
+                },
+                "PARSE": {
+                    "circexplorer2": "2.3.8"
+                },
+                "PASS_1": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "PASS_2": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
                 },
                 "QUANT": {
                     "psirc-quant": 1.0
                 },
+                "RENAME": {
+                    "gawk": "5.3.1"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": 1.24
+                },
                 "SEQKIT_SPLIT": {
-                    "seqkit": "2.8.0"
+                    "seqkit": "2.14.0"
                 },
                 "SJDB": {
-                    "mawk": "1.3.4"
+                    "mawk": "mawk 1.3.4 20171017"
                 },
                 "SPLIT_TYPES_COUNTS": {
-                    "gawk": "5.1.0"
+                    "gawk": "5.4.1"
                 },
                 "SPLIT_TYPES_TPM": {
-                    "gawk": "5.1.0"
+                    "gawk": "5.4.1"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "TRANSCRIPTOME": {
+                    "gffread": "0.12.7"
+                },
+                "TRIMGALORE": {
+                    "trimgalore": "2.3.0"
                 },
                 "TXIMETA_TXIMETA": {
-                    "bioconductor-tximeta": "1.20.1"
+                    "bioconductor-tximeta": "1.28.3"
+                },
+                "TXIMETA_TXIMPORT": {
+                    "bioconductor-tximeta": "1.28.3"
+                },
+                "UCSC_GTFTOGENEPRED": {
+                    "ucsc": 482
+                },
+                "UNIFY": {
+                    "gawk": "5.3.1"
                 },
                 "Workflow": {
                     "nf-core/circrna": "v0.0.1dev"
@@ -613,7 +772,6 @@
             ],
             [
                 "chrI.fa:md5,951c3e54a268727ff62ebd4954139ec7",
-                "gtf.filtered.gtf:md5,3bc7f633fb711ab0c2f3d0f0c06885d4",
                 "gtf.genepred:md5,34b21c4ae2c49bec101aafa26cc32100",
                 "chrI.fa.fai:md5,77d26f31962c39e6d6e7f0c4aa721584",
                 "gtf.circexplorer2.txt:md5,dbef70730dc57adea685f8a0cbe3333a",
@@ -628,67 +786,50 @@
                 "exonGeTrInfo.tab:md5,64571502520c918e21bc5153f7bc0ed9",
                 "exonInfo.tab:md5,d8a4f600a862fdcca32df4907f5c1412",
                 "geneInfo.tab:md5,9a397835c4d2e717e1eabcb1fd603ce3",
-                "genomeParameters.txt:md5,ae694eb9a8fa029c2bb60a98244d5879",
                 "sjdbInfo.txt:md5,55a9fda676904b8b711d07566e0f349c",
                 "sjdbList.fromGTF.out.tab:md5,14e3151cc214d0697adadba65b072f3e",
                 "sjdbList.out.tab:md5,fd0a82b5e3499b388af3a69e56f2f220",
                 "transcriptInfo.tab:md5,d8ad5b3a9aad46cd6e69c5d2920dc818",
-                "cel_N2_1_1.fastq.gz_trimming_report.txt:md5,d70a34b4724b704faae25110027e7a92",
-                "cel_N2_1_2.fastq.gz_trimming_report.txt:md5,5556b2f45b38839b571e2d75a0c164e8",
-                "cel_N2_2_1.fastq.gz_trimming_report.txt:md5,095f393ed40e217d1d2613d5c9cc88b5",
-                "cel_N2_2_2.fastq.gz_trimming_report.txt:md5,b4eea8a160197e82033558e006d28f3e",
-                "cel_N2_3_1.fastq.gz_trimming_report.txt:md5,4f32b79b783462ff29c6bbf1adae8259",
-                "cel_N2_3_2.fastq.gz_trimming_report.txt:md5,7b4a74ef56197bc79f758a6cff19eac6",
-                "fust1_1_1.fastq.gz_trimming_report.txt:md5,e35f497e2b3ae8fe02d1054813a63fe4",
-                "fust1_1_2.fastq.gz_trimming_report.txt:md5,ae7527222450d67ed9a2426228f2e28f",
-                "fust1_2_1.fastq.gz_trimming_report.txt:md5,78ecb323c83dc815acda6b5fc039ec28",
-                "fust1_2_2.fastq.gz_trimming_report.txt:md5,a16b5a715a2d6f6a68408ce1e0b952f0",
-                "fust1_3_1.fastq.gz_trimming_report.txt:md5,e515276836d31b91c259d286d69ceb01",
-                "fust1_3_2.fastq.gz_trimming_report.txt:md5,85998fe8c7c8a29ed5aeac26c0f21a36",
-                "all.annotated.gtf:md5,168b661c285786e86d10a0f471bb4a5b",
+                "cel_N2_1_1.fastq.gz_trimming_report.txt:md5,83ee532657702ed329508acdd6c894cc",
+                "cel_N2_1_2.fastq.gz_trimming_report.txt:md5,10d76285b987974c51519d7b0f0935fe",
+                "cel_N2_2_1.fastq.gz_trimming_report.txt:md5,fa5db3c9c687546db4b9fe12ead2efbd",
+                "cel_N2_2_2.fastq.gz_trimming_report.txt:md5,fb695cd461536c4459f1db1a0b26d030",
+                "cel_N2_3_1.fastq.gz_trimming_report.txt:md5,32bd6128eb57b0d5c029a1e692d6074d",
+                "cel_N2_3_2.fastq.gz_trimming_report.txt:md5,145953d505325a716488c9a9810725f3",
+                "fust1_1_1.fastq.gz_trimming_report.txt:md5,64b1015f86801ad8b1d80f6d8bf9d328",
+                "fust1_1_2.fastq.gz_trimming_report.txt:md5,419fbf185e4ba4650f7cd76dc4232cd5",
+                "fust1_2_1.fastq.gz_trimming_report.txt:md5,968efc94e92b0b49d084167704ebe9e8",
+                "fust1_2_2.fastq.gz_trimming_report.txt:md5,d29c62e397acaed85e17c93c88f5053a",
+                "fust1_3_1.fastq.gz_trimming_report.txt:md5,253c7df589618f4586c1bc7edaadd1ce",
+                "fust1_3_2.fastq.gz_trimming_report.txt:md5,340c97533ae582d77ff9e349676083b3",
                 "all.fa:md5,8c4e36329c50fa96ea8bd78bbd128b4d",
                 "n_samples.png:md5,8e5c20ff8db52725910456d796eb3d19",
                 "n_tools.png:md5,03821791e26183ccba9f1a50b692060e",
                 "cel_N2_1.annotated.bed12:md5,ff9526b60ecb7439fb042f1a672e02cd",
-                "cel_N2_1.annotated.gtf:md5,05aecf41528d564874e63afd4874ebee",
                 "cel_N2_1.fa:md5,4897629522b8a42a8ae7849a81570e9f",
                 "cel_N2_2.annotated.bed12:md5,e860b55790b8f6d72525c07d633c3f78",
-                "cel_N2_2.annotated.gtf:md5,2d084c89cbfb7eedbe2c5f2f4bc14d99",
                 "cel_N2_2.fa:md5,2c22a4112311303e119cbd92309e6672",
                 "cel_N2_3.annotated.bed12:md5,4e8449771fe6431cf035d3298114dcc6",
-                "cel_N2_3.annotated.gtf:md5,fc25a0eb70b3156959a5caeb44df4a93",
                 "cel_N2_3.fa:md5,c3041ac12ddefa2a461f309579edf8c4",
                 "fust1_1.annotated.bed12:md5,b738c0ca36bb2533eb55084d08fecf9b",
-                "fust1_1.annotated.gtf:md5,89e17df1ace8aa016845951de98b6842",
                 "fust1_1.fa:md5,6c303f53bfcfa4aaca1776550f6c8b0f",
                 "fust1_2.annotated.bed12:md5,745bb7d34a5f2234077f7f252efd8382",
-                "fust1_2.annotated.gtf:md5,e12b597faf0d6525dbda4c8e083099d5",
                 "fust1_2.fa:md5,2fdfa050e827f94bc0384b112896a98b",
                 "fust1_3.annotated.bed12:md5,3cb7a9c56ff4d2ba07dbdf9060c8bdb8",
-                "fust1_3.annotated.gtf:md5,4a8e6540e1fc6853bcfe2648aea5c819",
                 "fust1_3.fa:md5,98ea202d757970916aaa3ab45835f89f",
                 "cel_N2_1.annotated.bed12:md5,fab072a5a502d074ed001192b39bf6bb",
-                "cel_N2_1.annotated.gtf:md5,64dd26aae6b53d541a33812a9dd2f3d8",
                 "cel_N2_2.annotated.bed12:md5,2ceb402e8ee1ed805825881a27f49aa5",
-                "cel_N2_2.annotated.gtf:md5,1c9b9a1c92306260e799fa85eb1ac62d",
                 "cel_N2_3.annotated.bed12:md5,d5af7682b8f095db7d5279fc4103b891",
-                "cel_N2_3.annotated.gtf:md5,483738a0974be68c8b467e1d30c6f31d",
                 "fust1_1.annotated.bed12:md5,6a46b336218a3b46afe8e3aaed5c2047",
-                "fust1_1.annotated.gtf:md5,49500ede626e9cc1007c88473feb2e44",
                 "fust1_2.annotated.bed12:md5,5c3c557c3a741aa68d7299d4d6fef1a3",
-                "fust1_2.annotated.gtf:md5,352e9649f36bc6284b1d7801fb578ea0",
                 "fust1_3.annotated.bed12:md5,f9b0f86df495363bf23ed7ae0db111b5",
-                "fust1_3.annotated.gtf:md5,63cf5347b68712080dd48c7e75bb65dd",
                 "cel_N2_1.fa:md5,4ad7ae73616340f4b2bd8f96f2577def",
                 "cel_N2_2.fa:md5,d7051282a8f461f48b00124c632b1c85",
                 "cel_N2_3.fa:md5,e0f46995eb3c81669266980e1d1edcb0",
                 "fust1_1.fa:md5,4aaf170c93e3621721f2b362eea6318c",
                 "fust1_2.fa:md5,76c21bcefbdb21ded5806225e1dd326b",
                 "fust1_3.fa:md5,e80b466d781c1ebee2382873853bf56d",
-                "transcriptome.combined.gtf:md5,0bd459ae60487d8846ae74239a15a692",
-                "transcriptome.fasta:md5,47535c322df2f1a9e3b5dbdaa333ff89",
-                "transcriptome.filtered.gtf:md5,4e5bef5afb01bcd6f08b2cfb93c49701",
-                "transcriptome.tx2gene.tsv:md5,31a455ca5a0a4dc9c01d13e9e5c3b77e"
+                "transcriptome.fasta:md5,47535c322df2f1a9e3b5dbdaa333ff89"
             ],
             {
                 "combined_bed_rows": 362,
@@ -1224,13 +1365,33 @@
                     "gene_id",
                     "tx"
                 ],
-                "linear_rows": 5171
+                "linear_rows": 5171,
+                "normalized_content": {
+                    "1_references/genome/filtered_gtf/gtf.filtered.gtf": "e115a8813f938acb8244a7f660a747e0",
+                    "1_references/index/star/genomeParameters.txt": "d0cb6137a64ecf5a25fbf092cddcada6",
+                    "3_bsj_detection/combined/all.annotated.gtf": "076c90deb682f4e96ace2f4b92d4679b",
+                    "3_bsj_detection/samples/cel_N2_1/cel_N2_1.annotated.gtf": "442acca5a1526fa1f59b1643f83a8de8",
+                    "3_bsj_detection/samples/cel_N2_2/cel_N2_2.annotated.gtf": "7922fea7b95e4cc7fcbe300c411f3093",
+                    "3_bsj_detection/samples/cel_N2_3/cel_N2_3.annotated.gtf": "c66f0d1111bcc3d155632ed6af9322d2",
+                    "3_bsj_detection/samples/fust1_1/fust1_1.annotated.gtf": "46af92642976e2723ec5b1a87aae0e42",
+                    "3_bsj_detection/samples/fust1_2/fust1_2.annotated.gtf": "30a530618ceba897c3626eca2f542d91",
+                    "3_bsj_detection/samples/fust1_3/fust1_3.annotated.gtf": "9f87b8b900a7cf4003dc997664be988c",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_1.annotated.gtf": "66736cd628c759a9d49ba4e84ad0e2a6",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_2.annotated.gtf": "82f9f41954f2775af29eb9619d9e8249",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_3.annotated.gtf": "8f18dfeb3db03221d869393406851744",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_1.annotated.gtf": "f073c036756622d0667014df4851352d",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_2.annotated.gtf": "3cef71960e14d7c97bc6bca782b76d5b",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_3.annotated.gtf": "04f870f6ff2e25659abbb6efa615cfc1",
+                    "5_quantification/psirc/transcriptome/transcriptome.combined.gtf": "7c47965a696f911b0d83cbabac155116",
+                    "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf": "bebf68585a057e0a0486a19dd8afafc9",
+                    "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv": "c1d6bc53e95ff160387fb9dc003c2f7b"
+                }
             }
         ],
+        "timestamp": "2026-10-19T22:58:53.503644303",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-17T22:58:19.908729756"
+        }
     }
 }

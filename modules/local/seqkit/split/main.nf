@@ -3,16 +3,16 @@ process SEQKIT_SPLIT {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/seqkit:2.8.0--h9ee0642_0' :
-        'biocontainers/seqkit:2.8.0--h9ee0642_0' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/52/5266dd21f30e777f3b05d029e5b523e5a3f78ff2659cc23d58f2175700c20815/data'
+        : 'community.wave.seqera.io/library/seqkit_split:b24e98aca17fcd40'}"
 
     input:
     tuple val(meta), path(fasta)
 
     output:
     tuple val(meta), path("${prefix}/*"), emit: split
-    path "versions.yml"             , emit: versions
+    tuple val("${task.process}"), val('seqkit'), eval("seqkit version | sed 's/^seqkit v//'"), emit: versions_seqkit, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -28,10 +28,6 @@ process SEQKIT_SPLIT {
         $fasta \\
         --out-dir ${prefix}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        seqkit: \$(echo \$(seqkit 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
-    END_VERSIONS
     """
 
     stub:
@@ -40,9 +36,5 @@ process SEQKIT_SPLIT {
     mkdir ${prefix}
     touch ${prefix}/${fasta.baseName}.part_001.${fasta.extension}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        seqkit: \$(echo \$(seqkit 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
-    END_VERSIONS
     """
 }

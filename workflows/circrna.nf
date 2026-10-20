@@ -46,7 +46,6 @@ workflow CIRCRNA {
     blacklist                   // path or null
     mature                      // [meta, path] or null
     ch_annotation
-    ch_versions
     mirna_expression            // [meta, path] or null
 
     // tool selection
@@ -137,7 +136,6 @@ workflow CIRCRNA {
     star_index          = PREPARE_GENOME.out.star
     psirc_index         = PREPARE_GENOME.out.psirc
     circminer_index     = PREPARE_GENOME.out.circminer
-    ch_versions         = ch_versions.mix(PREPARE_GENOME.out.versions)
 
 
 
@@ -146,7 +144,6 @@ workflow CIRCRNA {
             ch_cat_fastq,
             "hg38"
         )
-        ch_versions = ch_versions.mix(LONGREAD.out.versions)
     } else {
         // MODULE: Run FastQC, trimgalore!
         FASTQC_TRIMGALORE (
@@ -154,7 +151,6 @@ workflow CIRCRNA {
             skip_fastqc,
             skip_trimming
         )
-        ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
         ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_zip.collect{ _meta, zip -> zip }.ifEmpty([]))
         ch_multiqc_files  = ch_multiqc_files.mix(FASTQC_TRIMGALORE.out.trim_log.collect{ _meta, log -> log }.ifEmpty([]))
 
@@ -167,7 +163,6 @@ workflow CIRCRNA {
                 CIRI_READS(FASTQC_TRIMGALORE.out.reads)
                 ch_bwa_reads = CIRI_READS.out.reads
                 ch_reads_fixed_length = CIRI_READS.out.reads
-                ch_versions = ch_versions.mix(CIRI_READS.out.versions)
             }
             else {
                 ch_bwa_reads = FASTQC_TRIMGALORE.out.reads
@@ -211,7 +206,6 @@ workflow CIRCRNA {
         )
 
         ch_multiqc_files  = ch_multiqc_files.mix(BSJ_DETECTION.out.multiqc_files)
-        ch_versions = ch_versions.mix(BSJ_DETECTION.out.versions)
 
         //
         // 3. FLI Detection
@@ -236,7 +230,6 @@ workflow CIRCRNA {
             fli_tools,
             max_shift
         )
-        ch_versions = ch_versions.mix(FLI_DETECTION.out.versions)
 
         COMBINE_TRANSCRIPTOMES(
             ch_fasta,
@@ -244,7 +237,6 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.gtf
         )
 
-        ch_versions = ch_versions.mix(COMBINE_TRANSCRIPTOMES.out.versions)
 
         //
         // 4. circRNA quantification
@@ -270,7 +262,6 @@ workflow CIRCRNA {
             ch_bwa_sam
         )
 
-        ch_versions = ch_versions.mix(QUANTIFICATION.out.versions)
 
         //
         // 5. miRNA prediction
@@ -289,7 +280,6 @@ workflow CIRCRNA {
                 mirna_min_reads,
                 mirna_min_sample_percentage
             )
-            ch_versions = ch_versions.mix(MIRNA_PREDICTION.out.versions)
         }
 
         //
@@ -303,7 +293,6 @@ workflow CIRCRNA {
             QUANTIFICATION.out.stringtie,
             ch_phenotype
         )
-        ch_versions = ch_versions.mix(STATISTICAL_TESTS.out.versions)
 
     }
 
@@ -312,7 +301,25 @@ workflow CIRCRNA {
     //
     // Collate and save software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch {
+            versions_file: it instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [process[process.lastIndexOf(':') + 1..-1], "  ${tool}: ${version}"]
+        }
+        .groupTuple(by: 0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(topic_versions.versions_file)
+        .mix(topic_versions_string)
         .collectFile(storeDir: "${outdir}/pipeline_info", name: 'nf_core_circrna_software_mqc_versions.yml', sort: true, newLine: true)
         .set { ch_collated_versions }
 
@@ -347,7 +354,6 @@ workflow CIRCRNA {
 
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> report }.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
 /*

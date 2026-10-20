@@ -52,7 +52,7 @@ nextflow_process {
                     summary_lines[0],
                     summary_lines.size(),
                     summary_lines.drop(1).collect { it.tokenize(' ')[0] }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_r_base, process.out.versions_aod, process.out.versions_plyr, process.out.versions_ggplot2]
                 ).match() }
             )
         }

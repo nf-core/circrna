@@ -12,7 +12,7 @@ process BOWTIE_BUILD {
 
     output:
     tuple val(meta), path('bowtie'), emit: index
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('bowtie'), eval("bowtie --version 2>&1 | sed 's/^.*bowtie-align-s version //; s/ .*\$//'"), topic: versions, emit: versions_bowtie
 
     when:
     task.ext.when == null || task.ext.when
@@ -23,10 +23,6 @@ process BOWTIE_BUILD {
     mkdir -p bowtie
     bowtie-build --threads ${task.cpus} ${fasta} bowtie/${prefix}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
-    END_VERSIONS
     """
 
     stub:
@@ -40,9 +36,5 @@ process BOWTIE_BUILD {
     touch bowtie/${prefix}.rev.1.ebwt
     touch bowtie/${prefix}.rev.2.ebwt
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
-    END_VERSIONS
     """
 }

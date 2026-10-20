@@ -61,7 +61,7 @@ nextflow_process {
                     dir.listFiles().collect { it.name }.sort(),
                     path("${dir}/abundance.tsv").csv(sep: '\t').columnNames,
                     path("${dir}/abundance.tsv").csv(sep: '\t').rowCount,
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_psircquant
                 ).match() }
             )
         }

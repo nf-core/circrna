@@ -12,11 +12,6 @@
                         "cel_N2_1.find_circ.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "1": [
-                    "versions.yml:md5,11c9552947e0d902a30118297358a243",
-                    "versions.yml:md5,5e347638019593dab2a21ec0239ef164",
-                    "versions.yml:md5,89cd94308933cf9a860835703f90caae"
-                ],
                 "bed": [
                     [
                         {
@@ -26,11 +21,6 @@
                         },
                         "cel_N2_1.find_circ.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
-                ],
-                "versions": [
-                    "versions.yml:md5,11c9552947e0d902a30118297358a243",
-                    "versions.yml:md5,5e347638019593dab2a21ec0239ef164",
-                    "versions.yml:md5,89cd94308933cf9a860835703f90caae"
                 ]
             }
         ],
@@ -38,7 +28,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:27:35.820359415"
+        "timestamp": "2026-10-18T23:19:50.909486997"
     },
     "cel_N2_1 paired-end": {
         "content": [
@@ -77,30 +67,12 @@
                 "chrI\t87576\t97830\t2\t+",
                 "chrI\t96049\t111281\t1\t+",
                 "chrI\t96049\t97830\t4\t+"
-            ],
-            [
-                {
-                    "FIND_CIRC:ANCHORS": {
-                        "find_circ": 1.2
-                    }
-                },
-                {
-                    "FIND_CIRC:GROUP_READS": {
-                        "csvtk": "0.31.0"
-                    }
-                },
-                {
-                    "FIND_CIRC:MAIN": {
-                        "bowtie2": "2.3.5.1",
-                        "find_circ": 1.2
-                    }
-                }
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T21:18:07.310863838"
+        "timestamp": "2026-10-18T23:18:54.488566949"
     }
 }

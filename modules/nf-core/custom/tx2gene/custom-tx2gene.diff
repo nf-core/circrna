@@ -1,0 +1,1277 @@
+Changes in component 'nf-core/custom/tx2gene'
+Changes in 'custom/tx2gene/meta.yml':
+--- modules/nf-core/custom/tx2gene/meta.yml
++++ modules/nf-core/custom/tx2gene/meta.yml
+@@ -1,75 +1,107 @@
+-# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+ name: "custom_tx2gene"
+-description: Make a transcript/gene mapping from a GTF and cross-reference with transcript
+-  quantifications.
++description: Make a transcript/gene mapping from a GTF and cross-reference with transcript quantifications.
+ keywords:
+-  - gene
+-  - gtf
+-  - pseudoalignment
+-  - rsem
+-  - transcript
++- gene
++- gtf
++- pseudoalignment
++- rsem
++- transcript
+ tools:
+-  - "custom":
+-      description: |
+-        "Custom module to create a transcript to gene mapping from a GTF and
+-        check it against transcript quantifications"
+-      tool_dev_url: "https://github.com/nf-core/modules/blob/master/modules/nf-core/custom/tx2gene/main.nf"
+-      licence: ["MIT"]
+-      identifier: ""
++- "custom":
++    description: |
++      "Custom module to create a transcript to gene mapping from a GTF and
++      check it against transcript quantifications"
++    tool_dev_url: "https://github.com/nf-core/modules/blob/master/modules/nf-core/custom/tx2gene/main.nf"
++    licence: ["MIT"]
++    identifier: ""
+ 
+ input:
++- - meta:
++      type: map
++      description: |
++        Groovy Map containing reference information related to the GTF file
++        e.g. `[ id:'yeast' ]`
++  - gtf:
++      type: file
++      description: An annotation file of the reference genome in GTF format
++      pattern: "*.gtf"
++      ontologies: []
++- - meta2:
++      type: map
++      description: |
++        Groovy Map containing information related to the experiment as a whole
++        e.g. `[ id:'SRP123456' ]`
++  - quants/*:
++      type: file
++      description: quants file
++- quant_type:
++    type: string
++    description: Quantification type, 'kallisto', 'salmon', or 'rsem'
++- id:
++    type: string
++    description: Gene ID attribute in the GTF file (default= gene_id)
++- extra:
++    type: string
++    description: Extra gene attribute(s) in the GTF file, comma-separated for multiple (default= gene_name)
++output:
++  tx2gene:
+   - - meta:
+         type: map
+         description: |
+           Groovy Map containing reference information related to the GTF file
+           e.g. `[ id:'yeast' ]`
+-    - gtf:
++    - "*tx2gene.tsv":
+         type: file
+-        description: An annotation file of the reference genome in GTF format
+-        pattern: "*.gtf"
+-        ontologies: []
+-  - - meta2:
+-        type: map
+-        description: |
+-          Groovy Map containing information related to the experiment as a whole
+-          e.g. `[ id:'SRP123456' ]`
+-    - quants/*:
+-        type: file
+-        description: quants file
+-  - quant_type:
+-      type: string
+-      description: Quantification type, 'kallisto', 'salmon', or 'rsem'
+-  - id:
+-      type: string
+-      description: Gene ID attribute in the GTF file (default= gene_id)
+-  - extra:
+-      type: string
+-      description: Extra gene attribute(s) in the GTF file, comma-separated for multiple (default= gene_name)
+-output:
+-  tx2gene:
+-    - - meta:
+-          type: map
+-          description: |
+-            Groovy Map containing reference information related to the GTF file
+-            e.g. `[ id:'yeast' ]`
+-      - "*tx2gene.tsv":
+-          type: file
+-          description: A transcript/ gene mapping table in TSV format
+-          pattern: "*.tx2gene.tsv"
+-          ontologies:
+-            - edam: http://edamontology.org/format_3475 # TSV
+-  versions:
+-    - versions.yml:
+-        type: file
+-        description: YAML file containing versions of tools used in the module
++        description: A transcript/ gene mapping table in TSV format
++        pattern: "*.tx2gene.tsv"
+         ontologies:
+-          - edam: http://edamontology.org/format_3750 # YAML
++        - edam: http://edamontology.org/format_3475     # TSV
++  versions_python:
++  - - ${task.process}:
++        type: string
++        description: The name of the process
++    - python:
++        type: string
++        description: The name of the tool
++    - python --version | cut -d " " -f 2:
++        type: eval
++        description: Software version
+ topics:
+   versions:
+-    - versions.yml:
++  - - ${task.process}:
+         type: string
+-        description: The name of the process
++        description: Process name
++    - python:
++        type: string
++        description: Software name
++    - python --version | cut -d " " -f 2:
++        type: eval
++        description: Software version
+ authors:
+-  - "@pinin4fjords"
++- "@pinin4fjords"
+ maintainers:
+-  - "@pinin4fjords"
++- "@pinin4fjords"
++containers:
++  docker:
++    linux/amd64:
++      name: community.wave.seqera.io/library/python:3.14.7--92bcd7a06268d464
++      build_id: bd-92bcd7a06268d464_1
++      scan_id: sc-db7e9b8feb072a7d_1
++    linux/arm64:
++      name: community.wave.seqera.io/library/python:3.14.7--00971c9535835747
++      build_id: bd-00971c9535835747_1
++      scan_id: sc-e004701c763ffe42_1
++  singularity:
++    linux/arm64:
++      name: oras://community.wave.seqera.io/library/python:3.14.7--478f5d019aa2d7bf
++      build_id: bd-478f5d019aa2d7bf_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2b/2b13e6b2babbdaa79992cf41bcd809ac9efd862069ee60e9215aaac6e222f452/data
++    linux/amd64:
++      name: oras://community.wave.seqera.io/library/python:3.14.7--a82871ac261818f0
++      build_id: bd-a82871ac261818f0_1
++      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5c/5ce43c6bfb1120fe0a53ef6ca35b1a17597ef51ce071ae27cf5b68aa577c90b9/data
++  conda:
++    linux/amd64:
++      lock_file: modules/nf-core/custom/tx2gene/.conda-lock/linux_amd64-bd-92bcd7a06268d464_1.txt
++    linux/arm64:
++      lock_file: modules/nf-core/custom/tx2gene/.conda-lock/linux_arm64-bd-00971c9535835747_1.txt
+
+Changes in 'custom/tx2gene/environment.yml':
+--- modules/nf-core/custom/tx2gene/environment.yml
++++ modules/nf-core/custom/tx2gene/environment.yml
+@@ -4,4 +4,4 @@
+   - conda-forge
+   - bioconda
+ dependencies:
+-  - python=3.10.4
++  - conda-forge::python=3.14.7
+
+Changes in 'custom/tx2gene/main.nf':
+--- modules/nf-core/custom/tx2gene/main.nf
++++ modules/nf-core/custom/tx2gene/main.nf
+@@ -3,9 +3,9 @@
+     label 'process_single'
+ 
+     conda "${moduleDir}/environment.yml"
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://depot.galaxyproject.org/singularity/python:3.10.4' :
+-        'biocontainers/python:3.10.4' }"
++    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
++        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5c/5ce43c6bfb1120fe0a53ef6ca35b1a17597ef51ce071ae27cf5b68aa577c90b9/data'
++        : 'community.wave.seqera.io/library/python:3.14.7--92bcd7a06268d464'}"
+ 
+     input:
+     tuple val(meta), path(gtf)
+@@ -16,22 +16,17 @@
+ 
+     output:
+     tuple val(meta), path("*tx2gene.tsv"), emit: tx2gene
+-    path "versions.yml"                  , emit: versions, topic: versions
++    tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f 2'), emit: versions_python, topic: versions
+ 
+     when:
+     task.ext.when == null || task.ext.when
+ 
+     script:
+-    template 'tx2gene.py'
++    template 'tx2gene.sh'
+ 
+     stub:
+     def prefix = task.ext.prefix ?: meta.id
+     """
+     touch ${prefix}.tx2gene.tsv
+-
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        python: \$(python --version | sed 's/Python //g')
+-    END_VERSIONS
+     """
+ }
+
+'modules/nf-core/custom/tx2gene/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/custom/tx2gene/tests/main.nf.test' is unchanged
+'modules/nf-core/custom/tx2gene/.conda-lock/linux_amd64-bd-92bcd7a06268d464_1.txt' was created
+'modules/nf-core/custom/tx2gene/.conda-lock/linux_arm64-bd-00971c9535835747_1.txt' was created
+'modules/nf-core/custom/tx2gene/templates/tx2gene.sh' was created
+'modules/nf-core/custom/tx2gene/templates/tx2gene.py' was removed
+Changes in 'custom/tx2gene/.conda-lock/linux_amd64-bd-92bcd7a06268d464_1.txt':
+--- /dev/null
++++ modules/nf-core/custom/tx2gene/.conda-lock/linux_amd64-bd-92bcd7a06268d464_1.txt
+@@ -0,0 +1,322 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/conda-forge/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-64:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_10.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libexpat-2.8.5-hd2095e1_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libffi-3.7.0-h81df57d_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libmpdec-4.0.0-hb03c661_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libpython-3.14.7-hdc7f604_106_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.54.1-h0737f62_100.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.42.4-hcfc3c73_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.14.7-hcd007b5_106_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-9_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/readline-8.3-hd6e31c0_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h1df4ec4_4.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: 1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9
++md5: a9f577daf3de00bca7c3c76c0ecbd1de
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28948
++timestamp: 1770939786096
++- conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_10.conda
++sha256: 1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96
++md5: e675fabcf81499adc7edf58124fb1e01
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: bzip2-1.0.6
++license_family: BSD
++size: 257808
++timestamp: 1785906269155
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++sha256: d65aa0c8990f34e1e86e6b505c8a149fea6cfbfcccef087a77c0bcb0b4fbe159
++md5: f9f6a9cf041f31438b034dac016e6429
++depends:
++- __unix
++license: ISC
++size: 129191
++timestamp: 1792347285941
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda
++sha256: 901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28
++md5: 2362c70e7e79827c32db35547d9c179b
++depends:
++- __glibc >=2.17,<3.0.a0
++- zstd >=1.5.7,<1.6.0a0
++constrains:
++- binutils_impl_linux-64 2.46.1
++license: GPL-3.0-only
++license_family: GPL
++size: 742109
++timestamp: 1791565468810
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libexpat-2.8.5-hd2095e1_0.conda
++sha256: 6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0
++md5: 72cfd2b95b0540247220b42f58a148d7
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++constrains:
++- expat 2.8.5.*
++license: MIT
++license_family: MIT
++size: 77893
++timestamp: 1790346247149
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libffi-3.7.0-h81df57d_1.conda
++sha256: c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106
++md5: 6525a0b06aa4fd390795f0740636a9dd
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 68004
++timestamp: 1787753412298
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
++sha256: e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea
++md5: 735629b400b70eeab21a2ba8f5b1c2ce
++depends:
++- __glibc >=2.17,<3.0.a0
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 he0feb66_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 1058444
++timestamp: 1790303109576
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
++sha256: 92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758
++md5: d904c7ddd95e026254b4b80808ee9e12
++depends:
++- __glibc >=2.17,<3.0.a0
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 640566
++timestamp: 1790303046034
++- conda: https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_1.conda
++sha256: 9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab
++md5: 1390b7c5ac0b1d8e447bc5efa6d3c8c2
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++constrains:
++- xz 5.8.3.*
++license: 0BSD
++size: 112995
++timestamp: 1786348617826
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libmpdec-4.0.0-hb03c661_2.conda
++sha256: 46820b4a835e175940ae20bec00fdddaff804cda27a1408ab1b95e77a2196437
++md5: fcfed1dc5053eb1901b66e7b1fc32588
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: BSD-2-Clause
++license_family: BSD
++size: 92759
++timestamp: 1786650399772
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libpython-3.14.7-hdc7f604_106_cp314.conda
++build_number: 106
++sha256: 5f879892bd439c3d94f4a97b06c214b9a19c4b92f74d84f0305c6ca1b2b239b2
++md5: 28af2158bb8dbb62e55b0af3b44f9d4a
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++- libstdcxx >=15
++license: Python-2.0
++size: 10520530
++timestamp: 1788383918299
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.54.1-h0737f62_100.conda
++sha256: 107ba2f9134b45a6fdaf8d2485f432e3a643fdfaf711a325d0c9139b580b3523
++md5: 5fdfd335c3d653e41c1eea1353d827d0
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- icu <0.0a0
++license: blessing
++size: 980418
++timestamp: 1792175610911
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
++sha256: fa7018298629fc429971fffd6ecba3d27a7b02e4e890d6a93ea01ffebe8cb745
++md5: 9b6707e0caca917fa6ea9ee473f37a5d
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc 16.2.0 ha9f2e26_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6615436
++timestamp: 1790303132935
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.42.4-hcfc3c73_0.conda
++sha256: f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041
++md5: 54a948337e66706380ff24d6b5fde63f
++depends:
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++license: BSD-3-Clause
++license_family: BSD
++size: 34442
++timestamp: 1790121449161
++- conda: https://conda.anaconda.org/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
++sha256: eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736
++md5: 0de0122d9570a8ab637c6b73db268389
++depends:
++- __glibc >=2.17,<3.0.a0
++constrains:
++- zlib 1.3.2 *_3
++license: Zlib
++license_family: Other
++size: 63713
++timestamp: 1785362952714
++- conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
++sha256: 5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3
++md5: ee6c0cd80a60961a1f48aa3e0b91f986
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 911196
++timestamp: 1786355078102
++- conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
++sha256: 9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c
++md5: 5a51a2ea653f120240b1a9bf76e0aae9
++depends:
++- __glibc >=2.17,<3.0.a0
++- ca-certificates
++- libgcc >=15
++license: Apache-2.0
++license_family: Apache
++size: 3195299
++timestamp: 1791098052301
++- conda: https://conda.anaconda.org/conda-forge/linux-64/procps-ng-4.0.6-h18c060e_0.conda
++sha256: 4ce2e1ee31a6217998f78c31ce7dc0a3e0557d9238b51d49dd20c52d467a126d
++md5: f2c23a77b25efcad57d377b34bd84941
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 593603
++timestamp: 1769710381284
++- conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.14.7-hcd007b5_106_cp314.conda
++build_number: 106
++sha256: 4cd05407d6b07d00fd5b6cc78bd2f60ae5e21f777eb26ead82be2e3751c610a1
++md5: 56ee91e118243e46bfc0c41e4030d354
++depends:
++- __glibc >=2.17,<3.0.a0
++- bzip2 >=1.0.8,<2.0a0
++- ld_impl_linux-64 >=2.36.1
++- libexpat >=2.8.1,<3.0a0
++- libffi >=3.7.0,<3.8.0a0
++- libgcc >=15
++- liblzma >=5.8.3,<6.0a0
++- libmpdec >=4.0.0,<5.0a0
++- libpython 3.14.7 hdc7f604_106_cp314
++- libsqlite >=3.53.4,<4.0a0
++- libuuid >=2.42.3,<3.0a0
++- libzlib >=1.3.2,<2.0a0
++- ncurses >=6.6,<7.0a0
++- openssl >=3.5.8,<4.0a0
++- python_abi 3.14.* *_cp314
++- readline >=8.3,<9.0a0
++- tk >=8.6.13,<8.7.0a0
++- tzdata
++- zstd >=1.5.7,<1.6.0a0
++license: Python-2.0
++size: 26484459
++timestamp: 1788383955577
++python_site_packages_path: lib/python3.14/site-packages
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-9_cp314.conda
++build_number: 9
++sha256: e7f8e965bbfb98e08feb2365cacdad8bb218fa5b5a0a2752f747287f425f213c
++md5: 350d89b50d7de805abf2e63e29dee451
++constrains:
++- python 3.14.* *_cp314
++license: BSD-3-Clause
++license_family: BSD
++size: 6791
++timestamp: 1788302824440
++- conda: https://conda.anaconda.org/conda-forge/linux-64/readline-8.3-hd6e31c0_1.conda
++sha256: 01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d
++md5: 69c01c781e7c8190bbdaf79e3848c5ca
++depends:
++- __glibc >=2.17,<3.0.a0
++- libgcc >=15
++- ncurses >=6.6,<7.0a0
++license: GPL-3.0-only
++license_family: GPL
++size: 348899
++timestamp: 1787033801506
++- conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h1df4ec4_4.conda
++build_number: 104
++sha256: a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1
++md5: 676a2f9b1c4fcf57b70aa5c65f6c60d0
++depends:
++- libgcc >=15
++- __glibc >=2.17,<3.0.a0
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- xorg-libx11 >=1.8.13,<2.0a0
++license: TCL
++size: 3566806
++timestamp: 1787272857910
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++sha256: b928c30ddcb0e3f544c6eade8352737e6e610e263276b90232db6a578ef899d8
++md5: fcb489df604d100968b737f2cb6076c6
++license: LicenseRef-Public-Domain
++size: 118849
++timestamp: 1784250406640
++- conda: https://conda.anaconda.org/conda-forge/linux-64/which-2.25-h171cf75_0.conda
++sha256: 2bf9a40d86d29fd5c30d0febec99d06398143ddeece9ebb175cc5a6d20279943
++md5: f16d4aec5e8135e8e7bba02ef600149e
++depends:
++- __glibc >=2.17,<3.0.a0
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 38560
++timestamp: 1779439547766
++- conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
++sha256: 47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60
++md5: aa459086047c0e5e27023ab19f8cb86a
++depends:
++- __glibc >=2.17,<3.0.a0
++- libzlib >=1.3.2,<2.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 601301
++timestamp: 1786599621503
+
+Changes in 'custom/tx2gene/.conda-lock/linux_arm64-bd-00971c9535835747_1.txt':
+--- /dev/null
++++ modules/nf-core/custom/tx2gene/.conda-lock/linux_arm64-bd-00971c9535835747_1.txt
+@@ -0,0 +1,298 @@
++
++version: 6
++environments:
++default:
++channels:
++- url: https://conda.anaconda.org/conda-forge/
++- url: https://conda.anaconda.org/bioconda/
++- url: https://conda.anaconda.org/conda-forge/
++options:
++pypi-prerelease-mode: if-necessary-or-explicit
++packages:
++linux-aarch64:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/bzip2-1.0.8-h4777abc_10.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ld_impl_linux-aarch64-2.46.1-default_h1979696_103.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libexpat-2.8.5-h4154aff_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libffi-3.7.0-hdaad0be_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/liblzma-5.8.3-he30d5cf_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libmpdec-4.0.0-he30d5cf_2.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libpython-3.14.7-hc71fabe_106_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libsqlite-3.54.1-hd26f1b6_100.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libuuid-2.42.4-hd6fdeab_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libzlib-1.3.2-hdc9db2a_3.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/openssl-3.6.5-he6ad1d5_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/python-3.14.7-hbec3b18_106_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-9_cp314.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/readline-8.3-ha7194a6_1.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/tk-8.6.13-noxft_hf03c496_4.conda
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/zstd-1.5.7-h9d15635_7.conda
++packages:
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
++build_number: 20
++sha256: a2527b1d81792a0ccd2c05850960df119c2b6d8f5fdec97f2db7d25dc23b1068
++md5: 468fd3bb9e1f671d36c2cbc677e56f1d
++depends:
++- libgomp >=7.5.0
++constrains:
++- openmp_impl <0.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 28926
++timestamp: 1770939656741
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/bzip2-1.0.8-h4777abc_10.conda
++sha256: 24eacc8a20fd7c4616566178562bef7f9344eb4a8700cfc3180fa75a6ff9d39f
++md5: fd544ef1c672d645bf78e5819cbb8f91
++depends:
++- libgcc >=14
++license: bzip2-1.0.6
++license_family: BSD
++size: 194694
++timestamp: 1785906301397
++- conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.18-hbd8a1cb_0.conda
++sha256: d65aa0c8990f34e1e86e6b505c8a149fea6cfbfcccef087a77c0bcb0b4fbe159
++md5: f9f6a9cf041f31438b034dac016e6429
++depends:
++- __unix
++license: ISC
++size: 129191
++timestamp: 1792347285941
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ld_impl_linux-aarch64-2.46.1-default_h1979696_103.conda
++sha256: 516808982ad26ebdc4a9d8f71ee86ea55d0bc95382b7bca80620e0ac220971f3
++md5: ca781d8b499c39ddfe10e55a0347d6d9
++depends:
++- zstd >=1.5.7,<1.6.0a0
++constrains:
++- binutils_impl_linux-aarch64 2.46.1
++license: GPL-3.0-only
++license_family: GPL
++size: 905349
++timestamp: 1791565559147
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libexpat-2.8.5-h4154aff_0.conda
++sha256: d155b9ee74abac0865095a66ebb008be967937a6deea6e7666ba01ead4a155fc
++md5: e5a973222327d9183c25eddfc3a80828
++depends:
++- libgcc >=15
++constrains:
++- expat 2.8.5.*
++license: MIT
++license_family: MIT
++size: 79463
++timestamp: 1790346233159
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libffi-3.7.0-hdaad0be_1.conda
++sha256: b1879d78b622c5f4817fd6d77fe7ae3ab7b501542e3c2f4ac77198c54c62c189
++md5: f9e5b3e446b526b34a7e25ecec08efd9
++depends:
++- libgcc >=15
++license: MIT
++license_family: MIT
++size: 63137
++timestamp: 1787753382033
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgcc-16.2.0-h205dda4_7.conda
++sha256: eae7a3449d5a3b5351c5427137c076cc3fc826645c7bfc42dc10772b783826f1
++md5: 489d5c9dc62265b3f6a57f9a106f1caf
++depends:
++- _openmp_mutex >=4.5
++constrains:
++- libgcc-ng ==16.2.0=*_7
++- libgomp 16.2.0 h8acb6b2_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 627793
++timestamp: 1790302345214
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libgomp-16.2.0-h8acb6b2_7.conda
++sha256: 4406fd67c5beeb99b9372f9bf07aa3e40ca141e337eceebac3ff64aa72799494
++md5: 259ded79ac497cfbcf5434540e8b81b6
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 617342
++timestamp: 1790302273072
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/liblzma-5.8.3-he30d5cf_1.conda
++sha256: f760669fd1cea27f689f411c0d5488e26ce50e382c9b63e4ad348f959850124a
++md5: e0e6411a60d00186eec7c73f4118ab67
++depends:
++- libgcc >=14
++constrains:
++- xz 5.8.3.*
++license: 0BSD
++size: 125578
++timestamp: 1786348561649
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libmpdec-4.0.0-he30d5cf_2.conda
++sha256: 5d6621a2229777824386164b40c67ff804fe98dd4165354cf73ee73e282a2adf
++md5: eaaaec4776cd8a7b987c4b1782220141
++depends:
++- libgcc >=14
++license: BSD-2-Clause
++license_family: BSD
++size: 113885
++timestamp: 1786650485380
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libpython-3.14.7-hc71fabe_106_cp314.conda
++build_number: 106
++sha256: 59abbd9f7980242f80a0e111376f4b5d4e3defebe1aca5d0b36d2e04c9a5c85f
++md5: eeb3bec9c10509463d6d5d90ed98fd7c
++depends:
++- libgcc >=15
++- libstdcxx >=15
++license: Python-2.0
++size: 9683680
++timestamp: 1788383990335
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libsqlite-3.54.1-hd26f1b6_100.conda
++sha256: 1745e55f4c575bce5be22d3837b26d93bcf3b426dc9e3d1b230b09f036ba17b1
++md5: d725572a110129ff7ed1d4303b1abee7
++depends:
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- icu <0.0a0
++license: blessing
++size: 977739
++timestamp: 1792175590430
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libstdcxx-16.2.0-hef695bb_7.conda
++sha256: b241a3acfa9cdb1359112864a1241225533c92642de3000d52ae65ef5d3a9786
++md5: 6c823668e78160957d1b061ceec15c2c
++depends:
++- libgcc 16.2.0 h205dda4_7
++constrains:
++- libstdcxx-ng ==16.2.0=*_7
++license: GPL-3.0-only WITH GCC-exception-3.1
++license_family: GPL
++size: 6236630
++timestamp: 1790302364054
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libuuid-2.42.4-hd6fdeab_0.conda
++sha256: 4d94770cc7c47eb4a0d7b92f16d7a450506d1a82406d63c987d6208ab2fb8a16
++md5: 9d63e86dc027166aaaeb0c99a0a90fd7
++depends:
++- libgcc >=15
++license: BSD-3-Clause
++license_family: BSD
++size: 36296
++timestamp: 1790121454455
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/libzlib-1.3.2-hdc9db2a_3.conda
++sha256: 76efa6cc9d7e6f5ee3bbca0939f64054af2bdfb3c3632531f8e633cf6c2ea41e
++md5: bd534c2fbe56d8c2ea3b2d8f5e12bca8
++constrains:
++- zlib 1.3.2 *_3
++license: Zlib
++license_family: Other
++size: 70108
++timestamp: 1785276540870
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/ncurses-6.6-h2b6f883_1.conda
++sha256: d69a04914139627f0a6bfd19412d6c7f1e37edc896af84a6011e07e8bc1e69fa
++md5: c3b4349171ca987ff33a1de61f7b3f96
++depends:
++- libgcc >=14
++license: X11 AND BSD-3-Clause
++size: 955422
++timestamp: 1786355019431
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/openssl-3.6.5-he6ad1d5_0.conda
++sha256: 238136f1df197ecd89bafd728a34d0642176f3170423d13d8276746d675a9485
++md5: 92aec5ec417d2ce9ae109e6c5ad377ff
++depends:
++- ca-certificates
++- libgcc >=15
++license: Apache-2.0
++license_family: Apache
++size: 3716078
++timestamp: 1791097887829
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/procps-ng-4.0.6-h1779866_0.conda
++sha256: e9cbcbc94e151ada3d6dc365380aaaf591f65012c16d9a2abaea4b9b90adc402
++md5: ab7288cc39545556d1bc5e71ab2df9a9
++depends:
++- libgcc >=14
++- ncurses >=6.5,<7.0a0
++license: GPL-2.0-or-later AND LGPL-2.0-or-later
++license_family: GPL
++size: 636733
++timestamp: 1769712412683
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/python-3.14.7-hbec3b18_106_cp314.conda
++build_number: 106
++sha256: 39af053b358d0a6d53549c8cb7fa33b03da4f8a39e966e12a84d1235bdc7023f
++md5: 1005503abb4660c19b44701f92f9e023
++depends:
++- bzip2 >=1.0.8,<2.0a0
++- ld_impl_linux-aarch64 >=2.36.1
++- libexpat >=2.8.1,<3.0a0
++- libffi >=3.7.0,<3.8.0a0
++- libgcc >=15
++- liblzma >=5.8.3,<6.0a0
++- libmpdec >=4.0.0,<5.0a0
++- libpython 3.14.7 hc71fabe_106_cp314
++- libsqlite >=3.53.4,<4.0a0
++- libuuid >=2.42.3,<3.0a0
++- libzlib >=1.3.2,<2.0a0
++- ncurses >=6.6,<7.0a0
++- openssl >=3.5.8,<4.0a0
++- python_abi 3.14.* *_cp314
++- readline >=8.3,<9.0a0
++- tk >=8.6.13,<8.7.0a0
++- tzdata
++- zstd >=1.5.7,<1.6.0a0
++license: Python-2.0
++size: 25455002
++timestamp: 1788384022687
++python_site_packages_path: lib/python3.14/site-packages
++- conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-9_cp314.conda
++build_number: 9
++sha256: e7f8e965bbfb98e08feb2365cacdad8bb218fa5b5a0a2752f747287f425f213c
++md5: 350d89b50d7de805abf2e63e29dee451
++constrains:
++- python 3.14.* *_cp314
++license: BSD-3-Clause
++license_family: BSD
++size: 6791
++timestamp: 1788302824440
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/readline-8.3-ha7194a6_1.conda
++sha256: 80167dcf73a96b6d0c1bb2298d7b8b9bc21b27cc5bf56979f9c548b49a4d1722
++md5: 5b399a7afa10098f2a6b02263181426e
++depends:
++- libgcc >=15
++- ncurses >=6.6,<7.0a0
++license: GPL-3.0-only
++license_family: GPL
++size: 364344
++timestamp: 1787033761576
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/tk-8.6.13-noxft_hf03c496_4.conda
++build_number: 104
++sha256: a1aa0d0f0b3d539644ff992e6dd0facf950c79df58fc37590ce5be84ff5e3f22
++md5: ebaded4b4b74c2cc43a754ded4eed76f
++depends:
++- libgcc >=15
++- libzlib >=1.3.2,<2.0a0
++constrains:
++- xorg-libx11 >=1.8.13,<2.0a0
++license: TCL
++size: 3664220
++timestamp: 1787272859143
++- conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
++sha256: b928c30ddcb0e3f544c6eade8352737e6e610e263276b90232db6a578ef899d8
++md5: fcb489df604d100968b737f2cb6076c6
++license: LicenseRef-Public-Domain
++size: 118849
++timestamp: 1784250406640
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/which-2.25-hdc560ac_0.conda
++sha256: 720691eb59b86f11ceb21b236b9402d59c47d156183375d2b24c53a201dd874b
++md5: 6dc4b55fc391a3d51ff12a6fed979562
++depends:
++- libstdcxx >=14
++- libgcc >=14
++license: GPL-3.0-only
++license_family: GPL
++size: 40249
++timestamp: 1779439555623
++- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/zstd-1.5.7-h9d15635_7.conda
++sha256: 427fd14bcb3b8659796fecc682716617409350fb5a98e5b7b47558a10d1a2fc7
++md5: d942e34ac3920ba83f8b2d0169570187
++depends:
++- libzlib >=1.3.2,<2.0a0
++license: BSD-3-Clause
++license_family: BSD
++size: 615477
++timestamp: 1786599613561
+
+Changes in 'custom/tx2gene/templates/tx2gene.sh':
+--- /dev/null
++++ modules/nf-core/custom/tx2gene/templates/tx2gene.sh
+@@ -0,0 +1,192 @@
++#!/usr/bin/env bash
++set -euo pipefail
++python3 - <<'PYTHON'
++
++# Written by Lorena Pantano with subsequent reworking by Jonathan Manning. Released under the MIT license.
++
++import glob
++import logging
++import os
++import re
++from collections import Counter, OrderedDict
++from collections.abc import Set
++from typing import Dict
++
++# Configure logging
++logging.basicConfig(format="%(name)s - %(asctime)s %(levelname)s: %(message)s")
++logger = logging.getLogger(__name__)
++logger.setLevel(logging.INFO)
++
++
++def read_top_transcripts(quant_dir: str, file_pattern: str) -> Set[str]:
++    """
++    Read the top 100 transcripts from the quantification file.
++
++    Parameters:
++    quant_dir (str): Directory where quantification files are located.
++    file_pattern (str): Pattern to match quantification files.
++
++    Returns:
++    set: A set containing the top 100 transcripts.
++    """
++    try:
++        # Find the quantification file within the directory
++        # Try subdirectory layout first (Salmon/Kallisto), then flat layout (RSEM)
++        matches = glob.glob(os.path.join(quant_dir, "*", file_pattern))
++        if not matches:
++            matches = glob.glob(os.path.join(quant_dir, file_pattern))
++        quant_file_path = matches[0]
++        with open(quant_file_path) as file_handle:
++            # Read the file and extract the top 100 transcripts
++            return {line.split()[0] for i, line in enumerate(file_handle) if i > 0 and i <= 100}
++    except IndexError:
++        # Log an error and raise a FileNotFoundError if the quant file does not exist
++        logger.error("No quantification files found.")
++        raise FileNotFoundError("Quantification file not found.")
++
++
++def discover_transcript_attribute(gtf_file: str, transcripts: Set[str]) -> str:
++    """
++    Discover the attribute in the GTF that corresponds to transcripts, prioritizing 'transcript_id'.
++
++    Parameters:
++    gtf_file (str): Path to the GTF file.
++    transcripts (Set[str]): A set of transcripts to match in the GTF file.
++
++    Returns:
++    str: The attribute name that corresponds to transcripts in the GTF file.
++    """
++
++    votes = Counter()
++    with open(gtf_file) as inh:
++        # Read GTF file, skipping header lines
++        for line in filter(lambda x: not x.startswith("#"), inh):
++            cols = line.split("\\t")
++
++            # Use regular expression to correctly split the attributes string
++            attributes_str = cols[8]
++            attributes = dict(re.findall(r'(\\S+) "(.*?)(?<!\\\\)";', attributes_str))
++
++            votes.update(key for key, value in attributes.items() if value in transcripts)
++
++    if not votes:
++        # Error out if no matching attribute is found
++        logger.error("No attribute in GTF matching transcripts")
++
++    # Check if 'transcript_id' is among the attributes with the highest votes
++    if "transcript_id" in votes and votes["transcript_id"] == max(votes.values()):
++        logger.info("Attribute 'transcript_id' corresponds to transcripts.")
++        return "transcript_id"
++
++    # If 'transcript_id' isn't the highest, determine the most common attribute that matches the transcripts
++    attribute, _ = votes.most_common(1)[0]
++    logger.info(f"Attribute '{attribute}' corresponds to transcripts.")
++    return attribute
++
++
++def parse_attributes(attributes_text: str) -> Dict[str, str]:
++    """
++    Parse the attributes column of a GTF file.
++
++    :param attributes_text: The attributes column as a string.
++    :return: A dictionary of the attributes.
++    """
++    # Split the attributes string by semicolon and strip whitespace
++    attributes = attributes_text.strip().split(";")
++    attr_dict = OrderedDict()
++
++    # Iterate over each attribute pair
++    for attribute in attributes:
++        # Split the attribute into key and value, ensuring there are two parts
++        parts = attribute.strip().split(" ", 1)
++        if len(parts) == 2:
++            key, value = parts
++            # Remove any double quotes from the value
++            value = value.replace('"', "")
++            attr_dict[key] = value
++
++    return attr_dict
++
++
++def map_transcripts_to_gene(
++    quant_type: str,
++    gtf_file: str,
++    quant_dir: str,
++    gene_id: str,
++    extra_id_fields: str,
++    output_file: str,
++) -> bool:
++    """
++    Map transcripts to gene names and write the output to a file.
++
++    Parameters:
++    quant_type (str): The quantification method used (e.g., 'salmon').
++    gtf_file (str): Path to the GTF file.
++    quant_dir (str): Directory where quantification files are located.
++    gene_id (str): The gene ID attribute in the GTF file.
++    extra_id_fields (str): Additional ID field(s) in the GTF file, comma-separated for multiple.
++    output_file (str): The output file path.
++
++    Returns:
++    bool: True if the operation was successful, False otherwise.
++    """
++    # Read the top transcripts based on quantification type
++    if quant_type == "salmon":
++        pattern = "quant.sf"
++    elif quant_type == "kallisto":
++        pattern = "abundance.tsv"
++    elif quant_type == "rsem":
++        pattern = "*.isoforms.results"
++    else:
++        raise ValueError(f"Unknown quantification type: {quant_type}")
++    transcripts = read_top_transcripts(quant_dir, pattern)
++    # Discover the attribute that corresponds to transcripts in the GTF
++    transcript_attribute = discover_transcript_attribute(gtf_file, transcripts)
++
++    # Parse comma-separated extra ID fields
++    extra_fields = [field.strip() for field in extra_id_fields.split(",")]
++
++    # Open GTF and output file to write the mappings
++    # Initialize the set to track seen combinations
++    seen = set()
++
++    with open(gtf_file) as inh, open(output_file, "w") as output_handle:
++        # Write header with all extra fields as separate columns
++        header_fields = [transcript_attribute, gene_id] + extra_fields
++        output_handle.write("\\t".join(header_fields) + "\\n")
++        # Parse each line of the GTF, mapping transcripts to genes
++        for line in filter(lambda x: not x.startswith("#"), inh):
++            cols = line.split("\\t")
++            attr_dict = parse_attributes(cols[8])
++            if gene_id in attr_dict and transcript_attribute in attr_dict:
++                # Create a unique identifier for the transcript-gene combination
++                transcript_gene_pair = (
++                    attr_dict[transcript_attribute],
++                    attr_dict[gene_id],
++                )
++
++                # Check if the combination has already been seen
++                if transcript_gene_pair not in seen:
++                    # If it's a new combination, write it to the output and add to the seen set
++                    # Extract values for all extra fields, falling back to gene_id if not present
++                    extra_values = [attr_dict.get(field, attr_dict[gene_id]) for field in extra_fields]
++                    output_fields = [attr_dict[transcript_attribute], attr_dict[gene_id]] + extra_values
++                    output_handle.write("\\t".join(output_fields) + "\\n")
++                    seen.add(transcript_gene_pair)
++
++    return True
++
++
++# Main function to parse arguments and call the mapping function
++if __name__ == "__main__":
++    if "${task.ext.prefix}" != "null":
++        prefix = "${task.ext.prefix}."
++    elif "$meta.id" != "null":
++        prefix = "${meta.id}."
++    else:
++        prefix = ""
++
++    if not map_transcripts_to_gene("$quant_type", "$gtf", "quants", "$id", "$extra", f"{prefix}tx2gene.tsv"):
++        logger.error("Failed to map transcripts to genes.")
++
++PYTHON
+
+Changes in 'custom/tx2gene/templates/tx2gene.py':
+--- modules/nf-core/custom/tx2gene/templates/tx2gene.py
++++ /dev/null
+@@ -1,215 +0,0 @@
+-#!/usr/bin/env python3
+-
+-# Written by Lorena Pantano with subsequent reworking by Jonathan Manning. Released under the MIT license.
+-
+-import glob
+-import logging
+-import os
+-import platform
+-import re
+-from collections import Counter, OrderedDict
+-from collections.abc import Set
+-from typing import Dict
+-
+-# Configure logging
+-logging.basicConfig(format="%(name)s - %(asctime)s %(levelname)s: %(message)s")
+-logger = logging.getLogger(__name__)
+-logger.setLevel(logging.INFO)
+-
+-
+-def format_yaml_like(data: dict, indent: int = 0) -> str:
+-    """Formats a dictionary to a YAML-like string.
+-
+-    Args:
+-        data (dict): The dictionary to format.
+-        indent (int): The current indentation level.
+-
+-    Returns:
+-        str: A string formatted as YAML.
+-    """
+-    yaml_str = ""
+-    for key, value in data.items():
+-        spaces = "  " * indent
+-        if isinstance(value, dict):
+-            yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
+-        else:
+-            yaml_str += f"{spaces}{key}: {value}\\n"
+-    return yaml_str
+-
+-
+-def read_top_transcripts(quant_dir: str, file_pattern: str) -> Set[str]:
+-    """
+-    Read the top 100 transcripts from the quantification file.
+-
+-    Parameters:
+-    quant_dir (str): Directory where quantification files are located.
+-    file_pattern (str): Pattern to match quantification files.
+-
+-    Returns:
+-    set: A set containing the top 100 transcripts.
+-    """
+-    try:
+-        # Find the quantification file within the directory
+-        # Try subdirectory layout first (Salmon/Kallisto), then flat layout (RSEM)
+-        matches = glob.glob(os.path.join(quant_dir, "*", file_pattern))
+-        if not matches:
+-            matches = glob.glob(os.path.join(quant_dir, file_pattern))
+-        quant_file_path = matches[0]
+-        with open(quant_file_path) as file_handle:
+-            # Read the file and extract the top 100 transcripts
+-            return {line.split()[0] for i, line in enumerate(file_handle) if i > 0 and i <= 100}
+-    except IndexError:
+-        # Log an error and raise a FileNotFoundError if the quant file does not exist
+-        logger.error("No quantification files found.")
+-        raise FileNotFoundError("Quantification file not found.")
+-
+-
+-def discover_transcript_attribute(gtf_file: str, transcripts: Set[str]) -> str:
+-    """
+-    Discover the attribute in the GTF that corresponds to transcripts, prioritizing 'transcript_id'.
+-
+-    Parameters:
+-    gtf_file (str): Path to the GTF file.
+-    transcripts (Set[str]): A set of transcripts to match in the GTF file.
+-
+-    Returns:
+-    str: The attribute name that corresponds to transcripts in the GTF file.
+-    """
+-
+-    votes = Counter()
+-    with open(gtf_file) as inh:
+-        # Read GTF file, skipping header lines
+-        for line in filter(lambda x: not x.startswith("#"), inh):
+-            cols = line.split("\\t")
+-
+-            # Use regular expression to correctly split the attributes string
+-            attributes_str = cols[8]
+-            attributes = dict(re.findall(r'(\\S+) "(.*?)(?<!\\\\)";', attributes_str))
+-
+-            votes.update(key for key, value in attributes.items() if value in transcripts)
+-
+-    if not votes:
+-        # Error out if no matching attribute is found
+-        logger.error("No attribute in GTF matching transcripts")
+-
+-    # Check if 'transcript_id' is among the attributes with the highest votes
+-    if "transcript_id" in votes and votes["transcript_id"] == max(votes.values()):
+-        logger.info("Attribute 'transcript_id' corresponds to transcripts.")
+-        return "transcript_id"
+-
+-    # If 'transcript_id' isn't the highest, determine the most common attribute that matches the transcripts
+-    attribute, _ = votes.most_common(1)[0]
+-    logger.info(f"Attribute '{attribute}' corresponds to transcripts.")
+-    return attribute
+-
+-
+-def parse_attributes(attributes_text: str) -> Dict[str, str]:
+-    """
+-    Parse the attributes column of a GTF file.
+-
+-    :param attributes_text: The attributes column as a string.
+-    :return: A dictionary of the attributes.
+-    """
+-    # Split the attributes string by semicolon and strip whitespace
+-    attributes = attributes_text.strip().split(";")
+-    attr_dict = OrderedDict()
+-
+-    # Iterate over each attribute pair
+-    for attribute in attributes:
+-        # Split the attribute into key and value, ensuring there are two parts
+-        parts = attribute.strip().split(" ", 1)
+-        if len(parts) == 2:
+-            key, value = parts
+-            # Remove any double quotes from the value
+-            value = value.replace('"', "")
+-            attr_dict[key] = value
+-
+-    return attr_dict
+-
+-
+-def map_transcripts_to_gene(
+-    quant_type: str,
+-    gtf_file: str,
+-    quant_dir: str,
+-    gene_id: str,
+-    extra_id_fields: str,
+-    output_file: str,
+-) -> bool:
+-    """
+-    Map transcripts to gene names and write the output to a file.
+-
+-    Parameters:
+-    quant_type (str): The quantification method used (e.g., 'salmon').
+-    gtf_file (str): Path to the GTF file.
+-    quant_dir (str): Directory where quantification files are located.
+-    gene_id (str): The gene ID attribute in the GTF file.
+-    extra_id_fields (str): Additional ID field(s) in the GTF file, comma-separated for multiple.
+-    output_file (str): The output file path.
+-
+-    Returns:
+-    bool: True if the operation was successful, False otherwise.
+-    """
+-    # Read the top transcripts based on quantification type
+-    if quant_type == "salmon":
+-        pattern = "quant.sf"
+-    elif quant_type == "kallisto":
+-        pattern = "abundance.tsv"
+-    elif quant_type == "rsem":
+-        pattern = "*.isoforms.results"
+-    else:
+-        raise ValueError(f"Unknown quantification type: {quant_type}")
+-    transcripts = read_top_transcripts(quant_dir, pattern)
+-    # Discover the attribute that corresponds to transcripts in the GTF
+-    transcript_attribute = discover_transcript_attribute(gtf_file, transcripts)
+-
+-    # Parse comma-separated extra ID fields
+-    extra_fields = [field.strip() for field in extra_id_fields.split(",")]
+-
+-    # Open GTF and output file to write the mappings
+-    # Initialize the set to track seen combinations
+-    seen = set()
+-
+-    with open(gtf_file) as inh, open(output_file, "w") as output_handle:
+-        # Write header with all extra fields as separate columns
+-        header_fields = [transcript_attribute, gene_id] + extra_fields
+-        output_handle.write("\\t".join(header_fields) + "\\n")
+-        # Parse each line of the GTF, mapping transcripts to genes
+-        for line in filter(lambda x: not x.startswith("#"), inh):
+-            cols = line.split("\\t")
+-            attr_dict = parse_attributes(cols[8])
+-            if gene_id in attr_dict and transcript_attribute in attr_dict:
+-                # Create a unique identifier for the transcript-gene combination
+-                transcript_gene_pair = (
+-                    attr_dict[transcript_attribute],
+-                    attr_dict[gene_id],
+-                )
+-
+-                # Check if the combination has already been seen
+-                if transcript_gene_pair not in seen:
+-                    # If it's a new combination, write it to the output and add to the seen set
+-                    # Extract values for all extra fields, falling back to gene_id if not present
+-                    extra_values = [attr_dict.get(field, attr_dict[gene_id]) for field in extra_fields]
+-                    output_fields = [attr_dict[transcript_attribute], attr_dict[gene_id]] + extra_values
+-                    output_handle.write("\\t".join(output_fields) + "\\n")
+-                    seen.add(transcript_gene_pair)
+-
+-    return True
+-
+-
+-# Main function to parse arguments and call the mapping function
+-if __name__ == "__main__":
+-    if "${task.ext.prefix}" != "null":
+-        prefix = "${task.ext.prefix}."
+-    elif "$meta.id" != "null":
+-        prefix = "${meta.id}."
+-    else:
+-        prefix = ""
+-
+-    if not map_transcripts_to_gene("$quant_type", "$gtf", "quants", "$id", "$extra", f"{prefix}tx2gene.tsv"):
+-        logger.error("Failed to map transcripts to genes.")
+-
+-    # Write the versions
+-    versions_this_module = {}
+-    versions_this_module["${task.process}"] = {"python": platform.python_version()}
+-    with open("versions.yml", "w") as f:
+-        f.write(format_yaml_like(versions_this_module))
+
+************************************************************

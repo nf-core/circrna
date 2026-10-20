@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::altair=5.5.0
-  - conda-forge::polars=1.31.0
-  - conda-forge::pyyaml=6.0.2
-  - conda-forge::vl-convert-python=1.7.0
+  - conda-forge::python=3.14.7
+  - conda-forge::altair=6.3.0
+  - conda-forge::polars=2.0.0
+  - conda-forge::vl-convert-python=1.9.0.post1

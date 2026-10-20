@@ -2,10 +2,10 @@ process CIRI_CIRIAS {
     tag "${meta.id}"
     label 'process_high'
 
-    conda "environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'oras://community.wave.seqera.io/library/ciri-full:2.1.2--c949e1e8f8689713'
-        : 'community.wave.seqera.io/library/ciri-full:2.1.2--a656fc79dda2140f'}"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f9/f945f0dd8c450d3c034f23db6680a7c44e1447f790ed1cf58727cc9f1ed02e72/data'
+        : 'community.wave.seqera.io/library/ciri-full:2.1.2--eca1ab13065c3c7d'}"
 
     input:
     tuple val(meta), path(ciri2), path(sam)
@@ -15,33 +15,23 @@ process CIRI_CIRIAS {
     output:
     tuple val(meta), path("${prefix}_jav.list"), emit: list
     tuple val(meta), path("${prefix}_library_length.list"), emit: library_length
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('ciri-as'), val('1.2'), emit: versions_ciri_as, topic: versions
 
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.0.0"
     """
     CIRI-AS -S ${sam} -C ${ciri2} -F ${fasta} -A ${gtf} -O ${prefix} -D yes ${args}
 
     # The library length file stays even if it is empty: CIRI-vis needs it via -l to write the circRNA sequences
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri-as: ${VERSION}
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    VERSION = "1.0.0"
     """
     touch ${prefix}_jav.list
     touch ${prefix}_library_length.list
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        ciri-as: ${VERSION}
-    END_VERSIONS
     """
 }

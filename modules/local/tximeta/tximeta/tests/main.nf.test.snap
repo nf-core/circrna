@@ -19,8 +19,16 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                    [
+                        "TXIMETA_TXIMETA",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ],
+                    [
+                        "TXIMETA_TXIMETA",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ],
                 "se": [
                     [
@@ -38,17 +46,25 @@
                         "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59",
-                    "versions.yml:md5,4b2e4c8e25aa40f9b448a8dc65806b59"
+                "versions_bioconductor_tximeta": [
+                    [
+                        "TXIMETA_TXIMETA",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ],
+                    [
+                        "TXIMETA_TXIMETA",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T11:00:26.403934689",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:19:53.761307954"
+        }
     },
     "psirc-quant directories": {
         "content": [
@@ -62,16 +78,23 @@
                     "fust1_1.rds"
                 ]
             ],
-            {
-                "TXIMETA_TXIMETA": {
-                    "bioconductor-tximeta": "1.20.1"
-                }
-            }
+            [
+                [
+                    "TXIMETA_TXIMETA",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ],
+                [
+                    "TXIMETA_TXIMETA",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
+            ]
         ],
+        "timestamp": "2026-10-19T11:00:10.672813369",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:19:06.787316837"
+        }
     }
 }

@@ -11,7 +11,18 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,5655da5e52a985dc5ce817ba6d0ad43e"
+                    [
+                        "COMPUTE_CORRELATIONS",
+                        "r-base",
+                        "4.5.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "COMPUTE_CORRELATIONS",
+                        "bioconductor-fishpond",
+                        "2.16.0"
+                    ]
                 ],
                 "correlations": [
                     [
@@ -21,15 +32,26 @@
                         "batch_1.circrna_correlation.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,5655da5e52a985dc5ce817ba6d0ad43e"
+                "versions_bioconductor_fishpond": [
+                    [
+                        "COMPUTE_CORRELATIONS",
+                        "bioconductor-fishpond",
+                        "2.16.0"
+                    ]
+                ],
+                "versions_r_base": [
+                    [
+                        "COMPUTE_CORRELATIONS",
+                        "r-base",
+                        "4.5.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:56:54.266656514",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:20:38.644514247"
+        }
     }
 }

@@ -22,7 +22,6 @@ workflow MIRNA_PREDICTION {
     mirna_min_sample_percentage
 
     main:
-    ch_versions = channel.empty()
 
     //
     // MIRNA NORMALIZATION WORKFLOW:
@@ -32,14 +31,12 @@ workflow MIRNA_PREDICTION {
 
         ch_mirna_normalized = DESEQ2_NORMALIZATION( channel.value(mirna_expression) ).normalized
 
-        ch_versions = ch_versions.mix(DESEQ2_NORMALIZATION.out.versions)
 
         ch_mirna_filtered = MIRNA_FILTERING(ch_mirna_normalized,
                                             mirna_min_sample_percentage,
                                             mirna_min_reads
                                             ).filtered
 
-        ch_versions = ch_versions.mix(MIRNA_FILTERING.out.versions)
 
         //
         // MIRNA BINDING SITES:
@@ -62,7 +59,6 @@ workflow MIRNA_PREDICTION {
     }
 
     MIRNA_BINDINGSITES( transcriptome_fasta, circrna_annotation, ch_mature, mirna_tools, mirna_min_tools )
-    ch_versions = ch_versions.mix(MIRNA_BINDINGSITES.out.versions)
 
     if (mirna_expression) {
         //
@@ -80,9 +76,6 @@ workflow MIRNA_PREDICTION {
             .flatten().collect()
             .map{results -> [[id: 'correlation'], results]}
 
-        ch_versions = ch_versions.mix(COMPUTE_CORRELATIONS.out.versions)
     }
 
-    emit:
-    versions = ch_versions
 }

@@ -70,6 +70,20 @@ This part of the pipeline is responsible for the detection of back-splice juncti
 
 The tools to be used can be specified using the `tools` parameter.
 `circMiner` and `psirc` require paired-end reads for BSJ detection.
+
+The Bioconda psirc package includes the `kallisto_b` fork used for detection and reconstruction. That fork permits educational and research not-for-profit use; commercial use requires a separate license. See the [Bioconda recipe](https://github.com/bioconda/bioconda-recipes/tree/master/recipes/psirc) for the bundled software licenses.
+
+### Tool-specific architecture restrictions
+
+The following packaged environments currently remain AMD64-only:
+
+| Tool               | ARM64 restriction                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| find_circ          | Its packaged release requires Python 2.7, which is unavailable for native ARM64.                |
+| circtools nanopore | The packaged StringTie and SAMtools dependencies require incompatible HTSlib versions on ARM64. |
+| CIRIquant          | The retained fork's StringTie/SAMtools runtime has the same ARM64 HTSlib conflict.              |
+
+The corresponding module READMEs record the compatibility constraints and available build reports. The packaged psirc and CIRI3 modules have generated images for both architectures and dedicated native-architecture CI tests.
 Each tool reports supporting-read counts for each BSJ. You can specify a cutoff for the minimum number of reads supporting a BSJ using the `bsj_reads` parameter. psiRC strands are assigned from its supporting transcript headers where they agree; otherwise canonical genome splice motifs are used when available. Calls that remain ambiguous retain `.`.
 Additionally, the parameter `min_tools` can be used to specify how many tools a BSJ has to be detected by to be considered as a valid hit.
 

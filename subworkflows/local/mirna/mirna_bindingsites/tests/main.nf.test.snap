@@ -9,25 +9,13 @@
                     "mirna.targets.tsv",
                     "9292a7dd6d3bad3834fa9f2fb3ce08a5"
                 ]
-            ],
-            [
-                "{MIRNA_BINDINGSITES:MAJORITY_VOTE={polars=1.5.0, python=3.12.5}}",
-                "{MIRNA_BINDINGSITES:MIRANDA={miranda=3.3a}}",
-                "{MIRNA_BINDINGSITES:MIRANDA={miranda=3.3a}}",
-                "{MIRNA_BINDINGSITES:MIRANDA={miranda=3.3a}}",
-                "{MIRNA_BINDINGSITES:MIRNA_TARGETS={awk=null, bedtools=2.30.0}}",
-                "{MIRNA_BINDINGSITES:MIRNA_TARGETS={awk=null, bedtools=2.30.0}}",
-                "{MIRNA_BINDINGSITES:MIRNA_TARGETS={awk=null, bedtools=2.30.0}}",
-                "{MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}",
-                "{MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}",
-                "{MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T18:04:05.089697021"
+        "timestamp": "2026-10-18T23:35:18.210917693"
     },
     "targetscan only": {
         "content": [
@@ -39,17 +27,13 @@
                     "mirna.targets.tsv",
                     "729ef9c831fa78f31806c2fdbf7d338e"
                 ]
-            ],
-            [
-                "{MIRNA_BINDINGSITES:MAJORITY_VOTE={polars=1.5.0, python=3.12.5}}",
-                "{MIRNA_BINDINGSITES:TARGETSCAN={awk=null, targetscan=7.0}}"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:29:30.626698768"
+        "timestamp": "2026-10-18T23:36:54.415695688"
     },
     "miranda only - stub": {
         "content": [
@@ -62,10 +46,6 @@
                         "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "1": [
-                    "versions.yml:md5,b6da40cdc002335423ca14e77546ae18",
-                    "versions.yml:md5,f79e3115ec9537df4833f7f430b3db4c"
-                ],
                 "binding_sites": [
                     [
                         {
@@ -73,10 +53,6 @@
                         },
                         "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
-                ],
-                "versions": [
-                    "versions.yml:md5,b6da40cdc002335423ca14e77546ae18",
-                    "versions.yml:md5,f79e3115ec9537df4833f7f430b3db4c"
                 ]
             }
         ],
@@ -84,7 +60,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:27:05.312803451"
+        "timestamp": "2026-10-18T23:38:45.978713828"
     },
     "miranda only": {
         "content": [
@@ -96,17 +72,13 @@
                     "mirna.targets.tsv",
                     "091877f96039c2f1ee7d49daa1165bf7"
                 ]
-            ],
-            [
-                "{MIRNA_BINDINGSITES:MAJORITY_VOTE={polars=1.5.0, python=3.12.5}}",
-                "{MIRNA_BINDINGSITES:MIRANDA={miranda=3.3a}}"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:29:04.27081011"
+        "timestamp": "2026-10-18T23:36:01.016891928"
     },
     "targetscan and miranda - stub": {
         "content": [
@@ -119,12 +91,6 @@
                         "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "1": [
-                    "versions.yml:md5,1373db56e2a18a99fa817d71ba426e03",
-                    "versions.yml:md5,2938c6f6ff4a5653f2af08982ca7c7c5",
-                    "versions.yml:md5,b6da40cdc002335423ca14e77546ae18",
-                    "versions.yml:md5,f79e3115ec9537df4833f7f430b3db4c"
-                ],
                 "binding_sites": [
                     [
                         {
@@ -132,12 +98,6 @@
                         },
                         "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
-                ],
-                "versions": [
-                    "versions.yml:md5,1373db56e2a18a99fa817d71ba426e03",
-                    "versions.yml:md5,2938c6f6ff4a5653f2af08982ca7c7c5",
-                    "versions.yml:md5,b6da40cdc002335423ca14e77546ae18",
-                    "versions.yml:md5,f79e3115ec9537df4833f7f430b3db4c"
                 ]
             }
         ],
@@ -145,6 +105,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:26:40.012558855"
+        "timestamp": "2026-10-18T23:37:48.174337725"
     }
 }

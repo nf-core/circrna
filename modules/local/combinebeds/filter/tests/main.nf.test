@@ -36,13 +36,16 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert keys.size() == 196 },
+                { assert process.out.plots.collect { file(it).name } == ['cel_N2_1_tools.upset.png'] },
+                { assert process.out.multiqc.collect { file(it).name } == ['cel_N2_1_tools.upset_mqc.json'] },
+                { assert path(process.out.multiqc[0]).readLines().join('\n').contains('data:image/png;base64,') },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [meta, file(f).name] },
                     keys.size(),
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -76,13 +79,15 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert keys.size() == 197 },
+                { assert process.out.plots.collect { file(it).name } == ['fust1_1_tools.upset.png'] },
+                { assert process.out.multiqc.collect { file(it).name } == ['fust1_1_tools.upset_mqc.json'] },
                 { assert snapshot(
                     process.out.combined.collect { meta, f -> [meta, file(f).name] },
                     keys.size(),
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -120,7 +125,7 @@ nextflow_process {
                     keys,
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -158,7 +163,7 @@ nextflow_process {
                     keys,
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -197,7 +202,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -236,7 +241,7 @@ nextflow_process {
                     keys.join('\n').md5(),
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }
@@ -272,7 +277,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_upsetplot, process.out.versions_matplotlib]
                 ).match() }
             )
         }

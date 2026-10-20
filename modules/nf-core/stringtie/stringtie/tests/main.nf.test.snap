@@ -7,7 +7,7 @@
                         "id": "test",
                         "strandedness": "forward"
                     },
-                    "test.gene.abundance.txt:md5,7d8bce7f2a922e367cedccae7267c22e"
+                    "test.gene.abundance.txt:md5,511fbd65b617c7af4425bb5d8ea14eed"
                 ]
             ],
             [
@@ -31,7 +31,7 @@
                         "id": "test",
                         "strandedness": "forward"
                     },
-                    "test.transcripts.gtf:md5,37154e7bda96544f24506ee902bb561d"
+                    "# stringtie test.paired_end.sorted.bam --fr -G genome.gtf -o test.transcripts.gtf -A test.gene.abundance.txt -C test.coverage.gtf -b test.ballgown -p <cpus>\n# StringTie version 3.0.3\n"
                 ]
             ],
             {
@@ -39,16 +39,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:39:34.77560846",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:11.16528789"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - forward strandedness": {
         "content": [
@@ -67,7 +67,7 @@
                         "id": "test",
                         "strandedness": "forward"
                     },
-                    "test.transcripts.gtf:md5,6087dfc9700a52d9e4a1ae3fcd1d1dfd"
+                    "# stringtie test.paired_end.sorted.bam --fr -o test.transcripts.gtf -A test.gene.abundance.txt -p <cpus>\n# StringTie version 3.0.3\n"
                 ]
             ],
             {
@@ -75,16 +75,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:38:54.721751804",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:05.908980074"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - forward strandedness - stub": {
         "content": [
@@ -122,14 +122,20 @@
                             "id": "test",
                             "strandedness": "forward"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "4": [
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ],
                 "abundance": [
@@ -147,7 +153,13 @@
                             "id": "test",
                             "strandedness": "forward"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "coverage_gtf": [
@@ -172,16 +184,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T15:43:35.274013755",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:26.94909715"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - forward strandedness + reference annotation - stub": {
         "content": [
@@ -219,14 +231,20 @@
                             "id": "test",
                             "strandedness": "forward"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "4": [
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ],
                 "abundance": [
@@ -244,7 +262,13 @@
                             "id": "test",
                             "strandedness": "forward"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "coverage_gtf": [
@@ -269,16 +293,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T15:43:43.687074763",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:32.157264403"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - reverse strandedness + reference annotation - stub": {
         "content": [
@@ -316,14 +340,20 @@
                             "id": "test",
                             "strandedness": "reverse"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "4": [
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ],
                 "abundance": [
@@ -341,7 +371,13 @@
                             "id": "test",
                             "strandedness": "reverse"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "coverage_gtf": [
@@ -366,16 +402,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:34:39.043301284",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:42.741125528"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - reverse strandedness - stub": {
         "content": [
@@ -413,14 +449,20 @@
                             "id": "test",
                             "strandedness": "reverse"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "4": [
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ],
                 "abundance": [
@@ -438,7 +480,13 @@
                             "id": "test",
                             "strandedness": "reverse"
                         },
-                        "test.ballgown:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        [
+                            "e2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "e_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i2t.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "i_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "t_data.ctab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
                     ]
                 ],
                 "coverage_gtf": [
@@ -463,16 +511,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T15:43:53.386196161",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:37.444482002"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - reverse strandedness + reference annotation": {
         "content": [
@@ -482,7 +530,7 @@
                         "id": "test",
                         "strandedness": "reverse"
                     },
-                    "test.gene.abundance.txt:md5,7385b870b955dae2c2ab78a70cf05cce"
+                    "test.gene.abundance.txt:md5,3b7ef93b7b2c6505132627bd11fa0636"
                 ]
             ],
             [
@@ -506,7 +554,7 @@
                         "id": "test",
                         "strandedness": "reverse"
                     },
-                    "test.transcripts.gtf:md5,fbabb4e3888bbede67f11f692e484880"
+                    "# stringtie test.paired_end.sorted.bam --rf -G genome.gtf -o test.transcripts.gtf -A test.gene.abundance.txt -C test.coverage.gtf -b test.ballgown -p <cpus>\n# StringTie version 3.0.3\n"
                 ]
             ],
             {
@@ -514,16 +562,16 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:40:58.371391213",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:21.762442003"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 [bam] - reverse strandedness": {
         "content": [
@@ -542,7 +590,7 @@
                         "id": "test",
                         "strandedness": "reverse"
                     },
-                    "test.transcripts.gtf:md5,01d6da00a3c458420841e57427297183"
+                    "# stringtie test.paired_end.sorted.bam --rf -o test.transcripts.gtf -A test.gene.abundance.txt -p <cpus>\n# StringTie version 3.0.3\n"
                 ]
             ],
             {
@@ -550,15 +598,15 @@
                     [
                         "STRINGTIE_STRINGTIE",
                         "stringtie",
-                        "2.2.3"
+                        "3.0.3"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:40:16.741226196",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-02T16:30:16.466823767"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }

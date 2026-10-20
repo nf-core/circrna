@@ -16,7 +16,8 @@ process BOWTIE_ALIGN {
     tuple val(meta), path('*.bam')     , emit: bam
     tuple val(meta), path('*.out')     , emit: log
     tuple val(meta), path('*fastq.gz') , emit: fastq, optional : true
-    path  "versions.yml"               , emit: versions
+    tuple val("${task.process}"), val('bowtie'), eval("bowtie --version 2>&1 | sed 's/^.*bowtie-align-s version //; s/ .*\$//'"), topic: versions, emit: versions_bowtie
+    tuple val("${task.process}"), val('samtools'), eval("samtools --version 2>&1 | sed 's/^.*samtools //; s/Using.*\$//'"), topic: versions, emit: versions_samtools
 
     when:
     task.ext.when == null || task.ext.when
@@ -49,11 +50,6 @@ process BOWTIE_ALIGN {
         gzip ${prefix}.unmapped_2.fastq
     fi
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-    END_VERSIONS
     """
 
     stub:
@@ -67,11 +63,6 @@ process BOWTIE_ALIGN {
     touch ${prefix}.out
     $unaligned
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-    END_VERSIONS
     """
 
 

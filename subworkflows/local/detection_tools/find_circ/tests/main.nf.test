@@ -47,7 +47,6 @@ nextflow_workflow {
                     workflow.out.bed.collect { file(it[1]).name },
                     bed.size(),
                     bed.collect { line -> def cols = line.tokenize('\t'); cols.remove(3); cols.take(5).join('\t') }.sort(),
-                    workflow.out.versions.collect { path(it).yaml }.sort { it.toString() }
                 ).match() }
             )
         }

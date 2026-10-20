@@ -82,9 +82,6 @@
                         ]
                     ]
                 ],
-                "4": [
-                    "versions.yml:md5,9c76ddb695ce3bf1bf3c5f68ec0618d2"
-                ],
                 "bam": [
                     [
                         {
@@ -164,9 +161,6 @@
                             "fust1_1.tab:md5,d41d8cd98f00b204e9800998ecf8427e"
                         ]
                     ]
-                ],
-                "versions": [
-                    "versions.yml:md5,9c76ddb695ce3bf1bf3c5f68ec0618d2"
                 ]
             }
         ],
@@ -174,7 +168,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:13:05.659084239"
+        "timestamp": "2026-10-18T23:25:09.72135914"
     },
     "mini - circexplorer2 chimeric output": {
         "content": [
@@ -234,20 +228,13 @@
                     "fust1_1.Aligned.out.bam",
                     "7fb85ba96f9fe6fe4292235884e6ee16"
                 ]
-            ],
-            [
-                {
-                    "STAR2PASS:SJDB": {
-                        "mawk": "1.3.4"
-                    }
-                }
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T20:12:05.289239339"
+        "timestamp": "2026-10-18T23:24:02.547544993"
     },
     "mini - circrna_finder chimeric output": {
         "content": [

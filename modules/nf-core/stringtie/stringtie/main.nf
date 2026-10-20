@@ -3,9 +3,9 @@ process STRINGTIE_STRINGTIE {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/stringtie:2.2.3--h43eeafb_0' :
-        'biocontainers/stringtie:2.2.3--h43eeafb_0' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/56/56eda015168efa0a6b6c814ae70827d2a05906d8f6e21450d6ccad05b29c7437/data'
+        : 'community.wave.seqera.io/library/stringtie:3.0.3--f9bc4844393ae0fa'}"
 
     input:
     tuple val(meta), path(bam)
@@ -15,7 +15,7 @@ process STRINGTIE_STRINGTIE {
     tuple val(meta), path("*.transcripts.gtf"), emit: transcript_gtf
     tuple val(meta), path("*.abundance.txt")  , emit: abundance
     tuple val(meta), path("*.coverage.gtf")   , optional: true, emit: coverage_gtf
-    tuple val(meta), path("*.ballgown")       , optional: true, emit: ballgown
+    tuple val(meta), path("*.ballgown/*.ctab"), optional: true, emit: ballgown
     tuple val("${task.process}"), val('stringtie'), eval("stringtie --version"), emit: versions_stringtie, topic: versions
 
     when:
@@ -53,6 +53,7 @@ process STRINGTIE_STRINGTIE {
     touch ${prefix}.transcripts.gtf
     touch ${prefix}.gene.abundance.txt
     touch ${prefix}.coverage.gtf
-    touch ${prefix}.ballgown
+    mkdir -p ${prefix}.ballgown
+    touch ${prefix}.ballgown/e_data.ctab ${prefix}.ballgown/i_data.ctab ${prefix}.ballgown/t_data.ctab ${prefix}.ballgown/e2t.ctab ${prefix}.ballgown/i2t.ctab
     """
 }

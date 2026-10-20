@@ -26,7 +26,9 @@ nextflow_process {
                 { assert process.success },
                 { assert snapshot(
                     process.out.bed.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_python,
+                    process.out.versions_gtfparse,
+                    process.out.versions_polars
                 ).match() }
             )
         }

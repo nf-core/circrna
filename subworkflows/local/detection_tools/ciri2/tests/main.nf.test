@@ -31,12 +31,10 @@ nextflow_workflow {
                 { assert txt.size() > 1 },
                 { assert workflow.out.ciri2_sam.collect { file(it[1]).name } == ['cel_N2_1.ciri2.sam'] },
                 { assert workflow.out.ciri2_sam[0][0].target_length == 147 },
-                { assert workflow.out.versions.size() == 1 },
                 { assert snapshot(
                     bed.sort(),
                     txt.size(),
                     workflow.out.ciri2_sam.collect { meta, sam -> [meta, file(sam).name] },
-                    workflow.out.versions.collect { path(it).yaml }
                 ).match() }
             )
         }
@@ -63,7 +61,6 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.ciri2_sam.size() == 1 },
                 { assert workflow.out.ciri2_sam[0][0].target_length == 147 },
-                { assert workflow.out.versions.size() == 1 },
                 { assert snapshot(workflow.out).match() }
             )
         }

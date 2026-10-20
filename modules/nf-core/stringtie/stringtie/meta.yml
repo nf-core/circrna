@@ -1,103 +1,127 @@
 name: stringtie_stringtie
 description: Transcript assembly and quantification for RNA-Se
 keywords:
-  - transcript
-  - assembly
-  - quantification
-  - gtf
+- transcript
+- assembly
+- quantification
+- gtf
 tools:
-  - stringtie2:
-      description: |
-        Transcript assembly and quantification for RNA-Seq
-      homepage: https://ccb.jhu.edu/software/stringtie/index.shtml
-      documentation: https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual
-      licence: ["MIT"]
-      identifier: biotools:stringtie
+- stringtie2:
+    description: |
+      Transcript assembly and quantification for RNA-Seq
+    homepage: https://ccb.jhu.edu/software/stringtie/index.shtml
+    documentation: https://ccb.jhu.edu/software/stringtie/index.shtml?t=manual
+    licence: ["MIT"]
+    identifier: biotools:stringtie
 input:
+- - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bam:
+      type: file
+      description: |
+        Stringtie transcript gtf output(s).
+      ontologies: []
+- annotation_gtf:
+    type: file
+    description: |
+      Annotation gtf file (optional).
+    ontologies: []
+output:
+  transcript_gtf:
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. [ id:'test', single_end:false ]
-    - bam:
+    - "*.transcripts.gtf":
         type: file
-        description: |
-          Stringtie transcript gtf output(s).
+        description: transcript gtf
+        pattern: "*.{transcripts.gtf}"
         ontologies: []
-  - annotation_gtf:
-      type: file
-      description: |
-        Annotation gtf file (optional).
-      ontologies: []
-output:
-  transcript_gtf:
-    - - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test', single_end:false ]
-      - "*.transcripts.gtf":
-          type: file
-          description: transcript gtf
-          pattern: "*.{transcripts.gtf}"
-          ontologies: []
   abundance:
-    - - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test', single_end:false ]
-      - "*.abundance.txt":
-          type: file
-          description: abundance
-          pattern: "*.{abundance.txt}"
-          ontologies: []
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. [ id:'test', single_end:false ]
+    - "*.abundance.txt":
+        type: file
+        description: abundance
+        pattern: "*.{abundance.txt}"
+        ontologies: []
   coverage_gtf:
-    - - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test', single_end:false ]
-      - "*.coverage.gtf":
-          type: file
-          description: coverage gtf
-          pattern: "*.{coverage.gtf}"
-          ontologies: []
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. [ id:'test', single_end:false ]
+    - "*.coverage.gtf":
+        type: file
+        description: coverage gtf
+        pattern: "*.{coverage.gtf}"
+        ontologies: []
   ballgown:
-    - - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test', single_end:false ]
-      - "*.ballgown":
-          type: file
-          description: for running ballgown
-          pattern: "*.{ballgown}"
-          ontologies: []
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. [ id:'test', single_end:false ]
+    - "*.ballgown/*.ctab":
+        type: file
+        description: Ballgown expression and transcript mapping tables
+        pattern: "*.ballgown/*.ctab"
+        ontologies: []
   versions_stringtie:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - stringtie:
-          type: string
-          description: The name of the tool
-      - "stringtie --version":
-          type: eval
-          description: The expression to obtain the version of the tool
+  - - ${task.process}:
+        type: string
+        description: The name of the process
+    - stringtie:
+        type: string
+        description: The name of the tool
+    - "stringtie --version":
+        type: eval
+        description: The expression to obtain the version of the tool
 
 topics:
   versions:
-    - - ${task.process}:
-          type: string
-          description: The name of the process
-      - stringtie:
-          type: string
-          description: The name of the tool
-      - "stringtie --version":
-          type: eval
-          description: The expression to obtain the version of the tool
+  - - ${task.process}:
+        type: string
+        description: The name of the process
+    - stringtie:
+        type: string
+        description: The name of the tool
+    - "stringtie --version":
+        type: eval
+        description: The expression to obtain the version of the tool
 
 authors:
-  - "@drpatelh"
+- "@drpatelh"
 maintainers:
-  - "@drpatelh"
+- "@drpatelh"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/stringtie:3.0.3--ff28090391cc81cd
+      build_id: bd-ff28090391cc81cd_1
+      scan_id: sc-d65ce39873a3b362_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/stringtie:3.0.3--f9bc4844393ae0fa
+      build_id: bd-f9bc4844393ae0fa_1
+      scan_id: sc-65a18ee86327c67d_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/stringtie:3.0.3--7fa4d671a69c970d
+      build_id: bd-7fa4d671a69c970d_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/71/7190a03a8068be06142374673cd7245a79353d77a8dc5b02f6cfbd750e845344/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/stringtie:3.0.3--5f86b3c1c3b6d9b4
+      build_id: bd-5f86b3c1c3b6d9b4_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/56/56eda015168efa0a6b6c814ae70827d2a05906d8f6e21450d6ccad05b29c7437/data
+  conda:
+    linux/amd64:
+      lock_file: modules/nf-core/stringtie/stringtie/.conda-lock/linux_amd64-bd-f9bc4844393ae0fa_1.txt
+    linux/arm64:
+      lock_file: modules/nf-core/stringtie/stringtie/.conda-lock/linux_arm64-bd-ff28090391cc81cd_1.txt

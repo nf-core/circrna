@@ -40,13 +40,27 @@ output:
           description: Reformatted TXT file containing microRNA targets
           pattern: "*.{txt}"
           ontologies: []
+  versions_miranda:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - miranda:
+          type: string
+          description: The name of the tool
+      - "miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*$//'":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
   versions:
-    - versions.yml:
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
-        ontologies:
-          - edam: http://edamontology.org/format_3750 # YAML
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - miranda:
+          type: string
+          description: The name of the tool
+      - "miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*$//'":
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@BarryDigby"
 maintainers:

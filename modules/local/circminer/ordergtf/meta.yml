@@ -9,11 +9,8 @@ tools:
       description: Read and write GFF and GTF features
       homepage: https://github.com/daler/gffutils
       documentation: https://daler.github.io/gffutils/
-      licence: [MIT]
-  - pyyaml:
-      description: Serialize software versions as YAML
-      homepage: https://pyyaml.org/
-      licence: [MIT]
+      licence:
+        - MIT
 input:
   - - meta:
         type: map
@@ -31,36 +28,71 @@ output:
           type: file
           description: Gene, transcript and exon records with minus-strand exon groups reversed
           pattern: "*.gtf"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version 2>&1 | sed "s/Python //":
+          type: eval
+          description: Software version
+  versions_gffutils:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - gffutils:
+          type: string
+          description: Software name
+      - python -c "import gffutils; print(gffutils.__version__)":
+          type: eval
+          description: Software version
+topics:
   versions:
-    - versions.yml:
-        type: file
-        description: Python, gffutils and PyYAML versions
-        pattern: versions.yml
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version 2>&1 | sed "s/Python //":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - gffutils:
+          type: string
+          description: Software name
+      - python -c "import gffutils; print(gffutils.__version__)":
+          type: eval
+          description: Software version
 authors:
   - "@nictru"
 maintainers:
   - "@nictru"
 containers:
   docker:
-    linux/arm64:
-      name: community.wave.seqera.io/library/python_gffutils_pyyaml:ea10dadee98652fc
-      build_id: bd-ea10dadee98652fc_1
-      scan_id: sc-4b35e944e87c1306_1
     linux/amd64:
-      name: community.wave.seqera.io/library/python_gffutils_pyyaml:7521a2b68d4ddc13
-      build_id: bd-7521a2b68d4ddc13_1
-      scan_id: sc-982a14467031ac6c_1
+      name: community.wave.seqera.io/library/python_gffutils:65d4e6d2f4b119ea
+      build_id: bd-65d4e6d2f4b119ea_1
+      scan_id: sc-af09b2fbc294ce7f_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_gffutils:ffe8c62a2d5b6970
+      build_id: bd-ffe8c62a2d5b6970_1
+      scan_id: sc-9bc81cc16b177ecc_1
   singularity:
     linux/amd64:
-      name: oras://community.wave.seqera.io/library/python_gffutils_pyyaml:682a9db686252ca4
-      build_id: bd-682a9db686252ca4_1
-      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/49/49df43a275ec8361a3a4f810876e9a7e7034f9998084dccd8f77f299c18225cb/data
+      name: oras://community.wave.seqera.io/library/python_gffutils:df41f8c274d2a3f9
+      build_id: bd-df41f8c274d2a3f9_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/47/47c5d77ca8b261780a14c2f3ef37ff3662bdec43474e9675d791cfb8ce383d55/data
     linux/arm64:
-      name: oras://community.wave.seqera.io/library/python_gffutils_pyyaml:3ee40b6797fedebe
-      build_id: bd-3ee40b6797fedebe_1
-      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/9c/9cfaf28d8818083c4a28ff49d18e46c88283614bd420664de6d0d10085644684/data
+      name: oras://community.wave.seqera.io/library/python_gffutils:d3a5d03b2b671c14
+      build_id: bd-d3a5d03b2b671c14_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/10/1088f2894100790f9e4fc7db5ce8b3ffc6bbd9c0af0e8739827836283dafc815/data
   conda:
     linux/amd64:
-      lock_file: modules/local/circminer/ordergtf/.conda-lock/linux_amd64-bd-7521a2b68d4ddc13_1.txt
+      lock_file: modules/local/circminer/ordergtf/.conda-lock/linux_amd64-bd-65d4e6d2f4b119ea_1.txt
     linux/arm64:
-      lock_file: modules/local/circminer/ordergtf/.conda-lock/linux_arm64-bd-ea10dadee98652fc_1.txt
+      lock_file: modules/local/circminer/ordergtf/.conda-lock/linux_arm64-bd-ffe8c62a2d5b6970_1.txt

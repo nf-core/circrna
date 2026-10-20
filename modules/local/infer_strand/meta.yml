@@ -1,0 +1,85 @@
+name: infer_strand
+description: Infer transcript strand from genomic annotation and read alignment
+keywords:
+  - strand
+  - annotation
+  - pysam
+tools:
+  - pysam:
+      description: Python interface to htslib
+      homepage: https://github.com/pysam-developers/pysam
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - bed:
+        type: file
+        description: BED records
+  - - meta:
+        type: map
+        description: Reference metadata
+    - fasta:
+        type: file
+        description: Reference FASTA
+    - fai:
+        type: file
+        description: FASTA index
+output:
+  bed:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.bed":
+          type: file
+          description: Strand-annotated BED records
+  versions_pysam:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - pysam:
+          type: string
+          description: Software name
+      - python -c "import pysam; print(pysam.__version__)":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - pysam:
+          type: string
+          description: Software name
+      - python -c "import pysam; print(pysam.__version__)":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/infer_strand:84d996a7cde83840
+      build_id: bd-84d996a7cde83840_1
+      scan_id: sc-0654b0ae4039f7f1_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/infer_strand:ed4f2d09f133a7c5
+      build_id: bd-ed4f2d09f133a7c5_1
+      scan_id: sc-73920b2b4ffb7217_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/infer_strand:8271674c70f592d3
+      build_id: bd-8271674c70f592d3_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3d/3db3d5f46165cb9c7e463f5b96a74b08612e2343dcc531f69f85c98cac2d95a0/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/infer_strand:fd9c5f208dc8d23a
+      build_id: bd-fd9c5f208dc8d23a_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/31/314ff1a25ac9b0d5ae281fc8acdd43cde990653bc2264bb8aa8e00ea691793f3/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/infer_strand/.conda-lock/linux_amd64-bd-84d996a7cde83840_1.txt
+    linux/arm64:
+      lock_file: modules/local/infer_strand/.conda-lock/linux_arm64-bd-ed4f2d09f133a7c5_1.txt

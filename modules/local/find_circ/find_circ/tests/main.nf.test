@@ -83,7 +83,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_bowtie2,
+                    process.out.versions_find_circ,
                     process.out.bed.collect { file(it[1]).name },
                     process.out.reads.collect { file(it[1]).name },
                     process.out.log.collect { file(it[1]).name },
@@ -112,7 +113,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    path(process.out.versions[0]).yaml,
+                    process.out.versions_bowtie2,
+                    process.out.versions_find_circ,
                     process.out.bed.collect { file(it[1]).name },
                     bed.size(),
                     bed.collect { line -> def cols = line.tokenize('\t'); [cols[0], cols[1], cols[2], cols[4]].join('\t') }.sort().toString().md5(),

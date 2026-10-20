@@ -2,4 +2,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::openjdk=23.0.2
+  - conda-forge::openjdk=25.0.2

@@ -1,0 +1,67 @@
+name: find_circ_anchors
+description: Extract unmapped read anchors for find_circ
+keywords:
+  - find_circ
+  - anchors
+  - circular-rna
+tools:
+  - find_circ:
+      description: Circular RNA detection pipeline
+      homepage: https://github.com/marvin-jens/find_circ
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - bam:
+        type: file
+        description: Alignment BAM file
+        pattern: "*.bam"
+output:
+  anchors:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*_anchors.qfa.gz":
+          type: file
+          description: Compressed read anchors
+  versions_find_circ:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - find_circ:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - find_circ:
+          type: string
+          description: Software name
+      - "1.2":
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/find_circ_anchors:e16458c7823af09d
+      build_id: bd-e16458c7823af09d_1
+      scan_id: sc-58e4ce6b09b85b56_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/find_circ_anchors:4d66611dee7ce2be
+      build_id: bd-4d66611dee7ce2be_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0f/0f572ecb116eee7e428c2f34e11a9c98d00b922893b1e97617a4875743ab967e/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/find_circ/anchors/.conda-lock/linux_amd64-bd-e16458c7823af09d_1.txt

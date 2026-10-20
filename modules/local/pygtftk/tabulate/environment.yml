@@ -3,4 +3,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - pygtftk=1.6.2
+  - bioconda::pygtftk=1.6.2

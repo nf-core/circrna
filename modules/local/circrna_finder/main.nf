@@ -2,17 +2,19 @@ process CIRCRNA_FINDER {
     tag "$meta.id"
     label 'process_low'
 
-    conda "bioconda::circrna_finder=1.2"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/circrna_finder%3A1.2--pl5321hdfd78af_1' :
-        'biocontainers/circrna_finder:1.2--pl5321hdfd78af_1' }"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ee/ee41e12abc2b47b1ce60ab8b6448961c701c00582098810066b5bae2c206bf03/data'
+        : 'community.wave.seqera.io/library/circrna_finder:b96e4b698e6cee7c'}"
 
     input:
     tuple val(meta), path(star_input, stageAs: 'input/')
 
     output:
     tuple val(meta), path("${prefix}.filteredJunctions.bed"), emit: results
-    path  "versions.yml"                                    , emit: versions
+    tuple val("${task.process}"), val('awk'), eval('awk --version | head -n1 | cut -d\' \' -f3 | sed \'s/,//g\''), emit: versions_awk, topic: versions
+    tuple val("${task.process}"), val('cat'), eval('cat --version | head -n1 | sed \'s/cat (GNU coreutils) //\''), emit: versions_cat, topic: versions
+    tuple val("${task.process}"), val('circRNA_finder'), val('1.2'), emit: versions_circrna_finder, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -20,29 +22,15 @@ process CIRCRNA_FINDER {
     script:
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = 'v1.2'
     """
     postProcessStarAlignment.pl ${args} --starDir input/ --outDir ./
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
-        cat: \$(cat --version | head -n 1 | sed -e 's/cat (GNU coreutils) //')
-        circRNA_finder: $VERSION
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = 'v1.2'
     """
     touch ${prefix}.filteredJunctions.bed
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        awk: \$(awk --version | head -n1 | cut -d' ' -f3 | sed 's/,//g' )
-        cat: \$(cat --version | head -n 1 | sed -e 's/cat (GNU coreutils) //')
-        circRNA_finder: $VERSION
-    END_VERSIONS
     """
 }

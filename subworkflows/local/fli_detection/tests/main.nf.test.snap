@@ -2,203 +2,27 @@
     "all FLI tools - stub": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.fa"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "fli_tool": "psirc"
-                    },
-                    "full_length_isoforms.fa"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.list_circle.fa"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.fa"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "fli_tool": "psirc"
-                    },
-                    "full_length_isoforms.fa"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.list_circle.fa"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.exon_counts.bed"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "fli_tool": "psirc"
-                    },
-                    "cel_N2_1.bed"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.bed"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.exon_counts.bed"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "fli_tool": "psirc"
-                    },
-                    "fust1_1.bed"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.bed"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "python": "3.12.10",
-                        "polars": "0.20.31"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "python": "3.13.3",
-                        "polars": "1.29.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIAS": {
-                        "ciri-as": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRI_VIS": {
-                        "ciri-vis": "1.4.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:MERGE": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO1": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO2": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:JCCIRC:MAIN": {
-                        "jccirc": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:JCCIRC:PREP": {
-                        "python": "3.13.3",
-                        "polars": "1.27.1"
-                    }
-                },
-                {
-                    "FLI_DETECTION:PSIRC:FLI": {
-                        "psirc": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:PSIRC:UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T18:49:34.940671256"
+        "timestamp": "2026-10-18T23:30:41.853767672"
     },
     "jccirc": {
         "content": [
-            [
-                {
-                    "FLI_DETECTION:JCCIRC:MAIN": {
-                        "jccirc": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:JCCIRC:PREP": {
-                        "polars": "1.27.1",
-                        "python": "3.13.3"
-                    }
-                }
-            ]
+            
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T18:46:13.52257803"
+        "timestamp": "2026-10-18T23:26:34.583997576"
     },
     "psirc - stub": {
         "content": [
@@ -237,448 +61,87 @@
                     },
                     "fust1_1.bed"
                 ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:PSIRC:FLI": {
-                        "psirc": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:PSIRC:UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                }
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:31:12.655092115"
+        "timestamp": "2026-10-18T23:29:51.815925137"
     },
     "cirifull - stub": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.list_circle.fa"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.list_circle.fa"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.bed"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.bed"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "python": "3.13.3",
-                        "polars": "1.29.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIAS": {
-                        "ciri-as": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRI_VIS": {
-                        "ciri-vis": "1.4.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:MERGE": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO1": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO2": {
-                        "cirifull": "2.1.2"
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T11:08:33.102284795"
+        "timestamp": "2026-10-18T23:28:20.433718039"
     },
     "circtools - stub": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.fa"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.fa"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.exon_counts.bed"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.exon_counts.bed"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "python": "3.12.10",
-                        "polars": "0.20.31"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-17T11:08:57.218401101"
+        "timestamp": "2026-10-18T23:28:57.989735863"
     },
     "circtools": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.fa",
-                    "66fc53e6a72f0f6dd72084ce60445f79"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.fa",
-                    "63e653807f405e25a2eb6ae66577308b"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.exon_counts.bed",
-                    "c0d6940bc4f960c5bf0ab3535c3a634f"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.exon_counts.bed",
-                    "ff1b1fc278f5840bced61e9263b34145"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "polars": "0.20.31",
-                        "python": "3.12.10"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:28:44.257837755"
+        "timestamp": "2026-10-18T23:26:07.789583312"
     },
     "cirifull and circtools": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.fa",
-                    "66fc53e6a72f0f6dd72084ce60445f79"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.list_circle.fa",
-                    "5c830e235cdbb2dc1b1adcb9a2963581"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.fa",
-                    "63e653807f405e25a2eb6ae66577308b"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.list_circle.fa",
-                    "32694cc55e338a955521f1ac2aa3ebd2"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "fli_tool": "circtools"
-                    },
-                    "cel_N2_1.exon_counts.bed",
-                    "c0d6940bc4f960c5bf0ab3535c3a634f"
-                ],
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.bed",
-                    "7164b2f9172fc99a0e209c605ddb0cc4"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "fli_tool": "circtools"
-                    },
-                    "fust1_1.exon_counts.bed",
-                    "ff1b1fc278f5840bced61e9263b34145"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.bed",
-                    "5a89c29114781757f704f1d2cc0bc983"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRCTOOLS:ANNOTATION": {
-                        "polars": "0.20.31",
-                        "python": "3.12.10"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRCTOOLS:RECONSTRUCT": {
-                        "circtools": 2.0
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "polars": "1.29.0",
-                        "python": "3.13.3"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIAS": {
-                        "ciri-as": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRI_VIS": {
-                        "ciri-vis": "1.4.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:MERGE": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO1": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO2": {
-                        "cirifull": "2.1.2"
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:29:32.928782612"
+        "timestamp": "2026-10-18T23:27:06.169619973"
     },
     "cirifull": {
         "content": [
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.list_circle.fa",
-                    "5c830e235cdbb2dc1b1adcb9a2963581"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.list_circle.fa",
-                    "32694cc55e338a955521f1ac2aa3ebd2"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "cel_N2_1",
-                        "single_end": false,
-                        "target_length": 147,
-                        "fli_tool": "cirifull"
-                    },
-                    "cel_N2_1.bed",
-                    "7164b2f9172fc99a0e209c605ddb0cc4"
-                ],
-                [
-                    {
-                        "id": "fust1_1",
-                        "single_end": false,
-                        "target_length": 146,
-                        "fli_tool": "cirifull"
-                    },
-                    "fust1_1.bed",
-                    "5a89c29114781757f704f1d2cc0bc983"
-                ]
-            ],
-            [
-                {
-                    "FLI_DETECTION:CIRIFULL:BUILD_LIST": {
-                        "polars": "1.29.0",
-                        "python": "3.13.3"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIAS": {
-                        "ciri-as": "1.0.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRIVIS_UNIFY": {
-                        "pandas": "2.3.0"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:CIRI_VIS": {
-                        "ciri-vis": "1.4.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:MERGE": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO1": {
-                        "cirifull": "2.1.2"
-                    }
-                },
-                {
-                    "FLI_DETECTION:CIRIFULL:RO2": {
-                        "cirifull": "2.1.2"
-                    }
-                }
+                
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-10-16T22:28:01.963008904"
+        "timestamp": "2026-10-18T23:25:43.330856142"
     }
 }

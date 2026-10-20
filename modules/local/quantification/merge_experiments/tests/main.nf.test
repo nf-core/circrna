@@ -96,7 +96,7 @@ nextflow_process {
                 { assert file(process.out.merged[0][1]).size() > 0 },
                 { assert snapshot(
                     process.out.merged.collect { meta, rds -> [ meta, file(rds).name ] },
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_bioconductor_summarizedexperiment, process.out.versions_bioconductor_rtracklayer]
                 ).match() }
             )
         }
@@ -130,7 +130,7 @@ nextflow_process {
                 { assert file(process.out.merged[0][1]).size() > 0 },
                 { assert snapshot(
                     process.out.merged.collect { meta, rds -> [ meta, file(rds).name ] },
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_bioconductor_summarizedexperiment, process.out.versions_bioconductor_rtracklayer]
                 ).match() }
             )
         }

@@ -3,9 +3,9 @@ process TXIMETA_TXIMPORT {
     label "process_medium"
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bioconductor-tximeta%3A1.20.1--r43hdfd78af_0' :
-        'biocontainers/bioconductor-tximeta:1.20.1--r43hdfd78af_0' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e8/e89aa87e7cac6160417d07064b4d4d693515c9af68df5775aa4683ea31d2e89d/data'
+        : 'community.wave.seqera.io/library/bioconductor-tximeta_bioconductor-rhdf5:be5b446b9dab47f3'}"
 
     input:
     tuple val(meta), path("quants/*")
@@ -21,13 +21,13 @@ process TXIMETA_TXIMPORT {
     tuple val(meta), path("*transcript_tpm.tsv")           , emit: tpm_transcript
     tuple val(meta), path("*transcript_counts.tsv")        , emit: counts_transcript
     tuple val(meta), path("*transcript_lengths.tsv")       , emit: lengths_transcript
-    path "versions.yml"                                    , emit: versions, topic: versions
+    tuple val("${task.process}"), val('bioconductor-tximeta'), eval('Rscript -e "cat(as.character(packageVersion(\'tximeta\')))"'), emit: versions_bioconductor_tximeta, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template 'tximport.r'
+    template 'tximport.sh'
 
     stub:
     """
@@ -40,9 +40,5 @@ process TXIMETA_TXIMPORT {
     touch ${meta.id}.transcript_counts.tsv
     touch ${meta.id}.transcript_lengths.tsv
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bioconductor-tximeta: \$(Rscript -e "library(tximeta); cat(as.character(packageVersion('tximeta')))")
-    END_VERSIONS
     """
 }

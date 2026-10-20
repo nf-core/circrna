@@ -1,0 +1,89 @@
+Changes in component 'nf-core/bowtie/build'
+Changes in 'bowtie/build/meta.yml':
+--- modules/nf-core/bowtie/build/meta.yml
++++ modules/nf-core/bowtie/build/meta.yml
+@@ -37,13 +37,27 @@
+           description: Folder containing bowtie genome index files
+           pattern: "*.ebwt"
+           ontologies: []
++  versions_bowtie:
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - bowtie:
++          type: string
++          description: The name of the tool
++      - "bowtie --version 2>&1 | sed 's/^.*bowtie-align-s version //; s/ .*$//'":
++          type: eval
++          description: The expression to obtain the version of the tool
++topics:
+   versions:
+-    - versions.yml:
+-        type: file
+-        description: File containing software versions
+-        pattern: "versions.yml"
+-        ontologies:
+-          - edam: http://edamontology.org/format_3750 # YAML
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - bowtie:
++          type: string
++          description: The name of the tool
++      - "bowtie --version 2>&1 | sed 's/^.*bowtie-align-s version //; s/ .*$//'":
++          type: eval
++          description: The expression to obtain the version of the tool
+ authors:
+   - "@kevinmenden"
+   - "@drpatelh"
+
+'modules/nf-core/bowtie/build/environment.yml' is unchanged
+Changes in 'bowtie/build/main.nf':
+--- modules/nf-core/bowtie/build/main.nf
++++ modules/nf-core/bowtie/build/main.nf
+@@ -12,7 +12,7 @@
+ 
+     output:
+     tuple val(meta), path('bowtie'), emit: index
+-    path "versions.yml", emit: versions
++    tuple val("${task.process}"), val('bowtie'), eval("bowtie --version 2>&1 | sed 's/^.*bowtie-align-s version //; s/ .*\$//'"), topic: versions, emit: versions_bowtie
+ 
+     when:
+     task.ext.when == null || task.ext.when
+@@ -23,10 +23,6 @@
+     mkdir -p bowtie
+     bowtie-build --threads ${task.cpus} ${fasta} bowtie/${prefix}
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
+-    END_VERSIONS
+     """
+ 
+     stub:
+@@ -40,9 +36,5 @@
+     touch bowtie/${prefix}.rev.1.ebwt
+     touch bowtie/${prefix}.rev.2.ebwt
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        bowtie: \$(echo \$(bowtie --version 2>&1) | sed 's/^.*bowtie-align-s version //; s/ .*\$//')
+-    END_VERSIONS
+     """
+ }
+
+'modules/nf-core/bowtie/build/tests/main.nf.test.snap' is unchanged
+Changes in 'bowtie/build/tests/main.nf.test':
+--- modules/nf-core/bowtie/build/tests/main.nf.test
++++ modules/nf-core/bowtie/build/tests/main.nf.test
+@@ -51,7 +51,7 @@
+             assertAll(
+                 { assert process.success },
+                 { assert snapshot(process.out).match() },
+-                { assert snapshot(path(process.out.versions.get(0)).yaml).match("versions") },
++                { assert snapshot(process.out.versions_bowtie).match("versions") },
+             )
+         }
+ 
+
+************************************************************

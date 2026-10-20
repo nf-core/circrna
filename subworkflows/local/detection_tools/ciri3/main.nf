@@ -8,10 +8,8 @@ workflow CIRI3 {
     ch_gtf
 
     main:
-    ch_versions = channel.empty()
 
     CIRI3_RUN(ch_sam, ch_fasta.first(), ch_gtf.first(), [])
-    ch_versions = ch_versions.mix(CIRI3_RUN.out.versions)
 
     UNIFY(
         CIRI3_RUN.out.txt.map { meta, txt -> [meta + [tool: 'ciri3'], txt, 'ciri3.bed'] },
@@ -21,5 +19,4 @@ workflow CIRI3 {
 
     emit:
     bed = UNIFY.out.output
-    versions = ch_versions
 }

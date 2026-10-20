@@ -30,16 +30,16 @@
                     [
                         "TRIMGALORE",
                         "trimgalore",
-                        "0.6.10"
+                        "2.3.0"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T14:59:32.042257737",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-15T14:40:14.896140126"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 - fastq - paired-end - keep-unpaired": {
         "content": [
@@ -48,56 +48,53 @@
             "test_1_unpaired_1.fq.gz:md5,17e0e878f6d0e93b9008a05f128660b6",
             "test_2_unpaired_2.fq.gz:md5,b09a064368a867e099e66df5ef69b044",
             [
-                "",
-                "SUMMARISING RUN PARAMETERS",
-                "==========================",
-                "Input filename: test_1.fastq.gz",
-                "Trimming mode: paired-end",
-                "Trim Galore version: 0.6.10",
-                "Cutadapt version: 5.2",
-                "Number of cores used for trimming: 1",
-                "Quality Phred score cutoff: 20",
-                "Quality encoding type selected: ASCII+33"
+                [
+                    {
+                        "id": "test",
+                        "single_end": false
+                    },
+                    [
+                        "test_1.fastq.gz_trimming_report.json:md5,0f259c830cd91eba7d9769cdf50980d7",
+                        "test_2.fastq.gz_trimming_report.json:md5,c09a07304357dbd9317096376e44a006"
+                    ]
+                ]
             ],
             [
-                "Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).",
-                "Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))",
-                "Maximum trimming error rate: 0.1 (default)",
+                "SUMMARISING RUN PARAMETERS",
+                "=========================",
+                "Input filename: test_1.fastq.gz",
+                "Trimming mode: paired-end",
+                "Trim Galore version: 2.3.0",
+                "Quality Phred score cutoff: 20",
+                "Quality encoding type selected: ASCII+33",
+                "Adapter sequence: 'AGATCGGAAGAGC' (user-specified or auto-detected)",
+                "Maximum trimming error rate: 0.1",
                 "Minimum required adapter overlap (stringency): 1 bp",
                 "Minimum required sequence length for both reads before a sequence pair gets removed: 150 bp",
-                "Length cut-off for read 1: 35 bp (default)",
-                "Length cut-off for read 2: 35 bp (default)",
                 "Output file will be GZIP compressed",
                 "",
                 "",
-                "This is cutadapt 5.2 with Python 3.12.12",
+                "Trim Galore 2.3.0 \u2014 adapter trimming built in",
+                "This is cutadapt 4.0 (compatible; for MultiQC backwards compatibility)",
                 "Command line parameters: -j 1 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC test_1.fastq.gz",
-                "Processing single-end reads on 1 core ...",
+                "Processing reads on 1 core in single-end mode ...",
                 "",
                 "=== Summary ===",
                 "",
-                "Total reads processed:                     100",
-                "Reads with adapters:                        31 (31.0%)",
-                "Reads written (passing filters):           100 (100.0%)",
+                "Total reads processed:                  100",
+                "Reads with adapters:                     31 (31.0%)",
+                "Reads written (passing filters):        100 (100.0%)",
                 "",
-                "Total basepairs processed:        13,897 bp",
-                "Quality-trimmed:                       0 bp (0.0%)",
-                "Total written (filtered):         13,851 bp (99.7%)",
+                "Total basepairs processed:         13,897 bp",
+                "Quality-trimmed:                        0 bp (0.0%)",
+                "Total written (filtered):          13,851 bp (99.7%)",
                 "",
                 "=== Adapter 1 ===",
                 "",
-                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times",
+                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times.",
                 "",
-                "Minimum overlap: 1",
                 "No. of allowed errors:",
                 "1-9 bp: 0; 10-13 bp: 1",
-                "",
-                "Bases preceding removed adapters:",
-                "  A: 35.5%",
-                "  C: 25.8%",
-                "  G: 9.7%",
-                "  T: 29.0%",
-                "  none/other: 0.0%",
                 "",
                 "Overview of removed sequences",
                 "length\tcount\texpect\tmax.err\terror counts",
@@ -106,61 +103,51 @@
                 "3\t1\t1.6\t0\t1",
                 "4\t1\t0.4\t0\t1",
                 "",
+                "",
                 "RUN STATISTICS FOR INPUT FILE: test_1.fastq.gz",
                 "=============================================",
-                "100 sequences processed in total"
+                "100 sequences processed in total",
+                "Sequences removed because they became shorter than the length cutoff of 150 bp:\t81 (81.0%)",
+                "Sequences removed because they were longer than the upper length cutoff:\t0 (0.0%)",
+                "Sequences removed because of too many N bases:\t0 (0.0%)",
+                ""
             ],
             [
-                "",
                 "SUMMARISING RUN PARAMETERS",
-                "==========================",
+                "=========================",
                 "Input filename: test_2.fastq.gz",
                 "Trimming mode: paired-end",
-                "Trim Galore version: 0.6.10",
-                "Cutadapt version: 5.2",
-                "Number of cores used for trimming: 1",
+                "Trim Galore version: 2.3.0",
                 "Quality Phred score cutoff: 20",
-                "Quality encoding type selected: ASCII+33"
-            ],
-            [
-                "Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).",
-                "Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))",
-                "Maximum trimming error rate: 0.1 (default)",
+                "Quality encoding type selected: ASCII+33",
+                "Adapter sequence: 'AGATCGGAAGAGC' (user-specified or auto-detected)",
+                "Maximum trimming error rate: 0.1",
                 "Minimum required adapter overlap (stringency): 1 bp",
                 "Minimum required sequence length for both reads before a sequence pair gets removed: 150 bp",
-                "Length cut-off for read 1: 35 bp (default)",
-                "Length cut-off for read 2: 35 bp (default)",
                 "Output file will be GZIP compressed",
                 "",
                 "",
-                "This is cutadapt 5.2 with Python 3.12.12",
+                "Trim Galore 2.3.0 \u2014 adapter trimming built in",
+                "This is cutadapt 4.0 (compatible; for MultiQC backwards compatibility)",
                 "Command line parameters: -j 1 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC test_2.fastq.gz",
-                "Processing single-end reads on 1 core ...",
+                "Processing reads on 1 core in single-end mode ...",
                 "",
                 "=== Summary ===",
                 "",
-                "Total reads processed:                     100",
-                "Reads with adapters:                        40 (40.0%)",
-                "Reads written (passing filters):           100 (100.0%)",
+                "Total reads processed:                  100",
+                "Reads with adapters:                     40 (40.0%)",
+                "Reads written (passing filters):        100 (100.0%)",
                 "",
-                "Total basepairs processed:        13,748 bp",
-                "Quality-trimmed:                       0 bp (0.0%)",
-                "Total written (filtered):         13,693 bp (99.6%)",
+                "Total basepairs processed:         13,748 bp",
+                "Quality-trimmed:                        0 bp (0.0%)",
+                "Total written (filtered):          13,693 bp (99.6%)",
                 "",
                 "=== Adapter 1 ===",
                 "",
-                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 40 times",
+                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 40 times.",
                 "",
-                "Minimum overlap: 1",
                 "No. of allowed errors:",
                 "1-9 bp: 0; 10-13 bp: 1",
-                "",
-                "Bases preceding removed adapters:",
-                "  A: 35.0%",
-                "  C: 25.0%",
-                "  G: 5.0%",
-                "  T: 35.0%",
-                "  none/other: 0.0%",
                 "",
                 "Overview of removed sequences",
                 "length\tcount\texpect\tmax.err\terror counts",
@@ -169,29 +156,42 @@
                 "3\t1\t1.6\t0\t1",
                 "4\t1\t0.4\t0\t1",
                 "",
+                "",
                 "RUN STATISTICS FOR INPUT FILE: test_2.fastq.gz",
                 "=============================================",
                 "100 sequences processed in total",
+                "Sequences removed because they became shorter than the length cutoff of 150 bp:\t81 (81.0%)",
+                "Sequences removed because they were longer than the upper length cutoff:\t0 (0.0%)",
+                "Sequences removed because of too many N bases:\t0 (0.0%)",
                 "",
-                "Total number of sequences analysed for the sequence pair length validation: 100",
+                "=== Paired-end validation ===",
                 "",
-                "Number of sequence pairs removed because at least one read was shorter than the length cutoff (150 bp): 81 (81.00%)"
+                "Number of sequence pairs analysed:         100",
+                "",
+                "Number of sequence pairs removed because at least one read was shorter than the length cutoff (81.00%):",
+                "                                     81",
+                "Number of pairs removed for N content (0.00%):",
+                "                                      0",
+                "",
+                "Unpaired read 1 kept:                81",
+                "Unpaired read 2 kept:                81",
+                ""
             ],
             {
                 "versions_trimgalore": [
                     [
                         "TRIMGALORE",
                         "trimgalore",
-                        "0.6.10"
+                        "2.3.0"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T14:59:10.276525211",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-15T14:39:53.811844594"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 - fastq - single-end - stub": {
         "content": [
@@ -218,70 +218,69 @@
                     [
                         "TRIMGALORE",
                         "trimgalore",
-                        "0.6.10"
+                        "2.3.0"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T14:59:21.284194787",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-15T14:40:03.991561892"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 - fastq - paired-end": {
         "content": [
             "test_1_val_1.fq.gz:md5,566d44cca0d22c522d6cf0e50c7165dc",
             "test_2_val_2.fq.gz:md5,3c023e8e890b897821df3dc98f48c2b3",
             [
-                "",
-                "SUMMARISING RUN PARAMETERS",
-                "==========================",
-                "Input filename: test_1.fastq.gz",
-                "Trimming mode: paired-end",
-                "Trim Galore version: 0.6.10",
-                "Cutadapt version: 5.2",
-                "Number of cores used for trimming: 1",
-                "Quality Phred score cutoff: 20",
-                "Quality encoding type selected: ASCII+33"
+                [
+                    {
+                        "id": "test",
+                        "single_end": false
+                    },
+                    [
+                        "test_1.fastq.gz_trimming_report.json:md5,b58c01066267d05b095f82130445cbb3",
+                        "test_2.fastq.gz_trimming_report.json:md5,ba0799f0474a6df8283233de4d9eab2f"
+                    ]
+                ]
             ],
             [
-                "Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).",
-                "Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))",
-                "Maximum trimming error rate: 0.1 (default)",
+                "SUMMARISING RUN PARAMETERS",
+                "=========================",
+                "Input filename: test_1.fastq.gz",
+                "Trimming mode: paired-end",
+                "Trim Galore version: 2.3.0",
+                "Quality Phred score cutoff: 20",
+                "Quality encoding type selected: ASCII+33",
+                "Adapter sequence: 'AGATCGGAAGAGC' (user-specified or auto-detected)",
+                "Maximum trimming error rate: 0.1",
                 "Minimum required adapter overlap (stringency): 1 bp",
                 "Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp",
                 "Output file will be GZIP compressed",
                 "",
                 "",
-                "This is cutadapt 5.2 with Python 3.12.12",
+                "Trim Galore 2.3.0 \u2014 adapter trimming built in",
+                "This is cutadapt 4.0 (compatible; for MultiQC backwards compatibility)",
                 "Command line parameters: -j 1 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC test_1.fastq.gz",
-                "Processing single-end reads on 1 core ...",
+                "Processing reads on 1 core in single-end mode ...",
                 "",
                 "=== Summary ===",
                 "",
-                "Total reads processed:                     100",
-                "Reads with adapters:                        31 (31.0%)",
-                "Reads written (passing filters):           100 (100.0%)",
+                "Total reads processed:                  100",
+                "Reads with adapters:                     31 (31.0%)",
+                "Reads written (passing filters):        100 (100.0%)",
                 "",
-                "Total basepairs processed:        13,897 bp",
-                "Quality-trimmed:                       0 bp (0.0%)",
-                "Total written (filtered):         13,851 bp (99.7%)",
+                "Total basepairs processed:         13,897 bp",
+                "Quality-trimmed:                        0 bp (0.0%)",
+                "Total written (filtered):          13,851 bp (99.7%)",
                 "",
                 "=== Adapter 1 ===",
                 "",
-                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times",
+                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times.",
                 "",
-                "Minimum overlap: 1",
                 "No. of allowed errors:",
                 "1-9 bp: 0; 10-13 bp: 1",
-                "",
-                "Bases preceding removed adapters:",
-                "  A: 35.5%",
-                "  C: 25.8%",
-                "  G: 9.7%",
-                "  T: 29.0%",
-                "  none/other: 0.0%",
                 "",
                 "Overview of removed sequences",
                 "length\tcount\texpect\tmax.err\terror counts",
@@ -290,60 +289,51 @@
                 "3\t1\t1.6\t0\t1",
                 "4\t1\t0.4\t0\t1",
                 "",
+                "",
                 "RUN STATISTICS FOR INPUT FILE: test_1.fastq.gz",
                 "=============================================",
                 "100 sequences processed in total",
+                "Sequences removed because they became shorter than the length cutoff of 20 bp:\t0 (0.0%)",
+                "Sequences removed because they were longer than the upper length cutoff:\t0 (0.0%)",
+                "Sequences removed because of too many N bases:\t0 (0.0%)",
                 ""
             ],
             [
-                "",
                 "SUMMARISING RUN PARAMETERS",
-                "==========================",
+                "=========================",
                 "Input filename: test_2.fastq.gz",
                 "Trimming mode: paired-end",
-                "Trim Galore version: 0.6.10",
-                "Cutadapt version: 5.2",
-                "Number of cores used for trimming: 1",
+                "Trim Galore version: 2.3.0",
                 "Quality Phred score cutoff: 20",
-                "Quality encoding type selected: ASCII+33"
-            ],
-            [
-                "Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).",
-                "Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))",
-                "Maximum trimming error rate: 0.1 (default)",
+                "Quality encoding type selected: ASCII+33",
+                "Adapter sequence: 'AGATCGGAAGAGC' (user-specified or auto-detected)",
+                "Maximum trimming error rate: 0.1",
                 "Minimum required adapter overlap (stringency): 1 bp",
                 "Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp",
                 "Output file will be GZIP compressed",
                 "",
                 "",
-                "This is cutadapt 5.2 with Python 3.12.12",
+                "Trim Galore 2.3.0 \u2014 adapter trimming built in",
+                "This is cutadapt 4.0 (compatible; for MultiQC backwards compatibility)",
                 "Command line parameters: -j 1 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC test_2.fastq.gz",
-                "Processing single-end reads on 1 core ...",
+                "Processing reads on 1 core in single-end mode ...",
                 "",
                 "=== Summary ===",
                 "",
-                "Total reads processed:                     100",
-                "Reads with adapters:                        40 (40.0%)",
-                "Reads written (passing filters):           100 (100.0%)",
+                "Total reads processed:                  100",
+                "Reads with adapters:                     40 (40.0%)",
+                "Reads written (passing filters):        100 (100.0%)",
                 "",
-                "Total basepairs processed:        13,748 bp",
-                "Quality-trimmed:                       0 bp (0.0%)",
-                "Total written (filtered):         13,693 bp (99.6%)",
+                "Total basepairs processed:         13,748 bp",
+                "Quality-trimmed:                        0 bp (0.0%)",
+                "Total written (filtered):          13,693 bp (99.6%)",
                 "",
                 "=== Adapter 1 ===",
                 "",
-                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 40 times",
+                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 40 times.",
                 "",
-                "Minimum overlap: 1",
                 "No. of allowed errors:",
                 "1-9 bp: 0; 10-13 bp: 1",
-                "",
-                "Bases preceding removed adapters:",
-                "  A: 35.0%",
-                "  C: 25.0%",
-                "  G: 5.0%",
-                "  T: 35.0%",
-                "  none/other: 0.0%",
                 "",
                 "Overview of removed sequences",
                 "length\tcount\texpect\tmax.err\terror counts",
@@ -352,11 +342,22 @@
                 "3\t1\t1.6\t0\t1",
                 "4\t1\t0.4\t0\t1",
                 "",
+                "",
                 "RUN STATISTICS FOR INPUT FILE: test_2.fastq.gz",
                 "=============================================",
                 "100 sequences processed in total",
+                "Sequences removed because they became shorter than the length cutoff of 20 bp:\t0 (0.0%)",
+                "Sequences removed because they were longer than the upper length cutoff:\t0 (0.0%)",
+                "Sequences removed because of too many N bases:\t0 (0.0%)",
                 "",
-                "Total number of sequences analysed for the sequence pair length validation: 100",
+                "=== Paired-end validation ===",
+                "",
+                "Number of sequence pairs analysed:         100",
+                "",
+                "Number of sequence pairs removed because at least one read was shorter than the length cutoff (0.00%):",
+                "                                      0",
+                "Number of pairs removed for N content (0.00%):",
+                "                                      0",
                 ""
             ],
             {
@@ -364,16 +365,16 @@
                     [
                         "TRIMGALORE",
                         "trimgalore",
-                        "0.6.10"
+                        "2.3.0"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T14:58:59.174135108",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-15T14:39:43.937555685"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "sarscov2 - fastq - single-end": {
         "content": [
@@ -387,54 +388,50 @@
                 ]
             ],
             [
-                "",
-                "SUMMARISING RUN PARAMETERS",
-                "==========================",
-                "Input filename: test.fastq.gz",
-                "Trimming mode: single-end",
-                "Trim Galore version: 0.6.10",
-                "Cutadapt version: 5.2",
-                "Number of cores used for trimming: 1",
-                "Quality Phred score cutoff: 20",
-                "Quality encoding type selected: ASCII+33"
+                [
+                    {
+                        "id": "test",
+                        "single_end": true
+                    },
+                    "test.fastq.gz_trimming_report.json:md5,ddba12e91487b3f2c05a3b3aa350f47b"
+                ]
             ],
             [
-                "Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).",
-                "Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))",
-                "Maximum trimming error rate: 0.1 (default)",
+                "SUMMARISING RUN PARAMETERS",
+                "=========================",
+                "Input filename: test.fastq.gz",
+                "Trimming mode: single-end",
+                "Trim Galore version: 2.3.0",
+                "Quality Phred score cutoff: 20",
+                "Quality encoding type selected: ASCII+33",
+                "Adapter sequence: 'AGATCGGAAGAGC' (user-specified or auto-detected)",
+                "Maximum trimming error rate: 0.1",
                 "Minimum required adapter overlap (stringency): 1 bp",
-                "Minimum required sequence length before a sequence gets removed: 20 bp",
+                "Minimum required sequence length single-end: 20 bp",
                 "Output file will be GZIP compressed",
                 "",
                 "",
-                "This is cutadapt 5.2 with Python 3.12.12",
+                "Trim Galore 2.3.0 \u2014 adapter trimming built in",
+                "This is cutadapt 4.0 (compatible; for MultiQC backwards compatibility)",
                 "Command line parameters: -j 1 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC test.fastq.gz",
-                "Processing single-end reads on 1 core ...",
+                "Processing reads on 1 core in single-end mode ...",
                 "",
                 "=== Summary ===",
                 "",
-                "Total reads processed:                     100",
-                "Reads with adapters:                        31 (31.0%)",
-                "Reads written (passing filters):           100 (100.0%)",
+                "Total reads processed:                  100",
+                "Reads with adapters:                     31 (31.0%)",
+                "Reads written (passing filters):        100 (100.0%)",
                 "",
-                "Total basepairs processed:        13,897 bp",
-                "Quality-trimmed:                       0 bp (0.0%)",
-                "Total written (filtered):         13,851 bp (99.7%)",
+                "Total basepairs processed:         13,897 bp",
+                "Quality-trimmed:                        0 bp (0.0%)",
+                "Total written (filtered):          13,851 bp (99.7%)",
                 "",
                 "=== Adapter 1 ===",
                 "",
-                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times",
+                "Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 31 times.",
                 "",
-                "Minimum overlap: 1",
                 "No. of allowed errors:",
                 "1-9 bp: 0; 10-13 bp: 1",
-                "",
-                "Bases preceding removed adapters:",
-                "  A: 35.5%",
-                "  C: 25.8%",
-                "  G: 9.7%",
-                "  T: 29.0%",
-                "  none/other: 0.0%",
                 "",
                 "Overview of removed sequences",
                 "length\tcount\texpect\tmax.err\terror counts",
@@ -443,10 +440,13 @@
                 "3\t1\t1.6\t0\t1",
                 "4\t1\t0.4\t0\t1",
                 "",
+                "",
                 "RUN STATISTICS FOR INPUT FILE: test.fastq.gz",
                 "=============================================",
                 "100 sequences processed in total",
                 "Sequences removed because they became shorter than the length cutoff of 20 bp:\t0 (0.0%)",
+                "Sequences removed because they were longer than the upper length cutoff:\t0 (0.0%)",
+                "Sequences removed because of too many N bases:\t0 (0.0%)",
                 ""
             ],
             {
@@ -454,15 +454,15 @@
                     [
                         "TRIMGALORE",
                         "trimgalore",
-                        "0.6.10"
+                        "2.3.0"
                     ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T14:58:48.338650678",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2025-12-15T14:39:33.985021562"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }

@@ -13,10 +13,8 @@ workflow CIRCTOOLS {
     ch_gtf
 
     main:
-    ch_versions = channel.empty()
 
     ANNOTATION(ch_gtf)
-    ch_versions = ch_versions.mix(ANNOTATION.out.versions)
 
     SAMTOOLS_SORT(ch_star_bam, ch_fasta.map { meta, fasta -> [meta, fasta, []] }, '')
 
@@ -29,7 +27,6 @@ workflow CIRCTOOLS {
         .join(ch_star_junction.map { meta, junction -> [[id: meta.id], junction] }),
         ANNOTATION.out.bed,
     )
-    ch_versions = ch_versions.mix(RECONSTRUCT.out.versions)
 
     BEDTOOLS_GETFASTA(RECONSTRUCT.out.exon_counts_bed, ch_fasta.map { _meta, fasta -> fasta })
 
@@ -37,5 +34,4 @@ workflow CIRCTOOLS {
     fasta = BEDTOOLS_GETFASTA.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'circtools'], fasta] }
     bed12 = RECONSTRUCT.out.exon_counts_bed.map{ meta, bed -> [meta + [fli_tool: 'circtools'], bed] }
 
-    versions = ch_versions
 }

@@ -21,6 +21,28 @@ nextflow_pipeline {
             // stable_content: All files in ${params.outdir}/ with stable content
             def stable_content = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
 
+            // Equal-coordinate transcript records may be ordered differently by native tools.
+            // Preserve every row (including duplicates), but compare their sorted contents.
+            // STAR also records its installation-specific executable path in its index header.
+            def normalized_names = ['transcriptome.combined.gtf', 'transcriptome.filtered.gtf', 'transcriptome.tx2gene.tsv', 'genomeParameters.txt']
+            def normalized_outputs = stable_content.findAll { it.name.endsWith('.gtf') || it.name in normalized_names }
+            assert normalized_outputs.collect { it.name }.containsAll(normalized_names)
+            def output_root = new File(params.outdir.toString()).toPath().toAbsolutePath().normalize()
+            def normalized_content = normalized_outputs.collectEntries { output ->
+                def name = output.name
+                def lines = output.readLines()
+                if (name == 'genomeParameters.txt') {
+                    lines = lines.collect { it.replaceFirst(/^### \S*\/(STAR\S*)/, '### $1') }
+                } else {
+                    lines = lines.sort(false)
+                }
+                def checksum = java.security.MessageDigest.getInstance('MD5').digest(lines.join('\n').bytes).encodeHex().toString()
+                def relative = output_root.relativize(output.toPath().toAbsolutePath().normalize()).toString()
+                [(relative): checksum]
+            }
+            assert normalized_content.size() == normalized_outputs.size()
+            stable_content = stable_content - normalized_outputs
+
             // Combined BSJ BED: the FUSIONJUNC_<n> names and the row order change between runs, so the
             // name column is dropped and the rows are sorted before hashing
             def combined_bed_rows = file("$outputDir/3_bsj_detection/combined/all.combined.bed").readLines()
@@ -37,6 +59,9 @@ nextflow_pipeline {
             def linear = path("$outputDir/5_quantification/psirc/combined/linear.tsv").csv(sep: '\t')
 
             assert workflow.success
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
+            assert software_versions.values().any { it instanceof Map && it.containsKey('fastqc') }
+            assert software_versions.values().any { it instanceof Map && it.containsKey('polars') }
             assertAll(
                 { assert snapshot(
                     // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
@@ -56,7 +81,8 @@ nextflow_pipeline {
                         circular_columns: circular.columnNames.sort(false),
                         circular_ids: circular.columns["tx"].sort(false),
                         linear_columns: linear.columnNames.sort(false),
-                        linear_rows: linear.rowCount
+                        linear_rows: linear.rowCount,
+                        normalized_content: normalized_content
                     ]
                 ).match() }
             )
@@ -79,6 +105,9 @@ nextflow_pipeline {
             def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
 
             assert workflow.success
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
+            assert software_versions.values().any { it instanceof Map && it.containsKey('fastqc') }
+            assert software_versions.values().any { it instanceof Map && it.containsKey('r-base') }
             assertAll(
                 { assert snapshot(
                     removeNextflowVersion("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml"),
@@ -154,11 +183,15 @@ nextflow_pipeline {
 
         then {
             def tasks = workflow.trace.succeeded()
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
             assertAll(
                 { assert workflow.success },
                 { assert tasks.count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
                 { assert tasks.count { task -> task.name.contains('CIRI3_RUN') } == 2 },
-                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } }
+                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('bwa') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('ciri3') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('polars') } }
             )
         }
     }

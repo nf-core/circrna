@@ -28,7 +28,28 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert list == ['chr1\t1\t100', 'chr2\t200\t300'] },
-                { assert process.out.versions.size() == 1 }
+                { assert process.out.versions_python[0] == ['CIRI3_UC_LIST', 'python', '3.14.7'] },
+                { assert process.out.versions_polars[0] == ['CIRI3_UC_LIST', 'polars', '2.0.0'] }
+            )
+        }
+    }
+
+    test('accepts annotated BED12 with trailing metadata columns') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def bed = file("$outputDir/input/annotated.bed12")
+                bed.text = 'chr1\\t0\\t100\\tcircA\\t5\\t+\\t0\\t100\\t0\\t2\\t50,50,\\t0,50,\\tgeneA\\ttranscriptA\\texonic\\t100\\t+\\tsource\\n'
+                input[0] = [[id: 'annotated'], bed]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.list[0][1]).readLines() == ['chr1\t1\t100'] }
             )
         }
     }
@@ -168,7 +189,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert process.out.list.size() == 1 },
-                { assert process.out.versions.size() == 1 }
+                { assert process.out.versions_python[0] == ['CIRI3_UC_LIST', 'python', '3.14.7'] },
+                { assert process.out.versions_polars[0] == ['CIRI3_UC_LIST', 'polars', '2.0.0'] }
             )
         }
     }

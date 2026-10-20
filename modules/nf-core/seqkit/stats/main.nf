@@ -3,9 +3,9 @@ process SEQKIT_STATS {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://depot.galaxyproject.org/singularity/seqkit:2.9.0--h9ee0642_0'
-        : 'biocontainers/seqkit:2.9.0--h9ee0642_0'}"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c854c28b0f0a7a895f283f230367875922689c9b20fa1bca5474bc9999e56ff2/data'
+        : 'community.wave.seqera.io/library/seqkit:2.14.0--fe9cf2addeefb114'}"
 
     input:
     tuple val(meta), path(reads)
@@ -29,8 +29,11 @@ process SEQKIT_STATS {
     """
 
     stub:
+    def args = task.ext.args ?: '--all'
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    echo ${args}
+
     touch ${prefix}.tsv
     """
 }

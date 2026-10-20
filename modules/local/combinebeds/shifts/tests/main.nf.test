@@ -32,7 +32,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.plots.flatten().collect { file(it).name }.sort(),
                     process.out.multiqc.flatten().collect { file(it).name }.sort(),
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars, process.out.versions_altair]
                 ).match() }
             )
         }
@@ -59,7 +59,7 @@ nextflow_process {
                 { assert process.success },
                 { assert process.out.plots.isEmpty() },
                 { assert process.out.multiqc.isEmpty() },
-                { assert snapshot(path(process.out.versions[0]).yaml).match() }
+                { assert snapshot([process.out.versions_python, process.out.versions_polars, process.out.versions_altair]).match() }
             )
         }
     }

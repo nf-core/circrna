@@ -2,17 +2,17 @@ process CIRCTOOLS_REFERENCE {
     tag "${genome}"
     label 'process_low'
 
-    conda "environment.yml"
-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'oras://community.wave.seqera.io/library/circtools:2.0--b33a23b50d9f0697'
-        : 'community.wave.seqera.io/library/circtools:2.0--f5bc60d7f93fefae'}"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3f/3f523ec9d03407da839bae40c76b9e49725d8b5273e9e167f7b5e081392f690d/data'
+        : 'community.wave.seqera.io/library/circtools:2.0.5.post2--20ffd704d69916e2'}"
 
     input:
     val(genome)
 
     output:
     path "reference", emit: reference
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
 
     script:
     """
@@ -20,19 +20,11 @@ process CIRCTOOLS_REFERENCE {
     export TMPDIR=./temp
     circtools nanopore -d -R reference/ -C ${genome}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        circtools: \$(circtools -V)
-    END_VERSIONS
     """
 
     stub:
     """
     mkdir -p reference
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        circtools: \$(circtools -V)
-    END_VERSIONS
     """
 }

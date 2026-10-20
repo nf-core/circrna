@@ -1,11 +1,12 @@
 process COMBINEBEDS_FILTER {
     tag "$meta.id"
     label "process_low"
+    shell '/bin/bash'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/pandas_polars_pyarrow_upsetplot:8840b96e156438fc' :
-        'community.wave.seqera.io/library/pandas_polars_pyarrow_upsetplot:6982d93f61d3e2ff' }"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/48/48af262bc66e75295b1a314cbf45b01bded343911ffeaa0357009f7370cb4573/data'
+        : 'community.wave.seqera.io/library/python_polars_upsetplot_pandas_matplotlib:a16ba3398a0ae7a3'}"
 
     input:
     tuple val(meta), path(beds)
@@ -19,23 +20,19 @@ process COMBINEBEDS_FILTER {
     tuple val(meta), path("${prefix}.${suffix}"), emit: combined, optional: true
     path "*.png"                                , emit: plots, optional: true
     path "*.json"                               , emit: multiqc, optional: true
-    path "versions.yml"                         , emit: versions
+    tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
+    tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
+    tuple val("${task.process}"), val('upsetplot'), eval("python -c 'import upsetplot; print(upsetplot.__version__)'"), emit: versions_upsetplot, topic: versions
+    tuple val("${task.process}"), val('matplotlib'), eval("python -c 'import matplotlib; print(matplotlib.__version__)'"), emit: versions_matplotlib, topic: versions
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template "filter.py"
+    template "filter.sh"
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.${suffix}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //')
-        polars: \$(python -c "import polars; print(polars.__version__)")
-        upsetplot: \$(python -c "import upsetplot; print(upsetplot.__version__)")
-        matplotlib: \$(python -c "import matplotlib; print(matplotlib.__version__)")
-    END_VERSIONS
     """
 }

@@ -47,7 +47,7 @@ nextflow_process {
                     counts.columnNames,
                     counts.rowCount,
                     counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() },
-                    path(process.out.versions[0]).yaml
+                    [process.out.versions_python, process.out.versions_polars]
                 ).match() }
             )
         }

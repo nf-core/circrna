@@ -8,7 +8,6 @@ workflow CIRCEXPLORER2 {
     _circexplorer2_index
 
     main:
-    ch_versions = channel.empty()
 
     PARSE( star_junctions )
 
@@ -18,5 +17,4 @@ workflow CIRCEXPLORER2 {
     emit:
     bed   = UNIFY.out.output
 
-    versions = ch_versions
 }

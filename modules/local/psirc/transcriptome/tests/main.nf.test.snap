@@ -1,5 +1,29 @@
 {
-    "chrI_mini gtf + fasta - stub": {
+    "chrI_mini original gtf + fasta": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "transcriptome.fasta"
+                ]
+            ],
+            [
+                [
+                    "PSIRC_TRANSCRIPTOME",
+                    "psirc",
+                    "1.0.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:03:04.622737361",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "chrI_mini original gtf + fasta - stub": {
         "content": [
             {
                 "0": [
@@ -11,7 +35,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,e77a0117bf7dca66e2275585fc7d3911"
+                    [
+                        "PSIRC_TRANSCRIPTOME",
+                        "psirc",
+                        "1.0.0"
+                    ]
                 ],
                 "transcriptome": [
                     [
@@ -21,37 +49,19 @@
                         "transcriptome.fasta:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,e77a0117bf7dca66e2275585fc7d3911"
+                "versions_psirc": [
+                    [
+                        "PSIRC_TRANSCRIPTOME",
+                        "psirc",
+                        "1.0.0"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T10:03:17.294930333",
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:06:12.915474242"
-    },
-    "chrI_mini gtf + fasta": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "transcriptome"
-                    },
-                    "transcriptome.fasta"
-                ]
-            ],
-            {
-                "PSIRC_TRANSCRIPTOME": {
-                    "psirc-quant": "1.0.0"
-                }
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.4"
-        },
-        "timestamp": "2026-10-16T20:05:51.95220539"
+        }
     }
 }

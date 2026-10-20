@@ -1,0 +1,119 @@
+name: psirc_bsj
+description: Detect back-splice junctions with psiRC
+keywords:
+  - psirc
+  - circrna
+  - bsj
+tools:
+  - psirc:
+      description: Full-length circular RNA detection
+      homepage: https://github.com/Christina-hshi/psirc
+      licence:
+        - MIT
+        - BSD-3-Clause
+        - BSD-2-Clause
+        - LicenseRef-kallisto-b-non-commercial
+  - kallisto_b:
+      description: psiRC bundled kallisto fork
+      homepage: https://github.com/Christina-hshi/psirc
+      licence:
+        - LicenseRef-kallisto-b-non-commercial
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - reads:
+        type: file
+        description: RNA-seq reads
+  - - meta2:
+        type: map
+        description: Transcriptome metadata
+    - transcriptome:
+        type: file
+        description: Custom transcriptome FASTA
+    - index:
+        type: file
+        description: psiRC index
+output:
+  output:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - output:
+          type: directory
+          description: psiRC output directory
+  bed:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "*.bed":
+          type: file
+          description: Candidate junctions
+  versions_psirc:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - psirc:
+          type: string
+          description: The name of the tool
+      - 1.0.0:
+          type: string
+          description: Software version
+  versions_kallisto_b:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - kallisto_b:
+          type: string
+          description: The name of the tool
+      - kallisto_b version | sed "s/.*version //":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - psirc:
+          type: string
+          description: Software name
+      - 1.0.0:
+          type: string
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - kallisto_b:
+          type: string
+          description: Software name
+      - kallisto_b version | sed "s/.*version //":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/psirc:1.0.0--2981c5b7387ff659
+      build_id: bd-2981c5b7387ff659_1
+      scan_id: sc-9ad49cf9027a04b7_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/psirc:1.0.0--4c24a8f727283097
+      build_id: bd-4c24a8f727283097_1
+      scan_id: sc-37c66557fca53983_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/psirc:1.0.0--a9ea6a3a66facae3
+      build_id: bd-a9ea6a3a66facae3_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f8/f82e7ee7b4150858365520038299ed2f8d4c0920871c224c163389a1d16d3f64/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/psirc:1.0.0--fd72486cd534e374
+      build_id: bd-fd72486cd534e374_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5e/5e5afa9a01488ef93da1c7d72dfb0f0c9d885e5933aa67aa4ccb52f3c98eeb0c/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/psirc/bsj/.conda-lock/linux_amd64-bd-4c24a8f727283097_1.txt
+    linux/arm64:
+      lock_file: modules/local/psirc/bsj/.conda-lock/linux_arm64-bd-2981c5b7387ff659_1.txt

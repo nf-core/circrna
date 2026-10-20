@@ -61,7 +61,6 @@ nextflow_workflow {
                 workflow.out.sam.collect { [it[0], file(it[1]).name] }.sort { it[0].id },
                 workflow.out.tab.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
                 workflow.out.bam.collect { [it[0], file(it[1]).name, bam(it[1]).getReadsMD5()] }.sort { it[0].id },
-                workflow.out.versions.collect { path(it).yaml }
             ).match()
         }
     }

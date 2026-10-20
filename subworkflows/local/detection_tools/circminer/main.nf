@@ -11,10 +11,8 @@ workflow CIRCMINER {
     faidx
 
     main:
-    ch_versions = channel.empty()
 
     DETECT(reads, index.first(), gtf.first())
-    ch_versions = ch_versions.mix(DETECT.out.versions)
 
     UNIFY(
         DETECT.out.report.map { meta, report -> [meta + [tool: 'circminer'], report, 'bed'] },
@@ -26,9 +24,7 @@ workflow CIRCMINER {
         .first()
 
     INFER_STRAND(UNIFY.out.output, ch_reference)
-    ch_versions = ch_versions.mix(INFER_STRAND.out.versions)
 
     emit:
     bed = INFER_STRAND.out.bed
-    versions = ch_versions
 }

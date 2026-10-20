@@ -39,7 +39,7 @@ nextflow_process {
                 { assert snapshot(
                     process.out.list.collect { meta, f -> [meta, file(f).name, path(f).readLines().collect { it.split('\t').take(7).join('\t') }.sort().toString().md5()] },
                     process.out.library_length.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_ciri_as
                 ).match() }
             )
         }

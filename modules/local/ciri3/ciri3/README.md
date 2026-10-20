@@ -1,16 +1,13 @@
-# CIRI3 bundled JAR provenance
+# CIRI3 notes
 
-`bin/CIRI3_Java_1.8.0.jar` is the CIRI3 v3.0.1 Java 8 build from the upstream
-release source, pinned to commit
-[`73108c4478a7e691cb93360921b65203e0701516`](https://github.com/gyjames/CIRI3/tree/73108c4478a7e691cb93360921b65203e0701516).
+CIRI3 v3.0.1 is supplied by the Bioconda `ciri3` package and invoked through its
+`ciri3` wrapper. The module sets `JAVA_TOOL_OPTIONS` because this wrapper does not
+honour `JAVA_OPTS`.
 
-- Upstream project/release: <https://github.com/gyjames/CIRI3/releases/tag/v3.0.1>
-- Source path: `CIRI3_Java_1.8.0.jar`
-- SHA-256: `fd2075523efde219fffc3bf48c0e12bd3b3fab5093a4c81a41e7273772b1718d`
-- Upstream license: GPL-2.0; the accompanying upstream `LICENSE.txt` is retained
-  alongside this notice.
+CIRI3 does not expose a version option, so the version topic records the pinned
+Bioconda package version, `3.0.1`. The package is licensed GPL-2.0-only.
 
-The JAR is run on Java 17. Its upstream v3.0.1 README documents detection output
+The upstream v3.0.1 README documents detection output
 as 13 tab-separated columns. Columns 2-4 are chromosome, 1-based inclusive
 start, and end; column 5 is BSJ read count; column 11 is strand; and column 12
 contains supporting BSJ read IDs separated by commas. `-UC` takes a tab-separated

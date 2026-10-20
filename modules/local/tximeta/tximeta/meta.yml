@@ -1,0 +1,81 @@
+name: tximeta_tximeta
+description: Import transcript quantifications into a tximeta SummarizedExperiment.
+keywords:
+  - tximeta
+  - quantification
+  - summarizedexperiment
+tools:
+  - tximeta:
+      description: Transcript quantification import with metadata.
+      homepage: https://bioconductor.org/packages/tximeta/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata.
+    - quants:
+        type: file
+        description: Quantification files staged beneath quants.
+        pattern: "*"
+  - quant_type:
+      type: string
+      description: Quantification tool type.
+output:
+  se:
+    - - meta:
+          type: map
+          description: Sample metadata.
+      - "*.rds":
+          type: file
+          description: tximeta SummarizedExperiment.
+          pattern: "*.rds"
+  versions_bioconductor_tximeta:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bioconductor-tximeta:
+          type: string
+          description: The name of the tool
+      - Rscript -e "cat(as.character(packageVersion('tximeta')))":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bioconductor-tximeta:
+          type: string
+          description: Software name
+      - Rscript -e "cat(as.character(packageVersion('tximeta')))":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/tximeta_tximeta:91ac7b8609ffb2f2
+      build_id: bd-91ac7b8609ffb2f2_1
+      scan_id: sc-14b65da212102601_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/tximeta_tximeta:08810fdf5bec2e36
+      build_id: bd-08810fdf5bec2e36_1
+      scan_id: sc-3ce0d624810fd3eb_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/tximeta_tximeta:a2e8e16a410edeb4
+      build_id: bd-a2e8e16a410edeb4_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/67/676a87512baa4aa94b5e3af327d07a75b170190cca324e25d4c9aa6d9b3f2fbd/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/tximeta_tximeta:af1e8cc79f6fa423
+      build_id: bd-af1e8cc79f6fa423_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f7/f734af517eb057817ecb66b9a9396837da043ed537a05bb6278efa3bfa8022d5/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/tximeta/tximeta/.conda-lock/linux_amd64-bd-91ac7b8609ffb2f2_1.txt
+    linux/arm64:
+      lock_file: modules/local/tximeta/tximeta/.conda-lock/linux_arm64-bd-08810fdf5bec2e36_1.txt

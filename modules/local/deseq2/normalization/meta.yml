@@ -1,0 +1,97 @@
+name: deseq2_normalization
+description: Normalise miRNA count matrices with DESeq2.
+keywords:
+  - deseq2
+  - mirna
+  - normalization
+tools:
+  - deseq2:
+      description: Differential-expression and normalisation package.
+      homepage: https://bioconductor.org/packages/DESeq2/
+      licence:
+        - LGPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Count metadata.
+    - counts:
+        type: file
+        description: miRNA count matrix.
+        pattern: "*.{tsv,txt}"
+output:
+  normalized:
+    - - meta:
+          type: map
+          description: Count metadata.
+      - "*.normalized_counts.tsv":
+          type: file
+          description: DESeq2-normalised count matrix.
+          pattern: "*.normalized_counts.tsv"
+  versions_bioconductor_deseq2:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - bioconductor-deseq2:
+          type: string
+          description: The name of the tool
+      - Rscript -e "cat(as.character(packageVersion('DESeq2')))":
+          type: eval
+          description: Software version
+  versions_r_base:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - r-base:
+          type: string
+          description: The name of the tool
+      - R --version | sed "1!d; s/.*version //; s/ .*//":
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - r-base:
+          type: string
+          description: Software name
+      - R --version | sed "1!d; s/.*version //; s/ .*//":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bioconductor-deseq2:
+          type: string
+          description: Software name
+      - Rscript -e "cat(as.character(packageVersion('DESeq2')))":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/deseq2_normalization:d76beacafc69a865
+      build_id: bd-d76beacafc69a865_1
+      scan_id: sc-d5c1f98544962a75_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/deseq2_normalization:1a857d00ad90f60e
+      build_id: bd-1a857d00ad90f60e_1
+      scan_id: sc-286eb86a56c7cdea_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/deseq2_normalization:10f32e6f1121a4d7
+      build_id: bd-10f32e6f1121a4d7_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b0/b0cde4f448f7fb2a5421bb9bf747e2c17fc7413916790dacca37930691d8e01d/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/deseq2_normalization:f56262d41e150f25
+      build_id: bd-f56262d41e150f25_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/52/52051f0d0b0ef9b320bdd08f63d9b585a9f77fda6dbfce6fd8eb3171255e6993/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/deseq2/normalization/.conda-lock/linux_amd64-bd-d76beacafc69a865_1.txt
+    linux/arm64:
+      lock_file: modules/local/deseq2/normalization/.conda-lock/linux_arm64-bd-1a857d00ad90f60e_1.txt

@@ -36,7 +36,7 @@ nextflow_process {
                 { assert circs[0].split('\t').toList().sort() == [ 'cel_N2_1', 'cel_N2_2', 'cel_N2_3', 'fust1_1', 'fust1_2', 'fust1_3', 'gene_id' ] },
                 { assert snapshot(
                     process.out.counts,
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_r_base
                 ).match() }
             )
         }
@@ -69,7 +69,7 @@ nextflow_process {
                 { assert circs[0].split('\t').toList().sort() == [ 'cel_N2_1', 'fust1_1', 'gene_id' ] },
                 { assert snapshot(
                     process.out.counts,
-                    path(process.out.versions[0]).yaml
+                    process.out.versions_r_base
                 ).match() }
             )
         }

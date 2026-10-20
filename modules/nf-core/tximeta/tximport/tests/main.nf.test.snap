@@ -67,7 +67,11 @@
                     ]
                 ],
                 "8": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ],
                 "counts_gene": [
                     [
@@ -133,16 +137,20 @@
                         "[].transcript_tpm.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                "versions_bioconductor_tximeta": [
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:32:40.749626918",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:26:21.185522"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - salmon - gtf": {
         "content": [
@@ -211,14 +219,18 @@
                 ]
             ],
             [
-                "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                [
+                    "TXIMETA_TXIMPORT",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
             ]
         ],
+        "timestamp": "2026-10-19T21:33:12.821048965",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:27:19.912432"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - salmon - gtf - stub": {
         "content": [
@@ -288,7 +300,11 @@
                     ]
                 ],
                 "8": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ],
                 "counts_gene": [
                     [
@@ -354,16 +370,20 @@
                         "[].transcript_tpm.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                "versions_bioconductor_tximeta": [
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:33:33.671493549",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:28:42.817097"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - kallisto - gtf - custom_column_names": {
         "content": [
@@ -432,14 +452,18 @@
                 ]
             ],
             [
-                "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                [
+                    "TXIMETA_TXIMPORT",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
             ]
         ],
+        "timestamp": "2026-10-19T21:35:00.546852608",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:29:35.461954"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - rsem - gtf - stub": {
         "content": [
@@ -509,7 +533,11 @@
                     ]
                 ],
                 "8": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ],
                 "counts_gene": [
                     [
@@ -575,16 +603,20 @@
                         "test.transcript_tpm.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                "versions_bioconductor_tximeta": [
+                    [
+                        "TXIMETA_TXIMPORT",
+                        "bioconductor-tximeta",
+                        "1.28.3"
+                    ]
                 ]
             }
         ],
+        "timestamp": "2026-10-19T21:34:27.563059138",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-11T10:59:46.025734857"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - kallisto - gtf": {
         "content": [
@@ -653,14 +685,18 @@
                 ]
             ],
             [
-                "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                [
+                    "TXIMETA_TXIMPORT",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
             ]
         ],
+        "timestamp": "2026-10-19T21:31:47.561023605",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:23:53.102679"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - rsem - gtf": {
         "content": [
@@ -729,14 +765,18 @@
                 ]
             ],
             [
-                "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                [
+                    "TXIMETA_TXIMPORT",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
             ]
         ],
+        "timestamp": "2026-10-19T21:34:06.379915284",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-02-11T10:59:31.386695001"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "saccharomyces_cerevisiae - kallisto - gtf - extra_attributes": {
         "content": [
@@ -805,13 +845,17 @@
                 ]
             ],
             [
-                "versions.yml:md5,6ff317cceddc686f84d79cb976e1e28b"
+                [
+                    "TXIMETA_TXIMPORT",
+                    "bioconductor-tximeta",
+                    "1.28.3"
+                ]
             ]
         ],
+        "timestamp": "2026-10-19T21:32:18.701684288",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-12-09T09:24:47.963548"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }

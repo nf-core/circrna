@@ -24,7 +24,6 @@ workflow QUANTIFICATION {
     ch_bwa_sam
 
     main:
-    ch_versions = channel.empty()
     ch_gene_counts = channel.empty()
     ch_circ_counts = channel.empty()
     ch_ciriquant = channel.empty()
@@ -42,7 +41,6 @@ workflow QUANTIFICATION {
         )
         ch_gene_counts = ch_gene_counts.mix(PSIRC_QUANT.out.gene_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
         ch_circ_counts = ch_circ_counts.mix(PSIRC_QUANT.out.circular_tx_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
-        ch_versions = ch_versions.mix(PSIRC_QUANT.out.versions)
         ch_rds = ch_rds.mix(PSIRC_QUANT.out.rds)
     }
 
@@ -55,7 +53,6 @@ workflow QUANTIFICATION {
             bwa_index,
             hisat2_index,
         )
-        ch_versions = ch_versions.mix(CIRIQUANT.out.versions)
         ch_gene_counts = ch_gene_counts.mix(CIRIQUANT.out.gene_tpm)
         ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
         ch_ciriquant = ch_ciriquant.mix(CIRIQUANT.out.raw)
@@ -65,7 +62,6 @@ workflow QUANTIFICATION {
     if (tools.contains('ciri3')) {
         CIRI3_QUANT(ch_bwa_sam, circ_annotation_bed, ch_fasta, ch_gtf)
         ch_circ_counts = ch_circ_counts.mix(CIRI3_QUANT.out.bsj)
-        ch_versions = ch_versions.mix(CIRI3_QUANT.out.versions)
     }
 
     aggregations = ['sum', 'max']
@@ -85,5 +81,4 @@ workflow QUANTIFICATION {
     ciriquant = ch_ciriquant
     stringtie = ch_stringtie
     rds       = ch_rds
-    versions  = ch_versions
 }

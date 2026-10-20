@@ -14,13 +14,10 @@ workflow CIRIQUANT {
     hisat2_index
 
     main:
-    ch_versions = channel.empty()
 
     MAIN( reads, ch_bed, ch_gtf, ch_fasta, bwa_index, hisat2_index )
-    ch_versions = ch_versions.mix(MAIN.out.versions)
 
     EXTRACT_CIRC( MAIN.out.gtf )
-    ch_versions = ch_versions.mix(EXTRACT_CIRC.out.versions)
 
     EXTRACT_GENES( MAIN.out.gene_list.map { meta, gene_list -> [meta, gene_list, 'gene.tsv'] }, [], false )
 
@@ -28,13 +25,11 @@ workflow CIRIQUANT {
         EXTRACT_GENES.out.output.map{meta, table -> [[id: 'gene'], meta.id, table]}.groupTuple(),
         "gene_id,gene_name"
     )
-    ch_versions = ch_versions.mix(JOIN_GENE.out.versions)
 
     JOIN_CIRC(
         EXTRACT_CIRC.out.table.map{meta, table -> [[id: 'circ'], meta.id, table]}.groupTuple(),
         "circ_id,gene_id"
     )
-    ch_versions = ch_versions.mix(JOIN_CIRC.out.versions)
 
     emit:
     gene_tpm  = JOIN_GENE.out.joined
@@ -42,5 +37,4 @@ workflow CIRIQUANT {
     raw       = MAIN.out.gtf
     stringtie = MAIN.out.gene_gtf
 
-    versions  = ch_versions
 }

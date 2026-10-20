@@ -1,0 +1,78 @@
+Changes in component 'nf-core/csvtk/split'
+Changes in 'csvtk/split/meta.yml':
+--- modules/nf-core/csvtk/split/meta.yml
++++ modules/nf-core/csvtk/split/meta.yml
+@@ -48,13 +48,27 @@
+           ontologies:
+             - edam: http://edamontology.org/format_3752 # CSV
+             - edam: http://edamontology.org/format_3475 # TSV
++  versions_csvtk:
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - csvtk:
++          type: string
++          description: The name of the tool
++      - "csvtk version | sed -e 's/csvtk v//g'":
++          type: eval
++          description: The expression to obtain the version of the tool
++topics:
+   versions:
+-    - versions.yml:
+-        type: file
+-        description: File containing software versions
+-        pattern: "versions.yml"
+-        ontologies:
+-          - edam: http://edamontology.org/format_3750 # YAML
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - csvtk:
++          type: string
++          description: The name of the tool
++      - "csvtk version | sed -e 's/csvtk v//g'":
++          type: eval
++          description: The expression to obtain the version of the tool
+ authors:
+   - "@SusiJo"
+ maintainers:
+
+'modules/nf-core/csvtk/split/environment.yml' is unchanged
+Changes in 'csvtk/split/main.nf':
+--- modules/nf-core/csvtk/split/main.nf
++++ modules/nf-core/csvtk/split/main.nf
+@@ -14,7 +14,7 @@
+ 
+     output:
+     tuple val(meta), path("*.${out_extension}"), emit: split_csv
+-    path "versions.yml"                        , emit: versions
++    tuple val("${task.process}"), val('csvtk'), eval("csvtk version | sed -e 's/csvtk v//g'"), topic: versions, emit: versions_csvtk
+ 
+     when:
+     task.ext.when == null || task.ext.when
+@@ -36,10 +36,6 @@
+         ${out_delimiter} \\
+         ${csv}
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        csvtk: \$(echo \$( csvtk version | sed -e 's/csvtk v//g' ))
+-    END_VERSIONS
+     """
+ 
+     stub:
+@@ -49,9 +45,5 @@
+     """
+     touch ${prefix}.${out_extension}
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        csvtk: \$(echo \$( csvtk version | sed -e "s/csvtk v//g" ))
+-    END_VERSIONS
+     """
+ }
+
+'modules/nf-core/csvtk/split/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/csvtk/split/tests/main.nf.test' is unchanged
+'modules/nf-core/csvtk/split/tests/nextflow.config' is unchanged
+************************************************************

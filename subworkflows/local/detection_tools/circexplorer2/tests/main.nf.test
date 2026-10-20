@@ -36,7 +36,6 @@ nextflow_workflow {
             assert workflow.success
             assert snapshot(
                 workflow.out.bed.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size(), path(it[1]).md5] }.sort { it[0].id },
-                workflow.out.versions
             ).match()
         }
     }

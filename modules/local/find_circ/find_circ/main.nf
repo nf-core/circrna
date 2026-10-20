@@ -2,10 +2,10 @@ process FIND_CIRC {
     tag "$meta.id"
     label "process_high"
 
-    conda "bioconda::find_circ=1.2 bioconda::bowtie2"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' :
-        'biocontainers/mulled-v2-c27e472038a09e49d9147bc52903e12836302c12:60ffb3b15a2c40c669f8d38382b1e6e4b065f5e4-0' }"
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/eb/ebc79c1656071bb656528ff16510f3a9afb3dedffd14a08fd456a6c0ca19fd1f/data'
+        : 'community.wave.seqera.io/library/find_circ:afd6068f3366fc58'}"
 
     input:
     tuple val(meta), path(anchors)
@@ -16,7 +16,8 @@ process FIND_CIRC {
     tuple val(meta), path("${prefix}.sites.bed")  , emit: bed
     tuple val(meta), path("${prefix}.sites.reads"), emit: reads
     tuple val(meta), path("${prefix}.sites.log")  , emit: log
-    path  "versions.yml"                          , emit: versions
+    tuple val("${task.process}"), val('bowtie2'), eval('bowtie2 --version 2>&1 | sed -n \'s/^bowtie2-align-s version //p\' | head -n 1'), emit: versions_bowtie2, topic: versions
+    tuple val("${task.process}"), val('find_circ'), val('1.2'), emit: versions_find_circ, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,7 +27,6 @@ process FIND_CIRC {
     args = task.ext.args ?: ""
     args2 = task.ext.args2 ?: ""
     def strand_arg = meta.strandedness && (meta.strandedness == 'forward' || meta.strandedness == 'reverse') ? "--stranded" : ""
-    def VERSION = '1.2'
     """
     INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/.rev.1.bt2//"`
     [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/.rev.1.bt2l//"`
@@ -44,25 +44,14 @@ process FIND_CIRC {
         -U $anchors | \\
         find_circ.py --genome=$fasta $strand_arg $args2 --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
-        find_circ: $VERSION
-    END_VERSIONS
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '1.2'
     """
     touch ${prefix}.sites.bed
     touch ${prefix}.sites.reads
     touch ${prefix}.sites.log
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
-        find_circ: $VERSION
-    END_VERSIONS
     """
 }

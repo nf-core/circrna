@@ -65,7 +65,7 @@ nextflow_process {
                     process.out.lengths_transcript,
                     process.out.tpm_gene,
                     process.out.tpm_transcript,
-                    process.out.versions).match()
+                    process.out.versions_bioconductor_tximeta).match()
                 }
             )
         }
@@ -124,7 +124,7 @@ nextflow_process {
                     process.out.lengths_transcript,
                     process.out.tpm_gene,
                     process.out.tpm_transcript,
-                    process.out.versions).match()
+                    process.out.versions_bioconductor_tximeta).match()
                 }
             )
         }
@@ -207,7 +207,7 @@ nextflow_process {
                     process.out.lengths_transcript,
                     process.out.tpm_gene,
                     process.out.tpm_transcript,
-                    process.out.versions).match()
+                    process.out.versions_bioconductor_tximeta).match()
                 }
             )
         }
@@ -330,7 +330,7 @@ nextflow_process {
                     process.out.lengths_transcript,
                     process.out.tpm_gene,
                     process.out.tpm_transcript,
-                    process.out.versions).match()
+                    process.out.versions_bioconductor_tximeta).match()
                 }
             )
         }
@@ -416,7 +416,7 @@ nextflow_process {
                     process.out.lengths_transcript,
                     process.out.tpm_gene,
                     process.out.tpm_transcript,
-                    process.out.versions).match()
+                    process.out.versions_bioconductor_tximeta).match()
                 }
             )
         }

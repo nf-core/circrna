@@ -14,7 +14,7 @@ process CSVTK_SPLIT {
 
     output:
     tuple val(meta), path("*.${out_extension}"), emit: split_csv
-    path "versions.yml"                        , emit: versions
+    tuple val("${task.process}"), val('csvtk'), eval("csvtk version | sed -e 's/csvtk v//g'"), topic: versions, emit: versions_csvtk
 
     when:
     task.ext.when == null || task.ext.when
@@ -36,10 +36,6 @@ process CSVTK_SPLIT {
         ${out_delimiter} \\
         ${csv}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        csvtk: \$(echo \$( csvtk version | sed -e 's/csvtk v//g' ))
-    END_VERSIONS
     """
 
     stub:
@@ -49,9 +45,5 @@ process CSVTK_SPLIT {
     """
     touch ${prefix}.${out_extension}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        csvtk: \$(echo \$( csvtk version | sed -e "s/csvtk v//g" ))
-    END_VERSIONS
     """
 }

@@ -1,0 +1,117 @@
+Changes in component 'nf-core/segemehl/align'
+Changes in 'segemehl/align/meta.yml':
+--- modules/nf-core/segemehl/align/meta.yml
++++ modules/nf-core/segemehl/align/meta.yml
+@@ -92,13 +92,27 @@
+               (optional, only if -S flag is set in task.ext.args)
+           pattern: "*.sngl.bed"
+           ontologies: []
++  versions_segemehl:
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - segemehl:
++          type: string
++          description: The name of the tool
++      - "segemehl.x 2>&1 | grep 'ge5dee' | awk -F Z '{print substr($1, 2, 6)}'":
++          type: eval
++          description: The expression to obtain the version of the tool
++topics:
+   versions:
+-    - versions.yml:
+-        type: file
+-        description: File containing software versions
+-        pattern: "versions.yml"
+-        ontologies:
+-          - edam: http://edamontology.org/format_3750 # YAML
++    - - ${task.process}:
++          type: string
++          description: The name of the process
++      - segemehl:
++          type: string
++          description: The name of the tool
++      - "segemehl.x 2>&1 | grep 'ge5dee' | awk -F Z '{print substr($1, 2, 6)}'":
++          type: eval
++          description: The expression to obtain the version of the tool
+ authors:
+   - "@BarryDigby"
+   - "@nictru"
+
+'modules/nf-core/segemehl/align/environment.yml' is unchanged
+Changes in 'segemehl/align/main.nf':
+--- modules/nf-core/segemehl/align/main.nf
++++ modules/nf-core/segemehl/align/main.nf
+@@ -17,7 +17,7 @@
+     tuple val(meta), path("${prefix}/${prefix}.trns.txt") , emit: trans_alignments, optional: true
+     tuple val(meta), path("${prefix}/${prefix}.mult.bed") , emit: multi_bed, optional: true
+     tuple val(meta), path("${prefix}/${prefix}.sngl.bed") , emit: single_bed, optional: true
+-    path "versions.yml"                                   , emit: versions
++    tuple val("${task.process}"), val('segemehl'), eval("segemehl.x 2>&1 | grep 'ge5dee' | awk -F Z '{print substr(\$1, 2, 6)}'"), topic: versions, emit: versions_segemehl
+ 
+     when:
+     task.ext.when == null || task.ext.when
+@@ -38,10 +38,6 @@
+         $args \\
+         -o ${prefix}/${prefix}.${suffix}
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        segemehl: \$(echo \$(segemehl.x 2>&1 | grep "ge5dee" | awk -F Z '{print substr(\$1, 2, 6)}' ))
+-    END_VERSIONS
+     """
+ 
+     stub:
+@@ -51,9 +47,5 @@
+     mkdir -p $prefix
+     touch ${prefix}/${prefix}.${suffix}
+ 
+-    cat <<-END_VERSIONS > versions.yml
+-    "${task.process}":
+-        segemehl: \$(echo \$(segemehl.x 2>&1 | grep "ge5dee" | awk -F Z '{print substr(\$1, 2, 6)}' ))
+-    END_VERSIONS
+     """
+ }
+
+'modules/nf-core/segemehl/align/tests/split.config' is unchanged
+'modules/nf-core/segemehl/align/tests/main.nf.test.snap' is unchanged
+Changes in 'segemehl/align/tests/main.nf.test':
+--- modules/nf-core/segemehl/align/tests/main.nf.test
++++ modules/nf-core/segemehl/align/tests/main.nf.test
+@@ -42,7 +42,7 @@
+             assertAll(
+                 { assert process.success },
+                 { assert path(process.out.alignment[0][1]).exists() },
+-                { assert snapshot(process.out.versions).match("homo_sapiens - single_end - versions") }
++                { assert snapshot(process.out.versions_segemehl).match("homo_sapiens - single_end - versions") }
+             )
+         }
+     }
+@@ -70,7 +70,7 @@
+             assertAll(
+                 { assert process.success },
+                 { assert path(process.out.alignment[0][1]).exists() },
+-                { assert snapshot(process.out.versions).match("homo_sapiens - paired_end - versions") }
++                { assert snapshot(process.out.versions_segemehl).match("homo_sapiens - paired_end - versions") }
+             )
+         }
+     }
+@@ -100,7 +100,7 @@
+                 { assert path(process.out.trans_alignments[0][1]).exists() },
+                 { assert path(process.out.multi_bed[0][1]).exists() },
+                 { assert path(process.out.single_bed[0][1]).exists() },
+-                { assert snapshot(process.out.versions).match("homo_sapiens - split - single_end - versions") }
++                { assert snapshot(process.out.versions_segemehl).match("homo_sapiens - split - single_end - versions") }
+             )
+         }
+     }
+@@ -133,7 +133,7 @@
+                 { assert path(process.out.trans_alignments[0][1]).exists() },
+                 { assert path(process.out.multi_bed[0][1]).exists() },
+                 { assert path(process.out.single_bed[0][1]).exists() },
+-                { assert snapshot(process.out.versions).match("homo_sapiens - split - paired_end - versions") }
++                { assert snapshot(process.out.versions_segemehl).match("homo_sapiens - split - paired_end - versions") }
+             )
+         }
+     }
+
+************************************************************
