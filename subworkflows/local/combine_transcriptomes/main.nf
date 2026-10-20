@@ -11,20 +11,21 @@ workflow COMBINE_TRANSCRIPTOMES {
     main:
 
     COMBINE_TRANSCRIPTOME_GTFS(
-        ch_genome_gtf.mix(ch_circ_gtf).map{ _meta, gtf -> gtf }.collect().map{ gtfs -> [[id: "transcriptome"], gtfs, "combined.gtf"]},
+        ch_genome_gtf.mix(ch_circ_gtf).map { _meta, gtf -> gtf }.collect().map { gtfs -> [[id: "transcriptome"], gtfs, "combined.gtf"] }
     )
 
     EXCLUDE_OVERLONG_TRANSCRIPTS(
-        COMBINE_TRANSCRIPTOME_GTFS.out.sorted.map{ meta, gtf -> [meta, gtf, "filtered.gtf"]}, [], false
+        COMBINE_TRANSCRIPTOME_GTFS.out.sorted.map { meta, gtf -> [meta, gtf, "filtered.gtf"] },
+        [],
+        false,
     )
 
     TRANSCRIPTOME(
         EXCLUDE_OVERLONG_TRANSCRIPTS.out.output,
-        ch_genome_fasta.map{_meta, fasta -> fasta}
+        ch_genome_fasta.map { _meta, fasta -> fasta },
     )
 
     emit:
     fasta = TRANSCRIPTOME.out.gffread_fasta
     gtf   = EXCLUDE_OVERLONG_TRANSCRIPTS.out.output
-
 }

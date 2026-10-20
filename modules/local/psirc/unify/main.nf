@@ -20,7 +20,7 @@ process PSIRC_UNIFY {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template 'psirc_unify.sh'
+    template('psirc_unify.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

@@ -17,7 +17,6 @@ workflow PSIRC {
     UNIFY(FLI.out.tsv)
 
     emit:
-    fasta = FLI.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'psirc'], fasta] }
-    bed12 = UNIFY.out.bed.map{ meta, bed -> [meta + [fli_tool: 'psirc'], bed] }
-
+    fasta = FLI.out.fasta.map { meta, fasta -> [meta + [fli_tool: 'psirc'], fasta] }
+    bed12 = UNIFY.out.bed.map { meta, bed -> [meta + [fli_tool: 'psirc'], bed] }
 }

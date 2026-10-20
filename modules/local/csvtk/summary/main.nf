@@ -1,5 +1,5 @@
 process CSVTK_SUMMARY {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
@@ -24,10 +24,10 @@ process CSVTK_SUMMARY {
     """
     csvtk \\
         summary \\
-        $args \\
-        --num-cpus $task.cpus \\
+        ${args} \\
+        --num-cpus ${task.cpus} \\
         --out-file ${prefix}.${out_extension} \\
-        $csv
+        ${csv}
 
     """
 

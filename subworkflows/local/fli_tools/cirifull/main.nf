@@ -33,10 +33,7 @@ workflow CIRIFULL {
     MERGE(ch_merge, ch_fasta, ch_gtf)
 
     BUILD_LIST(
-        MERGE.out.anno
-            .map { _meta, anno -> [[id: 'cirifull'], anno] }
-            .groupTuple()
-            .combine(ch_bsj_annotation.map { _meta, anno -> anno }),
+        MERGE.out.anno.map { _meta, anno -> [[id: 'cirifull'], anno] }.groupTuple().combine(ch_bsj_annotation.map { _meta, anno -> anno }),
         max_shift,
     )
 
@@ -50,7 +47,6 @@ workflow CIRIFULL {
     CIRIVIS_UNIFY(CIRI_VIS.out.list)
 
     emit:
-    fasta = CIRI_VIS.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'cirifull'], fasta] }
-    bed12 = CIRIVIS_UNIFY.out.bed.map{ meta, bed -> [meta + [fli_tool: 'cirifull'], bed] }
-
+    fasta = CIRI_VIS.out.fasta.map { meta, fasta -> [meta + [fli_tool: 'cirifull'], fasta] }
+    bed12 = CIRIVIS_UNIFY.out.bed.map { meta, bed -> [meta + [fli_tool: 'cirifull'], bed] }
 }

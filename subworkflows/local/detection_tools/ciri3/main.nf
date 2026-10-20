@@ -1,5 +1,5 @@
 include { CIRI3_CIRI3 as CIRI3_RUN } from '../../../../modules/local/ciri3/ciri3'
-include { GAWK as UNIFY } from '../../../../modules/nf-core/gawk'
+include { GAWK as UNIFY            } from '../../../../modules/nf-core/gawk'
 
 workflow CIRI3 {
     take:

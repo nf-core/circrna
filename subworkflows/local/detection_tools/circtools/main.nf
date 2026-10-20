@@ -66,17 +66,16 @@ workflow CIRCTOOLS {
         }
 
     ch_detect = ch_combined_junctions.multiMap { meta, paired, mate1, mate2 ->
-        junctions:   [meta, paired, mate1, mate2]
+        junctions: [meta, paired, mate1, mate2]
         strandedness: meta.strandedness ?: 'auto'
     }
 
     DETECT(ch_detect.junctions, ch_fasta, ch_gtf, ch_detect.strandedness)
 
-    UNIFY(DETECT.out.reads
-        .join(DETECT.out.coordinates)
-        .join(DETECT.out.counts)
+    UNIFY(
+        DETECT.out.reads.join(DETECT.out.coordinates).join(DETECT.out.counts)
     )
 
     emit:
-    bed      = UNIFY.out.bed.map{ meta, bed -> [meta + [tool: "circtools"], bed] }
+    bed = UNIFY.out.bed.map { meta, bed -> [meta + [tool: "circtools"], bed] }
 }

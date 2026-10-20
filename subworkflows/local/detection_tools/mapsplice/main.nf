@@ -1,6 +1,6 @@
-include { MAPSPLICE_ALIGN as ALIGN             } from '../../../../modules/local/mapsplice/align'
-include { CIRCEXPLORER2_PARSE as PARSE         } from '../../../../modules/nf-core/circexplorer2/parse'
-include { GAWK as UNIFY                        } from '../../../../modules/nf-core/gawk'
+include { MAPSPLICE_ALIGN as ALIGN     } from '../../../../modules/local/mapsplice/align'
+include { CIRCEXPLORER2_PARSE as PARSE } from '../../../../modules/nf-core/circexplorer2/parse'
+include { GAWK as UNIFY                } from '../../../../modules/nf-core/gawk'
 
 workflow MAPSPLICE {
     take:
@@ -14,13 +14,16 @@ workflow MAPSPLICE {
 
     main:
 
-    ALIGN( reads, bowtie_index.map{ _meta, index -> index}, chromosomes, gtf )
-    PARSE( ALIGN.out.raw_fusions )
-    UNIFY( PARSE.out.junction.map{ meta, bed ->
-        [ meta + [tool: "mapsplice"], bed, "mapsplice.bed" ] }, [], false )
-
+    ALIGN(reads, bowtie_index.map { _meta, index -> index }, chromosomes, gtf)
+    PARSE(ALIGN.out.raw_fusions)
+    UNIFY(
+        PARSE.out.junction.map { meta, bed ->
+            [meta + [tool: "mapsplice"], bed, "mapsplice.bed"]
+        },
+        [],
+        false,
+    )
 
     emit:
     bed = UNIFY.out.output
-
 }

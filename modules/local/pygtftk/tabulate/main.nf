@@ -1,5 +1,5 @@
 process PYGTFTK_TABULATE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
@@ -11,29 +11,29 @@ process PYGTFTK_TABULATE {
     tuple val(meta), path(gtf)
 
     output:
-    tuple val(meta), path("$outfile"), emit: table
+    tuple val(meta), path("${outfile}"), emit: table
     tuple val("${task.process}"), val('gtftk'), val('1.6.2'), emit: versions_gtftk, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args   = task.ext.args   ?: ''
+    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    outfile    = "${prefix}.circ.tsv"
+    outfile = "${prefix}.circ.tsv"
     """
     export HOME="\$PWD"
 
     gtftk tabulate \\
-        $args \\
-        -i $gtf | \\
+        ${args} \\
+        -i ${gtf} | \\
         grep -v '^tabulate()' > ${outfile}
 
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    outfile    = "${prefix}.circ.tsv"
+    outfile = "${prefix}.circ.tsv"
     """
     export HOME="\$PWD"
 

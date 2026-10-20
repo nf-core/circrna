@@ -8,12 +8,12 @@ process CIRCTEST_CIRCTEST {
         : 'community.wave.seqera.io/library/circtest_circtest:ff686a5b50cb6d65'}"
 
     input:
-    tuple val(meta) , path(gene_counts), path(circ_counts)
+    tuple val(meta), path(gene_counts), path(circ_counts)
     tuple val(meta2), path(phenotype)
 
     output:
     tuple val(meta), path("${prefix}_summary.txt"), emit: summary
-    tuple val(meta), path("*.pdf")                , emit: plots
+    tuple val(meta), path("*.pdf"), emit: plots
     tuple val("${task.process}"), val('r-base'), eval('R --version | sed "1!d; s/.*version //; s/ .*//"'), emit: versions_r_base, topic: versions
     tuple val("${task.process}"), val('aod'), eval('Rscript -e "cat(as.character(packageVersion(\'aod\')))"'), emit: versions_aod, topic: versions
     tuple val("${task.process}"), val('plyr'), eval('Rscript -e "cat(as.character(packageVersion(\'plyr\')))"'), emit: versions_plyr, topic: versions
@@ -24,7 +24,7 @@ process CIRCTEST_CIRCTEST {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'circtest.sh'
+    template('circtest.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id

@@ -1,5 +1,5 @@
 process MIRNA_TARGETS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
@@ -22,8 +22,8 @@ process MIRNA_TARGETS {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     ## reformat and sort miRanda, TargetScan outputs, convert to BED for overlaps.
-    tail -n +2 $targetscan | sort -k1,1 -k4n | awk -v OFS="\\t" '{print \$1, \$2, \$4, \$5, \$9}' | awk -v OFS="\\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' > targetscan.bed
-    tail -n +2 $miranda | sort -k2,2 -k7n | awk -v OFS="\\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' | awk -v OFS="\\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' > miranda.bed
+    tail -n +2 ${targetscan} | sort -k1,1 -k4n | awk -v OFS="\\t" '{print \$1, \$2, \$4, \$5, \$9}' | awk -v OFS="\\t" '{print \$2, \$3, \$4, \$1, "0", \$5}' > targetscan.bed
+    tail -n +2 ${miranda} | sort -k2,2 -k7n | awk -v OFS="\\t" '{print \$2, \$1, \$3, \$4, \$7, \$8}' | awk -v OFS="\\t" '{print \$2, \$5, \$6, \$1, \$3, \$4}' > miranda.bed
 
     ## intersect, consolidate miRanda, TargetScan information about miRs.
     ## -wa to output miRanda hits - targetscan makes it difficult to resolve duplicate miRNAs at MRE sites.

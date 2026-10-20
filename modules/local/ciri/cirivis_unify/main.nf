@@ -19,7 +19,7 @@ process CIRIVIS_UNIFY {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template 'cirivis_unify.sh'
+    template('cirivis_unify.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

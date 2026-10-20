@@ -1,5 +1,5 @@
 process MIRNA_FILTERING {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
     shell '/bin/bash'
 
@@ -10,8 +10,8 @@ process MIRNA_FILTERING {
 
     input:
     tuple val(meta), path(normalized_counts)
-    val(mirna_min_sample_percentage)
-    val(mirna_min_reads)
+    val mirna_min_sample_percentage
+    val mirna_min_reads
 
     output:
     tuple val(meta), path("${meta.id}.normalized_counts_filtered.tsv"), emit: filtered
@@ -21,7 +21,7 @@ process MIRNA_FILTERING {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'mirna_filtering.sh'
+    template('mirna_filtering.sh')
 
     stub:
     """

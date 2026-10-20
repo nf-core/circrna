@@ -20,7 +20,7 @@ process CIRCTEST_PREPARE {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'prepare.sh'
+    template('prepare.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id

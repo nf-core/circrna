@@ -22,7 +22,7 @@ process CIRIFULL_RO2 {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    CIRI-full RO2 -r ${fasta} -s ${sam} -l ${length} -o ${prefix} $args
+    CIRI-full RO2 -r ${fasta} -s ${sam} -l ${length} -o ${prefix} ${args}
 
     """
 

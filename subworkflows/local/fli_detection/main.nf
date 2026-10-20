@@ -1,6 +1,6 @@
-include { CIRIFULL } from '../fli_tools/cirifull'
-include { PSIRC    } from '../fli_tools/psirc'
-include { JCCIRC   } from '../fli_tools/jccirc'
+include { CIRIFULL  } from '../fli_tools/cirifull'
+include { PSIRC     } from '../fli_tools/psirc'
+include { JCCIRC    } from '../fli_tools/jccirc'
 include { CIRCTOOLS } from '../fli_tools/circtools'
 
 workflow FLI_DETECTION {

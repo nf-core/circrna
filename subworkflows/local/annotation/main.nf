@@ -46,7 +46,7 @@ workflow ANNOTATION {
     GET_FASTA(RENAME.out.output, fasta)
 
     emit:
-    bed12    = RENAME.out.output
-    gtf      = BED2GTF.out.gtf
-    fasta    = GET_FASTA.out.fasta
+    bed12 = RENAME.out.output
+    gtf   = BED2GTF.out.gtf
+    fasta = GET_FASTA.out.fasta
 }

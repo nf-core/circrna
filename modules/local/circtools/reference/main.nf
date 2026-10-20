@@ -8,7 +8,7 @@ process CIRCTOOLS_REFERENCE {
         : 'community.wave.seqera.io/library/circtools:2.0.5.post2--20ffd704d69916e2'}"
 
     input:
-    val(genome)
+    val genome
 
     output:
     path "reference", emit: reference

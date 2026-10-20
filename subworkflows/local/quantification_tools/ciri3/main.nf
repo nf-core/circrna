@@ -1,6 +1,6 @@
-include { CIRI3_CIRI3 as CIRI3 } from '../../../../modules/local/ciri3/ciri3'
-include { CIRI3_UC_LIST } from '../../../../modules/local/ciri3/uc_list'
-include { CIRI3_UC_MATRIX } from '../../../../modules/local/ciri3/uc_matrix'
+include { CIRI3_CIRI3 as CIRI3     } from '../../../../modules/local/ciri3/ciri3'
+include { CIRI3_UC_LIST            } from '../../../../modules/local/ciri3/uc_list'
+include { CIRI3_UC_MATRIX          } from '../../../../modules/local/ciri3/uc_matrix'
 include { JOIN_SAMPLES as JOIN_BSJ } from '../../../../modules/local/matrix/join_samples'
 include { JOIN_SAMPLES as JOIN_FSJ } from '../../../../modules/local/matrix/join_samples'
 
@@ -26,15 +26,15 @@ workflow CIRI3_QUANT {
 
     JOIN_BSJ(
         CIRI3_UC_MATRIX.out.bsj.map { meta, table -> [[id: 'ciri3_bsj'], meta.id, table] }.groupTuple(),
-        'circRNA_ID'
+        'circRNA_ID',
     )
 
     JOIN_FSJ(
         CIRI3_UC_MATRIX.out.fsj.map { meta, table -> [[id: 'ciri3_fsj'], meta.id, table] }.groupTuple(),
-        'circRNA_ID'
+        'circRNA_ID',
     )
 
     emit:
-    bsj      = JOIN_BSJ.out.joined.map { _meta, table -> [[id: 'ciri3_bsj', quantification: 'ciri3'], table] }
-    fsj      = JOIN_FSJ.out.joined.map { _meta, table -> [[id: 'ciri3_fsj', quantification: 'ciri3'], table] }
+    bsj = JOIN_BSJ.out.joined.map { _meta, table -> [[id: 'ciri3_bsj', quantification: 'ciri3'], table] }
+    fsj = JOIN_FSJ.out.joined.map { _meta, table -> [[id: 'ciri3_fsj', quantification: 'ciri3'], table] }
 }

@@ -1,5 +1,5 @@
 process SPLIT_TYPES {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
     shell '/bin/bash'
 
@@ -12,7 +12,7 @@ process SPLIT_TYPES {
     tuple val(meta), path(input)
 
     output:
-    tuple val(meta), path("linear.tsv")  , emit: linear
+    tuple val(meta), path("linear.tsv"), emit: linear
     tuple val(meta), path("circular.tsv"), emit: circular
     tuple val("${task.process}"), val('gawk'), eval("gawk --version | sed -n '1s/,.*//p' | cut -d ' ' -f 3"), emit: versions_gawk, topic: versions
 

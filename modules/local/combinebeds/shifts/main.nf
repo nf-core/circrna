@@ -1,5 +1,5 @@
 process COMBINEBEDS_SHIFTS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_low"
     shell '/bin/bash'
 
@@ -12,7 +12,7 @@ process COMBINEBEDS_SHIFTS {
     tuple val(meta), path(beds)
 
     output:
-    tuple val(meta), path("*.png") , emit: plots, optional: true
+    tuple val(meta), path("*.png"), emit: plots, optional: true
     tuple val(meta), path("*.json"), emit: multiqc, optional: true
     tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
     tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
@@ -22,7 +22,7 @@ process COMBINEBEDS_SHIFTS {
     task.ext.when == null || task.ext.when
 
     script:
-    template "shifts.sh"
+    template("shifts.sh")
 
     stub:
     """

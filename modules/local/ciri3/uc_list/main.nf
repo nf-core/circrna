@@ -1,5 +1,5 @@
 process CIRI3_UC_LIST {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
@@ -20,7 +20,7 @@ process CIRI3_UC_LIST {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template 'uc_list.sh'
+    template('uc_list.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

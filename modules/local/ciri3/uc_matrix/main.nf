@@ -1,5 +1,5 @@
 process CIRI3_UC_MATRIX {
-    tag "$meta2.id"
+    tag "${meta2.id}"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
@@ -22,7 +22,7 @@ process CIRI3_UC_MATRIX {
 
     script:
     prefix = task.ext.prefix ?: "${meta2.id}"
-    template 'uc_matrix.sh'
+    template('uc_matrix.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta2.id}"

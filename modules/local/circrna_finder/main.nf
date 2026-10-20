@@ -1,5 +1,5 @@
 process CIRCRNA_FINDER {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"

@@ -35,5 +35,5 @@ workflow CIRI_READS {
     FASTP(ch_fastp.map { meta, reads -> [meta, reads, []] }, false, false, false)
 
     emit:
-    reads    = FASTP.out.reads
+    reads = FASTP.out.reads
 }

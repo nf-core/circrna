@@ -1,5 +1,5 @@
 process CIRIQUANT_PREPDE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
 
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -10,10 +10,10 @@ process CIRIQUANT_PREPDE {
     tuple val(meta), val(samples), path(gtfs), val(conditions)
 
     output:
-    tuple val(meta), path("${prefix}_library.tsv")   , emit: library
+    tuple val(meta), path("${prefix}_library.tsv"), emit: library
     tuple val(meta), path("${prefix}_annotation.tsv"), emit: annotation
     tuple val(meta), path("${prefix}_expression.tsv"), emit: expression
-    tuple val(meta), path("${prefix}_ratio.tsv")     , emit: gene
+    tuple val(meta), path("${prefix}_ratio.tsv"), emit: gene
     tuple val("${task.process}"), val('ciriquant'), eval('CIRIquant --version 2>&1 | sed "s/CIRIquant //g"'), emit: versions_ciriquant, topic: versions
     tuple val("${task.process}"), val('python'), eval('python --version | cut -d " " -f2'), emit: versions_python, topic: versions
 
@@ -25,8 +25,10 @@ process CIRIQUANT_PREPDE {
     prefix = task.ext.prefix ?: "${meta.id}"
     samplesheet = [samples, gtfs, conditions]
         .transpose()
-        .collect{ sample, gtf, condition ->
-            "${sample}\\t${gtf}\\t${condition}" }.join('\\n')
+        .collect { sample, gtf, condition ->
+            "${sample}\\t${gtf}\\t${condition}"
+        }
+        .join('\\n')
     """
     echo -e "${samplesheet}" > samples.txt
 

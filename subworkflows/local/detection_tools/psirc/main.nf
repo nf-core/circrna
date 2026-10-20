@@ -1,6 +1,6 @@
-include { PSIRC_BSJ as BSJ } from '../../../../modules/local/psirc/bsj'
+include { PSIRC_BSJ as BSJ         } from '../../../../modules/local/psirc/bsj'
 include { PSIRC_BSJ_UNIFY as UNIFY } from '../../../../modules/local/psirc/bsj_unify'
-include { INFER_STRAND } from '../../../../modules/local/infer_strand'
+include { INFER_STRAND             } from '../../../../modules/local/infer_strand'
 
 workflow PSIRC {
     take:
@@ -22,7 +22,6 @@ workflow PSIRC {
     INFER_STRAND(UNIFY.out.bed, ch_fasta.join(ch_faidx).first())
 
     emit:
-    bed      = INFER_STRAND.out.bed
-    output   = BSJ.out.output
-
+    bed    = INFER_STRAND.out.bed
+    output = BSJ.out.output
 }

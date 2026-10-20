@@ -1,5 +1,5 @@
 process FIND_CIRC {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_high"
 
     conda "${moduleDir}/environment.yml"
@@ -14,9 +14,9 @@ process FIND_CIRC {
     val strandedness
 
     output:
-    tuple val(meta), path("${prefix}.sites.bed")  , emit: bed
+    tuple val(meta), path("${prefix}.sites.bed"), emit: bed
     tuple val(meta), path("${prefix}.sites.reads"), emit: reads
-    tuple val(meta), path("${prefix}.sites.log")  , emit: log
+    tuple val(meta), path("${prefix}.sites.log"), emit: log
     tuple val("${task.process}"), val('bowtie2'), eval('bowtie2 --version 2>&1 | sed -n \'s/^bowtie2-align-s version //p\' | head -n 1'), emit: versions_bowtie2, topic: versions
     tuple val("${task.process}"), val('find_circ'), val('1.2'), emit: versions_find_circ, topic: versions
 
@@ -34,16 +34,16 @@ process FIND_CIRC {
     [ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
 
     bowtie2 \\
-        --threads $task.cpus \\
+        --threads ${task.cpus} \\
         --reorder \\
         --mm \\
         -D 20 \\
         --score-min=C,-15,0 \\
         -q \\
         -x \$INDEX \\
-        $args \\
-        -U $anchors | \\
-        find_circ.py --genome=$fasta $strand_arg $args2 --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
+        ${args} \\
+        -U ${anchors} | \\
+        find_circ.py --genome=${fasta} ${strand_arg} ${args2} --prefix=${prefix} --stats=${prefix}.sites.log --reads=${prefix}.sites.reads > ${prefix}.sites.bed
 
     """
 

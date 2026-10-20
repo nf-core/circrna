@@ -1,5 +1,5 @@
 process FIND_CIRC_ANCHORS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_high"
 
     conda "${moduleDir}/environment.yml"
@@ -20,7 +20,7 @@ process FIND_CIRC_ANCHORS {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    unmapped2anchors.py $bam | gzip > ${prefix}_anchors.qfa.gz
+    unmapped2anchors.py ${bam} | gzip > ${prefix}_anchors.qfa.gz
 
     """
 

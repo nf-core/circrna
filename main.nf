@@ -61,7 +61,7 @@ workflow NFCORE_CIRCRNA {
     mature = params.mature ? [[id: "mature"], file(params.mature, checkIfExists: true)] : null
     mirna_expression = params.mature && params.mirna_expression ? [[id: "mirna"], file(params.mirna_expression, checkIfExists: true)] : null
     ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
-    ch_annotation = (params.annotation && params.annotation instanceof String)
+    ch_annotation = params.annotation && params.annotation instanceof String
         ? channel.fromSamplesheet("annotation", parameters_schema: "${projectDir}/nextflow_schema.json")
         : channel.empty()
 
@@ -114,12 +114,10 @@ workflow NFCORE_CIRCRNA {
 */
 
 workflow {
-
-    main:
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
-    PIPELINE_INITIALISATION (
+    PIPELINE_INITIALISATION(
         params.version,
         params.validate_params,
         params.monochrome_logs,
@@ -128,30 +126,24 @@ workflow {
         params.input,
         params.help,
         params.help_full,
-        params.show_hidden
+        params.show_hidden,
     )
 
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_CIRCRNA (
+    NFCORE_CIRCRNA(
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
     // SUBWORKFLOW: Run completion tasks
     //
-    PIPELINE_COMPLETION (
+    PIPELINE_COMPLETION(
         params.email,
         params.email_on_fail,
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        NFCORE_CIRCRNA.out.multiqc_report
+        NFCORE_CIRCRNA.out.multiqc_report,
     )
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

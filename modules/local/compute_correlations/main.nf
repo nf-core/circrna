@@ -1,5 +1,5 @@
 process COMPUTE_CORRELATIONS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
     shell '/bin/bash'
 
@@ -9,7 +9,7 @@ process COMPUTE_CORRELATIONS {
         : 'community.wave.seqera.io/library/compute_correlations:b3dacbb39dbd06ae'}"
 
     input:
-    tuple val(meta),  path(bindingsites)
+    tuple val(meta), path(bindingsites)
     tuple val(meta2), path(mirna_expression)
     tuple val(meta3), path(transcript_rds)
 
@@ -22,7 +22,7 @@ process COMPUTE_CORRELATIONS {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'compute_correlations.sh'
+    template('compute_correlations.sh')
 
     stub:
     """

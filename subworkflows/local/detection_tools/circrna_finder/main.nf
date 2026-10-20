@@ -9,15 +9,17 @@ workflow CIRCRNA_FINDER {
 
     main:
 
-    ch_joined = star_sam.join(star_junctions).join(star_tab)
-        .map{ meta, sam, junction, tab ->
-            [ meta + [tool: "circrna_finder"], [sam, junction, tab] ] }
+    ch_joined = star_sam
+        .join(star_junctions)
+        .join(star_tab)
+        .map { meta, sam, junction, tab ->
+            [meta + [tool: "circrna_finder"], [sam, junction, tab]]
+        }
 
-    MAIN( ch_joined )
+    MAIN(ch_joined)
 
-    UNIFY( MAIN.out.results.map{ meta, results -> [ meta, results, "circrna_finder.bed" ] }, [], false )
+    UNIFY(MAIN.out.results.map { meta, results -> [meta, results, "circrna_finder.bed"] }, [], false)
 
     emit:
     bed = UNIFY.out.output
-
 }

@@ -21,7 +21,7 @@ process BUILD_LIST {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template "build_list.sh"
+    template("build_list.sh")
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

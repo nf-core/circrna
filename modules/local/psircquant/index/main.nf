@@ -19,7 +19,7 @@ process PSIRCQUANT_INDEX {
 
     script:
     """
-    psirc-quant index -i psirc.index --make-unique $fasta
+    psirc-quant index -i psirc.index --make-unique ${fasta}
 
     """
 

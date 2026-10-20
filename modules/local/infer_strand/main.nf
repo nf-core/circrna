@@ -20,7 +20,7 @@ process INFER_STRAND {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'infer_strand.sh'
+    template('infer_strand.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id

@@ -1,5 +1,5 @@
 process CIRIQUANT_DE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
 
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container

@@ -21,17 +21,13 @@ workflow CIRCTOOLS {
     SAMTOOLS_INDEX(SAMTOOLS_SORT.out.bam)
 
     RECONSTRUCT(
-        ch_bsj_bed_per_sample.map { meta, bed -> [[id: meta.id], bed] }
-        .join(SAMTOOLS_SORT.out.bam.map { meta, bam -> [[id: meta.id], bam] })
-        .join(SAMTOOLS_INDEX.out.index.map { meta, bai -> [[id: meta.id], bai] })
-        .join(ch_star_junction.map { meta, junction -> [[id: meta.id], junction] }),
+        ch_bsj_bed_per_sample.map { meta, bed -> [[id: meta.id], bed] }.join(SAMTOOLS_SORT.out.bam.map { meta, bam -> [[id: meta.id], bam] }).join(SAMTOOLS_INDEX.out.index.map { meta, bai -> [[id: meta.id], bai] }).join(ch_star_junction.map { meta, junction -> [[id: meta.id], junction] }),
         ANNOTATION.out.bed,
     )
 
     BEDTOOLS_GETFASTA(RECONSTRUCT.out.exon_counts_bed, ch_fasta.map { _meta, fasta -> fasta })
 
     emit:
-    fasta = BEDTOOLS_GETFASTA.out.fasta.map{ meta, fasta -> [meta + [fli_tool: 'circtools'], fasta] }
-    bed12 = RECONSTRUCT.out.exon_counts_bed.map{ meta, bed -> [meta + [fli_tool: 'circtools'], bed] }
-
+    fasta = BEDTOOLS_GETFASTA.out.fasta.map { meta, fasta -> [meta + [fli_tool: 'circtools'], fasta] }
+    bed12 = RECONSTRUCT.out.exon_counts_bed.map { meta, bed -> [meta + [fli_tool: 'circtools'], bed] }
 }

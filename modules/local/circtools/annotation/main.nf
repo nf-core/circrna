@@ -21,7 +21,7 @@ process CIRCTOOLS_ANNOTATION {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template 'annotation.sh'
+    template('annotation.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

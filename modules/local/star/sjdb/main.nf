@@ -1,5 +1,5 @@
 process SJDB {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
@@ -9,7 +9,7 @@ process SJDB {
 
     input:
     tuple val(meta), path(sjdb)
-    val(bsj_reads)
+    val bsj_reads
 
     output:
     tuple val(meta), path("dataset.SJ.out.tab"), emit: sjtab

@@ -1,5 +1,5 @@
 include { CIRCTOOLS_REFERENCE } from '../../../../modules/local/circtools/reference'
-include { CIRCTOOLS_NANOPORE } from '../../../../modules/local/circtools/nanopore'
+include { CIRCTOOLS_NANOPORE  } from '../../../../modules/local/circtools/nanopore'
 
 workflow CIRCTOOLS_LONGREAD {
     take:

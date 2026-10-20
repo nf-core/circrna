@@ -1,5 +1,5 @@
 process MAJORITY_VOTE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
     shell '/bin/bash'
 
@@ -10,11 +10,11 @@ process MAJORITY_VOTE {
 
     input:
     tuple val(meta), path(bindingsites)
-    val(min_tools)
+    val min_tools
 
     output:
     tuple val(meta), path("${meta.id}.majority.tsv"), emit: tsv
-    tuple val(meta), path("${meta.id}.targets.tsv") , emit: targets
+    tuple val(meta), path("${meta.id}.targets.tsv"), emit: targets
     tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
     tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
 
@@ -22,7 +22,7 @@ process MAJORITY_VOTE {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'majority.sh'
+    template('majority.sh')
 
     stub:
     """

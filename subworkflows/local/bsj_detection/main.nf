@@ -25,8 +25,8 @@ include { CIRCMINER                                      } from '../detection_to
 include { ANNOTATION as ANNOTATE_COMBINED                } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE              } from '../annotation'
 include { ANNOTATION as ANNOTATE_PER_SAMPLE_TOOL         } from '../annotation'
-include { starBasedTools                                  } from '../utils_nfcore_circrna_pipeline'
-include { readCarryingTools                               } from '../utils_nfcore_circrna_pipeline'
+include { starBasedTools                                 } from '../utils_nfcore_circrna_pipeline'
+include { readCarryingTools                              } from '../utils_nfcore_circrna_pipeline'
 
 workflow BSJ_DETECTION {
     take:
@@ -198,9 +198,7 @@ workflow BSJ_DETECTION {
     EXTRACT_COUNTS(ch_bsj_bed_per_sample_tool.map { meta, bed -> [meta, bed, "counts.tsv"] }, [], false)
 
     COMBINE_COUNTS_PER_TOOL(
-        EXTRACT_COUNTS.out.output
-            .map { meta, counts -> [[id: meta.tool], meta.id, counts] }
-            .groupTuple(),
+        EXTRACT_COUNTS.out.output.map { meta, counts -> [[id: meta.tool], meta.id, counts] }.groupTuple(),
         "id",
     )
 
@@ -264,9 +262,7 @@ workflow BSJ_DETECTION {
     ch_bsj_fasta_per_sample_tool = ANNOTATE_PER_SAMPLE_TOOL.out.fasta
 
     // STOP PIPELINE IF NO CIRCULAR RNAs WERE FOUND
-    def fail_message = "No circular RNAs were found by at least ${min_tools} tools and in at least ${min_samples} samples.\n" +
-        "Feel free to check the preliminary results in the output directory.\n" +
-        "If they were not saved, you can enable saving intermediate files by setting the parameter 'save_intermediates' to 'true'."
+    def fail_message = "No circular RNAs were found by at least ${min_tools} tools and in at least ${min_samples} samples.\n" + "Feel free to check the preliminary results in the output directory.\n" + "If they were not saved, you can enable saving intermediate files by setting the parameter 'save_intermediates' to 'true'."
 
     FAIL_ON_EMPTY(
         ch_bsj_bed_combined.ifEmpty([[id: "empty"], []]),

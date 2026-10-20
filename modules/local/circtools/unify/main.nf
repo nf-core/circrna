@@ -20,7 +20,7 @@ process UNIFY {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template 'unify.sh'
+    template('unify.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

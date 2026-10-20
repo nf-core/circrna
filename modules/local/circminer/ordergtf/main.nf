@@ -1,5 +1,5 @@
 process CIRCMINER_ORDERGTF {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -20,7 +20,7 @@ process CIRCMINER_ORDERGTF {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"
-    template 'ordergtf.sh'
+    template('ordergtf.sh')
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}.circminer"

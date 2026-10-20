@@ -16,7 +16,7 @@ process CIRCTOOLS_DETECT {
     output:
     tuple val(meta), path("${prefix}_reads.junctions"), emit: reads
     tuple val(meta), path("${prefix}_coordinates.tsv"), emit: coordinates
-    tuple val(meta), path("${prefix}_counts.tsv")     , emit: counts
+    tuple val(meta), path("${prefix}_counts.tsv"), emit: counts
 
     tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions
 

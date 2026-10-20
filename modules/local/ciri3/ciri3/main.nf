@@ -11,7 +11,7 @@ process CIRI3_CIRI3 {
     tuple val(meta), path(sam)
     tuple val(meta2), path(fasta)
     tuple val(meta3), path(gtf)
-    path(circ_list)
+    path circ_list
 
     output:
     tuple val(meta), path("${prefix}.ciri3.txt"), emit: txt, optional: true

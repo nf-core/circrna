@@ -1,5 +1,5 @@
 process JOIN_SAMPLES {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
     shell '/bin/bash'
 
@@ -21,7 +21,7 @@ process JOIN_SAMPLES {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'join.sh'
+    template('join.sh')
 
     stub:
     """

@@ -1,5 +1,5 @@
 process STRINGTIE_PREPDE {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
@@ -11,8 +11,8 @@ process STRINGTIE_PREPDE {
     tuple val(meta), val(samples), path(gtfs)
 
     output:
-    tuple val(meta), path("${prefix}_transcript_count_matrix.csv") , emit: transcript_matrix
-    tuple val(meta), path("${prefix}_gene_count_matrix.csv")       , emit: gene_matrix
+    tuple val(meta), path("${prefix}_transcript_count_matrix.csv"), emit: transcript_matrix
+    tuple val(meta), path("${prefix}_gene_count_matrix.csv"), emit: gene_matrix
 
     tuple val("${task.process}"), val('stringtie'), eval('stringtie --version 2>&1'), emit: versions_stringtie, topic: versions
 
@@ -24,8 +24,10 @@ process STRINGTIE_PREPDE {
     prefix = task.ext.prefix ?: "${meta.id}"
     samplesheet = [samples, gtfs]
         .transpose()
-        .collect{ sample, gtf ->
-            "${sample}\\t${gtf}" }.join('\\n')
+        .collect { sample, gtf ->
+            "${sample}\\t${gtf}"
+        }
+        .join('\\n')
     transcript_path = "${prefix}_transcript_count_matrix.csv"
     gene_path = "${prefix}_gene_count_matrix.csv"
     """

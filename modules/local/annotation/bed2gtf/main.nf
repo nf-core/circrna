@@ -1,5 +1,5 @@
 process ANNOTATION_BED2GTF {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
     shell '/bin/bash'
 
@@ -22,7 +22,7 @@ process ANNOTATION_BED2GTF {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'bed2gtf.sh'
+    template('bed2gtf.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id

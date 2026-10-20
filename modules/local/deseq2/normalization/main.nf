@@ -1,5 +1,5 @@
 process DESEQ2_NORMALIZATION {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_single'
     shell '/bin/bash'
 
@@ -20,7 +20,7 @@ process DESEQ2_NORMALIZATION {
     task.ext.when == null || task.ext.when
 
     script:
-    template 'deseq_normalization.sh'
+    template('deseq_normalization.sh')
 
     stub:
     """

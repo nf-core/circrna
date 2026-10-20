@@ -18,11 +18,13 @@ workflow SEGEMEHL {
     // reference inputs to tuples and pair by position: their metadata IDs need not match.
     if (fasta instanceof Path || fasta instanceof String) {
         ch_fasta = channel.value([[id: 'segemehl_reference'], file(fasta)])
-    } else {
+    }
+    else {
         ch_fasta = fasta.map { entry ->
             if (entry instanceof List) {
                 entry
-            } else {
+            }
+            else {
                 [[id: 'segemehl_reference'], entry]
             }
         }
@@ -31,10 +33,12 @@ workflow SEGEMEHL {
     if (index) {
         if (index instanceof Path || index instanceof String) {
             ch_index = channel.value([[id: 'segemehl_reference'], file(index)])
-        } else {
+        }
+        else {
             ch_index = index
         }
-    } else {
+    }
+    else {
         ch_index = INDEX(ch_fasta).index
     }
 
@@ -43,15 +47,16 @@ workflow SEGEMEHL {
         .map { fasta_meta, reference_fasta, _index_meta, reference_index -> [fasta_meta, reference_fasta, reference_index] }
 
     ALIGN(reads, ch_reference.first())
-    EXTRACT( ALIGN.out.single_bed
-        .map{ meta, bed ->  [ meta + [tool: "segemehl"], bed, "segemehl_extracted.bed" ] }, [], false )
+    EXTRACT(
+        ALIGN.out.single_bed.map { meta, bed -> [meta + [tool: "segemehl"], bed, "segemehl_extracted.bed"] },
+        [],
+        false,
+    )
 
-    SORT( EXTRACT.out.output.map{ meta, bed -> [ meta, bed, "segemehl_sorted.bed" ] } )
-    GROUP( SORT.out.sorted, 5 )
-    UNIFY( GROUP.out.bed.map{ meta, bed -> [ meta, bed, "segemehl.unified.bed" ] }, [], false )
-
+    SORT(EXTRACT.out.output.map { meta, bed -> [meta, bed, "segemehl_sorted.bed"] })
+    GROUP(SORT.out.sorted, 5)
+    UNIFY(GROUP.out.bed.map { meta, bed -> [meta, bed, "segemehl.unified.bed"] }, [], false)
 
     emit:
     bed = UNIFY.out.output
-
 }

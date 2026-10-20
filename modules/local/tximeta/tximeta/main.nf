@@ -1,5 +1,5 @@
 process TXIMETA_TXIMETA {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_medium"
     shell '/bin/bash'
 
@@ -21,7 +21,7 @@ process TXIMETA_TXIMETA {
 
     script:
     prefix = task.ext.prefix ?: meta.id
-    template 'tximeta.sh'
+    template('tximeta.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id

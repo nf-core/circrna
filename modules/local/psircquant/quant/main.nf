@@ -12,7 +12,7 @@ process PSIRCQUANT_QUANT {
     tuple val(meta2), path(index)
     tuple val(meta3), path(gtf)
     tuple val(meta4), path(chrom_sizes)
-    val(bootstrap_samples)
+    val bootstrap_samples
 
     output:
     tuple val(meta), path("${meta.id}"), emit: directory
@@ -23,10 +23,10 @@ process PSIRCQUANT_QUANT {
 
     script:
     def single_end = meta.single_end ? "--single -l 76 -s 20" : ""
-    def genomebam = gtf ? "--genomebam -g $gtf" : ""
-    def chromosomes = chrom_sizes ? "-c $chrom_sizes" : ""
+    def genomebam = gtf ? "--genomebam -g ${gtf}" : ""
+    def chromosomes = chrom_sizes ? "-c ${chrom_sizes}" : ""
     """
-    psirc-quant quant -t $task.cpus -i $index -o $meta.id $single_end $reads -b $bootstrap_samples $genomebam $chromosomes
+    psirc-quant quant -t ${task.cpus} -i ${index} -o ${meta.id} ${single_end} ${reads} -b ${bootstrap_samples} ${genomebam} ${chromosomes}
 
     """
 

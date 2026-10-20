@@ -8,7 +8,7 @@ process PSIRC_INDEX {
         : 'community.wave.seqera.io/library/psirc:1.0.0--4c24a8f727283097'}"
 
     input:
-    tuple val(meta) , path(fasta)
+    tuple val(meta), path(fasta)
 
     output:
     tuple val(meta), path("*.all_possible_bsj_targets.fa.index"), path("*.FirstandLastExons_entities.fa.index"), emit: index

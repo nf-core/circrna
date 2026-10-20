@@ -16,39 +16,43 @@ workflow FIND_CIRC {
 
     main:
 
-    ALIGN( reads, bowtie2_index, ch_fasta, false, true )
+    ALIGN(reads, bowtie2_index, ch_fasta, false, true)
 
-    SAMTOOLS_INDEX( ALIGN.out.bam )
+    SAMTOOLS_INDEX(ALIGN.out.bam)
 
     SAMTOOLS_VIEW(
-        ALIGN.out.bam.join( SAMTOOLS_INDEX.out.index ),
+        ALIGN.out.bam.join(SAMTOOLS_INDEX.out.index),
         ch_fasta.map { meta, fasta -> [meta, fasta, []] },
-        [ [id: 'qname'], [] ],
-        [ [id: 'bed'], [] ],
-        ''
+        [[id: 'qname'], []],
+        [[id: 'bed'], []],
+        '',
     )
 
-    ANCHORS( SAMTOOLS_VIEW.out.bam )
+    ANCHORS(SAMTOOLS_VIEW.out.bam)
 
     ch_find_circ = ANCHORS.out.anchors.multiMap { meta, anchors ->
-        anchors:      [meta, anchors]
+        anchors: [meta, anchors]
         strandedness: meta.strandedness ?: 'auto'
     }
 
-    MAIN( ch_find_circ.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta }, ch_find_circ.strandedness )
+    MAIN(ch_find_circ.anchors, bowtie2_index, ch_fasta.map { _meta, fasta -> fasta }, ch_find_circ.strandedness)
 
-    EXTRACT_READS( MAIN.out.reads, [], false, "fastq.gz" )
+    EXTRACT_READS(MAIN.out.reads, [], false, "fastq.gz")
 
-    GROUP_READS( EXTRACT_READS.out.output )
+    GROUP_READS(EXTRACT_READS.out.output)
 
-    JOIN_READS( MAIN.out.bed.join(GROUP_READS.out.csv)
-        .map{ meta, bed, _reads -> [ meta, [bed, _reads]] }
+    JOIN_READS(
+        MAIN.out.bed.join(GROUP_READS.out.csv).map { meta, bed, _reads -> [meta, [bed, _reads]] }
     )
 
-    UNIFY( JOIN_READS.out.out_file.map{ meta, bed ->
-        [ meta + [tool: "find_circ"], bed, "find_circ.bed" ] }, [], false )
+    UNIFY(
+        JOIN_READS.out.out_file.map { meta, bed ->
+            [meta + [tool: "find_circ"], bed, "find_circ.bed"]
+        },
+        [],
+        false,
+    )
 
     emit:
     bed = UNIFY.out.output
-
 }

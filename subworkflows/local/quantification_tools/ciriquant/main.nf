@@ -16,24 +16,24 @@ workflow CIRIQUANT {
     main:
 
     ch_ciriquant = reads.multiMap { meta, sample_reads ->
-        reads:        [meta, sample_reads]
+        reads: [meta, sample_reads]
         strandedness: meta.strandedness ?: 'auto'
     }
 
-    MAIN( ch_ciriquant.reads, ch_bed, ch_gtf, ch_fasta, bwa_index, hisat2_index, ch_ciriquant.strandedness )
+    MAIN(ch_ciriquant.reads, ch_bed, ch_gtf, ch_fasta, bwa_index, hisat2_index, ch_ciriquant.strandedness)
 
-    EXTRACT_CIRC( MAIN.out.gtf )
+    EXTRACT_CIRC(MAIN.out.gtf)
 
-    EXTRACT_GENES( MAIN.out.gene_list.map { meta, gene_list -> [meta, gene_list, 'gene.tsv'] }, [], false )
+    EXTRACT_GENES(MAIN.out.gene_list.map { meta, gene_list -> [meta, gene_list, 'gene.tsv'] }, [], false)
 
     JOIN_GENE(
-        EXTRACT_GENES.out.output.map{meta, table -> [[id: 'gene'], meta.id, table]}.groupTuple(),
-        "gene_id,gene_name"
+        EXTRACT_GENES.out.output.map { meta, table -> [[id: 'gene'], meta.id, table] }.groupTuple(),
+        "gene_id,gene_name",
     )
 
     JOIN_CIRC(
-        EXTRACT_CIRC.out.table.map{meta, table -> [[id: 'circ'], meta.id, table]}.groupTuple(),
-        "circ_id,gene_id"
+        EXTRACT_CIRC.out.table.map { meta, table -> [[id: 'circ'], meta.id, table] }.groupTuple(),
+        "circ_id,gene_id",
     )
 
     emit:
@@ -41,5 +41,4 @@ workflow CIRIQUANT {
     circ_cpm  = JOIN_CIRC.out.joined
     raw       = MAIN.out.gtf
     stringtie = MAIN.out.gene_gtf
-
 }

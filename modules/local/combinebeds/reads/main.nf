@@ -1,5 +1,5 @@
 process COMBINEBEDS_READS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_low"
     shell '/bin/bash'
 
@@ -10,13 +10,13 @@ process COMBINEBEDS_READS {
 
     input:
     tuple val(meta), val(tools), path(beds)
-    val(consider_strand)
-    val(min_tools)
+    val consider_strand
+    val min_tools
 
     output:
     tuple val(meta), path("${prefix}.bed"), emit: combined
-    path "*.png"                          , emit: plots, optional: true
-    path "*.json"                         , emit: multiqc, optional: true
+    path "*.png", emit: plots, optional: true
+    path "*.json", emit: multiqc, optional: true
     tuple val("${task.process}"), val('python'), eval("python --version | sed 's/Python //'"), emit: versions_python, topic: versions
     tuple val("${task.process}"), val('polars'), eval("python -c 'import polars; print(polars.__version__)'"), emit: versions_polars, topic: versions
     tuple val("${task.process}"), val('seaborn'), eval("python -c 'import seaborn; print(seaborn.__version__)'"), emit: versions_seaborn, topic: versions
@@ -28,7 +28,7 @@ process COMBINEBEDS_READS {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template "reads.sh"
+    template("reads.sh")
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

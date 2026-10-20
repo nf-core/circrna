@@ -8,11 +8,11 @@ process PSIRC_TRANSCRIPTOME {
         : 'community.wave.seqera.io/library/psirc:1.0.0--4c24a8f727283097'}"
 
     input:
-    tuple val(meta) , path(gtf)
+    tuple val(meta), path(gtf)
     tuple val(meta2), path(fasta)
 
     output:
-    tuple val(meta), path("$prefix.$suffix"), emit: transcriptome
+    tuple val(meta), path("${prefix}.${suffix}"), emit: transcriptome
     tuple val("${task.process}"), val('psirc'), val('1.0.0'), emit: versions_psirc, topic: versions
 
     when:
@@ -21,12 +21,12 @@ process PSIRC_TRANSCRIPTOME {
     script:
     prefix = task.ext.prefix ?: meta.id
     suffix = 'fasta'
-    template 'transcriptome.sh'
+    template('transcriptome.sh')
 
     stub:
     prefix = task.ext.prefix ?: meta.id
     suffix = 'fasta'
     """
-    touch $prefix.$suffix
+    touch ${prefix}.${suffix}
     """
 }

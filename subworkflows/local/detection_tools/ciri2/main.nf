@@ -1,5 +1,5 @@
 include { CIRI2 as DETECT } from '../../../../modules/local/ciri2'
-include { GAWK  as UNIFY  } from '../../../../modules/nf-core/gawk'
+include { GAWK as UNIFY   } from '../../../../modules/nf-core/gawk'
 
 workflow CIRI2 {
     take:

@@ -1,5 +1,5 @@
 process CIRIQUANT {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
 
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
@@ -16,9 +16,9 @@ process CIRIQUANT {
     val strandedness
 
     output:
-    tuple val(meta), path("${prefix}/${prefix}.gtf")            , emit: gtf
+    tuple val(meta), path("${prefix}/${prefix}.gtf"), emit: gtf
     tuple val(meta), path("${prefix}/gene/${prefix}_genes.list"), emit: gene_list, optional: true
-    tuple val(meta), path("${prefix}/gene/${prefix}_out.gtf")   , emit: gene_gtf, optional: true
+    tuple val(meta), path("${prefix}/gene/${prefix}_out.gtf"), emit: gene_gtf, optional: true
     tuple val("${task.process}"), val('bwa'), eval("bwa 2>&1 | sed -n 's/.*Version: //p' | head -n 1"), emit: versions_bwa, topic: versions
     tuple val("${task.process}"), val('ciriquant'), eval('CIRIquant --version 2>&1 | sed "s/CIRIquant //g"'), emit: versions_ciriquant, topic: versions
     tuple val("${task.process}"), val('hisat2'), eval("hisat2 --version 2>&1 | sed -n '1{s/.* version //p}'"), emit: versions_hisat2, topic: versions

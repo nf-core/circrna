@@ -1,5 +1,5 @@
 process MERGE_EXPERIMENTS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_medium"
     shell '/bin/bash'
 
@@ -9,7 +9,7 @@ process MERGE_EXPERIMENTS {
         : 'community.wave.seqera.io/library/merge_experiments:85f748798d2b090d'}"
 
     input:
-    tuple val(meta),  path(experiments)
+    tuple val(meta), path(experiments)
     tuple val(meta2), path(phenotype)
     tuple val(meta3), path(gtf)
     tuple val(meta4), path(tpm)
@@ -23,7 +23,7 @@ process MERGE_EXPERIMENTS {
     task.ext.when == null || task.ext.when
 
     script:
-    template "merge_experiments.sh"
+    template("merge_experiments.sh")
 
     stub:
     """

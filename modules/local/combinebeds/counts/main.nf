@@ -1,5 +1,5 @@
 process COMBINEBEDS_COUNTS {
-    tag "$meta.id"
+    tag "${meta.id}"
     label "process_low"
     shell '/bin/bash'
 
@@ -10,8 +10,8 @@ process COMBINEBEDS_COUNTS {
 
     input:
     tuple val(meta), val(aggregation), path(candidates), path(beds)
-    val(max_shift)
-    val(consider_strand)
+    val max_shift
+    val consider_strand
 
     output:
     tuple val(meta), path("${prefix}.tsv"), emit: combined, optional: true
@@ -23,7 +23,7 @@ process COMBINEBEDS_COUNTS {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
-    template "counts.sh"
+    template("counts.sh")
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"

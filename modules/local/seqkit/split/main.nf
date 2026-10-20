@@ -1,5 +1,5 @@
 process SEQKIT_SPLIT {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -18,14 +18,14 @@ process SEQKIT_SPLIT {
     task.ext.when == null || task.ext.when
 
     script:
-    args   = task.ext.args   ?: ''
+    args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     seqkit \\
         split \\
-        $args \\
-        --threads $task.cpus \\
-        $fasta \\
+        ${args} \\
+        --threads ${task.cpus} \\
+        ${fasta} \\
         --out-dir ${prefix}
 
     """

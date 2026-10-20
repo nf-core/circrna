@@ -9,8 +9,8 @@ process CIRCTOOLS_NANOPORE {
 
     input:
     tuple val(meta), path(reads)
-    path(reference)
-    val(genome)
+    path reference
+    val genome
 
     output:
     tuple val("${task.process}"), val('circtools'), eval('circtools -V'), emit: versions_circtools, topic: versions

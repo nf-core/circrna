@@ -1,5 +1,5 @@
 process TARGETSCAN {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -23,8 +23,8 @@ process TARGETSCAN {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     ##format for targetscan
-    cat $fasta | grep ">" | sed 's/>//g' > id
-    cat $fasta | grep -v ">" > seq
+    cat ${fasta} | grep ">" | sed 's/>//g' > id
+    cat ${fasta} | grep -v ">" > seq
     paste id seq | awk -v OFS="\\t" '{print \$1, "0000", \$2}' > ${prefix}_ts.txt
     # run targetscan
     targetscan_70.pl mature.txt ${prefix}_ts.txt ${prefix}.txt

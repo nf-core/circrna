@@ -1,6 +1,6 @@
 include { CIRCMINER_CIRCMINER as DETECT } from '../../../../modules/local/circminer/circminer'
-include { GAWK as UNIFY } from '../../../../modules/nf-core/gawk'
-include { INFER_STRAND } from '../../../../modules/local/infer_strand'
+include { GAWK as UNIFY                 } from '../../../../modules/nf-core/gawk'
+include { INFER_STRAND                  } from '../../../../modules/local/infer_strand'
 
 workflow CIRCMINER {
     take:
