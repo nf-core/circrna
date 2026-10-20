@@ -51,6 +51,12 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
+                { assert workflow.out.fasta.size() == 2 },
+                { assert workflow.out.bed12.size() == 2 },
+                { assert workflow.out.fasta.collect { meta, _fasta -> meta.id }.sort() == ['cel_N2_1', 'fust1_1'] },
+                { assert workflow.out.bed12.collect { meta, _bed -> meta.id }.sort() == ['cel_N2_1', 'fust1_1'] },
+                { assert workflow.out.fasta.every { meta, fasta -> meta.fli_tool == 'cirifull' && path(fasta).readLines().any { it.startsWith('>') } } },
+                { assert workflow.out.bed12.every { meta, bed -> meta.fli_tool == 'cirifull' && !path(bed).readLines().isEmpty() } },
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
@@ -93,6 +99,12 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
+                { assert workflow.out.fasta.size() == 2 },
+                { assert workflow.out.bed12.size() == 2 },
+                { assert workflow.out.fasta.collect { meta, _fasta -> meta.id }.sort() == ['cel_N2_1', 'fust1_1'] },
+                { assert workflow.out.bed12.collect { meta, _bed -> meta.id }.sort() == ['cel_N2_1', 'fust1_1'] },
+                { assert workflow.out.fasta.every { meta, _fasta -> meta.fli_tool == 'cirifull' } },
+                { assert workflow.out.bed12.every { meta, _bed -> meta.fli_tool == 'cirifull' } },
                 { assert snapshot(
                     workflow.out.fasta.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },
                     workflow.out.bed12.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] }.sort { it[0].id },

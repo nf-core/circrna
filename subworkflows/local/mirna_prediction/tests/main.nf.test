@@ -44,9 +44,10 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(
-                    path("$outputDir/6_mirna_prediction/binding_sites/majority_vote/mirna.targets.tsv").readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5()
+                    path("$outputDir/6_mirna_prediction/binding_sites/majority_vote/mirna.targets.tsv").readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5(),
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
                 ).match() },
-                { assert snapshot(workflow.out).match() }
             )
         }
     }
@@ -81,9 +82,10 @@ nextflow_workflow {
                 { assert snapshot(
                     path("$outputDir/6_mirna_prediction/binding_sites/majority_vote/mirna.targets.tsv").readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5(),
                     path("$outputDir/mirna_expression/mirna.normalized_counts.tsv").readLines().sort().toString().md5(),
-                    path("$outputDir/mirna_expression/mirna.normalized_counts_filtered.tsv").readLines().sort().toString().md5()
+                    path("$outputDir/mirna_expression/mirna.normalized_counts_filtered.tsv").readLines().sort().toString().md5(),
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
                 ).match() },
-                { assert snapshot(workflow.out).match() }
             )
         }
     }
@@ -133,7 +135,10 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert workflow.trace.tasks().findAll { task -> task.name.contains('COMPUTE_CORRELATIONS') }.size() == 2 },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
             )
         }
     }
@@ -164,7 +169,10 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert workflow.trace.tasks().findAll { task -> task.name.contains('COMPUTE_CORRELATIONS') }.size() == 0 },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
             )
         }
     }
@@ -196,7 +204,10 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
             )
         }
     }
@@ -228,7 +239,10 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
             )
         }
     }
