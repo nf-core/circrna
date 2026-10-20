@@ -1,5 +1,5 @@
 process HISAT2_BUILD {
-    tag "${fasta}"
+    tag "${meta.id}"
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -8,9 +8,8 @@ process HISAT2_BUILD {
         : 'community.wave.seqera.io/library/hisat2:2.2.3--2616fa83d3b9d8f8'}"
 
     input:
-    tuple val(meta), path(fasta)
-    tuple val(meta2), path(gtf)
-    tuple val(meta3), path(splicesites)
+    tuple val(meta), path(fasta), path(gtf), path(splicesites)
+    val hisat2_memory_input
 
     output:
     tuple val(meta), path("hisat2"), emit: index
@@ -23,10 +22,10 @@ process HISAT2_BUILD {
     def args = task.ext.args ?: ''
 
     if (!task.memory) {
-        error "[HISAT2 index build] No memory specified for process. Please configure memory for 'process_high' label."
+        error("[HISAT2 index build] No memory specified for process. Please configure memory for 'process_high' label.")
     }
     def avail_mem = task.memory.toGiga()
-    def hisat2_build_memory = params.hisat2_build_memory ? (params.hisat2_build_memory as MemoryUnit).toGiga() : Integer.MAX_VALUE
+    def hisat2_build_memory = hisat2_memory_input ? (hisat2_memory_input as MemoryUnit).toGiga() : Integer.MAX_VALUE
 
     def ss = ''
     def exon = ''

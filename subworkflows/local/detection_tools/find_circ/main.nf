@@ -32,7 +32,7 @@ workflow FIND_CIRC {
 
     MAIN( ANCHORS.out.anchors, bowtie2_index, ch_fasta.map{ _meta, fasta -> fasta } )
 
-    EXTRACT_READS( MAIN.out.reads, "fastq.gz" )
+    EXTRACT_READS( MAIN.out.reads, [], false, "fastq.gz" )
 
     GROUP_READS( EXTRACT_READS.out.output )
 

@@ -9,7 +9,6 @@ on:
       - "nextflow.config"
       - "nf-test.config"
       - "tests/nextflow.config"
-      - "nf-test.modules.config"
       - ".github/workflows/module-packaging.yml"
   workflow_dispatch:
 
@@ -104,61 +103,5 @@ jobs:
           name: module-packaging-${{ matrix.arch }}
           path: |
             packaging.tap
-            .nf-test.log
-          if-no-files-found: ignore
-
-  upgraded-runtime:
-    name: Upgraded modules | ${{ matrix.module }} | ${{ matrix.arch }}
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        module:
-          - fastp
-          - trimgalore
-          - stringtie/stringtie
-          - samtools
-          - hisat2
-          - fastqc
-          - seqkit
-          - custom/gtffilter
-          - custom/tx2gene
-          - tximeta/tximport
-        arch: [amd64, arm64]
-        include:
-          - arch: amd64
-            runner: ubuntu-24.04
-            profile: docker
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-            profile: docker,arm64
-    env:
-      NXF_ANSI_LOG: false
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3
-        with:
-          version: "25.10.4"
-      - uses: nf-core/setup-nf-test@4069fbbaabe94c08faba4ad261bfa88225ba133f # v2
-        with:
-          version: "0.9.4"
-          install-pdiff: true
-      - name: Test upgraded modules on the native architecture
-        env:
-          NFT_WORKDIR: ${{ runner.temp }}/nf-test
-        run: |
-          nf-test test \
-            --config nf-test.modules.config \
-            modules/nf-core/${{ matrix.module }} \
-            --profile=+${{ matrix.profile }} \
-            --ci --verbose --tap=upgraded-modules.tap
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: upgraded-modules-${{ strategy.job-index }}-${{ matrix.arch }}
-          path: |
-            upgraded-modules.tap
             .nf-test.log
           if-no-files-found: ignore

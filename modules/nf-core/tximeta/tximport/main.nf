@@ -3,9 +3,9 @@ process TXIMETA_TXIMPORT {
     label "process_medium"
 
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e8/e89aa87e7cac6160417d07064b4d4d693515c9af68df5775aa4683ea31d2e89d/data'
-        : 'community.wave.seqera.io/library/bioconductor-tximeta_bioconductor-rhdf5:be5b446b9dab47f3'}"
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/bd/bdba33f8ad1b2df156f8f6775279fb217ce0f8233a3dc637337245de9ad2f29f/data' :
+        'community.wave.seqera.io/library/bioconductor-tximeta_jq:78bccd386c46a07c' }"
 
     input:
     tuple val(meta), path("quants/*")
@@ -21,13 +21,14 @@ process TXIMETA_TXIMPORT {
     tuple val(meta), path("*transcript_tpm.tsv")           , emit: tpm_transcript
     tuple val(meta), path("*transcript_counts.tsv")        , emit: counts_transcript
     tuple val(meta), path("*transcript_lengths.tsv")       , emit: lengths_transcript
-    tuple val("${task.process}"), val('bioconductor-tximeta'), eval('Rscript -e "cat(as.character(packageVersion(\'tximeta\')))"'), emit: versions_bioconductor_tximeta, topic: versions
+    tuple val(meta), path("*tx2gene_augmented.tsv")        , emit: tx2gene_augmented
+    path "versions.yml"                                    , emit: versions, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    template 'tximport.sh'
+    template 'tximport.r'
 
     stub:
     """
@@ -39,6 +40,11 @@ process TXIMETA_TXIMPORT {
     touch ${meta.id}.transcript_tpm.tsv
     touch ${meta.id}.transcript_counts.tsv
     touch ${meta.id}.transcript_lengths.tsv
+    touch ${meta.id}.tx2gene_augmented.tsv
 
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-tximeta: \$(Rscript -e "library(tximeta); cat(as.character(packageVersion('tximeta')))")
+    END_VERSIONS
     """
 }

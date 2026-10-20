@@ -1,7 +1,28 @@
 {
-    "se_versions": {
+    "Single-End": {
         "content": [
             {
+                "bam": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": true
+                        },
+                        "test.bam"
+                    ]
+                ],
+                "fastq": [
+                    
+                ],
+                "summary": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": true
+                        },
+                        "test.hisat2.summary.log:md5,7b8a9e61b7646da1089b041333c41a87"
+                    ]
+                ],
                 "versions_hisat2": [
                     [
                         "HISAT2_ALIGN",
@@ -18,50 +39,61 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:10:21.532165272",
+        "timestamp": "2026-08-31T12:46:22.385982961",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
+        }
+    },
+    "Single-End No Splice Sites": {
+        "content": [
+            {
+                "bam": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": true
+                        },
+                        "test.bam"
+                    ]
+                ],
+                "fastq": [
+                    
+                ],
+                "summary": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": true
+                        },
+                        "test.hisat2.summary.log:md5,7b8a9e61b7646da1089b041333c41a87"
+                    ]
+                ],
+                "versions_hisat2": [
+                    [
+                        "HISAT2_ALIGN",
+                        "hisat2",
+                        "2.2.3"
+                    ]
+                ],
+                "versions_samtools": [
+                    [
+                        "HISAT2_ALIGN",
+                        "samtools",
+                        "1.24"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-31T12:47:01.735902338",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
     "Paired-End - stub": {
         "content": [
             {
-                "0": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test.hisat2.summary.log:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "4": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ],
                 "bam": [
                     [
                         {
@@ -99,50 +131,61 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:11:10.896622014",
+        "timestamp": "2026-08-31T09:48:24.528182563",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
+        }
+    },
+    "Paired-End": {
+        "content": [
+            {
+                "bam": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.bam"
+                    ]
+                ],
+                "fastq": [
+                    
+                ],
+                "summary": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.hisat2.summary.log:md5,9839b31db795958cc4b70711a3414e9c"
+                    ]
+                ],
+                "versions_hisat2": [
+                    [
+                        "HISAT2_ALIGN",
+                        "hisat2",
+                        "2.2.3"
+                    ]
+                ],
+                "versions_samtools": [
+                    [
+                        "HISAT2_ALIGN",
+                        "samtools",
+                        "1.24"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-31T12:46:43.040392471",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
     "Single-End - stub": {
         "content": [
             {
-                "0": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": true
-                        },
-                        "test.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": true
-                        },
-                        "test.hisat2.summary.log:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "4": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ],
                 "bam": [
                     [
                         {
@@ -180,50 +223,15 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:10:37.781084717",
+        "timestamp": "2026-08-31T09:48:10.131245846",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
     "Paired-End No Splice Sites - stub": {
         "content": [
             {
-                "0": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test.hisat2.summary.log:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "4": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ],
                 "bam": [
                     [
                         {
@@ -261,15 +269,36 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:12:14.722811334",
+        "timestamp": "2026-08-31T09:48:48.699863609",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
-    "pe_no_ss_versions": {
+    "Paired-End No Splice Sites": {
         "content": [
             {
+                "bam": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.bam"
+                    ]
+                ],
+                "fastq": [
+                    
+                ],
+                "summary": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.hisat2.summary.log:md5,9839b31db795958cc4b70711a3414e9c"
+                    ]
+                ],
                 "versions_hisat2": [
                     [
                         "HISAT2_ALIGN",
@@ -286,183 +315,15 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:11:59.46183936",
+        "timestamp": "2026-08-31T12:47:19.279796565",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "pe_no_ss_summary": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "test",
-                        "single_end": false
-                    },
-                    "test.hisat2.summary.log:md5,9839b31db795958cc4b70711a3414e9c"
-                ]
-            ]
-        ],
-        "timestamp": "2026-10-19T22:11:59.395291651",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "pe_no_ss_fastq": {
-        "content": [
-            [
-                
-            ]
-        ],
-        "timestamp": "2026-10-19T21:32:18.538223654",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "se_summary": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "test",
-                        "single_end": true
-                    },
-                    "test.hisat2.summary.log:md5,7b8a9e61b7646da1089b041333c41a87"
-                ]
-            ]
-        ],
-        "timestamp": "2026-10-19T22:10:21.430264169",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "pe_summary": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "test",
-                        "single_end": false
-                    },
-                    "test.hisat2.summary.log:md5,9839b31db795958cc4b70711a3414e9c"
-                ]
-            ]
-        ],
-        "timestamp": "2026-10-19T22:10:54.796451072",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "pe_fastq": {
-        "content": [
-            [
-                
-            ]
-        ],
-        "timestamp": "2026-10-19T21:31:15.367269144",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "se_fastq": {
-        "content": [
-            [
-                
-            ]
-        ],
-        "timestamp": "2026-10-19T21:30:44.420374311",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "se_no_ss_summary": {
-        "content": [
-            [
-                [
-                    {
-                        "id": "test",
-                        "single_end": true
-                    },
-                    "test.hisat2.summary.log:md5,7b8a9e61b7646da1089b041333c41a87"
-                ]
-            ]
-        ],
-        "timestamp": "2026-10-19T22:11:27.164249541",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "se_no_ss_versions": {
-        "content": [
-            {
-                "versions_hisat2": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "versions_samtools": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2026-10-19T22:11:27.211598168",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
     "Single-End No Splice Sites - stub": {
         "content": [
             {
-                "0": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": true
-                        },
-                        "test.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": true
-                        },
-                        "test.hisat2.summary.log:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "4": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ],
                 "bam": [
                     [
                         {
@@ -500,47 +361,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:11:43.410346313",
+        "timestamp": "2026-08-31T09:48:36.36491742",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "se_no_ss_fastq": {
-        "content": [
-            [
-                
-            ]
-        ],
-        "timestamp": "2026-10-19T21:31:47.434180919",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "pe_versions": {
-        "content": [
-            {
-                "versions_hisat2": [
-                    [
-                        "HISAT2_ALIGN",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "versions_samtools": [
-                    [
-                        "HISAT2_ALIGN",
-                        "samtools",
-                        "1.24"
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2026-10-19T22:10:54.855175279",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     }
 }

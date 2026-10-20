@@ -90,10 +90,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:34:18.119044506",
+        "timestamp": "2026-10-20T07:29:53.124949",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end": {
@@ -126,10 +126,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:31:59.243888508",
+        "timestamp": "2026-10-20T07:28:40.30845",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_merged_adapterlist": {
@@ -168,10 +168,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:48.42174767",
+        "timestamp": "2026-10-20T07:29:05.571571",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_single_end_qc_only": {
@@ -204,10 +204,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:58.081983602",
+        "timestamp": "2026-10-20T07:29:11.437128",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_trim_fail": {
@@ -250,10 +250,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:27.881982506",
+        "timestamp": "2026-10-20T07:28:55.240459",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "fastp - stub test_fastp_interleaved": {
@@ -359,10 +359,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:33.948312073",
+        "timestamp": "2026-10-20T07:29:30.222789",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_single_end - stub": {
@@ -468,10 +468,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:16.824994531",
+        "timestamp": "2026-10-20T07:29:20.872868",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_merged_adapterlist - stub": {
@@ -595,10 +595,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:34:09.25712384",
+        "timestamp": "2026-10-20T07:29:48.725604",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_merged - stub": {
@@ -722,10 +722,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:34:00.296486468",
+        "timestamp": "2026-10-20T07:29:44.022359",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_merged": {
@@ -764,10 +764,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:38.362576681",
+        "timestamp": "2026-10-20T07:29:00.204217",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end - stub": {
@@ -879,10 +879,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:25.460147129",
+        "timestamp": "2026-10-20T07:29:25.727397",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_single_end": {
@@ -912,10 +912,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:31:49.610610961",
+        "timestamp": "2026-10-20T07:28:34.79259",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_single_end_trim_fail - stub": {
@@ -1033,10 +1033,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:42.573922145",
+        "timestamp": "2026-10-20T07:29:34.73774",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_trim_fail - stub": {
@@ -1168,10 +1168,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:51.449753324",
+        "timestamp": "2026-10-20T07:29:39.358515",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "fastp test_fastp_interleaved": {
@@ -1195,10 +1195,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:08.97702591",
+        "timestamp": "2026-10-20T07:28:45.408927",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_single_end_trim_fail": {
@@ -1234,10 +1234,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:32:18.298628251",
+        "timestamp": "2026-10-20T07:28:50.104094",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_qc_only": {
@@ -1270,10 +1270,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:33:08.042782678",
+        "timestamp": "2026-10-20T07:29:16.25113",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     },
     "test_fastp_paired_end_qc_only - stub": {
@@ -1367,10 +1367,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T15:34:27.106784803",
+        "timestamp": "2026-10-20T07:29:57.868628",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.7"
         }
     }
 }

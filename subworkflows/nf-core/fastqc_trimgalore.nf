@@ -12,6 +12,7 @@ workflow FASTQC_TRIMGALORE {
     skip_trimming // boolean: true/false
 
     main:
+    ch_versions = Channel.empty()
     fastqc_html = Channel.empty()
     fastqc_zip  = Channel.empty()
     if (!skip_fastqc) {
@@ -23,6 +24,7 @@ workflow FASTQC_TRIMGALORE {
     trim_html  = Channel.empty()
     trim_zip   = Channel.empty()
     trim_log   = Channel.empty()
+    trimgalore_versions = Channel.empty()
     if (!skip_trimming) {
         TRIMGALORE ( reads ).reads.set { trim_reads }
         trim_html   = TRIMGALORE.out.html
@@ -40,4 +42,5 @@ workflow FASTQC_TRIMGALORE {
     trim_zip               // channel: [ val(meta), [ zip ] ]
     trim_log               // channel: [ val(meta), [ txt ] ]
 
+    versions = ch_versions // channel: [ versions.yml ]
 }

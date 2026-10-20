@@ -10,7 +10,8 @@ tools:
       homepage: "https://cbio.mskcc.org/miRNA2003/miranda.html"
       documentation: "https://cbio.mskcc.org/miRNA2003/miranda.html"
       doi: "10.1186/gb-2003-5-1-r1"
-      licence: ["GNU Public License"]
+      licence:
+        - "GNU Public License"
       identifier: ""
 input:
   - - meta:
@@ -47,7 +48,7 @@ output:
       - miranda:
           type: string
           description: The name of the tool
-      - "miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*$//'":
+      - miranda -v | grep 'miranda v' | sed 's/.*v\([0-9]\.[0-9][a-z]\).*/\1/':
           type: eval
           description: The expression to obtain the version of the tool
 topics:
@@ -58,7 +59,7 @@ topics:
       - miranda:
           type: string
           description: The name of the tool
-      - "miranda -v | sed -n 4p | sed 's/^.*miranda v//; s/microRNA.*$//'":
+      - miranda -v | grep 'miranda v' | sed 's/.*v\([0-9]\.[0-9][a-z]\).*/\1/':
           type: eval
           description: The expression to obtain the version of the tool
 authors:

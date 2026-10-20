@@ -1,4 +1,39 @@
 {
+    "test_samtools_faidx_fasta - stub": {
+        "content": [
+            {
+                "fa": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "extract.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fai": [
+                    
+                ],
+                "gzi": [
+                    
+                ],
+                "sizes": [
+                    
+                ],
+                "versions_samtools": [
+                    [
+                        "SAMTOOLS_FAIDX",
+                        "samtools",
+                        "1.24"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-07-10T16:03:49.706821725",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
     "test_samtools_faidx": {
         "content": [
             {
@@ -163,7 +198,12 @@
         "content": [
             {
                 "fa": [
-                    
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "extract.fa:md5,6a0774a0ad937ba0bfd2ac7457d90f36"
+                    ]
                 ],
                 "fai": [
                     
@@ -183,9 +223,9 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:08:21.56106042",
+        "timestamp": "2026-03-19T08:57:39.136814",
         "meta": {
-            "nf-test": "0.9.4",
+            "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         }
     },
@@ -229,37 +269,7 @@
             "nextflow": "25.10.4"
         }
     },
-    "test_samtools_faidx_stub_fasta": {
-        "content": [
-            {
-                "fa": [
-                    
-                ],
-                "fai": [
-                    
-                ],
-                "gzi": [
-                    
-                ],
-                "sizes": [
-                    
-                ],
-                "versions_samtools": [
-                    [
-                        "SAMTOOLS_FAIDX",
-                        "samtools",
-                        "1.24"
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2026-10-19T22:08:35.04648496",
-        "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
-        }
-    },
-    "test_samtools_faidx_stub_fai": {
+    "test_samtools_faidx_fai - stub": {
         "content": [
             {
                 "fa": [
@@ -288,10 +298,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:08:48.773525137",
+        "timestamp": "2026-07-10T16:03:54.799114575",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
         }
     },
     "test_samtools_faidx_get_sizes_bgzip": {

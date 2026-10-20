@@ -1,11 +1,11 @@
 process TRIMGALORE {
     tag "${meta.id}"
-    label 'process_high'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fe/fecd74fd0e17966fdaf410970fd972d425457d99b05486e13a5718aaf1c28b72/data'
-        : 'community.wave.seqera.io/library/trim-galore:2.3.0--50f1fbc2a1bd21a2'}"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e0/e00369598bd6b7b34a7c83d5496c381104bf8b885c31a4b65b92e6ea2059fbb3/data' :
+        'community.wave.seqera.io/library/trim-galore:2.3.0--6a38a479b4972363'}"
 
     input:
     tuple val(meta), path(reads)

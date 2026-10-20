@@ -3,9 +3,9 @@ process FASTP {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/77/779b25fffc4544e4d4e3bebf1c1a1f2fee9166515bfa15908b2fee95f513a402/data'
-        : 'community.wave.seqera.io/library/fastp:1.4.0--df415eab5e33cb11'}"
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+?         'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/77/779b25fffc4544e4d4e3bebf1c1a1f2fee9166515bfa15908b2fee95f513a402/data'
+:         'community.wave.seqera.io/library/fastp:1.4.0--df415eab5e33cb11' }"
 
     input:
     tuple val(meta), path(reads), path(adapter_fasta)
@@ -32,12 +32,12 @@ process FASTP {
     def fail_fastq = save_trimmed_fail && meta.single_end ? "--failed_out ${prefix}.fail.fastq.gz" : save_trimmed_fail && !meta.single_end ? "--failed_out ${prefix}.paired.fail.fastq.gz --unpaired1 ${prefix}_R1.fail.fastq.gz --unpaired2 ${prefix}_R2.fail.fastq.gz" : ''
     def out_fq1 = discard_trimmed_pass ?: ( meta.single_end ? "--out1 ${prefix}.fastp.fastq.gz" : "--out1 ${prefix}_R1.fastp.fastq.gz" )
     def out_fq2 = discard_trimmed_pass ?: "--out2 ${prefix}_R2.fastp.fastq.gz"
-    // fastp reserves threads for I/O; keep at least two worker threads for gzip compression.
+    // fastp (1.3.6) --thread excludes its reader threads (and gzip if interleaved); keep >= 2 so workers do the gz compression
     def is_interleaved = task.ext.args?.contains('--interleaved_in')
     def threads        = Math.max(2, task.cpus - (is_interleaved || !meta.single_end ? 2 : 1))
     // Added soft-links to original fastqs for consistent naming in MultiQC
     // Use single ended for interleaved. Add --interleaved_in in config.
-    if ( task.ext.args?.contains('--interleaved_in') ) {
+    if ( is_interleaved ) {
         """
         [ ! -f  ${prefix}.fastq.gz ] && ln -sf $reads ${prefix}.fastq.gz
 

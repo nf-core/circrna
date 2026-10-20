@@ -2,28 +2,6 @@
     "test - stub": {
         "content": [
             {
-                "0": [
-                    [
-                        {
-                            "id": "genome"
-                        },
-                        "genome.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
-                    ]
-                ],
-                "1": [
-                    [
-                        "HISAT2_EXTRACTSPLICESITES",
-                        "hisat2",
-                        "2.2.3"
-                    ]
-                ],
-                "2": [
-                    [
-                        "HISAT2_EXTRACTSPLICESITES",
-                        "samtools",
-                        "1.24"
-                    ]
-                ],
                 "txt": [
                     [
                         {
@@ -48,15 +26,23 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:13:13.576509012",
+        "timestamp": "2026-09-01T14:27:57.496546312",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     },
     "Should run without failures": {
         "content": [
             {
+                "txt": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "genome.splice_sites.txt"
+                    ]
+                ],
                 "versions_hisat2": [
                     [
                         "HISAT2_EXTRACTSPLICESITES",
@@ -73,10 +59,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-19T22:13:00.110969316",
+        "timestamp": "2026-09-01T14:27:14.726466124",
         "meta": {
-            "nf-test": "0.9.4",
-            "nextflow": "25.10.4"
+            "nf-test": "0.9.5",
+            "nextflow": "26.08.0"
         }
     }
 }

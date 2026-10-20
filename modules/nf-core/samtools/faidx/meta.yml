@@ -1,6 +1,5 @@
 name: samtools_faidx
-description: Index FASTA file, and optionally generate a file of chromosome
-  sizes
+description: Index FASTA file, and optionally generate a file of chromosome sizes
 keywords:
   - index
   - fasta

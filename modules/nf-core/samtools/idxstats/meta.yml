@@ -76,14 +76,14 @@ maintainers:
   - "@matthdsm"
 containers:
   docker:
-    linux/amd64:
-      name: community.wave.seqera.io/library/htslib_samtools:1.24--8a3ddf262165ba23
-      build_id: bd-8a3ddf262165ba23_1
-      scan_id: sc-d80d6dd51882efb8_1
     linux/arm64:
       name: community.wave.seqera.io/library/htslib_samtools:1.24--4003425f22200067
       build_id: bd-4003425f22200067_1
       scan_id: sc-e4e98f3040c05cc1_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/htslib_samtools:1.24--8a3ddf262165ba23
+      build_id: bd-8a3ddf262165ba23_1
+      scan_id: sc-d80d6dd51882efb8_1
   singularity:
     linux/amd64:
       name: oras://community.wave.seqera.io/library/htslib_samtools:1.24--780d5da12d0c564c

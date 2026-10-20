@@ -21,7 +21,7 @@ workflow MIRNA_BINDINGSITES {
     // miRNAs can potentially bind to circRNAs right at the backsplice site
     // In this case, the miRNA binding sequence would partially overlap with start and end of the circRNA
     // To account for this, the first 25bp of the circRNA are added to the end of the circRNA sequence
-    ADD_BACKSPLICE( transcriptome_fasta, "fa" )
+    ADD_BACKSPLICE( transcriptome_fasta, [], false, "fa" )
 
     ch_transcriptome_batches = ADD_BACKSPLICE.out.output
         .splitFasta(by: 100, file: true)
@@ -39,7 +39,7 @@ workflow MIRNA_BINDINGSITES {
         // TARGETSCAN WORKFLOW:
         //
         // TargetScan expects one line per miRNA: id, seed sequence (7bp after the first base) and a dummy species id
-        FORMAT_TARGETSCAN( mirna_fasta, "txt" )
+        FORMAT_TARGETSCAN( mirna_fasta, [], false, "txt" )
         TARGETSCAN( ch_transcriptome_batches, FORMAT_TARGETSCAN.out.output.collect() )
         UNIFY_TARGETSCAN( TARGETSCAN.out.txt.map { meta, txt -> [meta, txt, 'targetscan.tsv'] }, [], false )
 

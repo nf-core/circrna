@@ -99,7 +99,13 @@ workflow PREPARE_GENOME {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
         ch_hisat2_splice_sites = HISAT2_EXTRACTSPLICESITES.out.txt
 
-        HISAT2_BUILD(ch_fasta, ch_gtf, HISAT2_EXTRACTSPLICESITES.out.txt)
+        ch_hisat2_reference = ch_fasta
+            .combine(ch_gtf)
+            .combine(HISAT2_EXTRACTSPLICESITES.out.txt)
+            .map { meta_fasta, fasta, meta_gtf, gtf, meta_splices, splices ->
+                [meta_fasta, fasta, gtf, splices]
+            }
+        HISAT2_BUILD(ch_hisat2_reference, params.hisat2_build_memory)
         ch_hisat2 = HISAT2_BUILD.out.index
     }
     else {
