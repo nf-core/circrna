@@ -23,6 +23,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Changed`
 
+- **Breaking:** Rename the public prebuilt-index parameters `--bowtie`, `--bowtie2`, `--bwa`, `--hisat2`, `--star`, `--segemehl` and `--circminer` to `--bowtie_index`, `--bowtie2_index`, `--bwa_index`, `--hisat2_index`, `--star_index`, `--segemehl_index` and `--circminer_index`. Update CLI flags and params-file keys; old names have no aliases and are ignored with the existing unknown-parameter warning, potentially triggering index rebuilding. Index inputs remain directories except for Segemehl's single `.idx` file; archive support, iGenomes catalogue keys and output paths are unchanged.
 - Collect module software versions through Nextflow topics using the nf-core template collector instead of passing version files through every subworkflow.
 - [#250](https://github.com/nf-core/circrna/pull/250) - Rename the legacy detector to CIRI2 throughout the pipeline, including `--tools ciri2`, module and subworkflow names, output paths and test fixtures (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - BSJ callers share one definition of STAR and read-support requirements; documentation now lists the current callers and published output paths (@nictru)

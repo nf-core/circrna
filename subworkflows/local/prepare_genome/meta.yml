@@ -46,35 +46,35 @@ input:
       type: value
       description: "Names of selected quantification methods. Structure: [ val(quantification_tools)
         ]"
-  - bowtie:
+  - bowtie_index:
       type: file
       description: "Optional prebuilt Bowtie index path; null requests an index build
         if selected tools require it.
 
 
         Structure: [ val(index_path) ]"
-  - bowtie2:
+  - bowtie2_index:
       type: file
       description: "Optional prebuilt Bowtie2 index path; null requests an index build
         if selected tools require it.
 
 
         Structure: [ val(index_path) ]"
-  - bwa:
+  - bwa_index:
       type: file
       description: "Optional prebuilt BWA index path; null requests an index build if
         selected tools require it.
 
 
         Structure: [ val(index_path) ]"
-  - hisat2:
+  - hisat2_index:
       type: file
       description: "Optional prebuilt HISAT2 index path; null requests an index build
         if selected tools require it.
 
 
         Structure: [ val(index_path) ]"
-  - star:
+  - star_index:
       type: file
       description: "Optional prebuilt STAR index path; null requests an index build
         if selected tools require it.
@@ -85,7 +85,7 @@ input:
       type: value
       description: "Names of selected full-length isoform callers. Structure: [ val(fli_tools)
         ]"
-  - circminer:
+  - circminer_index:
       type: file
       description: "Optional prebuilt circMiner index path; null requests an index build
         if circMiner is selected.
@@ -107,35 +107,35 @@ output:
 
         Structure: [ val(meta), path(file) ]"
       pattern: "*.fai"
-  - bowtie:
+  - bowtie_index:
       type: file
       description: "Bowtie index channel, either wrapped from the supplied raw path
         or emitted by the Bowtie build module.
 
 
         Structure: [ val(meta), path(index_files) ]"
-  - bowtie2:
+  - bowtie2_index:
       type: file
       description: "Bowtie2 index channel, either wrapped from the supplied raw path
         or emitted by the Bowtie2 build module.
 
 
         Structure: [ val(meta), path(index_files) ]"
-  - bwa:
+  - bwa_index:
       type: file
       description: "BWA index channel, either wrapped from the supplied raw path or
         emitted by the BWA index module.
 
 
         Structure: [ val(meta), path(index_files) ]"
-  - hisat2:
+  - hisat2_index:
       type: file
       description: "HISAT2 index channel, either wrapped from the supplied raw path
         or emitted by the HISAT2 build module.
 
 
         Structure: [ val(meta), path(index_files) ]"
-  - star:
+  - star_index:
       type: file
       description: "STAR index channel, either wrapped from the supplied raw path or
         emitted by STAR genome generation.
@@ -149,7 +149,7 @@ output:
 
 
         Structure: [ val(reference_files) ]"
-  - psirc:
+  - psirc_index:
       type: file
       description: "A collected list of reference tuples; each tuple contains metadata,
         the psirc transcriptome, and a two-file index list.
@@ -157,7 +157,7 @@ output:
 
         Structure: [ val(reference_tuples) ]; each item: [ val(meta), path(transcriptome),
         [ path(index_a), path(index_b) ] ]"
-  - circminer:
+  - circminer_index:
       type: file
       description: "circMiner index channel, either wrapped from the supplied raw path
         or emitted by the circMiner index module.

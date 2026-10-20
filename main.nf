@@ -27,14 +27,14 @@ include { parseToolList           } from './subworkflows/local/utils_nfcore_circ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta     = getGenomeAttribute('fasta')
-params.gtf       = getGenomeAttribute('gtf')
-params.bwa       = getGenomeAttribute('bwa')
-params.star      = getGenomeAttribute('star')
-params.bowtie    = getGenomeAttribute('bowtie')
-params.bowtie2   = getGenomeAttribute('bowtie2')
-params.mature    = getGenomeAttribute('mature')
-params.blacklist = getGenomeAttribute('blacklist')
+params.fasta         = getGenomeAttribute('fasta')
+params.gtf           = getGenomeAttribute('gtf')
+params.bwa_index     = getGenomeAttribute('bwa')
+params.star_index    = getGenomeAttribute('star')
+params.bowtie_index  = getGenomeAttribute('bowtie')
+params.bowtie2_index = getGenomeAttribute('bowtie2')
+params.mature        = getGenomeAttribute('mature')
+params.blacklist     = getGenomeAttribute('blacklist')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,13 +78,13 @@ workflow NFCORE_CIRCRNA {
         parseToolList(params.fli_tools),
         parseToolList(params.quantification_tools),
         parseToolList(params.mirna_tools),
-        params.bowtie ? file(params.bowtie, checkIfExists: true) : null,
-        params.bowtie2 ? file(params.bowtie2, checkIfExists: true) : null,
-        params.bwa ? file(params.bwa, checkIfExists: true) : null,
-        params.hisat2 ? file(params.hisat2, checkIfExists: true) : null,
-        params.star ? file(params.star, checkIfExists: true) : null,
-        params.segemehl ? file(params.segemehl, checkIfExists: true) : null,
-        params.circminer ? file(params.circminer, checkIfExists: true) : null,
+        params.bowtie_index ? file(params.bowtie_index, checkIfExists: true) : null,
+        params.bowtie2_index ? file(params.bowtie2_index, checkIfExists: true) : null,
+        params.bwa_index ? file(params.bwa_index, checkIfExists: true) : null,
+        params.hisat2_index ? file(params.hisat2_index, checkIfExists: true) : null,
+        params.star_index ? file(params.star_index, checkIfExists: true) : null,
+        params.segemehl_index ? file(params.segemehl_index, checkIfExists: true) : null,
+        params.circminer_index ? file(params.circminer_index, checkIfExists: true) : null,
         params.longread,
         params.skip_fastqc,
         params.skip_trimming,

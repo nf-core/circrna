@@ -351,25 +351,25 @@
                     "fa_icon": "fas fa-wheelchair",
                     "default": null
                 },
-                "bowtie": {
+                "bowtie_index": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
                     "description": "Path to Bowtie index files, surrounded by quotes. No glob pattern required.",
                     "default": null
                 },
-                "bowtie2": {
+                "bowtie2_index": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
                     "description": "Path to Bowtie2 index files, surrounded by quotes. No glob pattern required.",
                     "default": null
                 },
-                "bwa": {
+                "bwa_index": {
                     "type": "string",
                     "fa_icon": "fas fa-bold",
                     "description": "Path to BWA index directory, surrounded by quotes. No glob pattern required.",
                     "default": null
                 },
-                "hisat2": {
+                "hisat2_index": {
                     "type": "string",
                     "description": "Path to Hisat2 index directory, surrounded by quotes. No glob pattern required.",
                     "default": null,
@@ -383,19 +383,19 @@
                     "description": "Minimum memory required to use splice sites and exons in the HiSAT2 index build process.",
                     "help_text": "HiSAT2 requires a huge amount of RAM to build a genome index for larger genomes, if including splice sites and exons e.g. the human genome might typically require 200GB. If you specify less than this threshold for the `HISAT2_BUILD` process then the splice sites and exons will be ignored, meaning that the process will require a lot less memory. If you are working with a small genome, set this parameter to a lower value to reduce the threshold for skipping this check. If using a larger genome, consider supplying more memory to the `HISAT2_BUILD` process."
                 },
-                "segemehl": {
+                "segemehl_index": {
                     "type": "string",
                     "default": null,
                     "fa_icon": "fab fa-stripe-s",
                     "description": "Path to Segemehl Index **file**."
                 },
-                "circminer": {
+                "circminer_index": {
                     "type": "string",
                     "default": null,
                     "fa_icon": "fas fa-circle-notch",
                     "description": "Path to a prebuilt circMiner index directory. If omitted, the pipeline builds the index when circMiner is selected."
                 },
-                "star": {
+                "star_index": {
                     "type": "string",
                     "fa_icon": "far fa-star",
                     "description": "Path to STAR index directory, surrounded by quotes. No glob pattern required."

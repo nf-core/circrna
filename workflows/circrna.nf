@@ -51,13 +51,13 @@ workflow CIRCRNA {
     fli_tools // List<String>
     quantification_tools // List<String>
     mirna_tools // List<String>
-    bowtie
-    bowtie2
-    bwa
-    hisat2
-    star
-    segemehl
-    circminer
+    bowtie_index
+    bowtie2_index
+    bwa_index
+    hisat2_index
+    star_index
+    segemehl_index
+    circminer_index
     longread
     skip_fastqc
     skip_trimming
@@ -108,24 +108,24 @@ workflow CIRCRNA {
         ch_gtf,
         tools,
         quantification_tools,
-        bowtie,
-        bowtie2,
-        bwa,
-        hisat2,
-        star,
+        bowtie_index,
+        bowtie2_index,
+        bwa_index,
+        hisat2_index,
+        star_index,
         fli_tools,
-        circminer,
+        circminer_index,
     )
 
     ch_gtf = PREPARE_GENOME.out.gtf
-    bowtie_index = PREPARE_GENOME.out.bowtie
-    bowtie2_index = PREPARE_GENOME.out.bowtie2
-    bwa_index = PREPARE_GENOME.out.bwa
+    ch_bowtie_index = PREPARE_GENOME.out.bowtie_index
+    ch_bowtie2_index = PREPARE_GENOME.out.bowtie2_index
+    ch_bwa_index = PREPARE_GENOME.out.bwa_index
     chromosomes = PREPARE_GENOME.out.chromosomes
     circexplorer2_index = PREPARE_GENOME.out.circexplorer2
-    star_index = PREPARE_GENOME.out.star
-    psirc_index = PREPARE_GENOME.out.psirc
-    circminer_index = PREPARE_GENOME.out.circminer
+    ch_star_index = PREPARE_GENOME.out.star_index
+    ch_psirc_index = PREPARE_GENOME.out.psirc_index
+    ch_circminer_index = PREPARE_GENOME.out.circminer_index
 
 
 
@@ -164,7 +164,7 @@ workflow CIRCRNA {
                 ch_reads_fixed_length = channel.empty()
             }
 
-            CIRI_BWA_MEM(ch_bwa_reads, bwa_index.first(), ch_fasta, true)
+            CIRI_BWA_MEM(ch_bwa_reads, ch_bwa_index.first(), ch_fasta, true)
             ch_bwa_sam = CIRI_BWA_MEM.out.sam
         }
         else {
@@ -178,24 +178,24 @@ workflow CIRCRNA {
             ch_gtf,
             blacklist,
             ch_annotation,
-            bowtie_index,
-            bowtie2_index,
+            ch_bowtie_index,
+            ch_bowtie2_index,
             ch_bwa_sam,
             chromosomes,
-            star_index,
+            ch_star_index,
             circexplorer2_index,
-            psirc_index,
+            ch_psirc_index,
             bsj_reads,
             tools,
             fli_tools,
-            segemehl,
+            segemehl_index,
             max_shift,
             consider_strand,
             min_tools,
             min_samples,
             exons_only,
             PREPARE_GENOME.out.faidx,
-            circminer_index,
+            ch_circminer_index,
             PREPARE_GENOME.out.circminer_gtf,
             ch_reads_fixed_length,
         )
@@ -211,13 +211,13 @@ workflow CIRCRNA {
             BSJ_DETECTION.out.reads_fixed_length,
             ch_fasta,
             ch_gtf,
-            bwa_index,
+            ch_bwa_index,
             BSJ_DETECTION.out.ciri2_txt,
             BSJ_DETECTION.out.ciri2_sam,
             BSJ_DETECTION.out.bed12,
             BSJ_DETECTION.out.bed12_per_sample,
             BSJ_DETECTION.out.bed_reads,
-            psirc_index,
+            ch_psirc_index,
             BSJ_DETECTION.out.psirc_bsj,
             BSJ_DETECTION.out.star_bam,
             BSJ_DETECTION.out.star_junction,
@@ -249,8 +249,8 @@ workflow CIRCRNA {
             bootstrap_samples,
             ch_phenotype,
             PREPARE_GENOME.out.faidx,
-            PREPARE_GENOME.out.bwa,
-            PREPARE_GENOME.out.hisat2,
+            PREPARE_GENOME.out.bwa_index,
+            PREPARE_GENOME.out.hisat2_index,
             quantification_tools,
             max_shift,
             consider_strand,
