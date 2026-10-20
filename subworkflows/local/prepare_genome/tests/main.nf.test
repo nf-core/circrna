@@ -32,7 +32,7 @@ nextflow_workflow {
         }
         then {
             def tasks = workflow.trace.tasks().collect { it.name.tokenize(" ")[0] }
-            def circminerIndices = workflow.out.circminer.collect { meta, index -> [meta, path(index).exists()] }
+            def circminerIndices = workflow.out.circminer_index.collect { meta, index -> [meta, path(index).exists()] }
             assert workflow.success
             assert tasks.contains('PREPARE_GENOME:CIRCMINER_INDEX')
             assert circminerIndices.size() == 1
@@ -89,13 +89,13 @@ nextflow_workflow {
                 { assert snapshot(
                     workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size()] },
                     workflow.out.faidx.collect { meta, fai -> [meta, file(fai).name, path(fai).text] },
-                    workflow.out.bowtie.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.bowtie2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bowtie_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bowtie2_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bwa_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.star_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
                     workflow.out.circexplorer2.flatten().collect { file(it).name },
-                    workflow.out.psirc.collect { meta, fasta, index -> [meta, file(fasta).name, index.collect { file(it).name }.sort()] },
+                    workflow.out.psirc_index.collect { meta, fasta, index -> [meta, file(fasta).name, index.collect { file(it).name }.sort()] },
                     workflow.out.chromosomes.collect { meta, files -> [meta, [files].flatten().collect { file(it.toString()).name }.sort()] },
                     workflow.out.splice_sites.collect { meta, txt -> [meta, file(txt).name] },
                 ).match() }
@@ -119,10 +119,13 @@ nextflow_workflow {
                 }
                 input[0] = channel.value([[id: 'fasta'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
                 input[1] = channel.value([[id: 'gtf'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
-                input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice']
+                input[2] = ['ciri2', 'circexplorer2', 'find_circ', 'mapsplice', 'circminer']
                 input[3] = []
                 input[9] = []
-                input[10] = null
+                def circminerDir = file("$outputDir/prebuilt/circminer")
+                circminerDir.mkdirs()
+                circminerDir.resolve('circminer.idx').text = 'circminer'
+                input[10] = circminerDir
                 """
             }
         }
@@ -136,14 +139,20 @@ nextflow_workflow {
                 { assert !tasks.contains("PREPARE_GENOME:BWA_INDEX") },
                 { assert !tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
                 { assert !tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
+                { assert !tasks.contains("PREPARE_GENOME:CIRCMINER_INDEX") },
+                { assert tasks.count { it == 'PREPARE_GENOME:CIRCMINER_STANDARDIZE_GTF' } == 1 },
+                { assert tasks.count { it == 'PREPARE_GENOME:CIRCMINER_ORDERGTF' } == 1 },
+                { assert workflow.out.circminer_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] } == [[[id: 'circminer'], 'circminer', ['circminer.idx']]] },
+                { assert workflow.out.circminer_gtf.size() == 1 },
+                { assert path(workflow.out.circminer_gtf[0][1]).readLines().any { it.split('\t')[2] == 'gene' } },
                 { assert snapshot(
                     workflow.out.gtf.collect { meta, gtf -> [meta, file(gtf).name, path(gtf).readLines().size()] },
-                    workflow.out.bowtie.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.bowtie2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.psirc,
+                    workflow.out.bowtie_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bowtie2_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.bwa_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.star_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.psirc_index,
                     workflow.out.splice_sites
                 ).match() }
             )
@@ -182,15 +191,15 @@ nextflow_workflow {
                 { assert !tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
                 { assert !tasks.contains("PREPARE_GENOME:BWA_INDEX") },
                 { assert !tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
-                { assert workflow.out.bowtie.isEmpty() },
-                { assert workflow.out.bowtie2.isEmpty() },
-                { assert workflow.out.bwa.isEmpty() },
-                { assert workflow.out.hisat2.isEmpty() },
-                { assert workflow.out.psirc.isEmpty() },
+                { assert workflow.out.bowtie_index.isEmpty() },
+                { assert workflow.out.bowtie2_index.isEmpty() },
+                { assert workflow.out.bwa_index.isEmpty() },
+                { assert workflow.out.hisat2_index.isEmpty() },
+                { assert workflow.out.psirc_index.isEmpty() },
                 { assert workflow.out.circminer_gtf.isEmpty() },
                 { assert !tasks.any { it.contains('CIRCMINER_STANDARDIZE_GTF') || it.contains('CIRCMINER_ORDERGTF') } },
                 { assert snapshot(
-                    workflow.out.star.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.star_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
                     workflow.out.circexplorer2.flatten().collect { file(it).name },
                     workflow.out.faidx.collect { meta, fai -> [meta, file(fai).name, path(fai).text] }
                 ).match() }
@@ -229,13 +238,13 @@ nextflow_workflow {
                 { assert tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
                 { assert !tasks.contains("PREPARE_GENOME:BOWTIE_BUILD") },
                 { assert !tasks.contains("PREPARE_GENOME:BOWTIE2_BUILD") },
-                { assert !workflow.out.bwa.isEmpty() },
-                { assert !workflow.out.hisat2.isEmpty() },
-                { assert workflow.out.bowtie.isEmpty() },
-                { assert workflow.out.bowtie2.isEmpty() },
+                { assert !workflow.out.bwa_index.isEmpty() },
+                { assert !workflow.out.hisat2_index.isEmpty() },
+                { assert workflow.out.bowtie_index.isEmpty() },
+                { assert workflow.out.bowtie2_index.isEmpty() },
                 { assert snapshot(
-                    workflow.out.bwa.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
-                    workflow.out.hisat2.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] }
+                    workflow.out.bwa_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] },
+                    workflow.out.hisat2_index.collect { meta, dir -> [meta, file(dir).name, file(dir).list().sort()] }
                 ).match() }
             )
         }
@@ -272,8 +281,8 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert tasks.contains("PREPARE_GENOME:BWA_INDEX") },
                 { assert tasks.contains("PREPARE_GENOME:HISAT2_BUILD") },
-                { assert !workflow.out.bwa.isEmpty() },
-                { assert !workflow.out.hisat2.isEmpty() }
+                { assert !workflow.out.bwa_index.isEmpty() },
+                { assert !workflow.out.hisat2_index.isEmpty() }
             )
         }
     }
@@ -338,7 +347,7 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
-                { assert !workflow.out.star.isEmpty() }
+                { assert !workflow.out.star_index.isEmpty() }
             )
         }
     }
@@ -370,7 +379,7 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert tasks.contains("PREPARE_GENOME:STAR_GENOMEGENERATE") },
-                { assert !workflow.out.star.isEmpty() }
+                { assert !workflow.out.star_index.isEmpty() }
             )
         }
     }

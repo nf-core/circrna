@@ -23,13 +23,13 @@ workflow PREPARE_GENOME {
     ch_gtf
     tools
     quantification_tools
-    bowtie
-    bowtie2
-    bwa
-    hisat2
-    star
+    bowtie_index
+    bowtie2_index
+    bwa_index
+    hisat2_index
+    star_index
     fli_tools
-    circminer
+    circminer_index
 
     main:
     fli_tools = fli_tools ?: []
@@ -57,42 +57,42 @@ workflow PREPARE_GENOME {
 
     SEQKIT_SPLIT(ch_fasta)
 
-    if (bowtie) {
-        ch_bowtie = channel.value([[id: "bowtie"], bowtie])
+    if (bowtie_index) {
+        ch_bowtie_index = channel.value([[id: "bowtie"], bowtie_index])
     }
     else if (tools.contains('mapsplice')) {
         BOWTIE_BUILD(ch_fasta)
-        ch_bowtie = BOWTIE_BUILD.out.index
+        ch_bowtie_index = BOWTIE_BUILD.out.index
     }
     else {
-        ch_bowtie = channel.empty()
+        ch_bowtie_index = channel.empty()
     }
 
-    if (bowtie2) {
-        ch_bowtie2 = channel.value([[id: "bowtie2"], bowtie2])
+    if (bowtie2_index) {
+        ch_bowtie2_index = channel.value([[id: "bowtie2"], bowtie2_index])
     }
     else if (tools.contains('find_circ')) {
         BOWTIE2_BUILD(ch_fasta)
-        ch_bowtie2 = BOWTIE2_BUILD.out.index
+        ch_bowtie2_index = BOWTIE2_BUILD.out.index
     }
     else {
-        ch_bowtie2 = channel.empty()
+        ch_bowtie2_index = channel.empty()
     }
 
-    if (bwa) {
-        ch_bwa = channel.value([[id: "bwa"], bwa])
+    if (bwa_index) {
+        ch_bwa_index = channel.value([[id: "bwa"], bwa_index])
     }
     else if (tools.intersect(['ciri2', 'ciri3']).size() > 0 || quantification_tools.intersect(['ciriquant', 'ciri3']).size() > 0) {
         BWA_INDEX(ch_fasta)
-        ch_bwa = BWA_INDEX.out.index
+        ch_bwa_index = BWA_INDEX.out.index
     }
     else {
-        ch_bwa = channel.empty()
+        ch_bwa_index = channel.empty()
     }
 
     ch_hisat2_splice_sites = channel.empty()
-    if (hisat2) {
-        ch_hisat2 = channel.value([[id: "hisat2"], hisat2])
+    if (hisat2_index) {
+        ch_hisat2_index = channel.value([[id: "hisat2"], hisat2_index])
     }
     else if (tools.contains('ciri2') || quantification_tools.contains('ciriquant')) {
         HISAT2_EXTRACTSPLICESITES(ch_gtf)
@@ -105,21 +105,21 @@ workflow PREPARE_GENOME {
                 [meta_fasta, fasta, gtf, splices]
             }
         HISAT2_BUILD(ch_hisat2_reference, params.hisat2_build_memory)
-        ch_hisat2 = HISAT2_BUILD.out.index
+        ch_hisat2_index = HISAT2_BUILD.out.index
     }
     else {
-        ch_hisat2 = channel.empty()
+        ch_hisat2_index = channel.empty()
     }
 
-    if (star) {
-        ch_star = channel.value([[id: "star"], star])
+    if (star_index) {
+        ch_star_index = channel.value([[id: "star"], star_index])
     }
     else if (starBasedTools(tools).size() > 0 || fli_tools.contains('circtools')) {
         STAR_GENOMEGENERATE(ch_fasta, ch_gtf)
-        ch_star = STAR_GENOMEGENERATE.out.index
+        ch_star_index = STAR_GENOMEGENERATE.out.index
     }
     else {
-        ch_star = channel.empty()
+        ch_star_index = channel.empty()
     }
 
     SAMTOOLS_FAIDX(ch_fasta.map { meta, fasta -> [meta, fasta, []] }, false)
@@ -140,29 +140,29 @@ workflow PREPARE_GENOME {
             .collect()
     }
 
-    if (circminer) {
-        ch_circminer = channel.value([[id: "circminer"], circminer])
+    if (circminer_index) {
+        ch_circminer_index = channel.value([[id: "circminer"], circminer_index])
     }
     else if (tools.contains('circminer')) {
         CIRCMINER_INDEX(ch_fasta)
-        ch_circminer = CIRCMINER_INDEX.out.index
+        ch_circminer_index = CIRCMINER_INDEX.out.index
     }
     else {
-        ch_circminer = channel.empty()
+        ch_circminer_index = channel.empty()
     }
 
     emit:
-    gtf           = ch_gtf
-    faidx         = SAMTOOLS_FAIDX.out.fai
-    bowtie        = ch_bowtie
-    bowtie2       = ch_bowtie2
-    bwa           = ch_bwa
-    hisat2        = ch_hisat2
-    star          = ch_star
-    circexplorer2 = ch_circexplorer2_reference
-    psirc         = ch_psirc_index
-    circminer     = ch_circminer
-    chromosomes   = SEQKIT_SPLIT.out.split
-    splice_sites  = ch_hisat2_splice_sites.collect()
-    circminer_gtf = ch_circminer_gtf
+    gtf             = ch_gtf
+    faidx           = SAMTOOLS_FAIDX.out.fai
+    bowtie_index    = ch_bowtie_index
+    bowtie2_index   = ch_bowtie2_index
+    bwa_index       = ch_bwa_index
+    hisat2_index    = ch_hisat2_index
+    star_index      = ch_star_index
+    circexplorer2   = ch_circexplorer2_reference
+    psirc_index     = ch_psirc_index
+    circminer_index = ch_circminer_index
+    chromosomes     = SEQKIT_SPLIT.out.split
+    splice_sites    = ch_hisat2_splice_sites.collect()
+    circminer_gtf   = ch_circminer_gtf
 }

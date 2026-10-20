@@ -1,0 +1,157 @@
+nextflow_pipeline {
+
+    name 'Public index parameters'
+    script '../main.nf'
+    config './index_parameters.config'
+    tag 'pipeline'
+    tag 'index_parameters'
+
+    test('All seven public index parameters skip their builders and reach consumers - stub') {
+        options '-stub'
+
+        when {
+            params {
+                // Tiny stub-only inputs, isolated by nf-test; no committed fixtures.
+                ['bowtie', 'bowtie2', 'bwa', 'hisat2', 'star', 'circminer'].each { index ->
+                    def directory = new File("$outputDir/index-fixtures/supplied-${index}")
+                    directory.mkdirs()
+                    new File(directory, 'index.marker').text = "${index}\n"
+                }
+                new File("$outputDir/index-fixtures/supplied-segemehl.idx").text = 'segemehl\n'
+                outdir = "$outputDir"
+                bowtie_index = "$outputDir/index-fixtures/supplied-bowtie"
+                bowtie2_index = "$outputDir/index-fixtures/supplied-bowtie2"
+                bwa_index = "$outputDir/index-fixtures/supplied-bwa"
+                hisat2_index = "$outputDir/index-fixtures/supplied-hisat2"
+                star_index = "$outputDir/index-fixtures/supplied-star"
+                segemehl_index = "$outputDir/index-fixtures/supplied-segemehl.idx"
+                circminer_index = "$outputDir/index-fixtures/supplied-circminer"
+            }
+        }
+
+        then {
+            assert workflow.success
+            def tasks = workflow.trace.succeeded()
+            def builders = ['BOWTIE_BUILD', 'BOWTIE2_BUILD', 'BWA_INDEX', 'HISAT2_BUILD',
+                            'HISAT2_EXTRACTSPLICESITES', 'STAR_GENOMEGENERATE', 'CIRCMINER_INDEX']
+            assert !tasks.any { task -> builders.any { task.name.contains(it) } || task.name.contains('SEGEMEHL:INDEX') }
+
+            // The test config checks the staged index inside every consumer.
+            def consumers = [
+                'BSJ_DETECTION:MAPSPLICE:ALIGN': 'bowtie',
+                'BSJ_DETECTION:FIND_CIRC:ALIGN': 'bowtie2',
+                'CIRCRNA:CIRI_BWA_MEM': 'bwa',
+                'BSJ_DETECTION:STAR2PASS:PASS_1': 'star',
+                'BSJ_DETECTION:SEGEMEHL:ALIGN': 'segemehl',
+                'BSJ_DETECTION:CIRCMINER:DETECT': 'circminer'
+            ]
+            consumers.each { process, index ->
+                def consumers_tasks = tasks.findAll { it.name.contains(process) }
+                assert consumers_tasks.size() == 2
+            }
+            // Empty discovery stubs do not schedule CIRIquant; HISAT2 must still bypass preparation.
+            assert !tasks.any { it.name.contains('HISAT2_') }
+        }
+    }
+
+    test('iGenomes bare catalogue keys populate the four public index parameters - stub') {
+        options '-stub'
+
+        when {
+            params {
+                ['bowtie', 'bowtie2', 'bwa', 'star'].each { index ->
+                    def directory = new File("$outputDir/index-fixtures/preset-${index}")
+                    directory.mkdirs()
+                    new File(directory, 'index.marker').text = "${index}\n"
+                }
+                outdir = "$outputDir"
+                tools = 'mapsplice,find_circ,ciri3,circexplorer2'
+                genome = 'IndexTest'
+                genomes = [IndexTest: [
+                    bowtie: "$outputDir/index-fixtures/preset-bowtie",
+                    bowtie2: "$outputDir/index-fixtures/preset-bowtie2",
+                    bwa: "$outputDir/index-fixtures/preset-bwa",
+                    star: "$outputDir/index-fixtures/preset-star"
+                ]]
+            }
+        }
+
+        then {
+            assert workflow.success
+            def tasks = workflow.trace.succeeded()
+            assert !tasks.any { task -> ['BOWTIE_BUILD', 'BOWTIE2_BUILD', 'BWA_INDEX', 'STAR_GENOMEGENERATE'].any { task.name.contains(it) } }
+            def consumers = [
+                'BSJ_DETECTION:MAPSPLICE:ALIGN': 'bowtie',
+                'BSJ_DETECTION:FIND_CIRC:ALIGN': 'bowtie2',
+                'CIRCRNA:CIRI_BWA_MEM': 'bwa',
+                'BSJ_DETECTION:STAR2PASS:PASS_1': 'star'
+            ]
+            consumers.each { process, index ->
+                def consumers_tasks = tasks.findAll { it.name.contains(process) }
+                assert consumers_tasks.size() == 2
+            }
+        }
+    }
+
+    test('Explicit public index parameters override all four iGenomes catalogue values - stub') {
+        options '-stub'
+
+        when {
+            params {
+                ['bowtie', 'bowtie2', 'bwa', 'star'].each { index ->
+                    def directory = new File("$outputDir/index-fixtures/supplied-${index}")
+                    directory.mkdirs()
+                    new File(directory, 'index.marker').text = "${index}\n"
+                }
+                outdir = "$outputDir"
+                tools = 'mapsplice,find_circ,ciri3,circexplorer2'
+                genome = 'IndexTest'
+                // Deliberately absent preset paths: accidental preset precedence must fail.
+                genomes = [IndexTest: [
+                    bowtie: "$outputDir/index-fixtures/preset-bowtie",
+                    bowtie2: "$outputDir/index-fixtures/preset-bowtie2",
+                    bwa: "$outputDir/index-fixtures/preset-bwa",
+                    star: "$outputDir/index-fixtures/preset-star"
+                ]]
+                bowtie_index = "$outputDir/index-fixtures/supplied-bowtie"
+                bowtie2_index = "$outputDir/index-fixtures/supplied-bowtie2"
+                bwa_index = "$outputDir/index-fixtures/supplied-bwa"
+                star_index = "$outputDir/index-fixtures/supplied-star"
+            }
+        }
+
+        then {
+            assert workflow.success
+            def tasks = workflow.trace.succeeded()
+            assert !tasks.any { task -> ['BOWTIE_BUILD', 'BOWTIE2_BUILD', 'BWA_INDEX', 'STAR_GENOMEGENERATE'].any { task.name.contains(it) } }
+            def consumers = [
+                'BSJ_DETECTION:MAPSPLICE:ALIGN': 'bowtie',
+                'BSJ_DETECTION:FIND_CIRC:ALIGN': 'bowtie2',
+                'CIRCRNA:CIRI_BWA_MEM': 'bwa',
+                'BSJ_DETECTION:STAR2PASS:PASS_1': 'star'
+            ]
+            consumers.each { process, index ->
+                def consumers_tasks = tasks.findAll { it.name.contains(process) }
+                assert consumers_tasks.size() == 2
+            }
+        }
+    }
+
+    test('A missing public index path fails before index building - stub') {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'find_circ'
+                bowtie2_index = "$outputDir/index-fixtures/does-not-exist"
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert (workflow.stdout + workflow.stderr).join('\n').contains('does-not-exist')
+            assert !workflow.trace.tasks().any { it.name.contains('BOWTIE2_BUILD') }
+        }
+    }
+}

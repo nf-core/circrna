@@ -29,10 +29,6 @@ include { parseToolList           } from './subworkflows/local/utils_nfcore_circ
 
 params.fasta     = getGenomeAttribute('fasta')
 params.gtf       = getGenomeAttribute('gtf')
-params.bwa       = getGenomeAttribute('bwa')
-params.star      = getGenomeAttribute('star')
-params.bowtie    = getGenomeAttribute('bowtie')
-params.bowtie2   = getGenomeAttribute('bowtie2')
 params.mature    = getGenomeAttribute('mature')
 params.blacklist = getGenomeAttribute('blacklist')
 
@@ -61,9 +57,16 @@ workflow NFCORE_CIRCRNA {
     mature = params.mature ? [[id: "mature"], file(params.mature, checkIfExists: true)] : null
     mirna_expression = params.mature && params.mirna_expression ? [[id: "mirna"], file(params.mirna_expression, checkIfExists: true)] : null
     ch_phenotype = params.phenotype ? channel.value([[id: "phenotype"], file(params.phenotype, checkIfExists: true)]) : channel.empty()
-    ch_annotation = (params.annotation && params.annotation instanceof String)
+    ch_annotation = params.annotation && params.annotation instanceof String
         ? channel.fromSamplesheet("annotation", parameters_schema: "${projectDir}/nextflow_schema.json")
         : channel.empty()
+
+    // Configured null defaults prevent script-level params assignments from applying.
+    // Resolve optional indexes here so explicit paths take precedence over catalogue values.
+    bowtie_index = params.bowtie_index ?: getGenomeAttribute('bowtie')
+    bowtie2_index = params.bowtie2_index ?: getGenomeAttribute('bowtie2')
+    bwa_index = params.bwa_index ?: getGenomeAttribute('bwa')
+    star_index = params.star_index ?: getGenomeAttribute('star')
 
     CIRCRNA(
         ch_samplesheet,
@@ -78,13 +81,13 @@ workflow NFCORE_CIRCRNA {
         parseToolList(params.fli_tools),
         parseToolList(params.quantification_tools),
         parseToolList(params.mirna_tools),
-        params.bowtie ? file(params.bowtie, checkIfExists: true) : null,
-        params.bowtie2 ? file(params.bowtie2, checkIfExists: true) : null,
-        params.bwa ? file(params.bwa, checkIfExists: true) : null,
-        params.hisat2 ? file(params.hisat2, checkIfExists: true) : null,
-        params.star ? file(params.star, checkIfExists: true) : null,
-        params.segemehl ? file(params.segemehl, checkIfExists: true) : null,
-        params.circminer ? file(params.circminer, checkIfExists: true) : null,
+        bowtie_index ? file(bowtie_index, checkIfExists: true) : null,
+        bowtie2_index ? file(bowtie2_index, checkIfExists: true) : null,
+        bwa_index ? file(bwa_index, checkIfExists: true) : null,
+        params.hisat2_index ? file(params.hisat2_index, checkIfExists: true) : null,
+        star_index ? file(star_index, checkIfExists: true) : null,
+        params.segemehl_index ? file(params.segemehl_index, checkIfExists: true) : null,
+        params.circminer_index ? file(params.circminer_index, checkIfExists: true) : null,
         params.longread,
         params.skip_fastqc,
         params.skip_trimming,
@@ -114,12 +117,10 @@ workflow NFCORE_CIRCRNA {
 */
 
 workflow {
-
-    main:
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
-    PIPELINE_INITIALISATION (
+    PIPELINE_INITIALISATION(
         params.version,
         params.validate_params,
         params.monochrome_logs,
@@ -128,30 +129,24 @@ workflow {
         params.input,
         params.help,
         params.help_full,
-        params.show_hidden
+        params.show_hidden,
     )
 
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_CIRCRNA (
+    NFCORE_CIRCRNA(
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
     // SUBWORKFLOW: Run completion tasks
     //
-    PIPELINE_COMPLETION (
+    PIPELINE_COMPLETION(
         params.email,
         params.email_on_fail,
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        NFCORE_CIRCRNA.out.multiqc_report
+        NFCORE_CIRCRNA.out.multiqc_report,
     )
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

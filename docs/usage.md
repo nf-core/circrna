@@ -8,6 +8,42 @@
 
 Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration except for parameters; see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
+### Supplying reference indexes
+
+The public parameters for prebuilt indexes have been renamed. Update CLI flags and keys in YAML/JSON params files using this table (omit `--` for params-file keys):
+
+| Previous flag | Replacement flag    |
+| ------------- | ------------------- |
+| `--bowtie`    | `--bowtie_index`    |
+| `--bowtie2`   | `--bowtie2_index`   |
+| `--bwa`       | `--bwa_index`       |
+| `--hisat2`    | `--hisat2_index`    |
+| `--star`      | `--star_index`      |
+| `--segemehl`  | `--segemehl_index`  |
+| `--circminer` | `--circminer_index` |
+
+This is a breaking rename without aliases. Old parameters produce the existing unknown-parameter warning and are ignored, so indexes may be rebuilt instead of reused.
+
+Supply index directories, except for `--segemehl_index`, which takes a single `.idx` file. Compressed index archives are not supported. Indexes must match the supplied reference genome. For example, to reuse BWA and Segemehl indexes for CIRI2 and Segemehl discovery:
+
+```bash
+nextflow run nf-core/circrna \
+    -profile docker \
+    --input samplesheet.csv \
+    --outdir results \
+    --fasta /data/references/GRCh38/genome.fa \
+    --gtf /data/references/GRCh38/genes.gtf \
+    --igenomes_ignore \
+    --genome null \
+    --tools ciri2,segemehl \
+    --bwa_index /data/references/GRCh38/bwa/ \
+    --segemehl_index /data/references/GRCh38/segemehl/genome.idx
+```
+
+The iGenomes catalogue keys used for index lookup remain `bowtie`, `bowtie2`, `bwa`, and `star`; do not rename these keys in custom catalogues. `--genome` selection and published output paths are unchanged.
+
+Explicit index paths take precedence over catalogue values. This update also fixes index fallback from `--genome` catalogues when the corresponding public parameter has its default `null` value.
+
 ## Samplesheet input
 
 You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 4 columns, and a header row as shown in the examples below.

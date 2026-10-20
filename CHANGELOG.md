@@ -23,6 +23,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Changed`
 
+- **Breaking:** Rename the public prebuilt-index parameters `--bowtie`, `--bowtie2`, `--bwa`, `--hisat2`, `--star`, `--segemehl` and `--circminer` to `--bowtie_index`, `--bowtie2_index`, `--bwa_index`, `--hisat2_index`, `--star_index`, `--segemehl_index` and `--circminer_index`. Update CLI flags and params-file keys; old names have no aliases and are ignored with the existing unknown-parameter warning, potentially triggering index rebuilding. Index inputs remain directories except for Segemehl's single `.idx` file; archive support, iGenomes catalogue keys and output paths are unchanged. See the [migration table](docs/usage.md#supplying-reference-indexes).
 - Collect module software versions through Nextflow topics using the nf-core template collector instead of passing version files through every subworkflow.
 - [#250](https://github.com/nf-core/circrna/pull/250) - Rename the legacy detector to CIRI2 throughout the pipeline, including `--tools ciri2`, module and subworkflow names, output paths and test fixtures (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - BSJ callers share one definition of STAR and read-support requirements; documentation now lists the current callers and published output paths (@nictru)
@@ -38,6 +39,7 @@ Initial release of nf-core/circrna, created with the [nf-core](https://nf-co.re/
 
 ### `Fixed`
 
+- Resolve Bowtie, Bowtie2, BWA and STAR index paths from the selected genome catalogue when no explicit index path is supplied; configured `null` defaults previously prevented this fallback. Explicit index paths retain precedence.
 - [#249](https://github.com/nf-core/circrna/pull/249) - Prepare circMiner's required annotation in `PREPARE_GENOME` with the nf-core AGAT module and a small exon-ordering step, avoiding a GTF-loading segmentation fault without changing other tools' annotations (@nictru)
 - [#248](https://github.com/nf-core/circrna/pull/248) - Build the STAR index for circtools discovery and FLI detection. Infer psirc strand from supporting transcripts, with canonical genomic splice motifs as a fallback (@nictru)
 - [#242](https://github.com/nf-core/circrna/pull/242) - `exons_only = false` was treated as `true` in `ANNOTATION` (`bed2gtf`) (@nictru)

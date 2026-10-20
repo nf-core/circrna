@@ -136,22 +136,7 @@
                 "9": [
                     
                 ],
-                "bowtie": [
-                    [
-                        {
-                            "id": "fasta"
-                        },
-                        [
-                            "fasta.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                            "fasta.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                            "fasta.3.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                            "fasta.4.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                            "fasta.rev.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
-                            "fasta.rev.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e"
-                        ]
-                    ]
-                ],
-                "bowtie2": [
+                "bowtie2_index": [
                     [
                         {
                             "id": "fasta"
@@ -166,7 +151,22 @@
                         ]
                     ]
                 ],
-                "bwa": [
+                "bowtie_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.3.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.4.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "bwa_index": [
                     [
                         {
                             "id": "fasta"
@@ -193,10 +193,10 @@
                         "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "circminer": [
+                "circminer_gtf": [
                     
                 ],
-                "circminer_gtf": [
+                "circminer_index": [
                     
                 ],
                 "faidx": [
@@ -215,7 +215,7 @@
                         "gtf.filtered.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "hisat2": [
+                "hisat2_index": [
                     [
                         {
                             "id": "fasta"
@@ -225,7 +225,7 @@
                         ]
                     ]
                 ],
-                "psirc": [
+                "psirc_index": [
                     [
                         {
                             "id": "gtf"
@@ -245,7 +245,7 @@
                         "gtf.filtered.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "star": [
+                "star_index": [
                     [
                         {
                             "id": "fasta"
