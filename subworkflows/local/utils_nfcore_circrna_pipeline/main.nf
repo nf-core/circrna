@@ -176,7 +176,7 @@ workflow PIPELINE_COMPLETION {
 //
 // Parse a comma separated list of tools into a lower-cased list without empty entries
 //
-def parseToolList(tools: String) {
+def parseToolList(tools) {
     return tools.split(',').collect { tool -> tool.trim().toLowerCase() }.findAll { tool -> tool }
 }
 
@@ -197,12 +197,12 @@ def bsjToolProperties() {
     ]
 }
 
-def starBasedTools(tools: List) {
+def starBasedTools(tools) {
     def properties = bsjToolProperties()
     return tools.findAll { tool -> properties[tool]?.star }
 }
 
-def readCarryingTools(tools: List) {
+def readCarryingTools(tools) {
     def properties = bsjToolProperties()
     return tools.findAll { tool -> properties[tool]?.reads }
 }
