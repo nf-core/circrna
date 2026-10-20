@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow CIRCTOOLS"
     script "../main.nf"
     workflow "CIRCTOOLS"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

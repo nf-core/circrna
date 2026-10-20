@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Subworkflow CIRCRNA_FINDER"
     script "../main.nf"
     workflow "CIRCRNA_FINDER"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

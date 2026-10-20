@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow CIRI_READS"
     script "../main.nf"
     workflow "CIRI_READS"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

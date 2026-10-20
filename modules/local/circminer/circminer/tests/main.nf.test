@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process CIRCMINER_CIRCMINER"
     script "../main.nf"
     process "CIRCMINER_CIRCMINER"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"

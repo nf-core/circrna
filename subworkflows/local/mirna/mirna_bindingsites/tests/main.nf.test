@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow MIRNA_BINDINGSITES"
     script "../main.nf"
     workflow "MIRNA_BINDINGSITES"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

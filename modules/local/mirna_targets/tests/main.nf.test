@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process MIRNA_TARGETS"
     script "../main.nf"
     process "MIRNA_TARGETS"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"

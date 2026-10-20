@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow SEGEMEHL"
     script "../main.nf"
     workflow "SEGEMEHL"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"

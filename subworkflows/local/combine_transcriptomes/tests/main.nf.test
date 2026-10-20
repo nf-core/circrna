@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow COMBINE_TRANSCRIPTOMES"
     script "../main.nf"
     workflow "COMBINE_TRANSCRIPTOMES"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
