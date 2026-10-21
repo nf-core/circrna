@@ -7,6 +7,8 @@ nextflow_function {
     tag "subworkflows_local"
     tag "utils_nfcore_circrna_pipeline"
 
+    // Nextflow 25 logs validation failures to stdout; Nextflow 26 uses stderr outside agent mode.
+
     test("Paired-end runs retain first metadata and all read pairs with circminer and FLI") {
         when {
             params {
@@ -47,7 +49,7 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('Please check input samplesheet -> All samples must be paired-end when circminer is selected.')
+            assert (function.stdout + function.stderr).join('\n').contains('Please check input samplesheet -> All samples must be paired-end when circminer is selected.')
         }
     }
 
@@ -66,8 +68,8 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('All samples must be paired-end when circminer is selected.')
-            assert !function.stdout.join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
+            assert (function.stdout + function.stderr).join('\n').contains('All samples must be paired-end when circminer is selected.')
+            assert !(function.stdout + function.stderr).join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
         }
     }
 
@@ -114,7 +116,7 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: mixed_ends')
+            assert (function.stdout + function.stderr).join('\n').contains('Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: mixed_ends')
         }
     }
 
@@ -136,7 +138,7 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('Multiple runs of a sample must be of the same strandedness: mixed_strands')
+            assert (function.stdout + function.stderr).join('\n').contains('Multiple runs of a sample must be of the same strandedness: mixed_strands')
         }
     }
 
@@ -155,7 +157,7 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
+            assert (function.stdout + function.stderr).join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
         }
     }
 
@@ -174,7 +176,7 @@ nextflow_function {
         }
         then {
             assert function.failed
-            assert function.stdout.join('\n').contains('All samples must be single-end when longread is true.')
+            assert (function.stdout + function.stderr).join('\n').contains('All samples must be single-end when longread is true.')
         }
     }
 
