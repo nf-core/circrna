@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process CIRIQUANT"
     script "../main.nf"
     process "CIRIQUANT"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"

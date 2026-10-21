@@ -647,12 +647,12 @@ nextflow_workflow {
         }
 
         then {
-            def joined = file("$outputDir/3_bsj_detection/tools/find_circ/find_circ.joined.tsv")
+            def findCirc = workflow.out.bed_per_sample_tool.find { meta, _bed -> meta.tool == 'find_circ' }
             assertAll(
                 { assert workflow.success },
-                { assert joined.exists() },
-                { assert joined.readLines()[0] == "id\tcel_N2_1" },
-                { assert joined.readLines().size() > 1 }
+                { assert workflow.trace.succeeded().any { it.name.contains('COMBINE_COUNTS_PER_TOOL') } },
+                { assert findCirc[0].id == 'cel_N2_1' },
+                { assert path(findCirc[1]).readLines().size() > 0 }
             )
         }
     }

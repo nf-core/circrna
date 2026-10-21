@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process SEQKIT_SPLIT"
     script "../main.nf"
     process "SEQKIT_SPLIT"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"

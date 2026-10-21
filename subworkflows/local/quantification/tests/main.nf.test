@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow QUANTIFICATION"
     script "../main.nf"
     workflow "QUANTIFICATION"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
@@ -62,27 +63,22 @@ nextflow_workflow {
         then {
             def circular = path(workflow.out.circ.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
             def gene = path(workflow.out.gene.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
-            def sum = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
-                { assert !new File("$outputDir/5_quantification/aggregations/max.tsv").exists() },
+                { assert workflow.trace.succeeded().findAll { it.name.startsWith('QUANTIFICATION:AGGREGATE') }*.name == [ 'QUANTIFICATION:AGGREGATE (sum)' ] },
                 { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert circular.rowCount > 0 },
                 { assert gene.rowCount > 0 },
                 { assert workflow.out.rds.size() == 1 },
-                { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
-                { assert sum.rowCount > 0 },
                 { assert snapshot(
                     workflow.out.gene.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.circ.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.rds.collect { meta, f -> [ meta, file(f).name ] },
                     workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort().findAll { it.contains('AGGREGATE') },
                     circular.columns['tx'],
-                    gene.rowCount,
-                    sum.rowCount,
-                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
+                    gene.rowCount
                 ).match() }
             )
         }
@@ -172,7 +168,6 @@ nextflow_workflow {
             def gene = path(workflow.out.gene.find { it[0].quantification == 'psirc' }[1]).csv(sep: '\t')
             def ciriquantGene = path(workflow.out.gene.find { it[0].id == 'gene' }[1]).csv(sep: '\t')
             def ciriquantCirc = path(workflow.out.circ.find { it[0].id == 'circ' }[1])
-            def max = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
@@ -187,9 +182,7 @@ nextflow_workflow {
                 { assert ciriquantCirc.readLines()[0].split('\t').toList() == [ 'circ_id', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
                 { assert workflow.out.ciriquant.size() == 2 },
                 { assert workflow.out.stringtie.size() == 2 },
-                { assert !new File("$outputDir/5_quantification/aggregations/sum.tsv").exists() },
-                { assert max.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
-                { assert max.rowCount > 0 },
+                { assert workflow.trace.succeeded().findAll { it.name.startsWith('QUANTIFICATION:AGGREGATE') }*.name == [ 'QUANTIFICATION:AGGREGATE (max)' ] },
                 { assert snapshot(
                     workflow.out.gene.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
                     workflow.out.circ.collect { meta, f -> [ meta, file(f).name ] }.sort { it[0].id },
@@ -200,9 +193,7 @@ nextflow_workflow {
                     ciriquantGene.columnNames,
                     ciriquantGene.rowCount,
                     workflow.out.ciriquant.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
-                    workflow.out.stringtie.collect { meta, f -> [ meta.id, file(f).name ] }.sort(),
-                    max.rowCount,
-                    max.rows.collect { row -> "${row.cel_N2_1}\t${row.fust1_1}".toString() }.sort()
+                    workflow.out.stringtie.collect { meta, f -> [ meta.id, file(f).name ] }.sort()
                 ).match() }
             )
         }
@@ -260,24 +251,14 @@ nextflow_workflow {
         }
 
         then {
-            def sum = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t')
-            def max = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t')
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.gene.isEmpty() },
                 { assert workflow.out.circ.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
                 { assert workflow.trace.tasks().every { it.name.startsWith('QUANTIFICATION:AGGREGATE') } },
-                { assert sum.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
-                { assert sum.rowCount > 0 },
-                { assert max.columnNames == [ 'id', 'cel_N2_1', 'fust1_1' ] },
-                { assert max.rowCount > 0 },
-                { assert snapshot(workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort(),
-                    sum.rowCount,
-                    sum.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() },
-                    max.rowCount,
-                    max.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
-                ).match() }
+                { assert workflow.trace.succeeded()*.name.sort() == [ 'QUANTIFICATION:AGGREGATE (max)', 'QUANTIFICATION:AGGREGATE (sum)' ] },
+                { assert snapshot(workflow.trace.tasks().collect { it.name.replaceAll(/ \(.*\)/, '') }.unique().sort()).match() }
             )
         }
     }
@@ -341,8 +322,7 @@ nextflow_workflow {
                 { assert workflow.out.ciriquant.isEmpty() },
                 { assert workflow.out.stringtie.isEmpty() },
                 { assert workflow.out.rds.isEmpty() },
-                { assert workflow.trace.tasks().isEmpty() },
-                { assert !new File("$outputDir/5_quantification/aggregations").exists() }
+                { assert workflow.trace.tasks().isEmpty() }
             )
         }
     }

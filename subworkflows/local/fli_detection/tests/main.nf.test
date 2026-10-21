@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Workflow FLI_DETECTION"
     script "../main.nf"
     workflow "FLI_DETECTION"
+    config "./nextflow.config"
 
     tag "subworkflows"
     tag "subworkflows_local"
