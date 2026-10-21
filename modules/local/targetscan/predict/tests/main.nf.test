@@ -39,6 +39,40 @@ nextflow_process {
         }
     }
 
+    test("mini circRNAs - renamed mature miRNA input") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'batch_1' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)
+                ]
+                input[1] = channel.fromPath(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)
+                    .splitFasta(record: [id: true, seqString: true])
+                    .map { record -> "\${record.id}\\t\${record.seqString[1..7]}\\t0000\\n" }
+                    .collectFile(name: 'custom_mature.tsv')
+                    .map { f -> [[id: 'mature_targetscan'], f] }
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.txt.collect { meta, f -> [meta, file(f).name, path(f).readLines().sort().toString().md5()] },
+                    process.out.versions_awk,
+                    process.out.versions_targetscan
+                ).match() },
+                // Same normalized prediction content as the original mature.txt test.
+                { assert process.out.txt.every { meta, f ->
+                    path(f).readLines().sort().toString().md5() == '5d7129119bfb5deef9fe4c0f6c5b9531'
+                } }
+            )
+        }
+    }
+
     test("mini circRNAs - stub") {
 
         options '-stub'

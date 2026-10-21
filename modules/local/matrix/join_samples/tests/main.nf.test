@@ -3,6 +3,7 @@ nextflow_process {
     name "Test Process JOIN_SAMPLES"
     script "../main.nf"
     process "JOIN_SAMPLES"
+    config "./nextflow.config"
 
     tag "modules"
     tag "modules_local"
@@ -107,6 +108,53 @@ nextflow_process {
                 { assert process.success },
                 { assert path(process.out.joined[0][1]).readLines() == ['circ_id\tgene_id\tcel_N2_1\tfust1_1'] },
                 { assert snapshot(process.out.joined).match() }
+            )
+        }
+    }
+
+    test("find_circ BSJ counts - one sample") {
+
+        setup {
+            run("GAWK") {
+                script "modules/nf-core/gawk/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'cel_N2_1' ],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.find_circ.filtered.bed', checkIfExists: true),
+                        'counts.tsv'
+                    ]
+                    input[1] = []
+                    input[2] = false
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = GAWK.out.output.map { meta, counts -> [[id:'find_circ'], [meta.id], [counts]] }
+                input[1] = "id"
+                """
+            }
+        }
+
+        then {
+            def joined = path(process.out.joined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert joined.columnNames == ['id', 'cel_N2_1'] },
+                { assert joined.rowCount > 0 },
+                { assert snapshot(
+                    process.out.joined.collect { meta, output -> [meta, file(output).name] },
+                    joined.columnNames,
+                    joined.rowCount,
+                    joined.rows.collect { row -> "${row.id}\t${row.cel_N2_1}".toString() }
+                ).match() }
             )
         }
     }

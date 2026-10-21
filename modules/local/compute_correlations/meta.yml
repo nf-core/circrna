@@ -37,6 +37,9 @@ input:
         type: file
         description: Transcript SummarizedExperiment RDS.
         pattern: "*.rds"
+  - correlation_method:
+      type: string
+      description: Correlation method passed to fishpond swish (pearson or spearman).
 output:
   correlations:
     - - meta:

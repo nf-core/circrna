@@ -8,8 +8,52 @@ nextflow_process {
     tag "modules_local"
     tag "compute_correlations"
 
-    // The 2-sample psirc rds of the mini data keeps no transcripts in fishpond labelKeep,
-    // so only the sample check, which runs before the filtering, can be tested for real
+    // The frozen mini RDS has only two samples; derive six real RNA-seq samples for Swish.
+
+    ['pearson', 'spearman'].each { method ->
+        test("six biological samples - ${method}") {
+            setup {
+                run("CORRELATION_INPUT") {
+                    script "modules/local/compute_correlations/tests/setup.nf"
+                    workflow { """""" }
+                }
+            }
+            when {
+                process {
+                    """
+                    input[0] = [[id: 'batch_1'], file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna.binding_sites.targets.tsv', checkIfExists: true)]
+                    input[1] = [[id: 'mirna'], file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.normalized.tsv', checkIfExists: true)]
+                    input[2] = CORRELATION_INPUT.out.merged
+                    input[3] = '${method}'
+                    """
+                }
+            }
+            then {
+                assert process.success
+                assert process.out.correlations.size() == 1
+                def outputs = process.out.correlations[0][1]
+                outputs = outputs instanceof List ? outputs : [outputs]
+                assert outputs.size() > 0
+                outputs.each { output ->
+                    def lines = path(output).readLines()
+                    assert lines[0].replace('"', '').split('\t').toList() == ['stat', 'log2FC', 'pvalue', 'locfdr', 'qvalue']
+                    assert lines.size() > 1
+                    lines.drop(1).each { line ->
+                        def cells = line.replace('"', '').split('\t')
+                        assert cells.size() == 6
+                        assert cells[0] ==~ /(?:chrI:\d+-\d+:[+-]|N[MR]_\d+)/
+                        assert cells.drop(1).every { Double.isFinite(it as double) }
+                        assert Math.abs(cells[1] as double) <= 1.0
+                        assert [3, 4, 5].every { index -> (cells[index] as double) >= 0.0 && (cells[index] as double) <= 1.0 }
+                    }
+                }
+                assert snapshot(
+                    outputs.collect { file(it).name }.sort(),
+                    process.out.versions.collect { path(it).yaml }
+                ).match()
+            }
+        }
+    }
 
     test("miRNA table lacks an RNA-seq sample") {
 
@@ -28,6 +72,7 @@ nextflow_process {
                     [ id:'psirc' ],
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)
                 ]
+                input[3] = 'pearson'
                 """
             }
         }
@@ -36,6 +81,25 @@ nextflow_process {
             assertAll(
                 { assert process.failed },
                 { assert process.errorReport.contains('Error: RNA-seq samples missing from the miRNA expression table: fust1_1. Available miRNA samples: cel_N2_1, other_1') }
+            )
+        }
+    }
+
+    test("two samples leave no transcripts after filtering") {
+        when {
+            process {
+                """
+                input[0] = [[id: 'batch_1'], file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna.binding_sites.targets.tsv', checkIfExists: true)]
+                input[1] = [[id: 'mirna'], file(params.pipelines_testdata_base_path + 'mini/intermediates/mirna_expression.normalized.tsv', checkIfExists: true)]
+                input[2] = [[id: 'psirc'], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)]
+                input[3] = 'pearson'
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.contains('No transcripts left after filtering') }
             )
         }
     }
@@ -59,6 +123,7 @@ nextflow_process {
                     [ id:'psirc' ],
                     file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)
                 ]
+                input[3] = 'pearson'
                 """
             }
         }

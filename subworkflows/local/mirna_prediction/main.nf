@@ -18,6 +18,7 @@ workflow MIRNA_PREDICTION {
     mirna_min_tools
     mirna_min_reads
     mirna_min_sample_percentage
+    correlation_method
 
     main:
     ch_correlations = channel.empty()
@@ -70,7 +71,7 @@ workflow MIRNA_PREDICTION {
             .map { _meta, file -> [[id: "batch_" + file.baseName.split("\\.").last()], file] }
 
         // Value channels, so that every binding site batch is combined with the same inputs
-        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered.first(), quantification_rds.first())
+        COMPUTE_CORRELATIONS(ch_binding_site_batches, ch_mirna_filtered.first(), quantification_rds.first(), correlation_method)
 
         ch_correlations = COMPUTE_CORRELATIONS.out.correlations
             .map { _meta, results -> results }

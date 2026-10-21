@@ -96,6 +96,92 @@ nextflow_process {
         }
     }
 
+    test("sum - exact breakpoints without strand") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'sum' ],
+                    'sum',
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
+                    ]
+                ]
+                input[1] = 0
+                input[2] = false
+                """
+            }
+        }
+
+        then {
+            def counts = path(process.out.combined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert counts.columnNames == ['id', 'cel_N2_1', 'fust1_1'] },
+                { assert counts.rowCount > 0 },
+                { assert snapshot(
+                    process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
+                    counts.columnNames,
+                    counts.rowCount,
+                    counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
+                ).match() }
+            )
+        }
+    }
+
+    test("max - exact breakpoints without strand") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'max' ],
+                    'max',
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true),
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.ciri2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/fust1_1.segemehl.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.circexplorer2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.meta.bed', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.segemehl.meta.bed', checkIfExists: true)
+                    ]
+                ]
+                input[1] = 0
+                input[2] = false
+                """
+            }
+        }
+
+        then {
+            def counts = path(process.out.combined[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert process.success },
+                { assert counts.columnNames == ['id', 'cel_N2_1', 'fust1_1'] },
+                { assert counts.rowCount > 0 },
+                { assert snapshot(
+                    process.out.combined.collect { meta, f -> [ meta, file(f).name ] },
+                    counts.columnNames,
+                    counts.rowCount,
+                    counts.rows.collect { row -> "${row.id}\t${row.cel_N2_1}\t${row.fust1_1}".toString() }
+                ).match() }
+            )
+        }
+    }
+
     test("sum - stub") {
 
         options '-stub'

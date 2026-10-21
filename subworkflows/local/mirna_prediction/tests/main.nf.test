@@ -37,6 +37,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 5
                 input[9] = 0.2
+                input[10] = 'pearson'
                 """
             }
         }
@@ -73,6 +74,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 300
                 input[9] = 0.5
+                input[10] = 'pearson'
                 """
             }
         }
@@ -126,6 +128,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 1
                 input[9] = 0.2
+                input[10] = 'pearson'
                 """
             }
         }
@@ -160,6 +163,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 1
                 input[9] = 0.2
+                input[10] = 'pearson'
                 """
             }
         }
@@ -196,6 +200,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 5
                 input[9] = 0.2
+                input[10] = 'pearson'
                 """
             }
         }
@@ -231,6 +236,7 @@ nextflow_workflow {
                 input[7] = 1
                 input[8] = 5
                 input[9] = 0.2
+                input[10] = 'pearson'
                 """
             }
         }

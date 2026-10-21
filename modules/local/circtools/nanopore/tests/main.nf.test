@@ -8,7 +8,15 @@ nextflow_process {
     tag "modules_local"
     tag "circtools_nanopore"
 
-    // TODO(longread real test): blocked by missing nanopore test data
+    // The stub only needs a staged directory, not the pipeline's assets.
+    setup {
+        def reference = new File(System.getenv('NFT_WORKDIR') ?: '.nf-test', 'circtools-nanopore-reference').absoluteFile
+        reference.mkdirs()
+    }
+
+    // Real coverage requires a compatible circtools reference bundle and long reads;
+    // the short-read input below exercises staging only, not nanopore analysis.
+    // Success/version alone cannot prove analysis: circtools does not check its internal subprocess exit codes.
     test("nanopore reads - stub") {
 
         options '-stub'
@@ -23,7 +31,7 @@ nextflow_process {
                     [ id:'nanopore_1', single_end:true ],
                     file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true)
                 ]
-                input[1] = file(projectDir + '/assets', type: 'dir')
+                input[1] = file("${new File(System.getenv('NFT_WORKDIR') ?: '.nf-test', 'circtools-nanopore-reference').absolutePath}", type: 'dir', checkIfExists: true)
                 input[2] = 'hg38'
                 """
             }

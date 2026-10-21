@@ -101,6 +101,7 @@ workflow NFCORE_CIRCRNA {
         params.multiqc_config ? file(params.multiqc_config) : null,
         params.multiqc_logo ? file(params.multiqc_logo) : null,
         params.outdir,
+        params.mirna_correlation,
     )
 
     emit:

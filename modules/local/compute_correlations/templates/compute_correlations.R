@@ -44,7 +44,7 @@ for (i in 1:nrow(interactions)) {
         t(mirna_expression[, rownames(colData(transcript_expression))])
     )
 
-    result <- rowData(swish(transcript_expression, miRNA, cor = "${params.mirna_correlation}"))[, result_cols]
+    result <- rowData(swish(transcript_expression, miRNA, cor = "${correlation_method}"))[, result_cols]
     result <- result[complete.cases(result), ]
     write.table(result, paste0(miRNA, '.tsv'), sep = '\\t')
 }

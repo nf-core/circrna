@@ -8,7 +8,9 @@ nextflow_process {
     tag "modules_local"
     tag "circtools_reference"
 
-    // TODO(longread real test): blocked by missing nanopore test data (the reference is downloaded for a UCSC genome such as hg38)
+    // Real coverage is blocked by the download-only interface: -d -R reference/ -C hg38
+    // retrieves the full configured reference, with no input for a small local fixture.
+    // Keep this a staging/output-contract test rather than trigger a whole-genome download.
     test("hg38 - stub") {
 
         options '-stub'

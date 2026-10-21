@@ -11,6 +11,7 @@ process COMPUTE_CORRELATIONS {
     tuple val(meta), path(bindingsites)
     tuple val(meta2), path(mirna_expression)
     tuple val(meta3), path(transcript_rds)
+    val correlation_method
 
     output:
     tuple val(meta), path("*.tsv"), emit: correlations, optional: true

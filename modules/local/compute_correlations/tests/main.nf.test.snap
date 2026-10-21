@@ -31,5 +31,83 @@
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
         }
+    },
+    "six biological samples - pearson": {
+        "content": [
+            [
+                "cel-miR-1019-5p.tsv",
+                "cel-miR-1820-5p.tsv",
+                "cel-miR-2216-5p.tsv",
+                "cel-miR-2220-3p.tsv",
+                "cel-miR-233-3p.tsv",
+                "cel-miR-235-3p.tsv",
+                "cel-miR-239b-3p.tsv",
+                "cel-miR-253-5p.tsv",
+                "cel-miR-355-3p.tsv",
+                "cel-miR-356a.tsv",
+                "cel-miR-48-3p.tsv",
+                "cel-miR-4811-5p.tsv",
+                "cel-miR-4938.tsv",
+                "cel-miR-5548-5p.tsv",
+                "cel-miR-5553-5p.tsv",
+                "cel-miR-67-5p.tsv",
+                "cel-miR-786-5p.tsv",
+                "cel-miR-8207-3p.tsv",
+                "cel-miR-8212-5p.tsv",
+                "cel-miR-85-5p.tsv"
+            ],
+            [
+                {
+                    "COMPUTE_CORRELATIONS": {
+                        "r-base": "4.5.3",
+                        "bioconductor-fishpond": "2.16.0"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-21T08:42:03.286620601",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "six biological samples - spearman": {
+        "content": [
+            [
+                "cel-miR-1019-5p.tsv",
+                "cel-miR-1820-5p.tsv",
+                "cel-miR-2216-5p.tsv",
+                "cel-miR-2220-3p.tsv",
+                "cel-miR-233-3p.tsv",
+                "cel-miR-235-3p.tsv",
+                "cel-miR-239b-3p.tsv",
+                "cel-miR-253-5p.tsv",
+                "cel-miR-355-3p.tsv",
+                "cel-miR-356a.tsv",
+                "cel-miR-48-3p.tsv",
+                "cel-miR-4811-5p.tsv",
+                "cel-miR-4938.tsv",
+                "cel-miR-5548-5p.tsv",
+                "cel-miR-5553-5p.tsv",
+                "cel-miR-67-5p.tsv",
+                "cel-miR-786-5p.tsv",
+                "cel-miR-8207-3p.tsv",
+                "cel-miR-8212-5p.tsv",
+                "cel-miR-85-5p.tsv"
+            ],
+            [
+                {
+                    "COMPUTE_CORRELATIONS": {
+                        "r-base": "4.5.3",
+                        "bioconductor-fishpond": "2.16.0"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-21T08:44:52.022754875",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }

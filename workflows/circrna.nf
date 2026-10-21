@@ -74,6 +74,7 @@ workflow CIRCRNA {
     multiqc_config // path or null
     multiqc_logo // path or null
     outdir
+    mirna_correlation
 
     main:
 
@@ -274,6 +275,7 @@ workflow CIRCRNA {
                 mirna_min_tools,
                 mirna_min_reads,
                 mirna_min_sample_percentage,
+                mirna_correlation,
             )
         }
 

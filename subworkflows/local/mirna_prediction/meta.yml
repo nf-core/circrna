@@ -69,6 +69,9 @@ input:
       type: value
       description: "Minimum percentage of samples with expression required for filtering.
         Structure: [ val(mirna_min_sample_percentage) ]"
+  - correlation_method:
+      type: value
+      description: "Correlation method passed to fishpond swish (pearson or spearman). Structure: [ val(correlation_method) ]"
 output:
   - binding_sites:
       type: file

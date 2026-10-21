@@ -198,6 +198,8 @@ Follow these rules when you add a module or subworkflow:
 - Put the test in `modules/local/<path>/tests/main.nf.test` or `subworkflows/local/<name>/tests/main.nf.test`.
   Nested subworkflows live in nested folders, for example `subworkflows/local/detection_tools/ciri2/main.nf`.
 - Use `script "../main.nf"` together with `process "<NAME>"` or `workflow "<NAME>"`.
+- Test utility functions with `nextflow_function` suites beside their implementation, for example `subworkflows/local/utils_nfcore_circrna_pipeline/tests/main.nf.test`.
+  Assert validation failures and return values directly rather than launching the pipeline to exercise a function.
 - Tag module tests with `"modules"` and `"modules_local"`, and subworkflow tests with `"subworkflows"` and `"subworkflows_local"`.
   Add the path of the module (with `/` replaced by `_`) or the name of the subworkflow as a further tag.
   Further tags can overlap, so a bare `--tag circtools` can select both module and subworkflow tests.
@@ -208,14 +210,18 @@ Follow these rules when you add a module or subworkflow:
   Only `NFCORE_CIRCRNA` in `main.nf` reads them, parses the comma-separated tool lists with `parseToolList()` and passes typed values down.
   Tests set inputs with `input[N] = ...`.
   Optional files (prebuilt indices, blacklist, mature, miRNA expression) are passed as a plain value (`path` or `[meta, path]`) or `null`.
-- Add a `params {}` block to a test only where `conf/modules.config` reads a parameter in `ext.args`, `ext.when` or `publishDir`.
-  Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
+- Declare required tool arguments, output prefixes and setup-process settings explicitly in the module or subworkflow's `tests/nextflow.config`, and load it with `config "./nextflow.config"`.
+  Subworkflow test configs may explicitly include their dependencies' test configs. Test-specific replacement configs must include their common suite config where needed.
+  Component tests must remain runnable without `conf/modules.config`; do not rely on its selectors to supply required options.
+  Wrap parameter-dependent arguments in closures so their evaluation is deferred until the task runs.
 - Local modules read only `ext.args`, `ext.argsN`, `ext.prefix`, `ext.prefixN` and `ext.when`.
   Any other value that changes the module's behaviour (for example an output suffix) is a `val` process input, so tests pass it with `input[N] = ...`.
 - Publish software versions to `topic: versions`, using either named `(task.process, tool, version)` tuple outputs or a `versions.yml` file written by a native Python/R template, following the corresponding nf-core module pattern. MultiQC must not publish to that topic because its inputs depend on the collected versions.
 - Scaffold new local modules with `nf-core modules create <module> --dir .`. Describe them in `meta.yml` and declare software dependencies in `environment.yml`. Generate containers and architecture-specific locks with `nf-core modules containers create <module> --dir .`, then regenerate the pipeline configs with `nf-core pipelines containers create-configs --dir .`.
   Dependency-free Nextflow `exec:` processes do not need a software environment.
-- Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.
+- Keep test-specific resource settings, such as `cpus = 1` or a smaller STAR index, beside the relevant tests too.
+- Assert module and subworkflow output channels rather than published paths. Intermediate file-content checks belong in the owning module tests; publishing checks belong in pipeline integration tests.
+  Do not add `publishDir` overrides to component test configs to expose intermediates.
 - Snapshot only stable content: software-version tuple outputs, file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
   For files that change between runs, use `path(f).readLines().size()` or `.text.contains(...)`.
   Use the md5 of a whole file only if two consecutive runs give identical results.
@@ -237,5 +243,8 @@ nf-test test --tag pipeline --profile=+docker
 ```
 
 Use `--profile=+singularity` or `--profile=+apptainer` if docker is not available.
+
+Root `tests/` is for pipeline integration tests. `tests/nextflow.config` supplies shared test-data locations and runner settings, while `tests/mini.config` selects the two-sample mini integration dataset, disables phenotype analysis and adjusts STAR indexing for its small reference.
+Module and subworkflow tests do not use `tests/mini.config`; keep their tool requirements local instead of adding integration-config layers for them.
 
 <!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->

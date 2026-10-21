@@ -1,4 +1,58 @@
 {
+    "find_circ BSJ counts - one sample": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "find_circ"
+                    },
+                    "find_circ.joined.tsv"
+                ]
+            ],
+            [
+                "id",
+                "cel_N2_1"
+            ],
+            30,
+            [
+                "FUSIONJUNC_0/41\t41",
+                "FUSIONJUNC_1/1\t1",
+                "FUSIONJUNC_10/19\t19",
+                "FUSIONJUNC_11/2\t2",
+                "FUSIONJUNC_12/1\t1",
+                "FUSIONJUNC_13/8\t8",
+                "FUSIONJUNC_14/4\t4",
+                "FUSIONJUNC_15/1\t1",
+                "FUSIONJUNC_16/9\t9",
+                "FUSIONJUNC_17/3\t3",
+                "FUSIONJUNC_18/1\t1",
+                "FUSIONJUNC_19/1\t1",
+                "FUSIONJUNC_2/2\t2",
+                "FUSIONJUNC_20/5\t5",
+                "FUSIONJUNC_21/2\t2",
+                "FUSIONJUNC_22/1\t1",
+                "FUSIONJUNC_23/5\t5",
+                "FUSIONJUNC_24/1\t1",
+                "FUSIONJUNC_25/1\t1",
+                "FUSIONJUNC_26/3\t3",
+                "FUSIONJUNC_27/3\t3",
+                "FUSIONJUNC_28/1\t1",
+                "FUSIONJUNC_29/3\t3",
+                "FUSIONJUNC_3/1\t1",
+                "FUSIONJUNC_4/1\t1",
+                "FUSIONJUNC_5/3\t3",
+                "FUSIONJUNC_6/1\t1",
+                "FUSIONJUNC_7/2\t2",
+                "FUSIONJUNC_8/1\t1",
+                "FUSIONJUNC_9/1\t1"
+            ]
+        ],
+        "timestamp": "2026-10-21T08:36:24.151309008",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
     "ciriquant gene tables - samples in reverse order": {
         "content": [
             [

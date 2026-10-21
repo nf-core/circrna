@@ -1,0 +1,199 @@
+nextflow_function {
+
+    name "Validate grouped samplesheet input"
+    script "../main.nf"
+    function "validateInputSamplesheet"
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "utils_nfcore_circrna_pipeline"
+
+    test("Paired-end runs retain first metadata and all read pairs with circminer and FLI") {
+        when {
+            params {
+                tools = 'circminer,psirc'
+                fli_tools = 'psirc'
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['sample', [
+                    [id: 'sample', single_end: false, strandedness: 'reverse', run: 'first'],
+                    [id: 'sample', single_end: false, strandedness: 'reverse', run: 'second']
+                ], [['run1_R1.fastq.gz', 'run1_R2.fastq.gz'], ['run2_R1.fastq.gz', 'run2_R2.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.success
+            assert function.result == [
+                [id: 'sample', single_end: false, strandedness: 'reverse', run: 'first'],
+                [['run1_R1.fastq.gz', 'run1_R2.fastq.gz'], ['run2_R1.fastq.gz', 'run2_R2.fastq.gz']]
+            ]
+        }
+    }
+
+    test("circminer rejects single-end input with its specific message") {
+        when {
+            params {
+                tools = 'circminer'
+                fli_tools = ''
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['single', [[id: 'single', single_end: true, strandedness: 'auto']], [['single.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('Please check input samplesheet -> All samples must be paired-end when circminer is selected.')
+        }
+    }
+
+    test("Tool normalization still detects circminer among whitespace and empty entries") {
+        when {
+            params {
+                tools = ' , CIRI2, CircMiner , , '
+                fli_tools = ' , , '
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['single', [[id: 'single', single_end: true, strandedness: 'auto']], [['single.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('All samples must be paired-end when circminer is selected.')
+            assert !function.stdout.join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
+        }
+    }
+
+    test("Single-end runs are accepted without circminer or nonempty FLI tools") {
+        when {
+            params {
+                tools = ' CIRI2, circexplorer2, '
+                fli_tools = ' , , '
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['single', [
+                    [id: 'single', single_end: true, strandedness: 'forward'],
+                    [id: 'single', single_end: true, strandedness: 'forward']
+                ], [['run1.fastq.gz'], ['run2.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.success
+            assert function.result == [
+                [id: 'single', single_end: true, strandedness: 'forward'],
+                [['run1.fastq.gz'], ['run2.fastq.gz']]
+            ]
+        }
+    }
+
+    test("Mixed endedness across runs reports the sample identifier") {
+        when {
+            params {
+                tools = 'ciri2'
+                fli_tools = ''
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['mixed_ends', [
+                    [id: 'mixed_ends', single_end: false, strandedness: 'auto'],
+                    [id: 'mixed_ends', single_end: true, strandedness: 'auto']
+                ], [['paired_R1.fastq.gz', 'paired_R2.fastq.gz'], ['single.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: mixed_ends')
+        }
+    }
+
+    test("Mixed strandedness across runs reports the sample identifier") {
+        when {
+            params {
+                tools = 'ciri2'
+                fli_tools = ''
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['mixed_strands', [
+                    [id: 'mixed_strands', single_end: false, strandedness: 'forward'],
+                    [id: 'mixed_strands', single_end: false, strandedness: 'reverse']
+                ], [['run1_R1.fastq.gz', 'run1_R2.fastq.gz'], ['run2_R1.fastq.gz', 'run2_R2.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('Multiple runs of a sample must be of the same strandedness: mixed_strands')
+        }
+    }
+
+    test("Nonempty normalized FLI tools reject short single-end reads") {
+        when {
+            params {
+                tools = 'psirc'
+                fli_tools = ' , PSIRC , '
+                longread = false
+            }
+            function {
+                """
+                input[0] = ['single', [[id: 'single', single_end: true, strandedness: 'unstranded']], [['single.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('All samples must be paired-end when fli_tools is not empty.')
+        }
+    }
+
+    test("Long-read mode rejects paired-end input") {
+        when {
+            params {
+                tools = 'circminer'
+                fli_tools = 'psirc'
+                longread = true
+            }
+            function {
+                """
+                input[0] = ['paired', [[id: 'paired', single_end: false, strandedness: 'auto']], [['paired_R1.fastq.gz', 'paired_R2.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.failed
+            assert function.stdout.join('\n').contains('All samples must be single-end when longread is true.')
+        }
+    }
+
+    test("Long-read mode accepts single-end input without short-read tool restrictions") {
+        when {
+            params {
+                tools = 'circminer'
+                fli_tools = 'psirc'
+                longread = true
+            }
+            function {
+                """
+                input[0] = ['long', [[id: 'long', single_end: true, strandedness: 'auto']], [['long.fastq.gz']]]
+                """
+            }
+        }
+        then {
+            assert function.success
+            assert function.result == [[id: 'long', single_end: true, strandedness: 'auto'], [['long.fastq.gz']]]
+        }
+    }
+}
