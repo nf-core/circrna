@@ -1,0 +1,93 @@
+{
+    "paired-end": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1"
+                ]
+            ],
+            [
+                "abundance.h5",
+                "abundance.tsv",
+                "pseudoalignments.bam",
+                "pseudoalignments.bam.bai",
+                "run_info.json"
+            ],
+            [
+                "target_id",
+                "length",
+                "eff_length",
+                "est_counts",
+                "tpm"
+            ],
+            237,
+            [
+                [
+                    "PSIRCQUANT_QUANT",
+                    "psirc-quant",
+                    "1.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:04:54.215614307",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "abundance.h5:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "abundance.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "run_info.json:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRCQUANT_QUANT",
+                        "psirc-quant",
+                        "1.0"
+                    ]
+                ],
+                "directory": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "abundance.h5:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "abundance.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "run_info.json:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions_psircquant": [
+                    [
+                        "PSIRCQUANT_QUANT",
+                        "psirc-quant",
+                        "1.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:05:10.190667701",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

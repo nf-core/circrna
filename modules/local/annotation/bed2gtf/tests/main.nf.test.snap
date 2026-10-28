@@ -1,0 +1,83 @@
+{
+    "annotated bed12 - exons_only true": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.gtf",
+                    -1619316221
+                ]
+            ],
+            {
+                "ANNOTATION_BED2GTF": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:04.358926638",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "annotated bed12 - exons_only false": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "all"
+                    },
+                    "all.gtf",
+                    510719543
+                ]
+            ],
+            {
+                "ANNOTATION_BED2GTF": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:13.953895095",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "annotated bed12 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "all"
+                        },
+                        "all.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,ec3d61cc87b3090d0deea054527cedc1"
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "all"
+                        },
+                        "all.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,ec3d61cc87b3090d0deea054527cedc1"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:23.428097904",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

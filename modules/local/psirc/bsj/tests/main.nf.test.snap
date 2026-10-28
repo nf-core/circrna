@@ -1,0 +1,99 @@
+{
+    "cel_N2_1 paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PSIRC_BSJ",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "PSIRC_BSJ",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "output": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        [
+                            "candidate_circ_junctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions_kallisto_b": [
+                    [
+                        "PSIRC_BSJ",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
+                ],
+                "versions_psirc": [
+                    [
+                        "PSIRC_BSJ",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:02:00.037286143",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 paired-end": {
+        "content": [
+            [
+                [
+                    "PSIRC_BSJ",
+                    "psirc",
+                    "1.0.0"
+                ]
+            ],
+            "candidate_circ_junctions.bed",
+            0
+        ],
+        "timestamp": "2026-10-19T10:01:44.684118278",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

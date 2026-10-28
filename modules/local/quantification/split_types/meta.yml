@@ -1,0 +1,86 @@
+name: split_types
+description: Split a quantification matrix into circular and linear records.
+keywords:
+  - quantification
+  - circrna
+  - matrix
+tools:
+  - gawk:
+      description: GNU implementation of awk.
+      homepage: https://www.gnu.org/software/gawk/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Matrix metadata.
+    - input:
+        type: file
+        description: Quantification matrix.
+        pattern: "*.{tsv,txt}"
+output:
+  linear:
+    - - meta:
+          type: map
+          description: Matrix metadata.
+      - linear.tsv:
+          type: file
+          description: Linear RNA quantification records.
+          pattern: linear.tsv
+  circular:
+    - - meta:
+          type: map
+          description: Matrix metadata.
+      - circular.tsv:
+          type: file
+          description: Circular RNA quantification records.
+          pattern: circular.tsv
+  versions_gawk:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - gawk:
+          type: string
+          description: The name of the tool
+      - gawk --version | sed -n '1s/,.*//p' | cut -d ' ' -f 3:
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - gawk:
+          type: string
+          description: Software name
+      - gawk --version | sed -n '1s/,.*//p' | cut -d ' ' -f 3:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/split_types:84ca943aca0dd262
+      build_id: bd-84ca943aca0dd262_1
+      scan_id: sc-a2d02eba530afe10_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/split_types:91725e78fef229e3
+      build_id: bd-91725e78fef229e3_1
+      scan_id: sc-3edebdbe80e74759_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/split_types:32626ba3f8cc4ad0
+      build_id: bd-32626ba3f8cc4ad0_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fa/fadc2c277b689c5c075f8ca06347864b19cb30d5355f819cba851a3c24397f77/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/split_types:7a3ba99dfa01b3f4
+      build_id: bd-7a3ba99dfa01b3f4_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/38/38d57e987a3aa57060b64ea0be8475481bb356cd2c6dd044d98b4ae3971a32a3/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/quantification/split_types/.conda-lock/linux_amd64-bd-84ca943aca0dd262_1.txt
+    linux/arm64:
+      lock_file: modules/local/quantification/split_types/.conda-lock/linux_arm64-bd-91725e78fef229e3_1.txt

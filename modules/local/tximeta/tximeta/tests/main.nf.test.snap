@@ -1,0 +1,115 @@
+{
+    "psirc-quant directories - custom prefix": {
+        "content": [
+            [
+                [
+                    "cel_N2_1",
+                    "custom_prefix.rds"
+                ],
+                [
+                    "fust1_1",
+                    "custom_prefix.rds"
+                ]
+            ],
+            [
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:06:02.882216176",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "psirc-quant directories - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
+                ],
+                "se": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810",
+                    "versions.yml:md5,b557e73f34f6ff47cdf2ca37bc34d810"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:05:29.894133259",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "psirc-quant directories": {
+        "content": [
+            [
+                [
+                    "cel_N2_1",
+                    "cel_N2_1.rds"
+                ],
+                [
+                    "fust1_1",
+                    "fust1_1.rds"
+                ]
+            ],
+            [
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                },
+                {
+                    "TXIMETA_TXIMETA": {
+                        "bioconductor-tximeta": "1.28.3"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:05:15.421670233",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

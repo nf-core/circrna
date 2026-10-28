@@ -1,0 +1,65 @@
+{
+    "cel_N2_1 CIRI-vis list - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,2f1b9eff4518727e6ffe74acce5ca770"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,2f1b9eff4518727e6ffe74acce5ca770"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:23:14.136207742",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 CIRI-vis list": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1.bed",
+                    "c903c401f76cc516b2be4400b2922d54"
+                ]
+            ],
+            {
+                "CIRIVIS_UNIFY": {
+                    "python": "3.15.0",
+                    "pandas": "3.0.6"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:22:55.776239291",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

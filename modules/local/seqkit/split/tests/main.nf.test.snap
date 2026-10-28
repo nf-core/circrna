@@ -1,0 +1,69 @@
+{
+    "chrI_mini fasta": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "genome"
+                    },
+                    [
+                        "chrI.fa"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "SEQKIT_SPLIT",
+                    "seqkit",
+                    "2.14.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:24:54.355462485",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "chrI_mini fasta - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "chrI_mini.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "SEQKIT_SPLIT",
+                        "seqkit",
+                        "2.14.0"
+                    ]
+                ],
+                "split": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "chrI_mini.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_seqkit": [
+                    [
+                        "SEQKIT_SPLIT",
+                        "seqkit",
+                        "2.14.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:25:07.350002014",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

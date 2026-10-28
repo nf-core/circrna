@@ -1,0 +1,91 @@
+name: compute_correlations
+description: Compute miRNA and transcript-expression correlations for predicted targets.
+keywords:
+  - mirna
+  - correlation
+  - circrna
+tools:
+  - r-base:
+      description: R statistical computing environment.
+      homepage: https://www.r-project.org/
+      licence:
+        - GPL-2.0-or-later
+  - fishpond:
+      description: Inferential-replicate RNA-seq analysis package.
+      homepage: https://bioconductor.org/packages/fishpond/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Binding-site metadata.
+    - bindingsites:
+        type: file
+        description: miRNA target binding-site table.
+        pattern: "*.{tsv,txt}"
+  - - meta2:
+        type: map
+        description: miRNA-expression metadata.
+    - mirna_expression:
+        type: file
+        description: miRNA expression matrix.
+        pattern: "*.{tsv,txt}"
+  - - meta3:
+        type: map
+        description: Transcript-expression metadata.
+    - transcript_rds:
+        type: file
+        description: Transcript SummarizedExperiment RDS.
+        pattern: "*.rds"
+output:
+  correlations:
+    - - meta:
+          type: map
+          description: Binding-site metadata.
+      - "*.tsv":
+          type: file
+          description: Correlation results by miRNA.
+          pattern: "*.tsv"
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/compute_correlations:b3dacbb39dbd06ae
+      build_id: bd-b3dacbb39dbd06ae_1
+      scan_id: sc-2f9a26125c671f68_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/compute_correlations:62d27c43a1ac6f88
+      build_id: bd-62d27c43a1ac6f88_1
+      scan_id: sc-6737840a38b2b9ef_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/compute_correlations:ff3e74a20c935b00
+      build_id: bd-ff3e74a20c935b00_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c3/c3c7441de9df5430189904a4f577ac48cabbfbef61e64e90c1e401b28748ca1f/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/compute_correlations:4b15767ebefb52c3
+      build_id: bd-4b15767ebefb52c3_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/71/71a15ded33ccce2b9b4d16075a9f84e50f70bdd1191414e122c0a8e10c235a8a/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/compute_correlations/.conda-lock/linux_amd64-bd-b3dacbb39dbd06ae_1.txt
+    linux/arm64:
+      lock_file: modules/local/compute_correlations/.conda-lock/linux_arm64-bd-62d27c43a1ac6f88_1.txt

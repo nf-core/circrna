@@ -1,0 +1,153 @@
+{
+    "six samples - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_library.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_annotation.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_expression.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_ratio.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "4": [
+                    [
+                        "CIRIQUANT_PREPDE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "5": [
+                    [
+                        "CIRIQUANT_PREPDE",
+                        "python",
+                        "3.14.7"
+                    ]
+                ],
+                "annotation": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_annotation.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "expression": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_expression.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gene": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_ratio.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "library": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_library.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_ciriquant": [
+                    [
+                        "CIRIQUANT_PREPDE",
+                        "ciriquant",
+                        "1.1.3"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "CIRIQUANT_PREPDE",
+                        "python",
+                        "3.14.7"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:00:44.783058053",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "six samples": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_library.tsv:md5,8337cbddfe4f1546d1248bc447c46b75"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_annotation.tsv:md5,3608c8b367f541e4ddb5ce56b1e4311b"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_expression.tsv:md5,75fd75589f5e5a64c5e95e745c19dd74"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_ratio.tsv:md5,0985007548ccc97e7b65b8c3eb5c5e4d"
+                ]
+            ],
+            [
+                [
+                    "CIRIQUANT_PREPDE",
+                    "ciriquant",
+                    "1.1.3"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T00:00:13.498952163",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

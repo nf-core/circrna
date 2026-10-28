@@ -1,0 +1,81 @@
+{
+    "ciri2 table - group by type": {
+        "content": [
+            [
+                [
+                    "CSVTK_SUMMARY",
+                    "csvtk",
+                    "0.31.0"
+                ]
+            ],
+            "cel_N2_1.csv",
+            [
+                "circRNA_type\tcircRNA_start:count\tcircRNA_end:max",
+                "exon\t20\t752725.00",
+                "intergenic_region\t3\t670455.00",
+                "intron\t5\t308719.00"
+            ]
+        ],
+        "timestamp": "2026-10-19T00:36:00.491887719",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "ciri2 table - group by strand, tsv output": {
+        "content": [
+            "cel_N2_1.tsv",
+            [
+                "strand\tcircRNA_start:count",
+                "+\t15",
+                "-\t13"
+            ]
+        ],
+        "timestamp": "2026-10-18T18:31:15.388705248",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "ciri2 table - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CSVTK_SUMMARY",
+                        "csvtk",
+                        "0.31.0"
+                    ]
+                ],
+                "csv": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_csvtk": [
+                    [
+                        "CSVTK_SUMMARY",
+                        "csvtk",
+                        "0.31.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:36:43.412730911",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,67 @@
+name: cirivis_unify
+description: Convert CIRI-vis list output to BED
+keywords:
+  - ciri
+  - cirivis
+  - bed
+tools:
+  - pandas:
+      description: Data analysis and manipulation library
+      homepage: https://pandas.pydata.org/
+      licence:
+        - BSD-3-Clause
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - list:
+        type: file
+        description: CIRI-vis circle list
+output:
+  bed:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}.bed":
+          type: file
+          description: Unified BED records
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/pandas:3.0.6--81877ddfd58750a2
+      build_id: bd-81877ddfd58750a2_1
+      scan_id: sc-da479a4b400dc2da_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/pandas:3.0.6--73d876a9751f10fd
+      build_id: bd-73d876a9751f10fd_1
+      scan_id: sc-c459e9c7f140deb6_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/pandas:3.0.6--d583eb142d2d8d89
+      build_id: bd-d583eb142d2d8d89_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e4/e43e750ee9bd4c15aab75f470900831786e8e4cd675708b3153373677b7882aa/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/pandas:3.0.6--8fdea90e7bc946b0
+      build_id: bd-8fdea90e7bc946b0_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c8b750989e15832a4f4ffef444170df77a5567d86ce00e82b15acacd3d62c531/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri/cirivis_unify/.conda-lock/linux_amd64-bd-73d876a9751f10fd_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri/cirivis_unify/.conda-lock/linux_arm64-bd-81877ddfd58750a2_1.txt

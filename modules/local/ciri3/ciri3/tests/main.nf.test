@@ -1,0 +1,107 @@
+nextflow_process {
+    name 'Test Process CIRI3_CIRI3'
+    script '../main.nf'
+    process 'CIRI3_CIRI3'
+    config './nextflow.config'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3_ciri3'
+
+    setup {
+        run('BWA_INDEX') {
+            script 'modules/nf-core/bwa/index/main.nf'
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run('BWA_MEM') {
+            script 'modules/nf-core/bwa/mem/main.nf'
+            process {
+                """
+                input[0] = [[id: 'cel_N2_1', single_end: false], [
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                ]]
+                input[1] = BWA_INDEX.out.index
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[3] = false
+                """
+            }
+        }
+    }
+
+    test('detection mode') {
+        when {
+            process {
+                """
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = []
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.txt[0][1]).exists() },
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
+            )
+        }
+    }
+
+    test('user circRNA quantification mode with two circRNAs') {
+        when {
+            process {
+                """
+                def candidates = file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                def circList = file("$outputDir/two-circRNAs.tsv")
+                circList.parent.mkdirs()
+                circList.text = candidates.readLines().take(2).collect { line ->
+                    def fields = line.split('\\t')
+                    [fields[0], fields[1].toInteger() + 1, fields[2]].join('\\t')
+                }.join('\\n') + '\\n'
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = circList
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.bsj_matrix[0][1]).exists() },
+                { assert path(process.out.fsj_matrix[0][1]).exists() },
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
+            )
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                input[0] = BWA_MEM.out.sam
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                input[2] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[3] = []
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.txt[0][1]).exists() },
+                { assert process.out.versions_ciri3[0] == ['CIRI3_CIRI3', 'ciri3', '3.0.1'] }
+            )
+        }
+    }
+}

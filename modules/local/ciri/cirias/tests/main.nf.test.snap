@@ -1,0 +1,105 @@
+{
+    "cel_N2_1 CIRI2 result - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_jav.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_library_length.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRI_CIRIAS",
+                        "ciri-as",
+                        "1.2"
+                    ]
+                ],
+                "library_length": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_library_length.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "list": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_jav.list:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_ciri_as": [
+                    [
+                        "CIRI_CIRIAS",
+                        "ciri-as",
+                        "1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:49:30.053873446",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 CIRI2 result": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_jav.list",
+                    "aad0924b89ccea04bce1a260d0a5c97a"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_library_length.list",
+                    "d751713988987e9331980363e24189ce"
+                ]
+            ],
+            [
+                [
+                    "CIRI_CIRIAS",
+                    "ciri-as",
+                    "1.2"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:49:17.298348073",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,121 @@
+nextflow_process {
+
+    name "Test Process UNIFY"
+    script "../main.nf"
+    process "UNIFY"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circtools"
+    tag "circtools_unify"
+
+    setup {
+        run("STAR_GENOMEGENERATE") {
+            script "modules/nf-core/star/genomegenerate/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        run("STAR_ALIGN", alias: "STAR_ALIGN_MATE1") {
+            script "modules/nf-core/star/align/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'cel_N2_1', single_end: true], file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true)])
+                input[1] = STAR_GENOMEGENERATE.out.index.collect()
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = true
+                """
+            }
+        }
+
+        run("STAR_ALIGN", alias: "STAR_ALIGN_MATE2") {
+            script "modules/nf-core/star/align/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'cel_N2_1', single_end: true], file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)])
+                input[1] = STAR_GENOMEGENERATE.out.index.collect()
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = true
+                """
+            }
+        }
+
+        run("CIRCTOOLS_DETECT") {
+            script "modules/local/circtools/detect/main.nf"
+            process {
+                """
+                input[0] = STAR_ALIGN_MATE1.out.junction
+                    .combine(STAR_ALIGN_MATE2.out.junction.map { _meta, junction -> junction })
+                    .map { _meta, mate1, mate2 ->
+                        [
+                            [id: 'cel_N2_1', single_end: false, strandedness: 'auto'],
+                            file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.star.Chimeric.out.junction', checkIfExists: true),
+                            mate1,
+                            mate2
+                        ]
+                    }
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 'auto'
+                """
+            }
+        }
+    }
+
+    test("mini - circtools detect output") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRCTOOLS_DETECT.out.reads
+                    .join(CIRCTOOLS_DETECT.out.coordinates)
+                    .join(CIRCTOOLS_DETECT.out.counts)
+                """
+            }
+        }
+
+        then {
+            // Name and Reads are dropped: their order depends on polars' unordered group_by/unique
+            def rows = path(process.out.bed[0][1]).readLines()
+            assert process.success
+            assert snapshot(
+                path(process.out.versions[0]).yaml,
+                process.out.bed.collect { [it[0], file(it[1]).name] },
+                rows.size(),
+                rows.collect { it.split('\t').size() }.unique(),
+                rows.collect { line -> def f = line.split('\t'); [f[0], f[1], f[2], f[4], f[5]].join('\t') }.sort(false).join('\n').md5()
+            ).match()
+        }
+    }
+
+    test("mini - circtools detect output - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = CIRCTOOLS_DETECT.out.reads
+                    .join(CIRCTOOLS_DETECT.out.coordinates)
+                    .join(CIRCTOOLS_DETECT.out.counts)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+    }
+}

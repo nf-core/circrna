@@ -1,0 +1,94 @@
+nextflow_process {
+
+    name "Test Process CIRCMINER_ORDERGTF"
+    script "../main.nf"
+    process "CIRCMINER_ORDERGTF"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_local"
+    tag "circminer"
+    tag "circminer_ordergtf"
+
+    setup {
+        run("AGAT_CONVERTSPGFF2GTF") {
+            script "modules/nf-core/agat/convertspgff2gtf/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+    }
+
+    test("orders AGAT GTF exons for circMiner") {
+        when {
+            process {
+                """
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+            assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.python
+            assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.gffutils
+            def outputPath = path(process.out.gtf[0][1])
+            def source = outputPath.parent.resolve('input/chrI_mini.agat.gtf').readLines().findAll { it && !it.startsWith('#') }
+            def output = outputPath.readLines()
+            def selected = ['gene', 'transcript', 'exon']
+            def sourceRows = source.findAll { it.split('\t')[2] in selected }.sort()
+            def outputRows = output.findAll { it.split('\t')[2] in selected }.sort()
+            def sourceExons = source.findAll { it.split('\t')[2] == 'exon' }
+            def outputExons = output.findAll { it.split('\t')[2] == 'exon' }
+
+            assert output.every { it.split('\t')[2] in selected }
+            assert outputRows == sourceRows
+            assert outputExons.findAll { it.contains('exon_number "') }.sort() == sourceExons.findAll { it.contains('exon_number "') }.sort()
+
+            def currentGene = null
+            def currentTranscript = null
+            output.each { line ->
+                def fields = line.split('\t')
+                def geneId = (fields[8] =~ /gene_id "([^"]+)"/)[0][1]
+                if (fields[2] == 'gene') {
+                    currentGene = geneId
+                    currentTranscript = null
+                } else if (fields[2] == 'transcript') {
+                    assert geneId == currentGene
+                    currentTranscript = (fields[8] =~ /transcript_id "([^"]+)"/)[0][1]
+                } else {
+                    assert geneId == currentGene
+                    assert (fields[8] =~ /transcript_id "([^"]+)"/)[0][1] == currentTranscript
+                }
+            }
+
+            def minusExons = outputExons.findAll { it.split('\t')[6] == '-' }
+            assert minusExons.findAll { it.contains('transcript_id "NR_052813"') }*.split('\t')*.getAt(3) == ['350134', '191241', '142375', '1941', '1900', '1827']
+        }
+    }
+
+    test("orders AGAT GTF - stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.gtf[0][1]).exists() },
+                { assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.python },
+                { assert path(process.out.versions[0]).yaml.CIRCMINER_ORDERGTF.gffutils }
+            )
+        }
+    }
+}

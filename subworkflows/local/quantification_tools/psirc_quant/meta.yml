@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: psirc_quant
+description: Psirc quant processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - gawk
+  - psircquant/index
+  - psircquant/quant
+  - custom/tx2gene
+  - tximeta/tximport
+  - tximeta/tximeta
+  - merge/experiments
+  - csvtk/join
+  - split/types
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_transcriptome_fasta:
+      type: file
+      description: "Combined linear/circular transcriptome FASTA.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_transcriptome_gtf:
+      type: file
+      description: "Combined linear/circular transcriptome GTF annotation.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - bootstrap_samples:
+      type: value
+      description: "Number of bootstrap samples for kallisto. Structure: [ val(bootstrap_samples)
+        ]"
+  - ch_phenotype:
+      type: file
+      description: "Sample phenotype table.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_faidx:
+      type: file
+      description: "Reference FASTA index (FAI) channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.fai"
+output:
+  - se:
+      type: file
+      description: "Merged SummarizedExperiment/RDS quantification object.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - rds:
+      type: file
+      description: "Merged RDS quantification object.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - gene_counts:
+      type: file
+      description: "Joined gene-level count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - gene_tpm:
+      type: file
+      description: "Joined gene-level TPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - tx_counts:
+      type: file
+      description: "Joined transcript-level count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - tx_tpm:
+      type: file
+      description: "Joined transcript-level TPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - linear_tx_counts:
+      type: file
+      description: "Linear transcript count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - linear_tx_tpm:
+      type: file
+      description: "Linear transcript TPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - circular_tx_counts:
+      type: file
+      description: "Circular transcript count matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - circular_tx_tpm:
+      type: file
+      description: "Circular transcript TPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

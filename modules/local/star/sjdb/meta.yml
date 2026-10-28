@@ -1,0 +1,79 @@
+name: sjdb
+description: Filter and deduplicate STAR splice junction database entries
+keywords:
+  - star
+  - splice-junction
+  - filtering
+tools:
+  - mawk:
+      description: Fast AWK implementation
+      homepage: https://invisible-island.net/mawk/
+      licence:
+        - GPL-2.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - sjdb:
+        type: file
+        description: STAR splice junction tables
+  - bsj_reads:
+      type: integer
+      description: Minimum back-splice read support
+output:
+  sjtab:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - dataset.SJ.out.tab:
+          type: file
+          description: Filtered STAR splice junction table
+  versions_mawk:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - mawk:
+          type: string
+          description: Software name
+      - mawk -W version 2>&1 | head -n 1:
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - mawk:
+          type: string
+          description: Software name
+      - mawk -W version 2>&1 | head -n 1:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/star_sjdb:394c1615472519ad
+      build_id: bd-394c1615472519ad_1
+      scan_id: sc-16bd1e627fed0397_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/star_sjdb:517da11651f5309b
+      build_id: bd-517da11651f5309b_1
+      scan_id: sc-149f2ed26964a13d_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/star_sjdb:4de5cfc737089d0e
+      build_id: bd-4de5cfc737089d0e_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/38/38ff1095ee0b8de3a6c443938e99884446d747be72031b5245e3ccf2377a3b6d/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/star_sjdb:643617fd0abfb747
+      build_id: bd-643617fd0abfb747_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/dc/dcdda74a12f8e69313d76c77a8612e16ffab53a8a42d979e62b1b3c4bede4c03/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/star/sjdb/.conda-lock/linux_amd64-bd-517da11651f5309b_1.txt
+    linux/arm64:
+      lock_file: modules/local/star/sjdb/.conda-lock/linux_arm64-bd-394c1615472519ad_1.txt

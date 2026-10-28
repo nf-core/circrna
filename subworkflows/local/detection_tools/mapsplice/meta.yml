@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: mapsplice
+description: Mapsplice processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - mapsplice/align
+  - circexplorer2/parse
+  - gawk
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - gtf:
+      type: file
+      description: "Reference annotation passed as bare GTF paths to the MapSplice alignment
+        module.
+
+
+        Structure: [ path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - _fasta:
+      type: file
+      description: "Reference genome FASTA paths accepted for interface compatibility
+        but unused here.
+
+
+        Structure: [ path(fasta) ]"
+  - bowtie_index:
+      type: file
+      description: "Bowtie index channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - chromosomes:
+      type: file
+      description: "Per-chromosome FASTA files split from the reference genome.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - _star_junctions:
+      type: file
+      description: "STAR splice-junction input accepted for interface compatibility
+        but unused by this subworkflow.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - _circexplorer2_index:
+      type: file
+      description: "Collected Circexplorer2 reference paths accepted for interface compatibility
+        but unused here.
+
+
+        Structure: [ val(reference_files) ]"
+output:
+  - bed:
+      type: file
+      description: "Per-sample MapSplice back-splice junction BED calls.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

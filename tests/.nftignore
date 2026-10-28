@@ -1,12 +1,44 @@
 .DS_Store
-multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt
-multiqc/multiqc_data/multiqc.parquet
-multiqc/multiqc_data/multiqc.log
-multiqc/multiqc_data/multiqc_data.json
-multiqc/multiqc_data/multiqc_sources.txt
-multiqc/multiqc_data/multiqc_software_versions.txt
-multiqc/multiqc_data/llms-full.txt
-multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
-multiqc/multiqc_report.html
-fastqc/*_fastqc.{html,zip}
+8_multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt
+8_multiqc/multiqc_data/multiqc.parquet
+8_multiqc/multiqc_data/multiqc.log
+8_multiqc/multiqc_data/multiqc_data.json
+8_multiqc/multiqc_data/multiqc_sources.txt
+8_multiqc/multiqc_data/multiqc_software_versions.txt
+8_multiqc/multiqc_data/llms-full.txt
+8_multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
+8_multiqc/multiqc_report.html
 pipeline_info/*.{html,json,txt,yml}
+
+# FastQC outputs (zips and HTML vary by path to nested dir; hashes drift across runners)
+**/*_fastqc.{html,zip}
+
+# STAR genome index log (non-deterministic across CPU / compiler)
+**/star/Log.out
+
+# BSJ detection: FUSIONJUNC_<n> names, row order and sample column order vary between runs
+# (the combined BED is compared as parsed content in default.nf.test)
+**/*.combined.bed
+**/all_samples.upset.png
+**/all_samples.upset_mqc.json
+**/circexplorer2.joined.tsv
+**/*circexplorer2*.bed
+
+# Quantification: psirc bootstrapping + tximport/tximeta + merged tables vary between runs
+# (key tables are compared as parsed content in default.nf.test)
+**/abundance.h5
+**/abundance.tsv
+**/run_info.json
+**/pseudoalignments.bam
+**/pseudoalignments.bam.bai
+**/tximport/*.tsv
+**/tximeta/*.rds
+**/experiments.merged.rds
+**/max.tsv
+**/sum.tsv
+**/circular.tsv
+**/linear.tsv
+**/{gene,tx}_{counts,tpm}.csv
+
+# Statistical tests: the CIRCTEST p-values and plots depend on the psirc counts, which vary between runs
+**/circtest/*.{pdf,txt}

@@ -1,0 +1,84 @@
+{
+    "transcriptome fasta": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "transcriptome.all_possible_bsj_targets.fa.index",
+                    "transcriptome.FirstandLastExons_entities.fa.index"
+                ]
+            ],
+            [
+                [
+                    "PSIRC_INDEX",
+                    "psirc",
+                    "1.0.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:02:38.3318014",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "transcriptome fasta - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.all_possible_bsj_targets.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "transcriptome.FirstandLastExons_entities.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRC_INDEX",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PSIRC_INDEX",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
+                ],
+                "index": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.all_possible_bsj_targets.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "transcriptome.FirstandLastExons_entities.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_kallisto_b": [
+                    [
+                        "PSIRC_INDEX",
+                        "kallisto_b",
+                        "0.43.1"
+                    ]
+                ],
+                "versions_psirc": [
+                    [
+                        "PSIRC_INDEX",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:02:51.171134968",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

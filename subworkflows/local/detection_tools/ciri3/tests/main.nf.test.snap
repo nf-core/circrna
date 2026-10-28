@@ -1,0 +1,40 @@
+{
+    "CIRI3 detection": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri3"
+                    },
+                    "cel_N2_1.ciri3.bed:md5,79608347af000798bbbdd8417a6bc4f5"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:43:38.438935551",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "CIRI3 detection stub": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "ciri3"
+                    },
+                    "cel_N2_1.ciri3.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:43:54.065242885",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

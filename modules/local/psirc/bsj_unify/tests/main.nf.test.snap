@@ -1,0 +1,68 @@
+{
+    "resolves authentic psiRC transcript headers without overwriting staged calls": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,835564ec03f3acd123b5446b25d36e6f"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,820f8d52ec7b13b767612e44af4264b1"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,835564ec03f3acd123b5446b25d36e6f"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,820f8d52ec7b13b767612e44af4264b1"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:29:34.789807868",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,e3a5087250cfd03bf926e4cff285fcdf"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "calls"
+                        },
+                        "calls.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e3a5087250cfd03bf926e4cff285fcdf"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:29:44.955956025",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,1409 @@
+{
+    "-profile test - stub": {
+        "content": [
+            {
+                "CIRCEXPLORER2_REFERENCE": {
+                    "gawk": "5.3.1"
+                },
+                "CIRCTEST_CIRCTEST": {
+                    "r-base": "4.5.3",
+                    "aod": "1.3.3",
+                    "plyr": "1.8.9",
+                    "ggplot2": "4.0.3"
+                },
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.6.1"
+                },
+                "COMBINE_TRANSCRIPTOME_GTFS": {
+                    "coreutils": 9.5
+                },
+                "CUSTOM_TX2GENE": {
+                    "python": "3.10.4"
+                },
+                "EXCLUDE_OVERLONG_TRANSCRIPTS": {
+                    "gawk": "5.3.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.13.0"
+                },
+                "GTFFILTER": {
+                    "python": "3.14.5"
+                },
+                "INDEX": {
+                    "psirc-quant": 1.0
+                },
+                "JOIN_GENE_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_GENE_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "MARK_CIRCULAR": {
+                    "gawk": "5.3.1"
+                },
+                "MERGE_EXPERIMENTS": {
+                    "bioconductor-summarizedexperiment": "1.42.0",
+                    "bioconductor-rtracklayer": "1.72.0"
+                },
+                "PARSE": {
+                    "circexplorer2": "2.3.8"
+                },
+                "PASS_1": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "PASS_2": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "QUANT": {
+                    "psirc-quant": 1.0
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": 1.24
+                },
+                "SEQKIT_SPLIT": {
+                    "seqkit": "2.14.0"
+                },
+                "SJDB": {
+                    "mawk": "mawk 1.3.4 20171017"
+                },
+                "SPLIT_TYPES_COUNTS": {
+                    "gawk": "5.4.1"
+                },
+                "SPLIT_TYPES_TPM": {
+                    "gawk": "5.4.1"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "TRANSCRIPTOME": {
+                    "gffread": "0.12.7"
+                },
+                "TRIMGALORE": {
+                    "trimgalore": "2.3.0"
+                },
+                "TXIMETA_TXIMETA": {
+                    "bioconductor-tximeta": "1.28.3"
+                },
+                "TXIMETA_TXIMPORT": {
+                    "bioconductor-tximeta": "1.20.1"
+                },
+                "UCSC_GTFTOGENEPRED": {
+                    "ucsc": 482
+                },
+                "UNIFY": {
+                    "gawk": "5.3.1"
+                },
+                "Workflow": {
+                    "nf-core/circrna": "v0.0.1dev"
+                }
+            },
+            [
+                "1_references",
+                "1_references/genome",
+                "1_references/genome/chromosomes",
+                "1_references/genome/chromosomes/fasta",
+                "1_references/genome/chromosomes/fasta/chrI.part_001.fa",
+                "1_references/genome/filtered_gtf",
+                "1_references/genome/filtered_gtf/gtf.filtered.gtf",
+                "1_references/genome/genepred",
+                "1_references/genome/genepred/gtf.genepred",
+                "1_references/genome/genepred/gtf.refflat",
+                "1_references/index",
+                "1_references/index/fasta",
+                "1_references/index/fasta/chrI.fa.fai",
+                "1_references/index/gtf.circexplorer2.txt",
+                "1_references/index/psirc_quant",
+                "1_references/index/psirc_quant/psirc.index",
+                "1_references/index/star",
+                "1_references/index/star/Genome",
+                "1_references/index/star/Log.out",
+                "1_references/index/star/SA",
+                "1_references/index/star/SAindex",
+                "1_references/index/star/chrLength.txt",
+                "1_references/index/star/chrName.txt",
+                "1_references/index/star/chrNameLength.txt",
+                "1_references/index/star/chrStart.txt",
+                "1_references/index/star/exonGeTrInfo.tab",
+                "1_references/index/star/exonInfo.tab",
+                "1_references/index/star/geneInfo.tab",
+                "1_references/index/star/genomeParameters.txt",
+                "1_references/index/star/sjdbInfo.txt",
+                "1_references/index/star/sjdbList.fromGTF.out.tab",
+                "1_references/index/star/sjdbList.out.tab",
+                "1_references/index/star/transcriptInfo.tab",
+                "2_quality_control",
+                "2_quality_control/fastqc",
+                "2_quality_control/fastqc/cel_N2_1.html",
+                "2_quality_control/fastqc/cel_N2_1.zip",
+                "2_quality_control/fastqc/cel_N2_2.html",
+                "2_quality_control/fastqc/cel_N2_2.zip",
+                "2_quality_control/fastqc/cel_N2_3.html",
+                "2_quality_control/fastqc/cel_N2_3.zip",
+                "2_quality_control/fastqc/fust1_1.html",
+                "2_quality_control/fastqc/fust1_1.zip",
+                "2_quality_control/fastqc/fust1_2.html",
+                "2_quality_control/fastqc/fust1_2.zip",
+                "2_quality_control/fastqc/fust1_3.html",
+                "2_quality_control/fastqc/fust1_3.zip",
+                "2_quality_control/trimgalore",
+                "2_quality_control/trimgalore/cel_N2_1_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_1_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_2_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_2_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_3_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_3_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_1_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_1_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_2_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_2_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_3_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_3_2.fastq.gz_trimming_report.txt",
+                "3_bsj_detection",
+                "3_bsj_detection/tools",
+                "3_bsj_detection/tools/circexplorer2",
+                "3_bsj_detection/tools/circexplorer2/unified",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_1.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_2.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_3.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_1.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_2.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_3.circexplorer2.bed",
+                "5_quantification",
+                "5_quantification/psirc",
+                "5_quantification/psirc/combined",
+                "5_quantification/psirc/combined/circular.tsv",
+                "5_quantification/psirc/combined/experiments.merged.rds",
+                "5_quantification/psirc/combined/gene_counts.csv",
+                "5_quantification/psirc/combined/gene_tpm.csv",
+                "5_quantification/psirc/combined/linear.tsv",
+                "5_quantification/psirc/combined/tx_counts.csv",
+                "5_quantification/psirc/combined/tx_tpm.csv",
+                "5_quantification/psirc/samples",
+                "5_quantification/psirc/samples/cel_N2_1",
+                "5_quantification/psirc/samples/cel_N2_1/psirc",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_1/tximeta",
+                "5_quantification/psirc/samples/cel_N2_1/tximeta/cel_N2_1.rds",
+                "5_quantification/psirc/samples/cel_N2_1/tximport",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/cel_N2_2",
+                "5_quantification/psirc/samples/cel_N2_2/psirc",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_2/tximeta",
+                "5_quantification/psirc/samples/cel_N2_2/tximeta/cel_N2_2.rds",
+                "5_quantification/psirc/samples/cel_N2_2/tximport",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/cel_N2_3",
+                "5_quantification/psirc/samples/cel_N2_3/psirc",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_3/tximeta",
+                "5_quantification/psirc/samples/cel_N2_3/tximeta/cel_N2_3.rds",
+                "5_quantification/psirc/samples/cel_N2_3/tximport",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_1",
+                "5_quantification/psirc/samples/fust1_1/psirc",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/abundance.h5",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/run_info.json",
+                "5_quantification/psirc/samples/fust1_1/tximeta",
+                "5_quantification/psirc/samples/fust1_1/tximeta/fust1_1.rds",
+                "5_quantification/psirc/samples/fust1_1/tximport",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_2",
+                "5_quantification/psirc/samples/fust1_2/psirc",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/abundance.h5",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/run_info.json",
+                "5_quantification/psirc/samples/fust1_2/tximeta",
+                "5_quantification/psirc/samples/fust1_2/tximeta/fust1_2.rds",
+                "5_quantification/psirc/samples/fust1_2/tximport",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_3",
+                "5_quantification/psirc/samples/fust1_3/psirc",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/abundance.h5",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/run_info.json",
+                "5_quantification/psirc/samples/fust1_3/tximeta",
+                "5_quantification/psirc/samples/fust1_3/tximeta/fust1_3.rds",
+                "5_quantification/psirc/samples/fust1_3/tximport",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.tx2gene_augmented.tsv",
+                "5_quantification/psirc/transcriptome",
+                "5_quantification/psirc/transcriptome/transcriptome.combined.gtf",
+                "5_quantification/psirc/transcriptome/transcriptome.fasta",
+                "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf",
+                "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv",
+                "7_statistical_tests",
+                "7_statistical_tests/circtest",
+                "7_statistical_tests/circtest/circ_linear_line_plots.pdf",
+                "7_statistical_tests/circtest/circ_linear_ratio_plots.pdf",
+                "7_statistical_tests/circtest/counts_summary.txt",
+                "pipeline_info",
+                "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
+            ]
+        ],
+        "timestamp": "2026-10-20T17:03:26.601104943",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "-profile test": {
+        "content": [
+            {
+                "AGGREGATE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                },
+                "ANNOTATE": {
+                    "circexplorer2": "2.3.8"
+                },
+                "BED2GTF": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                },
+                "BED_ADD_SAMPLE_TOOL": {
+                    "gawk": "5.3.1"
+                },
+                "CIRCEXPLORER2_REFERENCE": {
+                    "gawk": "5.3.1"
+                },
+                "CIRCTEST_CIRCTEST": {
+                    "r-base": "4.5.3",
+                    "aod": "1.3.3",
+                    "plyr": "1.8.9",
+                    "ggplot2": "4.0.3"
+                },
+                "CIRCTEST_PREPARE": {
+                    "r-base": "4.6.1"
+                },
+                "COMBINE_COUNTS_PER_TOOL": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                },
+                "COMBINE_SAMPLES": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
+                },
+                "COMBINE_TOOLS_PER_SAMPLE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "upsetplot": "0.9.0",
+                    "matplotlib": "3.11.2"
+                },
+                "COMBINE_TRANSCRIPTOME_GTFS": {
+                    "coreutils": 9.5
+                },
+                "CUSTOM_TX2GENE": {
+                    "python": "3.10.4"
+                },
+                "CUT_BED12": {
+                    "gawk": "5.3.1"
+                },
+                "EXCLUDE_OVERLONG_TRANSCRIPTS": {
+                    "gawk": "5.3.1"
+                },
+                "EXTRACT_COUNTS": {
+                    "gawk": "5.3.1"
+                },
+                "FASTQC": {
+                    "fastqc": "0.13.0"
+                },
+                "FILTER_BSJS": {
+                    "gawk": "5.3.1"
+                },
+                "GET_FASTA": {
+                    "bedtools": "2.31.1"
+                },
+                "GTFFILTER": {
+                    "python": "3.14.5"
+                },
+                "INDEX": {
+                    "psirc-quant": 1.0
+                },
+                "INVESTIGATE_SHIFTS": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0",
+                    "altair": "6.3.0"
+                },
+                "JOIN_GENE_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_GENE_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_COUNTS": {
+                    "csvtk": "0.37.0"
+                },
+                "JOIN_TX_TPM": {
+                    "csvtk": "0.37.0"
+                },
+                "MARK_CIRCULAR": {
+                    "gawk": "5.3.1"
+                },
+                "MERGE_EXPERIMENTS": {
+                    "bioconductor-summarizedexperiment": "1.42.0",
+                    "bioconductor-rtracklayer": "1.72.0"
+                },
+                "PARSE": {
+                    "circexplorer2": "2.3.8"
+                },
+                "PASS_1": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "PASS_2": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "QUANT": {
+                    "psirc-quant": 1.0
+                },
+                "RENAME": {
+                    "gawk": "5.3.1"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": 1.24
+                },
+                "SEQKIT_SPLIT": {
+                    "seqkit": "2.14.0"
+                },
+                "SJDB": {
+                    "mawk": "mawk 1.3.4 20171017"
+                },
+                "SPLIT_TYPES_COUNTS": {
+                    "gawk": "5.4.1"
+                },
+                "SPLIT_TYPES_TPM": {
+                    "gawk": "5.4.1"
+                },
+                "STAR_GENOMEGENERATE": {
+                    "gawk": "5.1.0",
+                    "samtools": 1.21,
+                    "star": "2.7.11b"
+                },
+                "TRANSCRIPTOME": {
+                    "gffread": "0.12.7"
+                },
+                "TRIMGALORE": {
+                    "trimgalore": "2.3.0"
+                },
+                "TXIMETA_TXIMETA": {
+                    "bioconductor-tximeta": "1.28.3"
+                },
+                "TXIMETA_TXIMPORT": {
+                    "bioconductor-tximeta": "1.20.1"
+                },
+                "UCSC_GTFTOGENEPRED": {
+                    "ucsc": 482
+                },
+                "UNIFY": {
+                    "gawk": "5.3.1"
+                },
+                "Workflow": {
+                    "nf-core/circrna": "v0.0.1dev"
+                }
+            },
+            [
+                "1_references",
+                "1_references/genome",
+                "1_references/genome/chromosomes",
+                "1_references/genome/chromosomes/fasta",
+                "1_references/genome/chromosomes/fasta/chrI.fa",
+                "1_references/genome/filtered_gtf",
+                "1_references/genome/filtered_gtf/gtf.filtered.gtf",
+                "1_references/genome/genepred",
+                "1_references/genome/genepred/gtf.genepred",
+                "1_references/index",
+                "1_references/index/fasta",
+                "1_references/index/fasta/chrI.fa.fai",
+                "1_references/index/gtf.circexplorer2.txt",
+                "1_references/index/psirc_quant",
+                "1_references/index/psirc_quant/psirc.index",
+                "1_references/index/star",
+                "1_references/index/star/Genome",
+                "1_references/index/star/Log.out",
+                "1_references/index/star/SA",
+                "1_references/index/star/SAindex",
+                "1_references/index/star/chrLength.txt",
+                "1_references/index/star/chrName.txt",
+                "1_references/index/star/chrNameLength.txt",
+                "1_references/index/star/chrStart.txt",
+                "1_references/index/star/exonGeTrInfo.tab",
+                "1_references/index/star/exonInfo.tab",
+                "1_references/index/star/geneInfo.tab",
+                "1_references/index/star/genomeParameters.txt",
+                "1_references/index/star/sjdbInfo.txt",
+                "1_references/index/star/sjdbList.fromGTF.out.tab",
+                "1_references/index/star/sjdbList.out.tab",
+                "1_references/index/star/transcriptInfo.tab",
+                "2_quality_control",
+                "2_quality_control/fastqc",
+                "2_quality_control/fastqc/cel_N2_1_1_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_1_1_fastqc.zip",
+                "2_quality_control/fastqc/cel_N2_1_2_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_1_2_fastqc.zip",
+                "2_quality_control/fastqc/cel_N2_2_1_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_2_1_fastqc.zip",
+                "2_quality_control/fastqc/cel_N2_2_2_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_2_2_fastqc.zip",
+                "2_quality_control/fastqc/cel_N2_3_1_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_3_1_fastqc.zip",
+                "2_quality_control/fastqc/cel_N2_3_2_fastqc.html",
+                "2_quality_control/fastqc/cel_N2_3_2_fastqc.zip",
+                "2_quality_control/fastqc/fust1_1_1_fastqc.html",
+                "2_quality_control/fastqc/fust1_1_1_fastqc.zip",
+                "2_quality_control/fastqc/fust1_1_2_fastqc.html",
+                "2_quality_control/fastqc/fust1_1_2_fastqc.zip",
+                "2_quality_control/fastqc/fust1_2_1_fastqc.html",
+                "2_quality_control/fastqc/fust1_2_1_fastqc.zip",
+                "2_quality_control/fastqc/fust1_2_2_fastqc.html",
+                "2_quality_control/fastqc/fust1_2_2_fastqc.zip",
+                "2_quality_control/fastqc/fust1_3_1_fastqc.html",
+                "2_quality_control/fastqc/fust1_3_1_fastqc.zip",
+                "2_quality_control/fastqc/fust1_3_2_fastqc.html",
+                "2_quality_control/fastqc/fust1_3_2_fastqc.zip",
+                "2_quality_control/trimgalore",
+                "2_quality_control/trimgalore/cel_N2_1_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_1_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_2_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_2_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_3_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/cel_N2_3_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_1_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_1_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_2_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_2_2.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_3_1.fastq.gz_trimming_report.txt",
+                "2_quality_control/trimgalore/fust1_3_2.fastq.gz_trimming_report.txt",
+                "3_bsj_detection",
+                "3_bsj_detection/combined",
+                "3_bsj_detection/combined/all.annotated.gtf",
+                "3_bsj_detection/combined/all.combined.bed",
+                "3_bsj_detection/combined/all.fa",
+                "3_bsj_detection/combined/all_samples.upset.png",
+                "3_bsj_detection/combined/all_samples.upset_mqc.json",
+                "3_bsj_detection/combined/n_samples.png",
+                "3_bsj_detection/combined/n_tools.png",
+                "3_bsj_detection/samples",
+                "3_bsj_detection/samples/cel_N2_1",
+                "3_bsj_detection/samples/cel_N2_1/cel_N2_1.annotated.bed12",
+                "3_bsj_detection/samples/cel_N2_1/cel_N2_1.annotated.gtf",
+                "3_bsj_detection/samples/cel_N2_1/cel_N2_1.combined.bed",
+                "3_bsj_detection/samples/cel_N2_1/cel_N2_1.fa",
+                "3_bsj_detection/samples/cel_N2_2",
+                "3_bsj_detection/samples/cel_N2_2/cel_N2_2.annotated.bed12",
+                "3_bsj_detection/samples/cel_N2_2/cel_N2_2.annotated.gtf",
+                "3_bsj_detection/samples/cel_N2_2/cel_N2_2.combined.bed",
+                "3_bsj_detection/samples/cel_N2_2/cel_N2_2.fa",
+                "3_bsj_detection/samples/cel_N2_3",
+                "3_bsj_detection/samples/cel_N2_3/cel_N2_3.annotated.bed12",
+                "3_bsj_detection/samples/cel_N2_3/cel_N2_3.annotated.gtf",
+                "3_bsj_detection/samples/cel_N2_3/cel_N2_3.combined.bed",
+                "3_bsj_detection/samples/cel_N2_3/cel_N2_3.fa",
+                "3_bsj_detection/samples/fust1_1",
+                "3_bsj_detection/samples/fust1_1/fust1_1.annotated.bed12",
+                "3_bsj_detection/samples/fust1_1/fust1_1.annotated.gtf",
+                "3_bsj_detection/samples/fust1_1/fust1_1.combined.bed",
+                "3_bsj_detection/samples/fust1_1/fust1_1.fa",
+                "3_bsj_detection/samples/fust1_2",
+                "3_bsj_detection/samples/fust1_2/fust1_2.annotated.bed12",
+                "3_bsj_detection/samples/fust1_2/fust1_2.annotated.gtf",
+                "3_bsj_detection/samples/fust1_2/fust1_2.combined.bed",
+                "3_bsj_detection/samples/fust1_2/fust1_2.fa",
+                "3_bsj_detection/samples/fust1_3",
+                "3_bsj_detection/samples/fust1_3/fust1_3.annotated.bed12",
+                "3_bsj_detection/samples/fust1_3/fust1_3.annotated.gtf",
+                "3_bsj_detection/samples/fust1_3/fust1_3.combined.bed",
+                "3_bsj_detection/samples/fust1_3/fust1_3.fa",
+                "3_bsj_detection/tools",
+                "3_bsj_detection/tools/circexplorer2",
+                "3_bsj_detection/tools/circexplorer2/annotated",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_1.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_1.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_2.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_2.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_3.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_3.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_1.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_1.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_2.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_2.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_3.annotated.bed12",
+                "3_bsj_detection/tools/circexplorer2/annotated/fust1_3.annotated.gtf",
+                "3_bsj_detection/tools/circexplorer2/circexplorer2.joined.tsv",
+                "3_bsj_detection/tools/circexplorer2/fasta",
+                "3_bsj_detection/tools/circexplorer2/fasta/cel_N2_1.fa",
+                "3_bsj_detection/tools/circexplorer2/fasta/cel_N2_2.fa",
+                "3_bsj_detection/tools/circexplorer2/fasta/cel_N2_3.fa",
+                "3_bsj_detection/tools/circexplorer2/fasta/fust1_1.fa",
+                "3_bsj_detection/tools/circexplorer2/fasta/fust1_2.fa",
+                "3_bsj_detection/tools/circexplorer2/fasta/fust1_3.fa",
+                "3_bsj_detection/tools/circexplorer2/filtered",
+                "3_bsj_detection/tools/circexplorer2/filtered/cel_N2_1.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/filtered/cel_N2_2.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/filtered/cel_N2_3.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/filtered/fust1_1.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/filtered/fust1_2.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/filtered/fust1_3.circexplorer2.filtered.bed",
+                "3_bsj_detection/tools/circexplorer2/meta",
+                "3_bsj_detection/tools/circexplorer2/meta/cel_N2_1_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/meta/cel_N2_2_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/meta/cel_N2_3_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/meta/fust1_1_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/meta/fust1_2_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/meta/fust1_3_circexplorer2.meta.bed",
+                "3_bsj_detection/tools/circexplorer2/unified",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_1.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_2.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/cel_N2_3.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_1.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_2.circexplorer2.bed",
+                "3_bsj_detection/tools/circexplorer2/unified/fust1_3.circexplorer2.bed",
+                "5_quantification",
+                "5_quantification/aggregations",
+                "5_quantification/aggregations/max.tsv",
+                "5_quantification/aggregations/sum.tsv",
+                "5_quantification/psirc",
+                "5_quantification/psirc/combined",
+                "5_quantification/psirc/combined/circular.tsv",
+                "5_quantification/psirc/combined/experiments.merged.rds",
+                "5_quantification/psirc/combined/gene_counts.csv",
+                "5_quantification/psirc/combined/gene_tpm.csv",
+                "5_quantification/psirc/combined/linear.tsv",
+                "5_quantification/psirc/combined/tx_counts.csv",
+                "5_quantification/psirc/combined/tx_tpm.csv",
+                "5_quantification/psirc/samples",
+                "5_quantification/psirc/samples/cel_N2_1",
+                "5_quantification/psirc/samples/cel_N2_1/psirc",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/pseudoalignments.bam",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/cel_N2_1/psirc/cel_N2_1/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_1/tximeta",
+                "5_quantification/psirc/samples/cel_N2_1/tximeta/cel_N2_1.rds",
+                "5_quantification/psirc/samples/cel_N2_1/tximport",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_1/tximport/cel_N2_1.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/cel_N2_2",
+                "5_quantification/psirc/samples/cel_N2_2/psirc",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/pseudoalignments.bam",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/cel_N2_2/psirc/cel_N2_2/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_2/tximeta",
+                "5_quantification/psirc/samples/cel_N2_2/tximeta/cel_N2_2.rds",
+                "5_quantification/psirc/samples/cel_N2_2/tximport",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_2/tximport/cel_N2_2.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/cel_N2_3",
+                "5_quantification/psirc/samples/cel_N2_3/psirc",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/abundance.h5",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/abundance.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/pseudoalignments.bam",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/cel_N2_3/psirc/cel_N2_3/run_info.json",
+                "5_quantification/psirc/samples/cel_N2_3/tximeta",
+                "5_quantification/psirc/samples/cel_N2_3/tximeta/cel_N2_3.rds",
+                "5_quantification/psirc/samples/cel_N2_3/tximport",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.gene_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_counts.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/cel_N2_3/tximport/cel_N2_3.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_1",
+                "5_quantification/psirc/samples/fust1_1/psirc",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/abundance.h5",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/pseudoalignments.bam",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/fust1_1/psirc/fust1_1/run_info.json",
+                "5_quantification/psirc/samples/fust1_1/tximeta",
+                "5_quantification/psirc/samples/fust1_1/tximeta/fust1_1.rds",
+                "5_quantification/psirc/samples/fust1_1/tximport",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_1/tximport/fust1_1.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_2",
+                "5_quantification/psirc/samples/fust1_2/psirc",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/abundance.h5",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/pseudoalignments.bam",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/fust1_2/psirc/fust1_2/run_info.json",
+                "5_quantification/psirc/samples/fust1_2/tximeta",
+                "5_quantification/psirc/samples/fust1_2/tximeta/fust1_2.rds",
+                "5_quantification/psirc/samples/fust1_2/tximport",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_2/tximport/fust1_2.tx2gene_augmented.tsv",
+                "5_quantification/psirc/samples/fust1_3",
+                "5_quantification/psirc/samples/fust1_3/psirc",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/abundance.h5",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/abundance.tsv",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/pseudoalignments.bam",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/pseudoalignments.bam.bai",
+                "5_quantification/psirc/samples/fust1_3/psirc/fust1_3/run_info.json",
+                "5_quantification/psirc/samples/fust1_3/tximeta",
+                "5_quantification/psirc/samples/fust1_3/tximeta/fust1_3.rds",
+                "5_quantification/psirc/samples/fust1_3/tximport",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts_length_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_counts_scaled.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.gene_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_counts.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_lengths.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.transcript_tpm.tsv",
+                "5_quantification/psirc/samples/fust1_3/tximport/fust1_3.tx2gene_augmented.tsv",
+                "5_quantification/psirc/transcriptome",
+                "5_quantification/psirc/transcriptome/transcriptome.combined.gtf",
+                "5_quantification/psirc/transcriptome/transcriptome.fasta",
+                "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf",
+                "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv",
+                "7_statistical_tests",
+                "7_statistical_tests/circtest",
+                "7_statistical_tests/circtest/circ_linear_line_plots.pdf",
+                "7_statistical_tests/circtest/circ_linear_ratio_plots.pdf",
+                "7_statistical_tests/circtest/counts_summary.txt",
+                "pipeline_info",
+                "pipeline_info/nf_core_circrna_software_mqc_versions.yml"
+            ],
+            [
+                "chrI.fa:md5,951c3e54a268727ff62ebd4954139ec7",
+                "gtf.genepred:md5,34b21c4ae2c49bec101aafa26cc32100",
+                "chrI.fa.fai:md5,77d26f31962c39e6d6e7f0c4aa721584",
+                "gtf.circexplorer2.txt:md5,dbef70730dc57adea685f8a0cbe3333a",
+                "psirc.index:md5,77472699d8d4c837b36fa20fdf8f17ab",
+                "Genome:md5,d72e691e3d205f10032658cb890ce63e",
+                "SA:md5,d2af11b742354c5a1705a474e751f37e",
+                "SAindex:md5,b71d855996eac6f07bdf1e1cc0899bd9",
+                "chrLength.txt:md5,e90b7a48eec9795ac31c6e5be5832470",
+                "chrName.txt:md5,8558bfd1e609b408908ac193ccf94f29",
+                "chrNameLength.txt:md5,1a446f0bc4c4eced85839b38a46ebd4e",
+                "chrStart.txt:md5,2666d35c9f4650da7abb224c904344c5",
+                "exonGeTrInfo.tab:md5,64571502520c918e21bc5153f7bc0ed9",
+                "exonInfo.tab:md5,d8a4f600a862fdcca32df4907f5c1412",
+                "geneInfo.tab:md5,9a397835c4d2e717e1eabcb1fd603ce3",
+                "sjdbInfo.txt:md5,55a9fda676904b8b711d07566e0f349c",
+                "sjdbList.fromGTF.out.tab:md5,14e3151cc214d0697adadba65b072f3e",
+                "sjdbList.out.tab:md5,fd0a82b5e3499b388af3a69e56f2f220",
+                "transcriptInfo.tab:md5,d8ad5b3a9aad46cd6e69c5d2920dc818",
+                "cel_N2_1_1.fastq.gz_trimming_report.txt:md5,83ee532657702ed329508acdd6c894cc",
+                "cel_N2_1_2.fastq.gz_trimming_report.txt:md5,10d76285b987974c51519d7b0f0935fe",
+                "cel_N2_2_1.fastq.gz_trimming_report.txt:md5,fa5db3c9c687546db4b9fe12ead2efbd",
+                "cel_N2_2_2.fastq.gz_trimming_report.txt:md5,fb695cd461536c4459f1db1a0b26d030",
+                "cel_N2_3_1.fastq.gz_trimming_report.txt:md5,32bd6128eb57b0d5c029a1e692d6074d",
+                "cel_N2_3_2.fastq.gz_trimming_report.txt:md5,145953d505325a716488c9a9810725f3",
+                "fust1_1_1.fastq.gz_trimming_report.txt:md5,64b1015f86801ad8b1d80f6d8bf9d328",
+                "fust1_1_2.fastq.gz_trimming_report.txt:md5,419fbf185e4ba4650f7cd76dc4232cd5",
+                "fust1_2_1.fastq.gz_trimming_report.txt:md5,968efc94e92b0b49d084167704ebe9e8",
+                "fust1_2_2.fastq.gz_trimming_report.txt:md5,d29c62e397acaed85e17c93c88f5053a",
+                "fust1_3_1.fastq.gz_trimming_report.txt:md5,253c7df589618f4586c1bc7edaadd1ce",
+                "fust1_3_2.fastq.gz_trimming_report.txt:md5,340c97533ae582d77ff9e349676083b3",
+                "all.fa:md5,8c4e36329c50fa96ea8bd78bbd128b4d",
+                "n_samples.png:md5,8e5c20ff8db52725910456d796eb3d19",
+                "n_tools.png:md5,03821791e26183ccba9f1a50b692060e",
+                "cel_N2_1.annotated.bed12:md5,ff9526b60ecb7439fb042f1a672e02cd",
+                "cel_N2_1.fa:md5,4897629522b8a42a8ae7849a81570e9f",
+                "cel_N2_2.annotated.bed12:md5,e860b55790b8f6d72525c07d633c3f78",
+                "cel_N2_2.fa:md5,2c22a4112311303e119cbd92309e6672",
+                "cel_N2_3.annotated.bed12:md5,4e8449771fe6431cf035d3298114dcc6",
+                "cel_N2_3.fa:md5,c3041ac12ddefa2a461f309579edf8c4",
+                "fust1_1.annotated.bed12:md5,b738c0ca36bb2533eb55084d08fecf9b",
+                "fust1_1.fa:md5,6c303f53bfcfa4aaca1776550f6c8b0f",
+                "fust1_2.annotated.bed12:md5,745bb7d34a5f2234077f7f252efd8382",
+                "fust1_2.fa:md5,2fdfa050e827f94bc0384b112896a98b",
+                "fust1_3.annotated.bed12:md5,3cb7a9c56ff4d2ba07dbdf9060c8bdb8",
+                "fust1_3.fa:md5,98ea202d757970916aaa3ab45835f89f",
+                "cel_N2_1.annotated.bed12:md5,fab072a5a502d074ed001192b39bf6bb",
+                "cel_N2_2.annotated.bed12:md5,2ceb402e8ee1ed805825881a27f49aa5",
+                "cel_N2_3.annotated.bed12:md5,d5af7682b8f095db7d5279fc4103b891",
+                "fust1_1.annotated.bed12:md5,6a46b336218a3b46afe8e3aaed5c2047",
+                "fust1_2.annotated.bed12:md5,5c3c557c3a741aa68d7299d4d6fef1a3",
+                "fust1_3.annotated.bed12:md5,f9b0f86df495363bf23ed7ae0db111b5",
+                "cel_N2_1.fa:md5,4ad7ae73616340f4b2bd8f96f2577def",
+                "cel_N2_2.fa:md5,d7051282a8f461f48b00124c632b1c85",
+                "cel_N2_3.fa:md5,e0f46995eb3c81669266980e1d1edcb0",
+                "fust1_1.fa:md5,4aaf170c93e3621721f2b362eea6318c",
+                "fust1_2.fa:md5,76c21bcefbdb21ded5806225e1dd326b",
+                "fust1_3.fa:md5,e80b466d781c1ebee2382873853bf56d",
+                "transcriptome.fasta:md5,47535c322df2f1a9e3b5dbdaa333ff89"
+            ],
+            {
+                "combined_bed_rows": 362,
+                "combined_bed_md5": "395149177b5b98cbf7c89245f93c94ca",
+                "sum_columns": [
+                    "cel_N2_1",
+                    "cel_N2_2",
+                    "cel_N2_3",
+                    "fust1_1",
+                    "fust1_2",
+                    "fust1_3",
+                    "id"
+                ],
+                "sum_rows": [
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1039055-1039884:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 5,
+                        "fust1_3": 5,
+                        "id": "chrI:1071472-1071936:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1177880-1179394:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 2,
+                        "fust1_2": 0,
+                        "cel_N2_3": 6,
+                        "fust1_3": 0,
+                        "id": "chrI:1212576-1222830:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 3
+                    },
+                    {
+                        "cel_N2_2": 4,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 2,
+                        "id": "chrI:1221049-1222830:+",
+                        "cel_N2_1": 4,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 2,
+                        "id": "chrI:1221049-1234675:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 12,
+                        "fust1_2": 6,
+                        "cel_N2_3": 13,
+                        "fust1_3": 10,
+                        "id": "chrI:1420212-1421310:+",
+                        "cel_N2_1": 11,
+                        "fust1_1": 5
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:1514763-1515060:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1517534-1520272:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 8,
+                        "fust1_2": 6,
+                        "cel_N2_3": 4,
+                        "fust1_3": 4,
+                        "id": "chrI:1524299-1524645:+",
+                        "cel_N2_1": 4,
+                        "fust1_1": 6
+                    },
+                    {
+                        "cel_N2_2": 3,
+                        "fust1_2": 4,
+                        "cel_N2_3": 8,
+                        "fust1_3": 0,
+                        "id": "chrI:1550352-1552850:+",
+                        "cel_N2_1": 8,
+                        "fust1_1": 3
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 2,
+                        "cel_N2_3": 0,
+                        "fust1_3": 7,
+                        "id": "chrI:1577388-1577870:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 2,
+                        "id": "chrI:1613478-1613897:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 2,
+                        "id": "chrI:1725048-1725440:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1730818-1731575:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 3,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:1763590-1764898:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 25,
+                        "fust1_2": 3,
+                        "cel_N2_3": 24,
+                        "fust1_3": 7,
+                        "id": "chrI:1817302-1817614:+",
+                        "cel_N2_1": 18,
+                        "fust1_1": 5
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1838160-1839382:+",
+                        "cel_N2_1": 3,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 2,
+                        "cel_N2_3": 0,
+                        "fust1_3": 4,
+                        "id": "chrI:1876519-1877725:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 3
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 3,
+                        "id": "chrI:1879505-1882236:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:1902511-1904604:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:1906019-1910470:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:1929522-1929878:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2027827-2028597:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 2
+                    },
+                    {
+                        "cel_N2_2": 4,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2066706-2067241:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2082816-2084553:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 4,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2172005-2174986:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 2,
+                        "fust1_2": 14,
+                        "cel_N2_3": 4,
+                        "fust1_3": 11,
+                        "id": "chrI:2173755-2174986:+",
+                        "cel_N2_1": 7,
+                        "fust1_1": 10
+                    },
+                    {
+                        "cel_N2_2": 2,
+                        "fust1_2": 3,
+                        "cel_N2_3": 2,
+                        "fust1_3": 4,
+                        "id": "chrI:2201731-2202170:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2207321-2207840:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2328935-2329393:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 2,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2361567-2365216:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:2364257-2364688:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:2368921-2369653:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 2,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 3,
+                        "id": "chrI:2415843-2417576:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 3,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2492609-2492969:+",
+                        "cel_N2_1": 2,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2611372-2612097:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 4
+                    },
+                    {
+                        "cel_N2_2": 3,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 3,
+                        "id": "chrI:2668794-2669213:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:2711122-2712550:+",
+                        "cel_N2_1": 4,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 5,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:2936561-2936883:+",
+                        "cel_N2_1": 3,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:3017899-3018601:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 2,
+                        "fust1_2": 0,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:3238192-3239299:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 3,
+                        "cel_N2_3": 0,
+                        "fust1_3": 2,
+                        "id": "chrI:3253864-3254449:+",
+                        "cel_N2_1": 3,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 0,
+                        "cel_N2_3": 2,
+                        "fust1_3": 0,
+                        "id": "chrI:3444149-3444611:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    },
+                    {
+                        "cel_N2_2": 0,
+                        "fust1_2": 2,
+                        "cel_N2_3": 0,
+                        "fust1_3": 0,
+                        "id": "chrI:3775253-3776608:+",
+                        "cel_N2_1": 0,
+                        "fust1_1": 0
+                    }
+                ],
+                "max_columns": [
+                    "cel_N2_1",
+                    "cel_N2_2",
+                    "cel_N2_3",
+                    "fust1_1",
+                    "fust1_2",
+                    "fust1_3",
+                    "id"
+                ],
+                "max_rows": 45,
+                "circular_columns": [
+                    "cel_N2_1",
+                    "cel_N2_2",
+                    "cel_N2_3",
+                    "fust1_1",
+                    "fust1_2",
+                    "fust1_3",
+                    "gene_id",
+                    "tx"
+                ],
+                "circular_ids": [
+                    "chrI:1039055-1039884:+",
+                    "chrI:1056063-1060673:-",
+                    "chrI:1071472-1071936:+",
+                    "chrI:1140805-1147588:-",
+                    "chrI:1164511-1174098:-",
+                    "chrI:1166228-1167979:-",
+                    "chrI:1177880-1179394:+",
+                    "chrI:1212576-1222830:+",
+                    "chrI:1221049-1222830:+",
+                    "chrI:1221049-1234675:+",
+                    "chrI:1225178-1225538:-",
+                    "chrI:1262353-1266434:-",
+                    "chrI:1264758-1266434:-",
+                    "chrI:1265423-1266434:-",
+                    "chrI:1344034-1344694:-",
+                    "chrI:1379233-1379605:-",
+                    "chrI:1420212-1421310:+",
+                    "chrI:1500689-1501235:-",
+                    "chrI:1514763-1515060:+",
+                    "chrI:1517534-1520272:+",
+                    "chrI:1524299-1524645:+",
+                    "chrI:1550352-1552850:+",
+                    "chrI:1577388-1577870:+",
+                    "chrI:1613478-1613897:+",
+                    "chrI:1623183-1625005:-",
+                    "chrI:1663888-1664406:-",
+                    "chrI:1670970-1671257:-",
+                    "chrI:1674942-1675388:-",
+                    "chrI:1725048-1725440:+",
+                    "chrI:1730818-1731575:+",
+                    "chrI:1748288-1748697:-",
+                    "chrI:1763590-1764898:+",
+                    "chrI:1817302-1817614:+",
+                    "chrI:1838160-1839382:+",
+                    "chrI:1876519-1877725:+",
+                    "chrI:1879505-1882236:+",
+                    "chrI:1902511-1904604:+",
+                    "chrI:1906019-1910470:+",
+                    "chrI:1929522-1929878:+",
+                    "chrI:1953350-1953626:-",
+                    "chrI:1999955-2001196:-",
+                    "chrI:2007324-2008773:-",
+                    "chrI:2027827-2028597:+",
+                    "chrI:2066706-2067241:+",
+                    "chrI:2082816-2084553:+",
+                    "chrI:2090425-2092503:-",
+                    "chrI:2172005-2174986:+",
+                    "chrI:2173755-2174986:+",
+                    "chrI:2201731-2202170:+",
+                    "chrI:2207321-2207840:+",
+                    "chrI:2254176-2254368:+",
+                    "chrI:2258516-2259521:-",
+                    "chrI:2328935-2329393:+",
+                    "chrI:2361567-2365216:+",
+                    "chrI:2364257-2364688:+",
+                    "chrI:2368921-2369653:+",
+                    "chrI:2415843-2417576:+",
+                    "chrI:2454659-2456465:-",
+                    "chrI:2478229-2478802:-",
+                    "chrI:2492609-2492969:+",
+                    "chrI:2611372-2612097:+",
+                    "chrI:2668794-2669213:+",
+                    "chrI:2711122-2712550:+",
+                    "chrI:2936561-2936883:+",
+                    "chrI:3017899-3018601:+",
+                    "chrI:3076565-3077016:-",
+                    "chrI:3142043-3142267:-",
+                    "chrI:3238192-3239299:+",
+                    "chrI:3253864-3254449:+",
+                    "chrI:3343335-3345012:-",
+                    "chrI:3344574-3347017:-",
+                    "chrI:3381860-3384009:-",
+                    "chrI:3388730-3389125:-",
+                    "chrI:3394671-3397574:-",
+                    "chrI:3394671-3399022:-",
+                    "chrI:3394671-3400374:-",
+                    "chrI:3397377-3399022:-",
+                    "chrI:3397767-3399846:-",
+                    "chrI:3444149-3444611:+",
+                    "chrI:3598622-3598977:-",
+                    "chrI:3642861-3643459:-",
+                    "chrI:3749429-3751849:-",
+                    "chrI:3775253-3776608:+"
+                ],
+                "linear_columns": [
+                    "cel_N2_1",
+                    "cel_N2_2",
+                    "cel_N2_3",
+                    "fust1_1",
+                    "fust1_2",
+                    "fust1_3",
+                    "gene_id",
+                    "tx"
+                ],
+                "linear_rows": 5171,
+                "normalized_content": {
+                    "1_references/genome/filtered_gtf/gtf.filtered.gtf": "e115a8813f938acb8244a7f660a747e0",
+                    "1_references/index/star/genomeParameters.txt": "d0cb6137a64ecf5a25fbf092cddcada6",
+                    "3_bsj_detection/combined/all.annotated.gtf": "076c90deb682f4e96ace2f4b92d4679b",
+                    "3_bsj_detection/samples/cel_N2_1/cel_N2_1.annotated.gtf": "442acca5a1526fa1f59b1643f83a8de8",
+                    "3_bsj_detection/samples/cel_N2_2/cel_N2_2.annotated.gtf": "7922fea7b95e4cc7fcbe300c411f3093",
+                    "3_bsj_detection/samples/cel_N2_3/cel_N2_3.annotated.gtf": "c66f0d1111bcc3d155632ed6af9322d2",
+                    "3_bsj_detection/samples/fust1_1/fust1_1.annotated.gtf": "46af92642976e2723ec5b1a87aae0e42",
+                    "3_bsj_detection/samples/fust1_2/fust1_2.annotated.gtf": "30a530618ceba897c3626eca2f542d91",
+                    "3_bsj_detection/samples/fust1_3/fust1_3.annotated.gtf": "9f87b8b900a7cf4003dc997664be988c",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_1.annotated.gtf": "66736cd628c759a9d49ba4e84ad0e2a6",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_2.annotated.gtf": "82f9f41954f2775af29eb9619d9e8249",
+                    "3_bsj_detection/tools/circexplorer2/annotated/cel_N2_3.annotated.gtf": "8f18dfeb3db03221d869393406851744",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_1.annotated.gtf": "f073c036756622d0667014df4851352d",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_2.annotated.gtf": "3cef71960e14d7c97bc6bca782b76d5b",
+                    "3_bsj_detection/tools/circexplorer2/annotated/fust1_3.annotated.gtf": "04f870f6ff2e25659abbb6efa615cfc1",
+                    "5_quantification/psirc/transcriptome/transcriptome.combined.gtf": "7c47965a696f911b0d83cbabac155116",
+                    "5_quantification/psirc/transcriptome/transcriptome.filtered.gtf": "bebf68585a057e0a0486a19dd8afafc9",
+                    "5_quantification/psirc/transcriptome/transcriptome.tx2gene.tsv": "c1d6bc53e95ff160387fb9dc003c2f7b"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T17:00:31.356943332",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,102 @@
+{
+    "normalized counts - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.normalized_counts_filtered.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,8c5c6d50196f6cc5b61965e94e82a7fe"
+                ],
+                "filtered": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.normalized_counts_filtered.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,8c5c6d50196f6cc5b61965e94e82a7fe"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:25:41.290547711",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "normalized counts, strict thresholds": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.normalized_counts_filtered.tsv",
+                    [
+                        "miRNA",
+                        "cel_N2_1",
+                        "cel_N2_2",
+                        "cel_N2_3",
+                        "fust1_1",
+                        "fust1_2",
+                        "fust1_3"
+                    ],
+                    7
+                ]
+            ],
+            [
+                "6f4e2e0881faf0cc046fd88e90c1514f"
+            ]
+        ],
+        "timestamp": "2026-10-17T18:11:13.788275269",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "normalized counts, default thresholds": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.normalized_counts_filtered.tsv",
+                    [
+                        "miRNA",
+                        "cel_N2_1",
+                        "cel_N2_2",
+                        "cel_N2_3",
+                        "fust1_1",
+                        "fust1_2",
+                        "fust1_3"
+                    ],
+                    20
+                ]
+            ],
+            [
+                "8c705596deac53cca23cba32bcce72cf"
+            ],
+            [
+                {
+                    "MIRNA_FILTERING": {
+                        "r-base": "4.6.1"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:01:50.415783964",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

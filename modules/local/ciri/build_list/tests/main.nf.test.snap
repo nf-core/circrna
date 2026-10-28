@@ -1,0 +1,83 @@
+{
+    "cel_N2_1 merged annotation - max_shift 0": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cirifull"
+                    },
+                    "cirifull.txt",
+                    "cf89f07e8a16a918ff2f13c5341af624"
+                ]
+            ],
+            {
+                "BUILD_LIST": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:21:59.51946254",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 merged annotation - max_shift 1": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cirifull"
+                    },
+                    "cirifull.txt",
+                    "cf89f07e8a16a918ff2f13c5341af624"
+                ]
+            ],
+            {
+                "BUILD_LIST": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:22:17.020713039",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 merged annotation - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cirifull"
+                        },
+                        "cirifull.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,305bd95635cdf109e05586eb9d2398d6"
+                ],
+                "list": [
+                    [
+                        {
+                            "id": "cirifull"
+                        },
+                        "cirifull.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,305bd95635cdf109e05586eb9d2398d6"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:22:32.839380471",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

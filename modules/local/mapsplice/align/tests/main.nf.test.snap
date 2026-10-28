@@ -1,0 +1,79 @@
+{
+    "cel_N2_1 paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "fusions_raw.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MAPSPLICE_ALIGN",
+                        "mapsplice",
+                        "2.2.1"
+                    ]
+                ],
+                "raw_fusions": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "fusions_raw.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_mapsplice": [
+                    [
+                        "MAPSPLICE_ALIGN",
+                        "mapsplice",
+                        "2.2.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:58:39.505425685",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 paired-end": {
+        "content": [
+            [
+                [
+                    "MAPSPLICE_ALIGN",
+                    "mapsplice",
+                    "2.2.1"
+                ]
+            ],
+            [
+                "fusions_raw.txt"
+            ],
+            12,
+            [
+                "chrI~chrI\t137354\t141434",
+                "chrI~chrI\t140424\t143157",
+                "chrI~chrI\t252020\t261405",
+                "chrI~chrI\t258547\t223507",
+                "chrI~chrI\t296310\t295213",
+                "chrI~chrI\t395272\t392535",
+                "chrI~chrI\t427850\t425353",
+                "chrI~chrI\t461341\t459286",
+                "chrI~chrI\t549943\t550388",
+                "chrI~chrI\t714382\t713161",
+                "chrI~chrI\t97830\t87577",
+                "chrI~chrI\t97830\t96050"
+            ]
+        ],
+        "timestamp": "2026-10-20T10:58:28.565221837",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

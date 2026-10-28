@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: circexplorer2
+description: Circexplorer2 processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circexplorer2/parse
+  - gawk
+input:
+  - _fasta:
+      type: file
+      description: "Reference genome FASTA input accepted for interface compatibility
+        but unused by this subworkflow. Structure: [ path(fasta) ]"
+  - star_junctions:
+      type: file
+      description: "STAR splice-junction channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - _circexplorer2_index:
+      type: file
+      description: "Collected Circexplorer2 reference paths accepted for interface compatibility
+        but unused here.
+
+
+        Structure: [ val(reference_files) ]"
+output:
+  - bed:
+      type: file
+      description: "Unified Circexplorer2 BED calls parsed from STAR junctions.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

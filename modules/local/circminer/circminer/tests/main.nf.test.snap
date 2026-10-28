@@ -1,0 +1,34 @@
+{
+    "mini paired-end - stub": {
+        "content": [
+            [
+                [
+                    "CIRCMINER_CIRCMINER",
+                    "circminer",
+                    "0.4.2"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:13:09.648157526",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini paired-end calls or writes an empty report": {
+        "content": [
+            [
+                [
+                    "CIRCMINER_CIRCMINER",
+                    "circminer",
+                    "0.4.2"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:12:55.291870057",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,64 @@
+{
+    "cel_N2_1 unmapped reads": {
+        "content": [
+            [
+                [
+                    "FIND_CIRC_ANCHORS",
+                    "find_circ",
+                    "1.2"
+                ]
+            ],
+            "cel_N2_1_anchors.qfa.gz",
+            142912,
+            "f56d3c5df833684b8daae9322946c617"
+        ],
+        "timestamp": "2026-10-19T00:37:49.556623265",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 unmapped reads - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1_anchors.qfa.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        "FIND_CIRC_ANCHORS",
+                        "find_circ",
+                        "1.2"
+                    ]
+                ],
+                "anchors": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1_anchors.qfa.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "versions_find_circ": [
+                    [
+                        "FIND_CIRC_ANCHORS",
+                        "find_circ",
+                        "1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:38:27.235269414",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

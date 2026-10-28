@@ -1,0 +1,90 @@
+{
+    "targetscan and miranda, three batches": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    "9292a7dd6d3bad3834fa9f2fb3ce08a5"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-18T23:35:18.210917693",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "targetscan only": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    "729ef9c831fa78f31806c2fdbf7d338e"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-18T23:36:54.415695688",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "miranda only - stub": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "binding_sites": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:51:03.132921206",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "miranda only": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    "091877f96039c2f1ee7d49daa1165bf7"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-18T23:36:01.016891928",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "targetscan and miranda - stub": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "binding_sites": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:50:53.102137413",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "nanopore reads - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        
+                    ]
+                ],
+                "reference": [
+                    [
+                        
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:48:10.315357916",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

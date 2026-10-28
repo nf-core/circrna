@@ -1,0 +1,152 @@
+nextflow_workflow {
+
+    name "Test Subworkflow STAR2PASS"
+    script "../main.nf"
+    workflow "STAR2PASS"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "star2pass"
+
+    setup {
+        run("STAR_GENOMEGENERATE") {
+            script "modules/nf-core/star/genomegenerate/main.nf"
+            process {
+                """
+                input[0] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+    }
+
+    test("mini - circexplorer2 chimeric output") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = STAR_GENOMEGENERATE.out.index.collect()
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 1
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                workflow.out.junction.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
+                workflow.out.sam.collect { [it[0], file(it[1]).name] }.sort { it[0].id },
+                workflow.out.tab.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
+                workflow.out.bam.collect { [it[0], file(it[1]).name, bam(it[1]).getReadsMD5()] }.sort { it[0].id },
+            ).match()
+        }
+    }
+
+    test("mini - circrna_finder chimeric output") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circrna_finder'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = STAR_GENOMEGENERATE.out.index.collect()
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 1
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                workflow.out.junction.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
+                workflow.out.sam.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
+                workflow.out.tab.collect { [it[0], file(it[1]).name, path(it[1]).readLines().size()] }.sort { it[0].id },
+                workflow.out.bam.collect { [it[0], file(it[1]).name] }.sort { it[0].id }
+            ).match()
+        }
+    }
+
+    test("mini - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [id: 'cel_N2_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [id: 'fust1_1', single_end: false],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = STAR_GENOMEGENERATE.out.index.collect()
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                input[3] = 1
+                input[4] = true
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+    }
+}

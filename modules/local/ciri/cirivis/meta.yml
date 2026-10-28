@@ -1,0 +1,99 @@
+name: ciri_cirivis
+description: Visualize CIRI circular RNA calls
+keywords:
+  - ciri
+  - cirivis
+  - visualization
+tools:
+  - ciri-vis:
+      description: CIRI circular RNA visualization tool
+      homepage: https://sourceforge.net/projects/ciri/
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - "meta":
+        type: map
+        description: Sample metadata
+    - "anno":
+        type: file
+        description: CIRI annotation
+    - "library_length":
+        type: file
+        description: Library length data
+    - "list":
+        type: file
+        description: Optional circle ID list
+  - - "meta2":
+        type: map
+        description: Reference metadata
+    - "fasta":
+        type: file
+        description: Reference genome
+output:
+  fasta:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}/${prefix}.list_circle.fa":
+          type: file
+          description: Optional circular RNA sequences
+  list:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}/${prefix}.list":
+          type: file
+          description: Circle list
+  pdf:
+    - "${prefix}/*.pdf":
+        type: file
+        description: Visualization PDF
+  versions_ciri_vis:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "ciri-vis":
+          type: string
+          description: Software name
+      - "1.4.2":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciri-vis:
+          type: string
+          description: Software name
+      - 1.4.2:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/openjdk:25.0.2--b6e848e158c9ff5b
+      build_id: bd-b6e848e158c9ff5b_1
+      scan_id: sc-44f953c7f53af9bb_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/openjdk:25.0.2--501cbd5ba29e2498
+      build_id: bd-501cbd5ba29e2498_1
+      scan_id: sc-417d48433fb75c35_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/openjdk:25.0.2--cc282901a3280e6e
+      build_id: bd-cc282901a3280e6e_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/a9/a9c1f8c493dc731d72213644a92370b691ae4a6baf70eed5db0a5f6627428b42/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/openjdk:25.0.2--09accc68ba696563
+      build_id: bd-09accc68ba696563_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/5f/5f6d49dd729b528ffd272970024104e1a53309a73c2ff7d3c858fac7dcefd5a6/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri/cirivis/.conda-lock/linux_amd64-bd-b6e848e158c9ff5b_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri/cirivis/.conda-lock/linux_arm64-bd-501cbd5ba29e2498_1.txt

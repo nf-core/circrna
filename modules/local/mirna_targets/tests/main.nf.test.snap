@@ -1,0 +1,89 @@
+{
+    "mini circRNAs - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "batch_1"
+                        },
+                        "batch_1.mirna_targets.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "MIRNA_TARGETS",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MIRNA_TARGETS",
+                        "bedtools",
+                        "2.31.1"
+                    ]
+                ],
+                "results": [
+                    [
+                        {
+                            "id": "batch_1"
+                        },
+                        "batch_1.mirna_targets.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_awk": [
+                    [
+                        "MIRNA_TARGETS",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "versions_bedtools": [
+                    [
+                        "MIRNA_TARGETS",
+                        "bedtools",
+                        "2.31.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:42:56.307708044",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini circRNAs": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "batch_1"
+                    },
+                    "batch_1.mirna_targets.txt",
+                    "f88125895fc1234f6c2dad9072eb12ff"
+                ]
+            ],
+            [
+                [
+                    "MIRNA_TARGETS",
+                    "awk",
+                    "5.4.1"
+                ]
+            ],
+            [
+                [
+                    "MIRNA_TARGETS",
+                    "bedtools",
+                    "2.31.1"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:42:42.719002861",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

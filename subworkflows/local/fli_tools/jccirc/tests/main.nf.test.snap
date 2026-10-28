@@ -1,0 +1,45 @@
+{
+    "two samples - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "logs": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false
+                        },
+                        "fust1_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T11:39:21.502003126",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

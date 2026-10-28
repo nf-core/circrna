@@ -8,8 +8,7 @@ nf_core_version: 4.2.1
 repository_type: pipeline
 template:
   author: Barry Digby, Nico Trummer
-  description: Quantification, miRNA target prediction and differential expression
-    analysis of circular RNAs
+  description: Quantification, miRNA target prediction and differential expression analysis of circular RNAs
   force: false
   is_nfcore: true
   name: circrna

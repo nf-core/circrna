@@ -1,0 +1,74 @@
+{
+    "cel_N2_1 CIRI2 + CIRI-AS + RO2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_merge_circRNA_detail.anno",
+                    "df31cc68235bd5278a3d838aed07b8ab"
+                ]
+            ],
+            [
+                [
+                    "CIRIFULL_MERGE",
+                    "ciri-full",
+                    "2.1.2"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T00:33:15.484439994",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 CIRI2 + CIRI-AS + RO2 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_merge_circRNA_detail.anno:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRIFULL_MERGE",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
+                ],
+                "anno": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_merge_circRNA_detail.anno:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_ciri_full": [
+                    [
+                        "CIRIFULL_MERGE",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:33:47.036413293",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

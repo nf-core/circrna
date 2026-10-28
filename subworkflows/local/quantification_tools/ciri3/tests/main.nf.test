@@ -1,0 +1,104 @@
+nextflow_workflow {
+    name 'Test Workflow CIRI3_QUANT'
+    script '../main.nf'
+    workflow 'CIRI3_QUANT'
+    config './nextflow.config'
+
+    tag 'subworkflows'
+    tag 'subworkflows_local'
+    tag 'ciri3'
+    tag 'quantification_tools_ciri3'
+
+    setup {
+        run('BWA_INDEX') {
+            script 'modules/nf-core/bwa/index/main.nf'
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run('BWA_MEM') {
+            script 'modules/nf-core/bwa/mem/main.nf'
+            process {
+                """
+                input[0] = channel.of(
+                    [[id: 'sample_2', single_end: false], [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]],
+                    [[id: 'sample_10', single_end: false], [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                    ]]
+                )
+                input[1] = BWA_INDEX.out.index.first()
+                input[2] = [ [id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                input[3] = false
+                """
+            }
+        }
+    }
+
+    test('real CIRI3 BSJ and FSJ matrices for each sample') {
+        when {
+            workflow {
+                """
+                def fasta = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                def gtf = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)
+                input[0] = BWA_MEM.out.sam
+                input[1] = channel.value([
+                    [id: 'consensus'],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                ])
+                input[2] = channel.value([[id: 'chrI_mini'], fasta])
+                input[3] = channel.value([[id: 'chrI_mini'], gtf])
+                """
+            }
+        }
+        then {
+            def bsj = path(workflow.out.bsj[0][1]).csv(sep: '\t')
+            def fsj = path(workflow.out.fsj[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bsj[0][0] == [id: 'ciri3_bsj', quantification: 'ciri3'] },
+                { assert workflow.trace.tasks().findAll { task -> task.name.tokenize(':').last().tokenize(' ').first() == 'CIRI3' }.size() == 2 },
+                { assert bsj.columnNames == ['circRNA_ID', 'sample_10', 'sample_2'] },
+                { assert fsj.columnNames == ['circRNA_ID', 'sample_10', 'sample_2'] },
+                { assert bsj.rowCount > 0 },
+                { assert fsj.rowCount == bsj.rowCount },
+                { assert bsj.columns['circRNA_ID'].every { it ==~ /^.+:[0-9]+\|[0-9]+$/ } },
+                { assert bsj.columns['sample_10'].every { it ==~ /[0-9]+/ } },
+                { assert bsj.columns['sample_2'].every { it ==~ /[0-9]+/ } },
+                { assert snapshot(workflow.out.bsj, workflow.out.fsj).match() },
+            )
+        }
+    }
+
+    test('stub CIRI3 quantification') {
+        options '-stub'
+        when {
+            workflow {
+                """
+                def fasta = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)
+                def gtf = file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)
+                input[0] = BWA_MEM.out.sam
+                input[1] = channel.value([
+                    [id: 'consensus'],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)
+                ])
+                input[2] = channel.value([[id: 'chrI_mini'], fasta])
+                input[3] = channel.value([[id: 'chrI_mini'], gtf])
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bsj.size() == 1 },
+                { assert workflow.out.fsj.size() == 1 },
+                { assert snapshot(workflow.out.bsj, workflow.out.fsj).match() },
+            )
+        }
+    }
+}

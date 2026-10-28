@@ -1,0 +1,84 @@
+nextflow_process {
+
+    name "Test Process PSIRC_BSJ"
+    script "../main.nf"
+    process "PSIRC_BSJ"
+
+    tag "modules"
+    tag "modules_local"
+    tag "psirc_bsj"
+
+    setup {
+        run("PSIRC_TRANSCRIPTOME") {
+            script "modules/local/psirc/transcriptome/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                input[1] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("PSIRC_INDEX") {
+            script "modules/local/psirc/index/main.nf"
+            process {
+                """
+                input[0] = PSIRC_TRANSCRIPTOME.out.transcriptome
+                """
+            }
+        }
+    }
+
+    test("cel_N2_1 paired-end") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.versions_psirc,
+                    file(process.out.bed[0][1]).name,
+                    file(process.out.bed[0][1]).size()
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 paired-end - stub") {
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'cel_N2_1', single_end: false],
+                    [
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = PSIRC_TRANSCRIPTOME.out.transcriptome.join(PSIRC_INDEX.out.index.map { meta, a, b -> [meta, [a, b]] })
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

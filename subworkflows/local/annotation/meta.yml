@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: annotation
+description: Intersect candidate regions with annotation databases and emit BED12,
+  GTF, and extracted FASTA annotations.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - gawk
+  - bedtools/intersect
+  - circexplorer2/annotate
+  - bedtools/getfasta
+  - annotation/bed2gtf
+input:
+  - regions:
+      type: file
+      description: "Candidate circular RNA regions in BED format.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - ch_annotation:
+      type: file
+      description: "Annotation database BED channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - fasta:
+      type: file
+      description: "FASTA sequences extracted for annotated candidate regions.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - circexplorer2_index:
+      type: file
+      description: "Circexplorer2 reference file(s) used by the annotation module. Structure:
+        [ val(reference_files) ]"
+  - exons_only:
+      type: value
+      description: "Whether generated annotations should retain exons only. Structure:
+        [ val(exons_only) ]"
+output:
+  - bed12:
+      type: file
+      description: "Annotated candidate regions in BED12 format.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - gtf:
+      type: file
+      description: "Annotated candidate regions converted to GTF.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - fasta:
+      type: file
+      description: "FASTA sequences extracted for annotated candidate regions.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

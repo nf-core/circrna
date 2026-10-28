@@ -1,0 +1,69 @@
+{
+    "mini - circtools detect output": {
+        "content": [
+            {
+                "UNIFY": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            },
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "strandedness": "auto"
+                    },
+                    "cel_N2_1.bed"
+                ]
+            ],
+            31,
+            [
+                7
+            ],
+            "384e1f19c1feae9a494258a77694a64b"
+        ],
+        "timestamp": "2026-10-20T15:21:27.553762278",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini - circtools detect output - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,862ebafbb9d1ee769816ef6493827971"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,862ebafbb9d1ee769816ef6493827971"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:21:42.079682809",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

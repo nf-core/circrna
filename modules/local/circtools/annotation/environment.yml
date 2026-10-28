@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::gtfparse=3.0.4
+  - conda-forge::polars=2.0.0

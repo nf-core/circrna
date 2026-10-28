@@ -1,0 +1,78 @@
+name: build_list
+description: Build a list of circRNA IDs from CIRI annotations
+keywords:
+  - ciri
+  - list
+  - circular-rna
+tools:
+  - python:
+      description: Python programming language
+      homepage: https://www.python.org/
+      licence:
+        - PSF-2.0
+  - polars:
+      description: Fast DataFrame library
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - ciri_annotation:
+        type: file
+        description: CIRI annotation
+    - consensus:
+        type: file
+        description: Consensus calls
+  - max_shift:
+      type: integer
+      description: Maximum allowed coordinate shift
+output:
+  list:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}.txt":
+          type: file
+          description: Circular RNA identifier list
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/polars:2.0.0--2895a858bbcef9a5
+      build_id: bd-2895a858bbcef9a5_1
+      scan_id: sc-7b7dc04f9c520659_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/polars:2.0.0--ac15a3c2133b6908
+      build_id: bd-ac15a3c2133b6908_1
+      scan_id: sc-34629db6cfb0a8ef_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/polars:2.0.0--00bfc0230aa5be05
+      build_id: bd-00bfc0230aa5be05_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/bc/bc8e5ab4ba32d58b69d5395ae4b39f0fde2467e5a81c8a6895d664309bb27498/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/polars:2.0.0--d8bf8bff24021c5e
+      build_id: bd-d8bf8bff24021c5e_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3a/3a7e1dee1f22bdd66420260c717703354f09e42b1e7dae65b99c5428974aa69a/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri/build_list/.conda-lock/linux_amd64-bd-2895a858bbcef9a5_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri/build_list/.conda-lock/linux_arm64-bd-ac15a3c2133b6908_1.txt

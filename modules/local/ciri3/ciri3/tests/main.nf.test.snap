@@ -1,0 +1,203 @@
+{
+    "stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.BSJ_Matrix:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.FSJ_Matrix:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ],
+                "bsj_matrix": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.BSJ_Matrix:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fsj_matrix": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.FSJ_Matrix:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "txt": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_ciri3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:21:00.636572844",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "user circRNA quantification mode with two circRNAs": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.BSJ_Matrix:md5,7d64ff9582d4b8157bbb51c2cbcedffa"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.FSJ_Matrix:md5,9823ce738931904ea1461c2c2e421864"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ],
+                "bsj_matrix": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.BSJ_Matrix:md5,7d64ff9582d4b8157bbb51c2cbcedffa"
+                    ]
+                ],
+                "fsj_matrix": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt.FSJ_Matrix:md5,9823ce738931904ea1461c2c2e421864"
+                    ]
+                ],
+                "txt": [
+                    
+                ],
+                "versions_ciri3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:20:45.714246255",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "detection mode": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt:md5,a96926210a63fdbc682d1882bc5ef1a3"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ],
+                "bsj_matrix": [
+                    
+                ],
+                "fsj_matrix": [
+                    
+                ],
+                "txt": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.ciri3.txt:md5,a96926210a63fdbc682d1882bc5ef1a3"
+                    ]
+                ],
+                "versions_ciri3": [
+                    [
+                        "CIRI3_CIRI3",
+                        "ciri3",
+                        "3.0.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:20:28.509956529",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

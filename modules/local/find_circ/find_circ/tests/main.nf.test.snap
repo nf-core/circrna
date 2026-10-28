@@ -1,0 +1,171 @@
+{
+    "cel_N2_1 anchors - forward strandedness": {
+        "content": [
+            [
+                [
+                    "FIND_CIRC",
+                    "bowtie2",
+                    ""
+                ]
+            ],
+            [
+                [
+                    "FIND_CIRC",
+                    "find_circ",
+                    "1.2"
+                ]
+            ],
+            [
+                "cel_N2_1.sites.bed"
+            ],
+            426,
+            "f6d9971f2741384aa01ab8868e2426ab",
+            [
+                "cel_N2_1.sites.reads"
+            ],
+            [
+                "cel_N2_1.sites.log"
+            ],
+            26916
+        ],
+        "timestamp": "2026-10-19T00:41:01.040142151",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 anchors - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.reads:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        "FIND_CIRC",
+                        "bowtie2",
+                        ""
+                    ]
+                ],
+                "4": [
+                    [
+                        "FIND_CIRC",
+                        "find_circ",
+                        "1.2"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "log": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "reads": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1.sites.reads:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_bowtie2": [
+                    [
+                        "FIND_CIRC",
+                        "bowtie2",
+                        ""
+                    ]
+                ],
+                "versions_find_circ": [
+                    [
+                        "FIND_CIRC",
+                        "find_circ",
+                        "1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:41:43.66452729",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 anchors - auto strandedness": {
+        "content": [
+            [
+                [
+                    "FIND_CIRC",
+                    "bowtie2",
+                    ""
+                ]
+            ],
+            [
+                [
+                    "FIND_CIRC",
+                    "find_circ",
+                    "1.2"
+                ]
+            ],
+            [
+                "cel_N2_1.sites.bed"
+            ],
+            [
+                "cel_N2_1.sites.reads"
+            ],
+            [
+                "cel_N2_1.sites.log"
+            ],
+            426,
+            "15bded2419b44b3af0db4ac5c3226d9a",
+            26916
+        ],
+        "timestamp": "2026-10-19T00:39:44.533656389",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

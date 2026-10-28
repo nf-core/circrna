@@ -1,0 +1,228 @@
+{
+    "mini - paired-end with mate junctions": {
+        "content": [
+            [
+                [
+                    "CIRCTOOLS_DETECT",
+                    "circtools",
+                    "2.0.4"
+                ]
+            ],
+            [
+                "cel_N2_1_reads.junctions"
+            ],
+            [
+                "cel_N2_1_coordinates.tsv"
+            ],
+            [
+                "cel_N2_1_counts.tsv"
+            ],
+            164,
+            "bfde5b03a7069db354bda4d58a8cf7f8",
+            "8fc5175c2b5fed87ac8f411c56456908"
+        ],
+        "timestamp": "2026-10-20T10:22:25.755735456",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini - single-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRCTOOLS_DETECT",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ],
+                "coordinates": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "reads": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": true,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_circtools": [
+                    [
+                        "CIRCTOOLS_DETECT",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:22:58.866830719",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini - single-end": {
+        "content": [
+            [
+                [
+                    "CIRCTOOLS_DETECT",
+                    "circtools",
+                    "2.0.4"
+                ]
+            ],
+            [
+                "cel_N2_1_reads.junctions"
+            ],
+            [
+                "cel_N2_1_coordinates.tsv"
+            ],
+            [
+                "cel_N2_1_counts.tsv"
+            ],
+            240,
+            "a7749bc6fe8e67d2688dc6716b834b70",
+            "6fc94b1b88cef1627c7dc4e4c4025933"
+        ],
+        "timestamp": "2026-10-20T10:22:44.57887876",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini - paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRCTOOLS_DETECT",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ],
+                "coordinates": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_coordinates.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "counts": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "reads": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "strandedness": "auto"
+                        },
+                        "cel_N2_1_reads.junctions:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_circtools": [
+                    [
+                        "CIRCTOOLS_DETECT",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:23:13.10722947",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

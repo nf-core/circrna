@@ -1,0 +1,72 @@
+name: join_samples
+description: Join per-sample matrices into a single matrix.
+keywords:
+  - matrix
+  - quantification
+  - polars
+tools:
+  - polars:
+      description: Fast DataFrame library for Python.
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Matrix metadata.
+    - samples:
+        type: list
+        description: Sample names matching matrix inputs.
+    - matrices:
+        type: file
+        description: Per-sample matrices.
+        pattern: "*.{tsv,csv}"
+  - metacols:
+      type: string
+      description: Comma-separated matrix metadata columns.
+output:
+  joined:
+    - - "meta":
+          type: map
+          description: Matrix metadata.
+      - "${meta.id}.joined.tsv":
+          type: file
+          description: Joined sample matrix.
+          pattern: "*.joined.tsv"
+  versions:
+    - versions.yml:
+        type: file
+        description: YAML file containing versions of tools used in the module
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/join_samples:f5ee4ff1280edbba
+      build_id: bd-f5ee4ff1280edbba_1
+      scan_id: sc-3d16d1e6b7692249_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/join_samples:93dfeaf222b852c3
+      build_id: bd-93dfeaf222b852c3_1
+      scan_id: sc-a475ab3f08cc8d09_1
+  singularity:
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/join_samples:c449aee765e1655d
+      build_id: bd-c449aee765e1655d_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/41/41aaf212c3b64a46e9f955835c37d7357b9ace5b63323df5963a29fd3984302f/data
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/join_samples:3113f253f3d78428
+      build_id: bd-3113f253f3d78428_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/0a/0a88e97bf9947f619334029862edf5b0a560196105f003aa9d0d5905f58d2a40/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/matrix/join_samples/.conda-lock/linux_amd64-bd-f5ee4ff1280edbba_1.txt
+    linux/arm64:
+      lock_file: modules/local/matrix/join_samples/.conda-lock/linux_arm64-bd-93dfeaf222b852c3_1.txt

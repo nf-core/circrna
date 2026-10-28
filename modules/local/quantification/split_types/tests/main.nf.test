@@ -1,0 +1,70 @@
+nextflow_process {
+
+    name "Test Process SPLIT_TYPES"
+    script "../main.nf"
+    process "SPLIT_TYPES"
+
+    tag "modules"
+    tag "modules_local"
+    tag "quantification"
+    tag "quantification_split_types"
+
+    test("psirc transcript counts") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'tx_counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.tx_counts.csv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def linear = path(process.out.linear[0][1]).csv(sep: '\t')
+            def circular = path(process.out.circular[0][1]).csv(sep: '\t')
+            def input = path(process.out.linear[0][1]).readLines().size() + path(process.out.circular[0][1]).readLines().size() - 2
+            assertAll(
+                { assert process.success },
+                { assert process.out.versions_gawk[0] == ['SPLIT_TYPES', 'gawk', '5.4.1'] },
+                { assert linear.rowCount + circular.rowCount == input },
+                { assert circular.rowCount > 0 },
+                { assert circular.columns['tx'].every { it ==~ /^.+:[0-9]+-[0-9]+(:[+-])?/ } },
+                { assert linear.columns['tx'].every { !(it ==~ /^.+:[0-9]+-[0-9]+(:[+-])?/) } },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("psirc transcript counts - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'tx_counts', quantification:'psirc' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.tx_counts.csv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.versions_gawk[0] == ['SPLIT_TYPES', 'gawk', '5.4.1'] },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

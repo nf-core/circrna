@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: ciriquant
+description: Ciriquant processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - ciriquant
+  - pygtftk/tabulate
+  - gawk
+  - join/samples
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - ch_bed:
+      type: file
+      description: "Circular RNA calls in BED format.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - bwa_index:
+      type: file
+      description: "BWA index channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - hisat2_index:
+      type: file
+      description: "HISAT2 index channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+output:
+  - gene_tpm:
+      type: file
+      description: "Joined gene-level TPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - circ_cpm:
+      type: file
+      description: "Joined circular RNA CPM matrix.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - raw:
+      type: file
+      description: "Per-sample raw CIRIquant GTF result.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - stringtie:
+      type: file
+      description: "Per-sample StringTie gene GTF results.
+
+
+        Structure: [ val(meta), path(file) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

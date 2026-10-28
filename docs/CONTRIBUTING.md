@@ -121,7 +121,7 @@ Please also refer to the [pipeline-specific contribution guidelines](#pipeline-s
 
 - [ ] Define the corresponding [input channel](#channel-naming-schemes) into your new process from the expected previous process channel.
 - [ ] Install a module with nf-core/tools, or write a local module (see [default processes resource requirements](#default-processes-resource-requirements)), and add it to the target `<workflow>.nf`.
-- [ ] Define the output channel if needed. Mix the version output channel into `ch_versions` and relevant files into `ch_multiqc`.
+- [ ] Define the output channel if needed and mix relevant report files into `ch_multiqc`. Publish software versions to the `versions` topic instead of passing version channels through subworkflows.
 - [ ] Add new or updated parameters to `nextflow.config` with a [default value](#default-parameter-values).
 - [ ] Add new or updated parameters and relevant help text to `nextflow_schema.json` with [nf-core/tools](#default-parameter-values).
 - [ ] Add validation for relevant parameters to the pipeline utilisation section of `utils_nfcore_\_pipeline/main.nf` subworkflow.
@@ -181,5 +181,61 @@ nf-core pipelines bump-version --nextflow . <min_nf_version>
 If you update images or graphics, follow the nf-core [style guidelines](https://nf-co.re/docs/community/brand/workflow-schematics).
 
 ## Pipeline specific contribution guidelines
+
+### Testing conventions
+
+Every local module and subworkflow has its own nf-test, in addition to the pipeline test in `tests/default.nf.test`.
+Write tests in nf-test only and do not add test-only processes for assertions.
+
+CI runs three nf-test categories, selected by tag:
+
+- `modules_local` for local module tests.
+- `subworkflows_local` for local subworkflow tests.
+- `pipeline` for the end-to-end tests in `tests/`.
+
+Follow these rules when you add a module or subworkflow:
+
+- Put the test in `modules/local/<path>/tests/main.nf.test` or `subworkflows/local/<name>/tests/main.nf.test`.
+  Nested subworkflows live in nested folders, for example `subworkflows/local/detection_tools/ciri2/main.nf`.
+- Use `script "../main.nf"` together with `process "<NAME>"` or `workflow "<NAME>"`.
+- Tag module tests with `"modules"` and `"modules_local"`, and subworkflow tests with `"subworkflows"` and `"subworkflows_local"`.
+  Add the path of the module (with `/` replaced by `_`) or the name of the subworkflow as a further tag.
+  Further tags can overlap, so a bare `--tag circtools` can select both module and subworkflow tests.
+- Write a real test, `test("<case>")`, and a stub test, `test("<case> - stub")`.
+  The stub test uses `options '-stub'` and snapshots `process.out` or `workflow.out`.
+  Every local module needs a `stub:` block.
+- Keep local subworkflows, `CIRCRNA`, `MAJORITY_VOTE` and `FAIL_ON_EMPTY` free of `params`.
+  Only `NFCORE_CIRCRNA` in `main.nf` reads them, parses the comma-separated tool lists with `parseToolList()` and passes typed values down.
+  Tests set inputs with `input[N] = ...`.
+  Optional files (prebuilt indices, blacklist, mature, miRNA expression) are passed as a plain value (`path` or `[meta, path]`) or `null`.
+- Add a `params {}` block to a test only where `conf/modules.config` reads a parameter in `ext.args`, `ext.when` or `publishDir`.
+  Selectors in `conf/modules.config` use the form `(.*:)?SUBWORKFLOW:PROCESS`, so they also match when the subworkflow is the entry workflow of a test.
+- Local modules read only `ext.args`, `ext.argsN`, `ext.prefix`, `ext.prefixN` and `ext.when`.
+  Any other value that changes the module's behaviour (for example an output suffix) is a `val` process input, so tests pass it with `input[N] = ...`.
+- Publish software versions to `topic: versions`, using either named `(task.process, tool, version)` tuple outputs or a `versions.yml` file written by a native Python/R template, following the corresponding nf-core module pattern. MultiQC must not publish to that topic because its inputs depend on the collected versions.
+- Scaffold new local modules with `nf-core modules create <module> --dir .`. Describe them in `meta.yml` and declare software dependencies in `environment.yml`. Generate containers and architecture-specific locks with `nf-core modules containers create <module> --dir .`, then regenerate the pipeline configs with `nf-core pipelines containers create-configs --dir .`.
+  Dependency-free Nextflow `exec:` processes do not need a software environment.
+- Use a `tests/nextflow.config` next to a test only for settings specific to the test, such as `cpus = 1` or a smaller STAR index.
+- Snapshot only stable content: software-version tuple outputs, file names, row counts, the parsed content of deterministic tables (`path(f).csv(sep: '\t')`), and read counts or `bam(f).getReadsMD5()` for alignments.
+  For files that change between runs, use `path(f).readLines().size()` or `.text.contains(...)`.
+  Use the md5 of a whole file only if two consecutive runs give identical results.
+- Never edit snapshots by hand.
+  Regenerate them with `nf-test test --update-snapshot <path>`.
+- A test file is done once it passes twice in a row without `--update-snapshot`.
+
+Test inputs come from the `circrna` branch of [nf-core/test-datasets](https://github.com/nf-core/test-datasets/tree/circrna) (until the new files are merged there, from the fork [nictru/test-datasets](https://github.com/nictru/test-datasets/tree/circrna) pinned in `tests/nextflow.config`).
+Reference them through `params.pipelines_testdata_base_path` with `checkIfExists: true`; the files are documented in the README of that branch.
+Build cheap indices for the mini reference in `setup {}` with the modules in `modules/nf-core`.
+Do not commit test data to this repository.
+
+Run one category with, for example:
+
+```bash
+nf-test test --tag modules_local --profile=+docker
+nf-test test --tag subworkflows_local --profile=+docker
+nf-test test --tag pipeline --profile=+docker
+```
+
+Use `--profile=+singularity` or `--profile=+apptainer` if docker is not available.
 
 <!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->
