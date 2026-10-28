@@ -1,0 +1,117 @@
+{
+    "targetscan and miranda, min_tools 2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.majority.tsv",
+                    "1b17dc3417634855e13704cea98ae187"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    20
+                ]
+            ],
+            {
+                "MAJORITY_VOTE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T16:50:42.166606375",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "targetscan and miranda, min_tools 1": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.majority.tsv",
+                    "25529c377206c7e25c7e8f8e4314af7b"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv",
+                    20
+                ]
+            ],
+            {
+                "MAJORITY_VOTE": {
+                    "python": "3.14.7",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T16:50:26.521927534",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "targetscan and miranda, min_tools 1 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.majority.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,74704a2ec736e705e8f114dc6576bb20"
+                ],
+                "targets": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.targets.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "tsv": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.majority.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,74704a2ec736e705e8f114dc6576bb20"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:28:32.540754369",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

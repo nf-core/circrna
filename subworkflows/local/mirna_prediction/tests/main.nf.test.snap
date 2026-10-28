@@ -1,0 +1,114 @@
+{
+    "with miRNA expression, 101 miRNAs are split into two correlation batches": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv"
+                ]
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:27:01.631245737",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "with miRNA expression, without quantification rds": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv"
+                ]
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:27:26.084782914",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "without miRNA expression - stub": {
+        "content": [
+            [
+                
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:27:36.227695073",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "with miRNA expression - stub": {
+        "content": [
+            [
+                
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:27:48.619081939",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "without miRNA expression": {
+        "content": [
+            "729ef9c831fa78f31806c2fdbf7d338e",
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv"
+                ]
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:26:01.57747059",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "with miRNA expression, filtered miRNAs, correlations disabled": {
+        "content": [
+            "8aa89fec72452ab756593f428d9058b6",
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.targets.tsv"
+                ]
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-20T12:26:25.920574838",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,78 @@
+{
+    "cel_N2_1 paired-end - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "find_circ"
+                        },
+                        "cel_N2_1.find_circ.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "find_circ"
+                        },
+                        "cel_N2_1.find_circ.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T23:19:50.909486997"
+    },
+    "cel_N2_1 paired-end": {
+        "content": [
+            [
+                "cel_N2_1.find_circ.bed"
+            ],
+            30,
+            [
+                "chrI\t100178\t100538\t2\t-",
+                "chrI\t128334\t442021\t1\t+",
+                "chrI\t137353\t141434\t3\t-",
+                "chrI\t139758\t143157\t1\t-",
+                "chrI\t140423\t143157\t3\t-",
+                "chrI\t142581\t143157\t1\t-",
+                "chrI\t15805\t22588\t3\t-",
+                "chrI\t231083\t231373\t1\t+",
+                "chrI\t252019\t261405\t41\t-",
+                "chrI\t295212\t296310\t5\t+",
+                "chrI\t302229\t308719\t2\t-",
+                "chrI\t358084\t360061\t1\t+",
+                "chrI\t37619\t38107\t1\t+",
+                "chrI\t392534\t395272\t2\t+",
+                "chrI\t399299\t399645\t3\t+",
+                "chrI\t41228\t45899\t1\t-",
+                "chrI\t425352\t427850\t9\t+",
+                "chrI\t452388\t452870\t1\t+",
+                "chrI\t459285\t461341\t1\t+",
+                "chrI\t501345\t501631\t1\t-",
+                "chrI\t521959\t523476\t1\t-",
+                "chrI\t549942\t550388\t8\t-",
+                "chrI\t638590\t639898\t1\t+",
+                "chrI\t668255\t670455\t5\t+",
+                "chrI\t692302\t692614\t19\t+",
+                "chrI\t713160\t714382\t3\t+",
+                "chrI\t751519\t752725\t1\t+",
+                "chrI\t87576\t97830\t2\t+",
+                "chrI\t96049\t111281\t1\t+",
+                "chrI\t96049\t97830\t4\t+"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T23:18:54.488566949"
+    }
+}

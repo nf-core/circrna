@@ -1,0 +1,39 @@
+nextflow_workflow {
+
+    name "Test Workflow LONGREAD"
+    script "../main.nf"
+    workflow "LONGREAD"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "longread"
+
+    // TODO(longread real test): blocked by missing nanopore test data
+    test("nanopore reads - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'nanopore_1', single_end:true ],
+                    file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true)
+                ])
+                input[1] = 'hg38'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().any { task -> task.name.contains('CIRCTOOLS_NANOPORE') } },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

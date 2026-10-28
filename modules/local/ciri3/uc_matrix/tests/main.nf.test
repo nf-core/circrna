@@ -1,0 +1,224 @@
+nextflow_process {
+    name 'Test Process CIRI3_UC_MATRIX'
+    script '../main.nf'
+    process 'CIRI3_UC_MATRIX'
+
+    tag 'modules'
+    tag 'modules_local'
+    tag 'ciri3'
+    tag 'ciri3_uc_matrix'
+
+    test('zero-fills the complete candidate set and retains sample ID') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\nchr1\\t30\\t40\\nchr2\\t50\\t70\\n'
+                def bsj = file("$outputDir/input/sample.ciri3.txt.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\t7\\n'
+                def fsj = file("$outputDir/input/sample.ciri3.txt.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\nchr1\\t10\\t20\\t19\\nchr2\\t50\\t70\\t3\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'sample_9'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            def bsj = path(process.out.bsj[0][1]).readLines()
+            def fsj = path(process.out.fsj[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert process.out.bsj[0][0].id == 'sample_9' },
+                { assert bsj == ['circRNA_ID\tcount', 'chr1:10|20\t7', 'chr1:30|40\t0', 'chr2:50|70\t0'] },
+                { assert fsj == ['circRNA_ID\tcount', 'chr1:10|20\t19', 'chr1:30|40\t0', 'chr2:50|70\t3'] },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_MATRIX.python == '3.14.7' },
+                { assert path(process.out.versions[0]).yaml.CIRI3_UC_MATRIX.polars == '2.0.0' }
+            )
+        }
+    }
+
+    test('header-only matrices zero-fill candidates in input order and retain zero counts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr2\\t50\\t70\\nchr1\\t30\\t40\\nchr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/empty.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\n'
+                def fsj = file("$outputDir/input/empty.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'empty_sample'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            def bsj = path(process.out.bsj[0][1]).readLines()
+            def fsj = path(process.out.fsj[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert bsj == ['circRNA_ID\tcount', 'chr2:50|70\t0', 'chr1:30|40\t0', 'chr1:10|20\t0'] },
+                { assert fsj == ['circRNA_ID\tcount', 'chr2:50|70\t0', 'chr1:30|40\t0', 'chr1:10|20\t0'] }
+            )
+        }
+    }
+
+    test('rejects duplicate matrix coordinates') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/duplicate.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\t0\\nchr1\\t10\\t20\\t4\\n'
+                def fsj = file("$outputDir/input/duplicate.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'duplicate'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('duplicate matrix coordinate') }
+            )
+        }
+    }
+
+    test('rejects matrix coordinates outside the consensus') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/outside.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr2\\t10\\t20\\t1\\n'
+                def fsj = file("$outputDir/input/outside.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'outside'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('outside the requested consensus') }
+            )
+        }
+    }
+
+    test('rejects negative matrix counts') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/negative.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\t-1\\n'
+                def fsj = file("$outputDir/input/negative.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'negative'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('count must not be negative') }
+            )
+        }
+    }
+
+    test('rejects malformed count instead of treating it as absent') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/bad.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\nchr1\\t10\\t20\\tNaN\\n'
+                def fsj = file("$outputDir/input/bad.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'bad_count'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('coordinates/count must be integers') }
+            )
+        }
+    }
+
+    test('rejects missing or malformed matrix header') {
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/missing.BSJ_Matrix")
+                bsj.text = ''
+                def fsj = file("$outputDir/input/missing.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'missing_matrix'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert (process.stdout + process.stderr).join('\n').contains('expected header circRNA') }
+            )
+        }
+    }
+
+    test('stub') {
+        options '-stub'
+        when {
+            process {
+                """
+                def inputDir = file("$outputDir/input")
+                inputDir.mkdirs()
+                def circ = file("$outputDir/input/consensus.list")
+                circ.text = 'chr1\\t10\\t20\\n'
+                def bsj = file("$outputDir/input/sample.BSJ_Matrix")
+                bsj.text = 'circRNA\\tBSJ\\n'
+                def fsj = file("$outputDir/input/sample.FSJ_Matrix")
+                fsj.text = 'circRNA\\tFSJ\\n'
+                input[0] = [[id: 'consensus'], circ]
+                input[1] = [[id: 'sample_9'], bsj, fsj]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert process.out.bsj.size() == 1 },
+                { assert process.out.fsj.size() == 1 }
+            )
+        }
+    }
+}

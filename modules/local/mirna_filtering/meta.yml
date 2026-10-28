@@ -1,0 +1,78 @@
+name: mirna_filtering
+description: Filter lowly expressed miRNAs from a normalised count matrix.
+keywords:
+  - mirna
+  - filtering
+  - expression
+tools:
+  - r-base:
+      description: R statistical computing environment.
+      homepage: https://www.r-project.org/
+      licence:
+        - GPL-2.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Count metadata.
+    - normalized_counts:
+        type: file
+        description: Normalised miRNA count matrix.
+        pattern: "*.{tsv,txt}"
+  - mirna_min_sample_percentage:
+      type: float
+      description: Minimum fraction of samples expressing a miRNA.
+  - mirna_min_reads:
+      type: integer
+      description: Minimum reads required in a sample.
+output:
+  filtered:
+    - - "meta":
+          type: map
+          description: Count metadata.
+      - "${meta.id}.normalized_counts_filtered.tsv":
+          type: file
+          description: Filtered normalised count matrix.
+          pattern: "*.normalized_counts_filtered.tsv"
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/mirna_filtering:6d818378228715c0
+      build_id: bd-6d818378228715c0_1
+      scan_id: sc-ab091a0ce648240c_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/mirna_filtering:2620b723f898c330
+      build_id: bd-2620b723f898c330_1
+      scan_id: sc-54f8abb2c380f115_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/mirna_filtering:6d8c3be7a3faca0b
+      build_id: bd-6d8c3be7a3faca0b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ed/ed8bfdd256acb1cb60f9b1252aafd0dd726fd61da2b62669e78741b744ed7403/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/mirna_filtering:13d3c9274f53dae8
+      build_id: bd-13d3c9274f53dae8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/7d/7d0c186549ef832e7a958e4b8a143f59f67cc0cb3bdc9038437d62dceda20570/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/mirna_filtering/.conda-lock/linux_amd64-bd-6d818378228715c0_1.txt
+    linux/arm64:
+      lock_file: modules/local/mirna_filtering/.conda-lock/linux_arm64-bd-2620b723f898c330_1.txt

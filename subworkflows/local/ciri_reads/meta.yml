@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: ciri_reads
+description: Infer a per-sample target read length and trim paired reads for CIRI-full
+  input.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - seqkit/fx2tab
+  - ciri/readlength
+  - fastp
+input:
+  - ch_reads:
+      type: file
+      description: "Per-sample sequencing reads, paired-end file lists where applicable.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+output:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

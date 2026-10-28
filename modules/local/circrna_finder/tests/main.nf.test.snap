@@ -1,0 +1,111 @@
+{
+    "mini - STAR 2-pass output": {
+        "content": [
+            [
+                [
+                    "CIRCRNA_FINDER",
+                    "awk",
+                    "5.4.1"
+                ]
+            ],
+            [
+                [
+                    "CIRCRNA_FINDER",
+                    "cat",
+                    "9.12"
+                ]
+            ],
+            [
+                [
+                    "CIRCRNA_FINDER",
+                    "circRNA_finder",
+                    "1.2"
+                ]
+            ],
+            [
+                "cel_N2_1.filteredJunctions.bed"
+            ],
+            59,
+            [
+                6
+            ],
+            "97cfd0ce291b402c486e06fd6927dd6e"
+        ],
+        "timestamp": "2026-10-19T00:13:48.912504741",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini - STAR 2-pass output - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.filteredJunctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "cat",
+                        "9.12"
+                    ]
+                ],
+                "3": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "circRNA_finder",
+                        "1.2"
+                    ]
+                ],
+                "results": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.filteredJunctions.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_awk": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "awk",
+                        "5.4.1"
+                    ]
+                ],
+                "versions_cat": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "cat",
+                        "9.12"
+                    ]
+                ],
+                "versions_circrna_finder": [
+                    [
+                        "CIRCRNA_FINDER",
+                        "circRNA_finder",
+                        "1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:14:10.526309841",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

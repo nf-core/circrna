@@ -1,0 +1,69 @@
+nextflow_workflow {
+
+    name "Test Workflow CIRI2"
+    script "../main.nf"
+    workflow "CIRI2"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "ciri2"
+
+    test("cel_N2_1 shared BWA alignment") {
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false, target_length: 147], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            def bed = path(workflow.out.bed[0][1]).readLines()
+            def txt = path(workflow.out.ciri2_txt[0][1]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert bed.size() > 0 },
+                { assert txt.size() > 1 },
+                { assert workflow.out.ciri2_sam.collect { file(it[1]).name } == ['cel_N2_1.ciri2.sam'] },
+                { assert workflow.out.ciri2_sam[0][0].target_length == 147 },
+                { assert snapshot(
+                    bed.sort(),
+                    txt.size(),
+                    workflow.out.ciri2_sam.collect { meta, sam -> [meta, file(sam).name] },
+                ).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 shared BWA alignment - stub") {
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false, target_length: 147], file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.ciri2.sam', checkIfExists: true)])
+                input[1] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[2] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.ciri2_sam.size() == 1 },
+                { assert workflow.out.ciri2_sam[0][0].target_length == 147 },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

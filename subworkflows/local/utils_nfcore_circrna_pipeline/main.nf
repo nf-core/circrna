@@ -38,7 +38,6 @@ workflow PIPELINE_INITIALISATION {
 
     main:
 
-    ch_versions = channel.empty()
 
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
@@ -122,15 +121,10 @@ workflow PIPELINE_INITIALISATION {
         .map { samplesheet ->
             validateInputSamplesheet(samplesheet)
         }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
         .set { ch_samplesheet }
 
     emit:
     samplesheet = ch_samplesheet
-    versions    = ch_versions
 }
 
 /*
@@ -170,7 +164,6 @@ workflow PIPELINE_COMPLETION {
         }
 
         completionSummary(monochrome_logs)
-
     }
 
     workflow.onError {
@@ -184,10 +177,77 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
+// Parse a comma separated list of tools into a lower-cased list without empty entries
+//
+def parseToolList(String tools) {
+    return tools.split(',').collect { tool -> tool.trim().toLowerCase() }.findAll { tool -> tool }
+}
+
+// Facts about BSJ callers belong here so index preparation, dispatch and validation
+// cannot silently drift apart.
+def bsjToolProperties() {
+    return [
+        ciri2           : [reads: true,  star: false],
+        ciri3           : [reads: true,  star: false],
+        circminer       : [reads: true,  star: false],
+        circexplorer2   : [reads: false, star: true],
+        circrna_finder  : [reads: false, star: true],
+        circtools       : [reads: true,  star: true],
+        find_circ       : [reads: true,  star: false],
+        mapsplice       : [reads: false, star: true],
+        psirc           : [reads: false, star: false],
+        segemehl        : [reads: true,  star: false],
+    ]
+}
+
+def starBasedTools(List tools) {
+    def properties = bsjToolProperties()
+    return tools.findAll { tool -> properties[tool]?.star }
+}
+
+def readCarryingTools(List tools) {
+    def properties = bsjToolProperties()
+    return tools.findAll { tool -> properties[tool]?.reads }
+}
+
+//
 // Check and validate pipeline parameters
 //
 def validateInputParameters() {
     genomeExistsError()
+
+    def fli_tools = parseToolList(params.fli_tools)
+    def bsj_tools = parseToolList(params.tools)
+    def quantification_tools = parseToolList(params.quantification_tools)
+
+    if (!params.longread && quantification_tools.size() == 0) {
+        error('No tools selected for circRNA quantification.')
+    }
+
+    if (fli_tools.contains('psirc') && !bsj_tools.contains('psirc')) {
+        error("Please check input parameters -> If psirc is selected for FLI detection, it must also be selected for BSJ detection.")
+    }
+
+    if (fli_tools.contains('cirifull') && !bsj_tools.contains('ciri2')) {
+        error("Please check input parameters -> If cirifull is selected for FLI detection, CIRI2 must also be selected for BSJ detection.")
+    }
+
+    def tools_with_reads = readCarryingTools(bsjToolProperties().keySet() as List)
+    def enabled_bsj_tools_with_reads = readCarryingTools(bsj_tools)
+    if (fli_tools.contains('jccirc') && enabled_bsj_tools_with_reads.size() == 0) {
+        error("Please check input parameters -> If jccirc is selected for FLI detection, at least one BSJ detection tool that supports read-level detection (${tools_with_reads.join(', ')}) must also be selected.")
+    }
+
+    if (params.min_tools > bsj_tools.size()) {
+        error("Please check input parameters -> The minimum number of tools required for BSJ detection (${params.min_tools}) must be less than or equal to the number of BSJ detection tools selected (${bsj_tools.size()}).")
+    }
+
+    if (params.mature) {
+        def mirna_tools = parseToolList(params.mirna_tools)
+        if (params.mirna_min_tools > mirna_tools.size()) {
+            error("Please check input parameters -> The minimum number of tools required for miRNA binding site prediction (${params.mirna_min_tools}) must be less than or equal to the number of miRNA binding site prediction tools selected (${mirna_tools.size()}).")
+        }
+    }
 }
 
 //
@@ -200,6 +260,33 @@ def validateInputSamplesheet(input) {
     def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
     if (!endedness_ok) {
         error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+    }
+
+    // Check that multiple runs of the same sample are of the same strandedness i.e. auto / unstranded / forward / reverse
+    def strandedness_ok = metas.collect{ meta -> meta.strandedness }.unique().size == 1
+    if (!strandedness_ok) {
+        error("Please check input samplesheet -> Multiple runs of a sample must be of the same strandedness: ${metas[0].id}")
+    }
+
+    def fli_tools = parseToolList(params.fli_tools)
+    def bsj_tools = parseToolList(params.tools)
+
+    if (!params.longread && fli_tools.size() > 0) {
+        def all_paired_end = metas.every{ meta -> meta.single_end == false }
+        if (!all_paired_end) {
+            error("Please check input samplesheet -> All samples must be paired-end when fli_tools is not empty.")
+        }
+    }
+
+    if (params.longread) {
+        def all_single_end = metas.every{ meta -> meta.single_end == true }
+        if (!all_single_end) {
+            error("Please check input samplesheet -> All samples must be single-end when longread is true.")
+        }
+    }
+
+    if (!params.longread && bsj_tools.contains('circminer') && metas.any{ meta -> meta.single_end == true }) {
+        error("Please check input samplesheet -> All samples must be paired-end when circminer is selected.")
     }
 
     return [ metas[0], fastqs ]

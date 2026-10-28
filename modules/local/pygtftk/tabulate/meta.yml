@@ -1,0 +1,77 @@
+name: pygtftk_tabulate
+description: Tabulate selected fields from a GTF annotation
+keywords:
+  - pygtftk
+  - gtf
+  - tabulate
+tools:
+  - pygtftk:
+      description: Toolkit for GTF/GFF files
+      homepage: https://github.com/dputhier/pygtftk
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Annotation metadata
+    - gtf:
+        type: file
+        description: Gene annotation
+        pattern: "*.gtf"
+output:
+  table:
+    - - "meta":
+          type: map
+          description: Annotation metadata
+      - "${outfile}":
+          type: file
+          description: Tabulated annotation fields
+  versions_gtftk:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "gtftk":
+          type: string
+          description: Software name
+      - "1.6.2":
+          type: string
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - gtftk:
+          type: string
+          description: Software name
+      - 1.6.2:
+          type: string
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/pygtftk_tabulate:d76feeed07fc8121
+      build_id: bd-d76feeed07fc8121_1
+      scan_id: sc-87cbce40a5173814_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/pygtftk_tabulate:db1d4cb61817f9b1
+      build_id: bd-db1d4cb61817f9b1_1
+      scan_id: sc-b9292a25d268b4c3_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/pygtftk_tabulate:6a5f0383a7b077d8
+      build_id: bd-6a5f0383a7b077d8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/1e/1e3b69f00edfd9e23a400689d62645ed0588d0f0504cc589536df8bab2ded673/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/pygtftk_tabulate:f286de20fb0f5b19
+      build_id: bd-f286de20fb0f5b19_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/85/85402e0b13dbce608a8e2d4cb8bf3b32fd0ba33621e67d56feb6d89ca4078fdc/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/pygtftk/tabulate/.conda-lock/linux_amd64-bd-db1d4cb61817f9b1_1.txt
+    linux/arm64:
+      lock_file: modules/local/pygtftk/tabulate/.conda-lock/linux_arm64-bd-d76feeed07fc8121_1.txt

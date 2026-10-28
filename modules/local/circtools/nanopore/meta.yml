@@ -1,0 +1,65 @@
+name: circtools_nanopore
+description: Detect circular RNA from nanopore reads
+keywords:
+  - circtools
+  - nanopore
+  - circular-rna
+tools:
+  - circtools:
+      description: Circular RNA analysis toolkit
+      homepage: https://github.com/dieterich-lab/circtools
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - reads:
+        type: file
+        description: Nanopore reads
+  - reference:
+      type: file
+      description: Reference directory
+  - genome:
+      type: string
+      description: Genome identifier
+output:
+  versions_circtools:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circtools:
+          type: string
+          description: Software name
+      - circtools -V:
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circtools:
+          type: string
+          description: Software name
+      - circtools -V:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/bedtools_circtools_nanofilt_pblat_samtools:7a25c5c7268bf53b
+      build_id: bd-7a25c5c7268bf53b_1
+      scan_id: sc-ff895bb501ecceab_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/bedtools_circtools_nanofilt_pblat_samtools:205be54bfbf54caa
+      build_id: bd-205be54bfbf54caa_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b2/b2d16e12d96fbed5965f922347a73c59232ccf4420325577e6c1a20e788f0a31/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circtools/nanopore/.conda-lock/linux_amd64-bd-7a25c5c7268bf53b_1.txt

@@ -9,6 +9,9 @@ nextflow_pipeline {
         when {
             params {
                 outdir = "$outputDir"
+                // Skips miRNA prediction (MIRANDA and TARGETSCAN dominate the CPU time)
+                mature = null
+                bootstrap_samples = 2
             }
         }
 
@@ -17,7 +20,48 @@ nextflow_pipeline {
             def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_content: All files in ${params.outdir}/ with stable content
             def stable_content = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+
+            // Equal-coordinate transcript records may be ordered differently by native tools.
+            // Preserve every row (including duplicates), but compare their sorted contents.
+            // STAR also records its installation-specific executable path in its index header.
+            def normalized_names = ['transcriptome.combined.gtf', 'transcriptome.filtered.gtf', 'transcriptome.tx2gene.tsv', 'genomeParameters.txt']
+            def normalized_outputs = stable_content.findAll { it.name.endsWith('.gtf') || it.name in normalized_names }
+            assert normalized_outputs.collect { it.name }.containsAll(normalized_names)
+            def output_root = new File(params.outdir.toString()).toPath().toAbsolutePath().normalize()
+            def normalized_content = normalized_outputs.collectEntries { output ->
+                def name = output.name
+                def lines = output.readLines()
+                if (name == 'genomeParameters.txt') {
+                    lines = lines.collect { it.replaceFirst(/^### \S*\/(STAR\S*)/, '### $1') }
+                } else {
+                    lines = lines.sort(false)
+                }
+                def checksum = java.security.MessageDigest.getInstance('MD5').digest(lines.join('\n').bytes).encodeHex().toString()
+                def relative = output_root.relativize(output.toPath().toAbsolutePath().normalize()).toString()
+                [(relative): checksum]
+            }
+            assert normalized_content.size() == normalized_outputs.size()
+            stable_content = stable_content - normalized_outputs
+
+            // Combined BSJ BED: the FUSIONJUNC_<n> names and the row order change between runs, so the
+            // name column is dropped and the rows are sorted before hashing
+            def combined_bed_rows = file("$outputDir/3_bsj_detection/combined/all.combined.bed").readLines()
+                .collect { line -> def f = line.split('\t').toList(); (f[0..2] + f[4..-1]).join('\t') }
+                .sort(false)
+            def combined_bed_md5 = java.security.MessageDigest.getInstance('MD5').digest(combined_bed_rows.join('\n').bytes).encodeHex().toString()
+
+            // Aggregated circRNA counts: the sample column order changes between runs
+            def sum_counts = path("$outputDir/5_quantification/aggregations/sum.tsv").csv(sep: '\t').sort()
+            def max_counts = path("$outputDir/5_quantification/aggregations/max.tsv").csv(sep: '\t').sort()
+
+            // psirc matrices: the values change between runs (bootstrapping), the dimensions and ids do not
+            def circular = path("$outputDir/5_quantification/psirc/combined/circular.tsv").csv(sep: '\t')
+            def linear = path("$outputDir/5_quantification/psirc/combined/linear.tsv").csv(sep: '\t')
+
             assert workflow.success
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
+            assert software_versions.values().any { it instanceof Map && it.containsKey('fastqc') }
+            assert software_versions.values().any { it instanceof Map && it.containsKey('polars') }
             assertAll(
                 { assert snapshot(
                     // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
@@ -25,8 +69,212 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_path,
                     // All files with stable contents
-                    stable_content
+                    stable_content,
+                    // Parsed content of the files with partly unstable content
+                    [
+                        combined_bed_rows: combined_bed_rows.size(),
+                        combined_bed_md5: combined_bed_md5,
+                        sum_columns: sum_counts.columnNames,
+                        sum_rows: sum_counts.rows,
+                        max_columns: max_counts.columnNames,
+                        max_rows: max_counts.rowCount,
+                        circular_columns: circular.columnNames.sort(false),
+                        circular_ids: circular.columns["tx"].sort(false),
+                        linear_columns: linear.columnNames.sort(false),
+                        linear_rows: linear.rowCount,
+                        normalized_content: normalized_content
+                    ]
                 ).match() }
+            )
+        }
+    }
+
+    test("-profile test - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                mature = null
+                bootstrap_samples = 2
+                min_trimmed_reads = 0
+            }
+        }
+
+        then {
+            def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+
+            assert workflow.success
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
+            assert software_versions.values().any { it instanceof Map && it.containsKey('fastqc') }
+            assert software_versions.values().any { it instanceof Map && it.containsKey('r-base') }
+            assertAll(
+                { assert snapshot(
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml"),
+                    stable_path
+                ).match() }
+            )
+        }
+    }
+
+    test("circMiner shares one prepared annotation across samples - stub") {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2,circminer'
+                fli_tools = ''
+                quantification_tools = 'sum'
+                mature = null
+                bsj_reads = 1
+                min_trimmed_reads = 0
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('PREPARE_GENOME:CIRCMINER_STANDARDIZE_GTF') } == 1 },
+                { assert tasks.count { task -> task.name.contains('PREPARE_GENOME:CIRCMINER_ORDERGTF') } == 1 },
+                { assert tasks.count { task -> task.name.contains('BSJ_DETECTION:CIRCMINER:DETECT') } == 2 }
+            )
+        }
+    }
+
+    test("circMiner rejects single-end input - stub") {
+        config './circminer_input.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circminer'
+                fli_tools = ''
+                mature = null
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert (workflow.stdout + workflow.stderr).join('\n').contains('All samples must be paired-end when circminer is selected.') }
+            )
+        }
+    }
+
+    test('CIRI2 and CIRI3 share one BWA-MEM task per sample') {
+        config './mini.config'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'ciri2,ciri3'
+                fli_tools = ''
+                quantification_tools = 'sum,max'
+                mature = null
+                phenotype = null
+                skip_fastqc = true
+                skip_trimming = true
+                min_tools = 1
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            def software_versions = path("$outputDir/pipeline_info/nf_core_circrna_software_mqc_versions.yml").yaml
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert tasks.count { task -> task.name.contains('CIRI3_RUN') } == 2 },
+                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('bwa') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('ciri3') } },
+                { assert software_versions.values().any { it instanceof Map && it.containsKey('polars') } }
+            )
+        }
+    }
+
+    test('CIRI3 alone does not generate a STAR index - stub') {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'ciri3'
+                fli_tools = ''
+                quantification_tools = 'sum,max'
+                mature = null
+                phenotype = null
+                skip_fastqc = true
+                skip_trimming = true
+                min_tools = 1
+            }
+        }
+
+        then {
+            def tasks = workflow.trace.succeeded()
+            assertAll(
+                { assert workflow.success },
+                { assert tasks.count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert tasks.count { task -> task.name.contains('CIRI3_RUN') } == 2 },
+                { assert !tasks.any { task -> task.name.contains('STAR_GENOMEGENERATE') } }
+            )
+        }
+    }
+    test('CIRI3 quantification without CIRI3 discovery') {
+        config './mini.config'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+                quantification_tools = 'ciri3'
+                mature = null
+                bsj_reads = 1
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert workflow.trace.succeeded().every { task -> !task.name.contains('BSJ_DETECTION:CIRI3:') } },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
+                { assert path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
+            )
+        }
+    }
+
+    test('CIRI3 quantification with empty stub discovery') {
+        config './mini.config'
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+                tools = 'circexplorer2'
+                quantification_tools = 'ciri3'
+                mature = null
+                bsj_reads = 1
+                min_trimmed_reads = 0
+            }
+        }
+
+        then {
+            // Discovery stubs write empty BEDs, which BSJ_DETECTION filters out.
+            // Non-empty candidate propagation is covered by the real pipeline test
+            // and the CIRI3_QUANT subworkflow's real/stub tests.
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.succeeded().count { task -> task.name.contains('CIRI_BWA_MEM') } == 2 },
+                { assert !workflow.trace.tasks().any { task -> task.name.contains('QUANTIFICATION:CIRI3_QUANT:') } },
+                { assert !path("$outputDir/5_quantification/ciri3/combined/ciri3_bsj.joined.tsv").exists() },
+                { assert !path("$outputDir/5_quantification/ciri3/combined/ciri3_fsj.joined.tsv").exists() }
             )
         }
     }

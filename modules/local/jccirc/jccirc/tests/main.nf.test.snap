@@ -1,0 +1,61 @@
+{
+    "cel_N2_1 reads - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "JCCIRC_JCCIRC",
+                        "jccirc",
+                        "1.0.0"
+                    ]
+                ],
+                "log": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.jccirc.log:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_jccirc": [
+                    [
+                        "JCCIRC_JCCIRC",
+                        "jccirc",
+                        "1.0.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:43:28.690237822",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 reads and a single BSJ": {
+        "content": [
+            [
+                [
+                    "JCCIRC_JCCIRC",
+                    "jccirc",
+                    "1.0.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:43:16.413736853",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

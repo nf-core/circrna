@@ -1,0 +1,89 @@
+name: ciri3_uc_matrix
+description: Normalize CIRI3 BSJ and FSJ counts against the consensus candidate list
+keywords:
+  - ciri3
+  - circrna
+  - matrix
+tools:
+  - polars:
+      description: Fast DataFrame library for Python
+      homepage: https://pola.rs/
+      documentation: https://docs.pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: CircRNA annotation metadata
+    - circ_list:
+        type: file
+        description: CIRI3 circRNA list
+        pattern: "*.ciri3.list"
+  - - meta2:
+        type: map
+        description: Sample metadata
+    - bsj_matrix:
+        type: file
+        description: CIRI3 back-splice junction count matrix
+        pattern: "*.BSJ_Matrix"
+    - fsj_matrix:
+        type: file
+        description: CIRI3 forward-splice junction count matrix
+        pattern: "*.FSJ_Matrix"
+output:
+  bsj:
+    - - "meta2":
+          type: map
+          description: Sample metadata
+      - "${prefix}.bsj.tsv":
+          type: file
+          description: Back-splice junction counts with absent consensus candidates zero-filled
+          pattern: "*.bsj.tsv"
+  fsj:
+    - - "meta2":
+          type: map
+          description: Sample metadata
+      - "${prefix}.fsj.tsv":
+          type: file
+          description: Forward-splice junction counts with absent consensus candidates zero-filled
+          pattern: "*.fsj.tsv"
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_polars:708bbfa3590a8658
+      build_id: bd-708bbfa3590a8658_1
+      scan_id: sc-10e65cfdc3311f6f_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/python_polars:1b7f504ed40f3dec
+      build_id: bd-1b7f504ed40f3dec_1
+      scan_id: sc-e6254777e6066041_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_polars:289541feed6088d8
+      build_id: bd-289541feed6088d8_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/fc/fc24a035d2b10ae5cddc290f972da775bed663c0a9f3d046386412b2922112ad/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/python_polars:a6602ea35d60f547
+      build_id: bd-a6602ea35d60f547_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/30/305927c7781dd8df6ea9debae9d2a8ee42f86b87e94d8479729815e166932916/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/ciri3/uc_matrix/.conda-lock/linux_amd64-bd-708bbfa3590a8658_1.txt
+    linux/arm64:
+      lock_file: modules/local/ciri3/uc_matrix/.conda-lock/linux_arm64-bd-1b7f504ed40f3dec_1.txt

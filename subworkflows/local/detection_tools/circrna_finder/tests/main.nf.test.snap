@@ -1,0 +1,80 @@
+{
+    "mini - STAR 2-pass output": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "tool": "circrna_finder"
+                    },
+                    "cel_N2_1.circrna_finder.bed",
+                    59,
+                    "4b1b7152b5c4d2e7af90d42c6453019e"
+                ],
+                [
+                    {
+                        "id": "fust1_1",
+                        "single_end": false,
+                        "tool": "circrna_finder"
+                    },
+                    "fust1_1.circrna_finder.bed",
+                    66,
+                    "54cd5d05463bbc6b3f4d181d5490b236"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T23:11:53.019826936"
+    },
+    "mini - STAR 2-pass output - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "circrna_finder"
+                        },
+                        "cel_N2_1.circrna_finder.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false,
+                            "tool": "circrna_finder"
+                        },
+                        "fust1_1.circrna_finder.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "tool": "circrna_finder"
+                        },
+                        "cel_N2_1.circrna_finder.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "fust1_1",
+                            "single_end": false,
+                            "tool": "circrna_finder"
+                        },
+                        "fust1_1.circrna_finder.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T23:12:19.90589773"
+    }
+}

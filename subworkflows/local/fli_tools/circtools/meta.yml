@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: circtools
+description: Build Circtools reference resources and run nanopore circRNA detection.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circtools/annotation
+  - samtools/sort
+  - samtools/index
+  - circtools/reconstruct
+  - bedtools/getfasta
+input:
+  - ch_bsj_bed_per_sample:
+      type: file
+      description: "Per-sample back-splice junction BED channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+  - ch_star_bam:
+      type: file
+      description: "STAR-aligned BAM channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_star_junction:
+      type: file
+      description: "STAR splice-junction channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_fasta:
+      type: file
+      description: "Reference genome FASTA channel.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+output:
+  - fasta:
+      type: file
+      description: "FASTA sequences extracted for the relevant circular RNA transcripts.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - bed12:
+      type: file
+      description: "Circular RNA calls annotated in BED12 format.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

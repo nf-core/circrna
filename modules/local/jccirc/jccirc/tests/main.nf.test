@@ -1,0 +1,97 @@
+nextflow_process {
+
+    name "Test Process JCCIRC_JCCIRC"
+    script "../main.nf"
+    process "JCCIRC_JCCIRC"
+
+    tag "modules"
+    tag "modules_local"
+    tag "jccirc_jccirc"
+
+    test("cel_N2_1 reads and a single BSJ") {
+
+        setup {
+            run("TRINITY") {
+                script "modules/nf-core/trinity/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'cel_N2_1', single_end:false ],
+                        [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ]
+                    ]
+                    """
+                }
+            }
+            run("JCCIRC_PREP") {
+                script "modules/local/jccirc/prep/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'cel_N2_1', single_end:false ],
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.annotated.bed12', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true)
+                    ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = JCCIRC_PREP.out.merged
+                    .join(TRINITY.out.transcript_fasta)
+                    .map { meta, bsjs, denovo -> [
+                        meta,
+                        [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
+                        bsjs,
+                        denovo
+                    ] }
+                input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.log[0][1]).text.contains('Completing the alignment of 1 circRNAs') },
+                { assert snapshot(process.out.versions_jccirc).match() }
+            )
+        }
+    }
+
+    test("cel_N2_1 reads - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id:'cel_N2_1', single_end:false ],
+                    [ file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true) ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/cel_N2_1.reads.bed', checkIfExists: true),
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ]
+                input[1] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true) ]
+                input[2] = [ [ id:'chrI_mini' ], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

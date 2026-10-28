@@ -1,0 +1,247 @@
+name: ciriquant
+description: Quantify circRNA expression with the pinned CIRIquant fork
+keywords:
+  - ciriquant
+  - circrna
+  - quantification
+tools:
+  - ciriquant:
+      description: CircRNA quantification from the pinned nictru fork
+      homepage: https://github.com/nictru/CIRIquant
+      licence:
+        - MIT
+  - bwa:
+      description: Burrows-Wheeler Aligner
+      homepage: https://github.com/lh3/bwa
+      licence:
+        - GPL-3.0-or-later
+  - hisat2:
+      description: Graph-based alignment of next generation sequencing reads
+      homepage: https://daehwankimlab.github.io/hisat2/
+      licence:
+        - GPL-3.0-or-later
+  - samtools:
+      description: Tools for manipulating SAM, BAM, and CRAM files
+      homepage: https://www.htslib.org/
+      licence:
+        - MIT
+  - stringtie:
+      description: Transcript assembly and abundance estimation
+      homepage: https://ccb.jhu.edu/software/stringtie/
+      licence:
+        - MIT
+  - pysam:
+      description: Python interface for SAM/BAM/VCF/BCF files
+      homepage: https://github.com/pysam-developers/pysam
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - reads:
+        type: file
+        description: RNA-seq reads
+  - - meta2:
+        type: map
+        description: CircRNA annotation metadata
+    - bed:
+        type: file
+        description: CircRNA BED12 annotation
+  - - meta3:
+        type: map
+        description: Reference metadata
+    - gtf:
+        type: file
+        description: Gene annotation
+  - - meta4:
+        type: map
+        description: Reference metadata
+    - fasta:
+        type: file
+        description: Reference FASTA
+  - - meta5:
+        type: map
+        description: Index metadata
+    - bwa:
+        type: directory
+        description: BWA index
+  - - meta6:
+        type: map
+        description: Index metadata
+    - hisat2:
+        type: directory
+        description: HISAT2 index
+  - strandedness:
+      type: string
+      description: Library strandedness (`auto`, `unstranded`, `forward`, or `reverse`).
+output:
+  gtf:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "${prefix}/${prefix}.gtf":
+          type: file
+          description: CIRIquant result
+  gene_list:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "${prefix}/gene/${prefix}_genes.list":
+          type: file
+          description: Quantified genes
+  gene_gtf:
+    - - meta:
+          type: map
+          description: Sample metadata
+      - "${prefix}/gene/${prefix}_out.gtf":
+          type: file
+          description: Gene expression annotation
+  versions_bwa:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bwa:
+          type: string
+          description: Software name
+      - "bwa 2>&1 | sed -n 's/.*Version: //p' | head -n 1":
+          type: eval
+          description: Software version
+  versions_ciriquant:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciriquant:
+          type: string
+          description: Software name
+      - CIRIquant --version 2>&1 | sed "s/CIRIquant //g":
+          type: eval
+          description: Software version
+  versions_hisat2:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - hisat2:
+          type: string
+          description: Software name
+      - hisat2 --version 2>&1 | sed -n '1{s/.* version //p}':
+          type: eval
+          description: Software version
+  versions_pysam:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - pysam:
+          type: string
+          description: Software name
+      - python -c "import pysam; print(pysam.__version__)":
+          type: eval
+          description: Software version
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | cut -d " " -f2:
+          type: eval
+          description: Software version
+  versions_samtools:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - samtools:
+          type: string
+          description: Software name
+      - samtools --version 2>&1 | sed -n '1{s/^samtools //p}':
+          type: eval
+          description: Software version
+  versions_stringtie:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - stringtie:
+          type: string
+          description: Software name
+      - stringtie --version 2>&1:
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - bwa:
+          type: string
+          description: Software name
+      - "bwa 2>&1 | sed -n 's/.*Version: //p' | head -n 1":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - ciriquant:
+          type: string
+          description: Software name
+      - CIRIquant --version 2>&1 | sed "s/CIRIquant //g":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - hisat2:
+          type: string
+          description: Software name
+      - hisat2 --version 2>&1 | sed -n '1{s/.* version //p}':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - pysam:
+          type: string
+          description: Software name
+      - python -c "import pysam; print(pysam.__version__)":
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - python:
+          type: string
+          description: Software name
+      - python --version | cut -d " " -f2:
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - samtools:
+          type: string
+          description: Software name
+      - samtools --version 2>&1 | sed -n '1{s/^samtools //p}':
+          type: eval
+          description: Software version
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - stringtie:
+          type: string
+          description: Software name
+      - stringtie --version 2>&1:
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: docker.io/nicotru/ciriquant@sha256:5e59c7a31355f1814a1703e9cb27d347b7bb04871606a24c1acdacfc02c627f8
+      build_id: bd-45acbdd4f4c8b517_1
+  singularity:
+    linux/amd64:
+      name: oras://docker.io/nicotru/ciriquant:35228e054dcad0b0
+      build_id: bd-35228e054dcad0b0_1

@@ -1,0 +1,106 @@
+{
+    "cel_N2_1 fixed-length reads": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_ro1_align.txt",
+                    "838a55e15a2a019f0f0a6007317d3447"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 147
+                    },
+                    "cel_N2_1_ro1.fq.gz",
+                    404,
+                    "ab1d10434fef14617d681262fc22e7ed"
+                ]
+            ],
+            [
+                [
+                    "CIRIFULL_RO1",
+                    "ciri-full",
+                    "2.1.2"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T00:34:12.357333833",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 fixed-length reads - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro1_align.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro1.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "2": [
+                    [
+                        "CIRIFULL_RO1",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
+                ],
+                "align": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro1_align.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fastq": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false,
+                            "target_length": 147
+                        },
+                        "cel_N2_1_ro1.fq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "versions_ciri_full": [
+                    [
+                        "CIRIFULL_RO1",
+                        "ciri-full",
+                        "2.1.2"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T00:34:32.479571527",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

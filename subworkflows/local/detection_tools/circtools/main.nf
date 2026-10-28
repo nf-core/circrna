@@ -1,0 +1,81 @@
+include { STAR2PASS as MATE1_STAR2PASS } from '../star2pass'
+include { STAR2PASS as MATE2_STAR2PASS } from '../star2pass'
+include { CIRCTOOLS_DETECT as DETECT   } from '../../../../modules/local/circtools/detect'
+include { UNIFY                        } from '../../../../modules/local/circtools/unify'
+
+workflow CIRCTOOLS {
+    take:
+    reads
+    ch_fasta
+    ch_gtf
+    star_index
+    star_junction
+    ignore_sjdbgtf
+    bsj_reads
+
+    main:
+
+    // Process mate 1
+    ch_mate1 = reads
+        .filter { meta, _reads -> !meta.single_end }
+        .map { meta, _reads ->
+            return [[id: meta.id, single_end: true], _reads[0]]
+        }
+
+    MATE1_STAR2PASS(
+        ch_mate1,
+        star_index,
+        ch_gtf,
+        bsj_reads,
+        ignore_sjdbgtf,
+    )
+
+    // Process mate 2
+    ch_mate2 = reads
+        .filter { meta, _reads -> !meta.single_end }
+        .map { meta, _reads ->
+            return [[id: meta.id, single_end: true], _reads[1]]
+        }
+
+    MATE2_STAR2PASS(
+        ch_mate2,
+        star_index,
+        ch_gtf,
+        bsj_reads,
+        ignore_sjdbgtf,
+    )
+
+    ch_combined_junctions = star_junction
+        .map { meta, junction ->
+            return [meta.id, meta, junction]
+        }
+        .join(
+            MATE1_STAR2PASS.out.junction.map { meta, junction ->
+                return [meta.id, junction]
+            },
+            remainder: true
+        )
+        .join(
+            MATE2_STAR2PASS.out.junction.map { meta, junction ->
+                return [meta.id, junction]
+            },
+            remainder: true
+        )
+        .map { _id, meta, paired, mate1, mate2 ->
+            return [meta, paired, mate1 ?: [], mate2 ?: []]
+        }
+
+    ch_detect = ch_combined_junctions.multiMap { meta, paired, mate1, mate2 ->
+        junctions: [meta, paired, mate1, mate2]
+        strandedness: meta.strandedness ?: 'auto'
+    }
+
+    DETECT(ch_detect.junctions, ch_fasta, ch_gtf, ch_detect.strandedness)
+
+    UNIFY(
+        DETECT.out.reads.join(DETECT.out.coordinates).join(DETECT.out.counts)
+    )
+
+    emit:
+    bed = UNIFY.out.bed.map { meta, bed -> [meta + [tool: "circtools"], bed] }
+}

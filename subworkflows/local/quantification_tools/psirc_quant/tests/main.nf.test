@@ -1,0 +1,145 @@
+nextflow_workflow {
+
+    name "Test Workflow PSIRC_QUANT"
+    script "../main.nf"
+    workflow "PSIRC_QUANT"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "psirc_quant"
+    tag "quantification_tools_psirc_quant"
+
+    test("paired-end mini samples") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [ id:'fust1_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ])
+                input[2] = channel.value([
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ])
+                input[3] = 2
+                input[4] = channel.value([
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'mini/phenotype.csv', checkIfExists: true)
+                ])
+                input[5] = channel.value([
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            def circular = path(workflow.out.circular_tx_counts[0][1]).csv(sep: '\t')
+            def linear = path(workflow.out.linear_tx_counts[0][1]).csv(sep: '\t')
+            def gene = path(workflow.out.gene_counts[0][1]).csv(sep: '\t')
+            assertAll(
+                { assert workflow.success },
+                { assert circular.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
+                { assert gene.columnNames == [ 'gene_id', 'gene_name', 'cel_N2_1', 'fust1_1' ] },
+                { assert linear.columnNames == [ 'tx', 'gene_id', 'cel_N2_1', 'fust1_1' ] },
+                { assert circular.rowCount > 0 },
+                { assert linear.rowCount > 0 },
+                { assert gene.rowCount > 0 },
+                { assert workflow.out.se[0][1] == workflow.out.rds[0][1] },
+                { assert snapshot(
+                    workflow.out.gene_counts.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.gene_tpm.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.tx_counts.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.tx_tpm.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.linear_tx_counts.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.circular_tx_counts.collect { meta, f -> [ meta, file(f).name ] },
+                    workflow.out.rds.collect { meta, f -> [ meta, file(f).name ] },
+                    circular.columnNames,
+                    gene.columnNames,
+                    linear.columnNames,
+                    circular.columns['tx'],
+                    circular.rowCount,
+                    linear.rowCount,
+                    gene.rowCount
+                ).match() }
+            )
+        }
+    }
+
+    test("paired-end mini samples - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of(
+                    [
+                        [ id:'cel_N2_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ],
+                    [
+                        [ id:'fust1_1', single_end:false, strandedness:'auto' ],
+                        [
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true),
+                            file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)
+                        ]
+                    ]
+                )
+                input[1] = channel.value([
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.fasta', checkIfExists: true)
+                ])
+                input[2] = channel.value([
+                    [ id:'transcriptome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/transcriptome.filtered.gtf', checkIfExists: true)
+                ])
+                input[3] = 2
+                input[4] = channel.value([
+                    [ id:'phenotype' ],
+                    file(params.pipelines_testdata_base_path + 'mini/phenotype.csv', checkIfExists: true)
+                ])
+                input[5] = channel.value([
+                    [ id:'genome' ],
+                    file(params.pipelines_testdata_base_path + 'mini/intermediates/chrI_mini.fa.fai', checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

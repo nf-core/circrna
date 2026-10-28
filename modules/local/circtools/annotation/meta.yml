@@ -1,0 +1,73 @@
+name: circtools_annotation
+description: Convert gene annotation to BED format for circtools
+keywords:
+  - circtools
+  - annotation
+  - bed
+tools:
+  - gtfparse:
+      description: Python GTF parser
+      homepage: https://github.com/openvax/gtfparse
+      licence:
+        - MIT
+  - polars:
+      description: Fast DataFrame library
+      homepage: https://pola.rs/
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Annotation metadata
+    - gtf:
+        type: file
+        description: Gene annotation
+        pattern: "*.gtf"
+output:
+  bed:
+    - - "meta":
+          type: map
+          description: Annotation metadata
+      - "${prefix}.bed":
+          type: file
+          description: BED annotation
+  versions:
+    - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+topics:
+  versions:
+    - versions.yml:
+        type: string
+        description: The name of the process
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/gtfparse_polars:9863c97ac5ba8581
+      build_id: bd-9863c97ac5ba8581_1
+      scan_id: sc-42d5da8fbaba8e4d_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/gtfparse_polars:58e453d2bfabb473
+      build_id: bd-58e453d2bfabb473_1
+      scan_id: sc-7a2c05adf6b6f047_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/gtfparse_polars:618d40defc3e064e
+      build_id: bd-618d40defc3e064e_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/51/51f47a2e827b3bc883ac39107f50e25e5ad8f014138300106751c6a444dbff3d/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/gtfparse_polars:1c48be8278358d5b
+      build_id: bd-1c48be8278358d5b_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ce/cefa06205539b5ac0d346e1f54ae362481e4d5b4504d70a84b3428d478827faf/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circtools/annotation/.conda-lock/linux_amd64-bd-58e453d2bfabb473_1.txt
+    linux/arm64:
+      lock_file: modules/local/circtools/annotation/.conda-lock/linux_arm64-bd-9863c97ac5ba8581_1.txt

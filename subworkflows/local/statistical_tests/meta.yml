@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: statistical_tests
+description: Run differential expression analyses for circular RNA and gene quantification
+  results.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - circtest/prepare
+  - circtest/circtest
+  - ciriquant/prepde
+  - stringtie/prepde
+  - ciriquant/de
+input:
+  - ch_gene_counts:
+      type: file
+      description: "Gene-level count matrix tuples; sample metadata includes the quantification
+        method.
+
+
+        Structure: [ val(meta), path(matrix) ]"
+  - ch_circ_counts:
+      type: file
+      description: "Circular-transcript count matrix tuples; sample metadata includes
+        the quantification method.
+
+
+        Structure: [ val(meta), path(matrix) ]"
+  - ch_ciriquant:
+      type: file
+      description: "Per-sample CIRIquant GTF results used to construct condition-level
+        test inputs.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+  - ch_stringtie:
+      type: file
+      description: "Per-sample StringTie GTF results used to construct condition-level
+        test inputs.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+  - ch_phenotype:
+      type: file
+      description: "Phenotype table with sample and condition columns.
+
+
+        Structure: [ val(meta), path(table) ]"
+output:
+  - circ:
+      type: file
+      description: "Differential circular RNA expression result table(s) from CIRIquant.
+
+
+        Structure: [ val(meta), path(results) ]"
+  - gene:
+      type: file
+      description: "Differential gene expression result table(s) from CIRIquant.
+
+
+        Structure: [ val(meta), path(results) ]"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

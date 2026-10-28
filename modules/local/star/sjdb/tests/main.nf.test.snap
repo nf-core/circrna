@@ -1,0 +1,78 @@
+{
+    "synthetic SJ.out.tab - bsj_reads 3": {
+        "content": [
+            3,
+            "4debf6641fb34cab9dc340d954584a7c"
+        ],
+        "timestamp": "2026-10-16T20:07:57.8692486",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "synthetic SJ.out.tab - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "star_sjdb"
+                        },
+                        "dataset.SJ.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "SJDB",
+                        "mawk",
+                        "mawk 1.3.4 20171017"
+                    ]
+                ],
+                "sjtab": [
+                    [
+                        {
+                            "id": "star_sjdb"
+                        },
+                        "dataset.SJ.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_mawk": [
+                    [
+                        "SJDB",
+                        "mawk",
+                        "mawk 1.3.4 20171017"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:41:47.261538079",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "synthetic SJ.out.tab - bsj_reads 1": {
+        "content": [
+            [
+                [
+                    "SJDB",
+                    "mawk",
+                    "mawk 1.3.4 20171017"
+                ]
+            ],
+            [
+                "dataset.SJ.out.tab"
+            ],
+            4,
+            [
+                6
+            ],
+            "aa85c9b4e24a8f2fc08485f6f96bfbc3"
+        ],
+        "timestamp": "2026-10-20T10:41:24.750773497",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

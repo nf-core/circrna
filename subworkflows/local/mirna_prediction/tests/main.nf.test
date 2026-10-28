@@ -1,0 +1,248 @@
+nextflow_workflow {
+
+    name "Test Workflow MIRNA_PREDICTION"
+    script "../main.nf"
+    workflow "MIRNA_PREDICTION"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "mirna_prediction"
+    tag "mirna_bindingsites"
+    tag "deseq2_normalization"
+    tag "mirna_filtering"
+    tag "compute_correlations"
+    tag "bioawk"
+    tag "miranda"
+    tag "gawk"
+    tag "targetscan_predict"
+    tag "mirna_targets"
+    tag "majority_vote"
+
+    test("without miRNA expression") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.value([[ id:'psirc' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)])
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 5
+                input[9] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    path(workflow.out.binding_sites[0][1]).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5(),
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() },
+            )
+        }
+    }
+
+    test("with miRNA expression, filtered miRNAs, correlations disabled") {
+
+        config "./no_correlation.config"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = [[ id:'mirna' ], file(params.pipelines_testdata_base_path + 'mini/mirna_expression.tsv', checkIfExists: true)]
+                input[4] = channel.empty()
+                input[5] = channel.value([[ id:'psirc' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)])
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 300
+                input[9] = 0.5
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    path(workflow.out.binding_sites[0][1]).readLines().collect { l -> def p = l.split('\t'); p[0] + '\t' + p[1].split(',').sort().join(',') }.sort().toString().md5(),
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() },
+            )
+        }
+    }
+
+    // The 2-sample psirc rds of the mini data keeps no transcripts in fishpond labelKeep, so the COMPUTE_CORRELATIONS
+    // tasks fail. The failures are ignored here, the tests only count how many tasks were started.
+
+    test("with miRNA expression, 101 miRNAs are split into two correlation batches") {
+
+        config "./ignore_correlation_failures.config"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def sequences = ['GUGAGCAUUGUUCGAGUUUCAUUUU', 'UUUUGAUUGUUUUUCGAUGAUGUUCG', 'GCACAUUUUAAGUCGGUAGGC', 'UCAAUUGUUUGUGGACUUACAG', 'UUGAGCAAUGCGCAUGUGCGGGA']
+                def ids = (1..101).collect { i -> 'cel-miR-' + i }
+                def mature = file("$outputDir/mature.fa").with { fa ->
+                    fa.parent.mkdirs()
+                    fa.text = ids.withIndex().collect { id, i -> '>' + id + '\\n' + sequences[i % sequences.size()] }.join('\\n') + '\\n'
+                    fa
+                }
+                def expression = file("$outputDir/mirna_expression.tsv").with { tsv ->
+                    tsv.parent.mkdirs()
+                    tsv.text = (['miRNA\\tcel_N2_1\\tcel_N2_2\\tcel_N2_3\\tfust1_1\\tfust1_2\\tfust1_3'] + ids.withIndex().collect { id, i ->
+                        id + (0..5).collect { j -> '\\t' + ((i * 7 + j * 13) % 50 + 20) }.join('')
+                    }).join('\\n') + '\\n'
+                    tsv
+                }
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], mature])
+                input[3] = [[ id:'mirna' ], expression]
+                input[4] = channel.empty()
+                input[5] = channel.of([[ id:'psirc' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)])
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 1
+                input[9] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.tasks().findAll { task -> task.name.contains('COMPUTE_CORRELATIONS') }.size() == 2 },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
+            )
+        }
+    }
+
+    test("with miRNA expression, without quantification rds") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = [[ id:'mirna' ], file(params.pipelines_testdata_base_path + 'mini/mirna_expression.tsv', checkIfExists: true)]
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 1
+                input[9] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.trace.tasks().findAll { task -> task.name.contains('COMPUTE_CORRELATIONS') }.size() == 0 },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
+            )
+        }
+    }
+
+    test("without miRNA expression - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = null
+                input[4] = channel.empty()
+                input[5] = channel.value([[ id:'psirc' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)])
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 5
+                input[9] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
+            )
+        }
+    }
+
+    test("with miRNA expression - stub") {
+
+        options '-stub'
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.value([[ id:'transcriptome' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.fa', checkIfExists: true)])
+                input[1] = channel.value([[ id:'all' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/all.annotated.bed12', checkIfExists: true)])
+                input[2] = channel.value([[ id:'mature' ], file(params.pipelines_testdata_base_path + 'mini/reference/mature_mini.fa', checkIfExists: true)])
+                input[3] = [[ id:'mirna' ], file(params.pipelines_testdata_base_path + 'mini/mirna_expression.tsv', checkIfExists: true)]
+                input[4] = channel.empty()
+                input[5] = channel.value([[ id:'psirc' ], file(params.pipelines_testdata_base_path + 'mini/intermediates/psirc.experiments.merged.rds', checkIfExists: true)])
+                input[6] = ['targetscan', 'miranda']
+                input[7] = 1
+                input[8] = 5
+                input[9] = 0.2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    workflow.out.binding_sites.collect { meta, result -> [meta, file(result).name] },
+                    workflow.out.correlations.collect { meta, result -> [meta, file(result).name] }
+                ).match() }
+            )
+        }
+    }
+}

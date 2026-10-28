@@ -1,0 +1,27 @@
+{
+    "nanopore reads - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "CIRCTOOLS_NANOPORE",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ],
+                "versions_circtools": [
+                    [
+                        "CIRCTOOLS_NANOPORE",
+                        "circtools",
+                        "2.0.4"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:42:40.142076304",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

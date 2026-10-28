@@ -1,0 +1,77 @@
+{
+    "psirc counts and ciriquant gtfs - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2.circ.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2.gene.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "circ": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2.circ.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gene": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2.gene.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:53:46.651322588",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "psirc counts and ciriquant gtfs - 6 samples": {
+        "content": [
+            [
+                "CIRCTEST_CIRCTEST",
+                "CIRCTEST_PREPARE",
+                "CIRIQUANT_PREPDE",
+                "STRINGTIE_PREPDE"
+            ],
+            [
+                "CIRIQUANT_DE"
+            ],
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "circ": [
+                    
+                ],
+                "gene": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:55:52.764578897",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

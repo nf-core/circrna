@@ -1,0 +1,46 @@
+{
+    "mini paired-end reads are trimmed to the fifth-percentile length": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 148
+                    },
+                    [
+                        "cel_N2_1_R1.fastp.fastq.gz:md5,cfbe625cf5ce40bda1872d69bea44eb5",
+                        "cel_N2_1_R2.fastp.fastq.gz:md5,d40c41b554279c96913eba1ca4de74d9"
+                    ]
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:11:14.954173503",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini paired-end reads - stub": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false,
+                        "target_length": 100
+                    },
+                    [
+                        "cel_N2_1_R1.fastp.fastq.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                        "cel_N2_1_R2.fastp.fastq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:11:28.317482351",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: segemehl
+description: Build or use a supplied Segemehl index, align sample reads, and consolidate
+  single-read back-splice junction calls.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - segemehl/index
+  - segemehl/align
+  - gawk
+  - gnu/sort
+  - bedtools/groupby
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - fasta:
+      type: file
+      description: "Reference FASTA channel with reference metadata.
+
+
+        Structure: [ val(meta), path(fasta) ]"
+      pattern: "*.{fa,fasta,fa.gz,fasta.gz}"
+  - index:
+      type: file
+      description: "Optional prebuilt Segemehl index channel; when null, an index is
+        built from the reference FASTA.
+
+
+        Structure: [ val(meta), path(index) ], or null to build the index."
+      pattern: "*.{idx,sec}"
+output:
+  - bed:
+      type: file
+      description: "Per-sample Segemehl calls consolidated from single-read alignment
+        results.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.{bed,bed.gz}"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

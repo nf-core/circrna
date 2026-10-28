@@ -1,0 +1,90 @@
+name: circminer_circminer
+description: Detect circular RNA from paired-end reads using circMiner
+keywords:
+  - circminer
+  - circular-rna
+  - detection
+tools:
+  - circminer:
+      description: CircRNA detection software
+      homepage: https://github.com/rajewsky-lab/circMiner
+      licence:
+        - GPL-3.0-or-later
+input:
+  - - "meta":
+        type: map
+        description: Sample metadata
+    - "reads":
+        type: file
+        description: Paired-end reads
+        pattern: "*.{fastq,fq}.gz"
+  - - "meta2":
+        type: map
+        description: Reference metadata
+    - "index":
+        type: directory
+        description: circMiner index
+  - - "meta3":
+        type: map
+        description: Annotation metadata
+    - "gtf":
+        type: file
+        description: Gene annotation
+        pattern: "*.gtf"
+output:
+  report:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}.circ_report":
+          type: file
+          description: circMiner report
+  versions_circminer:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "circminer":
+          type: string
+          description: Software name
+      - 'circminer --version | sed -E "s/^CircMiner //"':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - circminer:
+          type: string
+          description: Software name
+      - circminer --version | sed -E "s/^CircMiner //":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/arm64:
+      name: community.wave.seqera.io/library/circminer:0.4.2--b81dbe23e29cad3a
+      build_id: bd-b81dbe23e29cad3a_1
+      scan_id: sc-8170c996f591ae7a_1
+    linux/amd64:
+      name: community.wave.seqera.io/library/circminer:0.4.2--a7cbccf5a8b1afe7
+      build_id: bd-a7cbccf5a8b1afe7_1
+      scan_id: sc-7fe2d816c2716227_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/circminer:0.4.2--7ab2374d8831f5c3
+      build_id: bd-7ab2374d8831f5c3_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4e/4efcb00978baf72ee51c2f271993e85bec61a9fe1bcd67935632d2f44d941030/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/circminer:0.4.2--14314a572c9c5f13
+      build_id: bd-14314a572c9c5f13_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/3e/3e5a423406f6db6db0dd84a33bca0f920bba0b33e5668b4615c23263cd21a445/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/circminer/circminer/.conda-lock/linux_amd64-bd-a7cbccf5a8b1afe7_1.txt
+    linux/arm64:
+      lock_file: modules/local/circminer/circminer/.conda-lock/linux_arm64-bd-b81dbe23e29cad3a_1.txt

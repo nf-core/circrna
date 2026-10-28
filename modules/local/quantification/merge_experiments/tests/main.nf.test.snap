@@ -1,0 +1,85 @@
+{
+    "with phenotype - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,d64bd51ca26ad43e66e464d04884b904"
+                ],
+                "merged": [
+                    [
+                        {
+                            "id": "experiments"
+                        },
+                        "experiments.merged.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,d64bd51ca26ad43e66e464d04884b904"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:04:44.522595532",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "without phenotype": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            [
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:04:27.341895647",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "with phenotype": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            [
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:03:45.568832185",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

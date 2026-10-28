@@ -1,0 +1,52 @@
+{
+    "cel_N2_1 paired-end read lengths": {
+        "content": [
+            {
+                "CIRI_READLENGTH": {
+                    "python": "3.14.8",
+                    "polars": "2.0.0"
+                }
+            },
+            "cel_N2_1.txt",
+            "148"
+        ],
+        "timestamp": "2026-10-20T15:23:25.34249663",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "cel_N2_1 paired-end read lengths - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1.txt:md5,919d117956d3135c4c683ff021352f5c"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,e7dfdc1102a36c3bcaf1b391ecace36a"
+                ],
+                "length": [
+                    [
+                        {
+                            "id": "cel_N2_1"
+                        },
+                        "cel_N2_1.txt:md5,919d117956d3135c4c683ff021352f5c"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e7dfdc1102a36c3bcaf1b391ecace36a"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:23:37.054167407",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

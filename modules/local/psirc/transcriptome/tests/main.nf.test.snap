@@ -1,0 +1,67 @@
+{
+    "chrI_mini original gtf + fasta": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "transcriptome.fasta"
+                ]
+            ],
+            [
+                [
+                    "PSIRC_TRANSCRIPTOME",
+                    "psirc",
+                    "1.0.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:03:04.622737361",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "chrI_mini original gtf + fasta - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.fasta:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRC_TRANSCRIPTOME",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ],
+                "transcriptome": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.fasta:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_psirc": [
+                    [
+                        "PSIRC_TRANSCRIPTOME",
+                        "psirc",
+                        "1.0.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:03:17.294930333",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

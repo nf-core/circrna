@@ -1,0 +1,60 @@
+{
+    "chrI_mini gtf - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,c4c181e1c676173ce2033f6062dc557a"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,c4c181e1c676173ce2033f6062dc557a"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:21:09.519618484",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "chrI_mini gtf": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "chrI_mini"
+                    },
+                    "chrI_mini.bed",
+                    "1e9de2a709f6e21279259ab1b75640b5"
+                ]
+            ],
+            {
+                "CIRCTOOLS_ANNOTATION": {
+                    "python": "3.15.0",
+                    "gtfparse": "3.0.4",
+                    "polars": "2.0.0"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:58.727119026",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

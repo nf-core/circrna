@@ -1,0 +1,74 @@
+{
+    "mini genome + annotated circRNA gtf": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "transcriptome.filtered.gtf",
+                    2463,
+                    654076648
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "transcriptome.fasta",
+                    4068,
+                    479735502
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-16T20:28:33.706636911"
+    },
+    "mini genome + annotated circRNA gtf - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.fasta:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.filtered.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fasta": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.fasta:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "transcriptome.filtered.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-10-18T23:08:56.391079219"
+    }
+}

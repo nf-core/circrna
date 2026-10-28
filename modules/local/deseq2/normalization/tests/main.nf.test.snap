@@ -1,0 +1,73 @@
+{
+    "mini miRNA expression - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.normalized_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,3d5b7e0c71b1264df85c94ca6866bd6b"
+                ],
+                "normalized": [
+                    [
+                        {
+                            "id": "mirna"
+                        },
+                        "mirna.normalized_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,3d5b7e0c71b1264df85c94ca6866bd6b"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:24:56.428066923",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "mini miRNA expression": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "mirna"
+                    },
+                    "mirna.normalized_counts.tsv",
+                    [
+                        "miRNA",
+                        "cel_N2_1",
+                        "cel_N2_2",
+                        "cel_N2_3",
+                        "fust1_1",
+                        "fust1_2",
+                        "fust1_3"
+                    ],
+                    20
+                ]
+            ],
+            [
+                "8c705596deac53cca23cba32bcce72cf"
+            ],
+            [
+                {
+                    "DESEQ2_NORMALIZATION": {
+                        "r-base": "4.5.3",
+                        "bioconductor-deseq2": "1.50.2"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:01:25.8082255",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

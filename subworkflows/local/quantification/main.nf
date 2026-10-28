@@ -1,0 +1,84 @@
+include { PSIRC_QUANT                     } from '../quantification_tools/psirc_quant'
+include { CIRIQUANT                       } from '../quantification_tools/ciriquant'
+include { CIRI3_QUANT                     } from '../quantification_tools/ciri3'
+include { COMBINEBEDS_COUNTS as AGGREGATE } from '../../../modules/local/combinebeds/counts'
+
+workflow QUANTIFICATION {
+    take:
+    reads
+    ch_gtf
+    ch_fasta
+    ch_transcriptome_fasta
+    ch_transcriptome_gtf
+    circ_annotation_bed
+    _circ_annotation_gtf
+    ch_bsj_bed_per_sample_tool
+    bootstrap_samples
+    ch_phenotype
+    ch_faidx
+    bwa_index
+    hisat2_index
+    tools
+    max_shift
+    consider_strand
+    ch_bwa_sam
+
+    main:
+    ch_gene_counts = channel.empty()
+    ch_circ_counts = channel.empty()
+    ch_ciriquant = channel.empty()
+    ch_stringtie = channel.empty()
+    ch_rds = channel.empty()
+
+    if (tools.contains('psirc')) {
+        PSIRC_QUANT(
+            reads,
+            ch_transcriptome_fasta,
+            ch_transcriptome_gtf,
+            bootstrap_samples,
+            ch_phenotype,
+            ch_faidx,
+        )
+        ch_gene_counts = ch_gene_counts.mix(PSIRC_QUANT.out.gene_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
+        ch_circ_counts = ch_circ_counts.mix(PSIRC_QUANT.out.circular_tx_counts.map { meta, counts -> [meta + [quantification: 'psirc'], counts] })
+        ch_rds = ch_rds.mix(PSIRC_QUANT.out.rds)
+    }
+
+    if (tools.contains('ciriquant')) {
+        CIRIQUANT(
+            reads,
+            circ_annotation_bed,
+            ch_gtf,
+            ch_fasta,
+            bwa_index,
+            hisat2_index,
+        )
+        ch_gene_counts = ch_gene_counts.mix(CIRIQUANT.out.gene_tpm)
+        ch_circ_counts = ch_circ_counts.mix(CIRIQUANT.out.circ_cpm)
+        ch_ciriquant = ch_ciriquant.mix(CIRIQUANT.out.raw)
+        ch_stringtie = ch_stringtie.mix(CIRIQUANT.out.stringtie)
+    }
+
+    if (tools.contains('ciri3')) {
+        CIRI3_QUANT(ch_bwa_sam, circ_annotation_bed, ch_fasta, ch_gtf)
+        ch_circ_counts = ch_circ_counts.mix(CIRI3_QUANT.out.bsj)
+    }
+
+    aggregations = ['sum', 'max']
+    if (tools.intersect(aggregations).size() > 0) {
+        ch_aggregations = channel.fromList(tools.intersect(aggregations))
+
+        AGGREGATE(
+            ch_aggregations.map { agg -> [[id: agg], agg] }.combine(circ_annotation_bed.map { _meta, bed -> bed }).combine(ch_bsj_bed_per_sample_tool.map { _meta, bed -> bed }.collect().map { beds -> [beds] }),
+            max_shift,
+            consider_strand,
+        )
+    }
+
+    emit:
+    gene      = ch_gene_counts
+    circ      = ch_circ_counts
+    ciriquant = ch_ciriquant
+    stringtie = ch_stringtie
+    rds       = ch_rds
+}

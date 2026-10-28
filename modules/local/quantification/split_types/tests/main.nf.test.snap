@@ -1,0 +1,124 @@
+{
+    "psirc transcript counts": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,71f6d514cc2c61a7577ae7d88ff03b3c"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,8856a7b988932a548afe4426baa72d09"
+                    ]
+                ],
+                "2": [
+                    [
+                        "SPLIT_TYPES",
+                        "gawk",
+                        "5.4.1"
+                    ]
+                ],
+                "circular": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,8856a7b988932a548afe4426baa72d09"
+                    ]
+                ],
+                "linear": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,71f6d514cc2c61a7577ae7d88ff03b3c"
+                    ]
+                ],
+                "versions_gawk": [
+                    [
+                        "SPLIT_TYPES",
+                        "gawk",
+                        "5.4.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:37:16.111823236",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "psirc transcript counts - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        "SPLIT_TYPES",
+                        "gawk",
+                        "5.4.1"
+                    ]
+                ],
+                "circular": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "circular.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "linear": [
+                    [
+                        {
+                            "id": "tx_counts",
+                            "quantification": "psirc"
+                        },
+                        "linear.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_gawk": [
+                    [
+                        "SPLIT_TYPES",
+                        "gawk",
+                        "5.4.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:37:27.677103133",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

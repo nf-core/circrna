@@ -1,0 +1,98 @@
+nextflow_workflow {
+
+    name "Test Workflow CIRCMINER"
+    script "../main.nf"
+    workflow "CIRCMINER"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "circminer"
+
+    setup {
+        run("AGAT_CONVERTSPGFF2GTF") {
+            script "modules/nf-core/agat/convertspgff2gtf/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.gtf', checkIfExists: true)]
+                """
+            }
+        }
+        run("CIRCMINER_ORDERGTF") {
+            script "modules/local/circminer/ordergtf/main.nf"
+            process {
+                """
+                input[0] = AGAT_CONVERTSPGFF2GTF.out.output_gtf
+                """
+            }
+        }
+        run("CIRCMINER_INDEX") {
+            script "modules/local/circminer/index/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)]
+                """
+            }
+        }
+        run("SAMTOOLS_FAIDX") {
+            script "modules/nf-core/samtools/faidx/main.nf"
+            process {
+                """
+                input[0] = [[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true), []]
+                input[1] = false
+                """
+            }
+        }
+    }
+
+    test("two paired-end samples share one reference index") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of(
+                    [[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]],
+                    [[id: 'fust1_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/fust1_rep1_2.fastq.gz', checkIfExists: true)]]
+                )
+                input[1] = CIRCMINER_INDEX.out.index
+                input[2] = CIRCMINER_ORDERGTF.out.gtf
+                input[3] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[4] = SAMTOOLS_FAIDX.out.fai
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.out.bed.size() == 2
+            assert workflow.trace.succeeded().count { task -> task.name.contains('AGAT_CONVERTSPGFF2GTF') } == 1
+            assert workflow.trace.succeeded().count { task -> task.name.contains('CIRCMINER_ORDERGTF') } == 1
+            assert workflow.trace.succeeded().count { task -> task.name.contains('CIRCMINER:DETECT') } == 2
+            def bed = workflow.out.bed.collectMany { meta, output -> path(output).readLines() }
+            assert bed.every { it.split('\t').size() == 7 }
+            assert bed.every { it.split('\t')[5] in ['+', '-', '.'] }
+            assert snapshot(workflow.out.bed).match()
+        }
+    }
+
+    test("mini paired-end - stub") {
+        options '-stub'
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([[id: 'cel_N2_1', single_end: false], [file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_1.fastq.gz', checkIfExists: true), file(params.pipelines_testdata_base_path + 'mini/fastq/N2_rep1_2.fastq.gz', checkIfExists: true)]])
+                input[1] = CIRCMINER_INDEX.out.index
+                input[2] = CIRCMINER_ORDERGTF.out.gtf
+                input[3] = channel.value([[id: 'chrI_mini'], file(params.pipelines_testdata_base_path + 'mini/reference/chrI_mini.fa', checkIfExists: true)])
+                input[4] = SAMTOOLS_FAIDX.out.fai
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert path(workflow.out.bed[0][1]).readLines().isEmpty()
+            assert snapshot(workflow.out.bed).match()
+        }
+    }
+}

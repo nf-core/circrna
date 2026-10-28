@@ -1,0 +1,91 @@
+{
+    "six samples - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_transcript_count_matrix.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_gene_count_matrix.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        "STRINGTIE_PREPDE",
+                        "stringtie",
+                        "3.0.3"
+                    ]
+                ],
+                "gene_matrix": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_gene_count_matrix.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "transcript_matrix": [
+                    [
+                        {
+                            "id": "fust1_N2"
+                        },
+                        "fust1_N2_transcript_count_matrix.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_stringtie": [
+                    [
+                        "STRINGTIE_PREPDE",
+                        "stringtie",
+                        "3.0.3"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T10:41:40.6007285",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "six samples": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_gene_count_matrix.csv:md5,35c857db798f5982efa24d5b6e877edd"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fust1_N2"
+                    },
+                    "fust1_N2_transcript_count_matrix.csv:md5,75c0dd21491d0ca62a9d2097aadd1dfd"
+                ]
+            ],
+            [
+                [
+                    "STRINGTIE_PREPDE",
+                    "stringtie",
+                    "3.0.3"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T10:41:27.294654119",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

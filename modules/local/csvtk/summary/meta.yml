@@ -1,0 +1,76 @@
+name: csvtk_summary
+description: Summarize a delimited table with csvtk
+keywords:
+  - csvtk
+  - summary
+  - table
+tools:
+  - csvtk:
+      description: Toolkit for tabular data
+      homepage: https://github.com/shenwei356/csvtk
+      licence:
+        - MIT
+input:
+  - - meta:
+        type: map
+        description: Sample metadata
+    - csv:
+        type: file
+        description: Input CSV or TSV table
+output:
+  csv:
+    - - "meta":
+          type: map
+          description: Sample metadata
+      - "${prefix}.${out_extension}":
+          type: file
+          description: Summary table
+  versions_csvtk:
+    - - "${task.process}":
+          type: string
+          description: Process name
+      - "csvtk":
+          type: string
+          description: Software name
+      - 'csvtk version | sed "s/csvtk v//"':
+          type: eval
+          description: Software version
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: Process name
+      - csvtk:
+          type: string
+          description: Software name
+      - csvtk version | sed "s/csvtk v//":
+          type: eval
+          description: Software version
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"
+containers:
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/csvtk:0.31.0--07ef9a35e53e4e23
+      build_id: bd-07ef9a35e53e4e23_1
+      scan_id: sc-2afbeb9c5a1902db_1
+    linux/arm64:
+      name: community.wave.seqera.io/library/csvtk:0.31.0--f6d6b0871ae9f927
+      build_id: bd-f6d6b0871ae9f927_1
+      scan_id: sc-746d8dfd7d29e201_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/csvtk:0.31.0--6b1595e0e76aac2d
+      build_id: bd-6b1595e0e76aac2d_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/67/673f8139d490e93cbfcc5e6f206ae2f516862c1b243a396cc34a0eef8eac8431/data
+    linux/arm64:
+      name: oras://community.wave.seqera.io/library/csvtk:0.31.0--54b4ce13cd382900
+      build_id: bd-54b4ce13cd382900_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f3/f333075205ca2c4856a11aee413fec782d073bde82c57cb61be29f8355bb1e8f/data
+  conda:
+    linux/amd64:
+      lock_file: modules/local/csvtk/summary/.conda-lock/linux_amd64-bd-07ef9a35e53e4e23_1.txt
+    linux/arm64:
+      lock_file: modules/local/csvtk/summary/.conda-lock/linux_arm64-bd-f6d6b0871ae9f927_1.txt

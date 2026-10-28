@@ -1,0 +1,68 @@
+{
+    "orders AGAT GTF exons for circMiner": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,02b521d55d8b16d054f38c12b2e2ccc7"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,38b3c4b3bbed7a46e5756ad0eba357f9"
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,02b521d55d8b16d054f38c12b2e2ccc7"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,38b3c4b3bbed7a46e5756ad0eba357f9"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:37.033056783",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "orders AGAT GTF - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,38b3c4b3bbed7a46e5756ad0eba357f9"
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "chrI_mini"
+                        },
+                        "chrI_mini.circminer.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,38b3c4b3bbed7a46e5756ad0eba357f9"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:20:48.153305406",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

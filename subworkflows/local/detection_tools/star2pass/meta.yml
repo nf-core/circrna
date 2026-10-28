@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: star2pass
+description: Star2pass processing workflow for circRNA analysis.
+keywords:
+  - circRNA
+  - analysis
+  - workflow
+components:
+  - star/align
+  - sjdb
+input:
+  - reads:
+      type: file
+      description: "Per-sample sequencing reads; paired-end samples carry both FASTQ
+        files in the reads field.
+
+
+        Structure: [ val(meta), path(reads) ]"
+      pattern: "*.{fastq,fastq.gz,fq,fq.gz}"
+  - star_index:
+      type: file
+      description: "STAR genome index channel.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - ch_gtf:
+      type: file
+      description: "Reference genome GTF annotation channel.
+
+
+        Structure: [ val(meta), path(gtf) ]"
+      pattern: "*.{gtf,gtf.gz}"
+  - bsj_reads:
+      type: value
+      description: "Minimum read support threshold used to build the STAR splice-junction
+        database.
+
+
+        Structure: [ val(bsj_reads) ]"
+  - ignore_sjdbgtf:
+      type: value
+      description: "Boolean controlling whether STAR ignores the supplied GTF junction
+        database. Structure: [ val(ignore_sjdbgtf) ]"
+output:
+  - junction:
+      type: file
+      description: "Per-sample STAR second-pass junction table.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - sam:
+      type: file
+      description: "Per-sample STAR second-pass SAM alignment.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.sam"
+  - tab:
+      type: file
+      description: "Per-sample STAR second-pass alignment summary table.
+
+
+        Structure: [ val(meta), path(file) ]"
+  - bam:
+      type: file
+      description: "Per-sample STAR second-pass BAM alignment.
+
+
+        Structure: [ val(meta), path(file) ]"
+      pattern: "*.bam"
+authors:
+  - "@nictru"
+maintainers:
+  - "@nictru"

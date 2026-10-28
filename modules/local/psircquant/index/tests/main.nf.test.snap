@@ -1,0 +1,67 @@
+{
+    "transcriptome - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "psirc.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PSIRCQUANT_INDEX",
+                        "psirc-quant",
+                        "1.0"
+                    ]
+                ],
+                "index": [
+                    [
+                        {
+                            "id": "transcriptome"
+                        },
+                        "psirc.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_psircquant": [
+                    [
+                        "PSIRCQUANT_INDEX",
+                        "psirc-quant",
+                        "1.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-19T10:04:35.874768342",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "transcriptome": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "transcriptome"
+                    },
+                    "psirc.index"
+                ]
+            ],
+            [
+                [
+                    "PSIRCQUANT_INDEX",
+                    "psirc-quant",
+                    "1.0"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-19T10:04:22.236014396",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

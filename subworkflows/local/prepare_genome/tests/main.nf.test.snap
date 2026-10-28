@@ -1,0 +1,600 @@
+{
+    "build all indices - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.filtered.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        "fasta.fa.fai:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "10": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "11": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.filtered.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "12": [
+                    
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.3.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.4.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.3.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.4.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.amb:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.ann:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.bwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.pac:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.sa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "5": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            
+                        ]
+                    ]
+                ],
+                "6": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "Genome:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "Log.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "SA:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "SAindex:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrName.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrNameLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrStart.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "exonGeTrInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "exonInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "geneInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "genomeParameters.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbInfo.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbList.fromGTF.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbList.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "transcriptInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "7": [
+                    [
+                        "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.fasta:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        [
+                            "gtf.all_possible_bsj_targets.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "gtf.FirstandLastExons_entities.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "9": [
+                    
+                ],
+                "bowtie2_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.3.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.4.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.1.bt2:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.2.bt2:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "bowtie_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.3.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.4.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.1.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.rev.2.ebwt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "bwa_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "fasta.amb:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.ann:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.bwt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.pac:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "fasta.sa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "chromosomes": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        "fasta.part_001.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "circexplorer2": [
+                    [
+                        "gtf.circexplorer2.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "circminer_gtf": [
+                    
+                ],
+                "circminer_index": [
+                    
+                ],
+                "faidx": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        "fasta.fa.fai:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "gtf": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.filtered.gtf:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "hisat2_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            
+                        ]
+                    ]
+                ],
+                "psirc_index": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.fasta:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        [
+                            "gtf.all_possible_bsj_targets.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "gtf.FirstandLastExons_entities.fa.index:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "splice_sites": [
+                    [
+                        {
+                            "id": "gtf"
+                        },
+                        "gtf.filtered.splice_sites.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "star_index": [
+                    [
+                        {
+                            "id": "fasta"
+                        },
+                        [
+                            "Genome:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "Log.out:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "SA:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "SAindex:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrName.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrNameLength.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "chrStart.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "exonGeTrInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "exonInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "geneInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "genomeParameters.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbInfo.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbList.fromGTF.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "sjdbList.out.tab:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "transcriptInfo.tab:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-18T23:52:30.489694953",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "build all indices": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.filtered.gtf",
+                    2293
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "fasta.fa.fai",
+                    "chrI\t800000\t6\t60\t61\n"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "bowtie",
+                    [
+                        "fasta.1.ebwt",
+                        "fasta.2.ebwt",
+                        "fasta.3.ebwt",
+                        "fasta.4.ebwt",
+                        "fasta.rev.1.ebwt",
+                        "fasta.rev.2.ebwt"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "bowtie2",
+                    [
+                        "fasta.1.bt2",
+                        "fasta.2.bt2",
+                        "fasta.3.bt2",
+                        "fasta.4.bt2",
+                        "fasta.rev.1.bt2",
+                        "fasta.rev.2.bt2"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "bwa",
+                    [
+                        "fasta.amb",
+                        "fasta.ann",
+                        "fasta.bwt",
+                        "fasta.pac",
+                        "fasta.sa"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "hisat2",
+                    [
+                        "fasta.1.ht2",
+                        "fasta.2.ht2",
+                        "fasta.3.ht2",
+                        "fasta.4.ht2",
+                        "fasta.5.ht2",
+                        "fasta.6.ht2",
+                        "fasta.7.ht2",
+                        "fasta.8.ht2"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "star",
+                    [
+                        "Genome",
+                        "Log.out",
+                        "SA",
+                        "SAindex",
+                        "chrLength.txt",
+                        "chrName.txt",
+                        "chrNameLength.txt",
+                        "chrStart.txt",
+                        "exonGeTrInfo.tab",
+                        "exonInfo.tab",
+                        "geneInfo.tab",
+                        "genomeParameters.txt",
+                        "sjdbInfo.txt",
+                        "sjdbList.fromGTF.out.tab",
+                        "sjdbList.out.tab",
+                        "transcriptInfo.tab"
+                    ]
+                ]
+            ],
+            [
+                "gtf.circexplorer2.txt"
+            ],
+            [
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.fasta",
+                    [
+                        "gtf.FirstandLastExons_entities.fa.index",
+                        "gtf.all_possible_bsj_targets.fa.index"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    [
+                        "chrI.fa"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.filtered.splice_sites.txt"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-20T11:22:07.410242991",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "reuse prebuilt indices": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "gtf"
+                    },
+                    "gtf.filtered.gtf",
+                    2293
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "bowtie"
+                    },
+                    "bowtie",
+                    [
+                        "bowtie.idx"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "bowtie2"
+                    },
+                    "bowtie2",
+                    [
+                        "bowtie2.idx"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "bwa"
+                    },
+                    "bwa",
+                    [
+                        "bwa.idx"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "hisat2"
+                    },
+                    "hisat2",
+                    [
+                        "hisat2.idx"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "star"
+                    },
+                    "star",
+                    [
+                        "star.idx"
+                    ]
+                ]
+            ],
+            [
+                
+            ],
+            [
+                
+            ]
+        ],
+        "timestamp": "2026-10-16T20:24:20.760507998",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "tools subset": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "star",
+                    [
+                        "Genome",
+                        "Log.out",
+                        "SA",
+                        "SAindex",
+                        "chrLength.txt",
+                        "chrName.txt",
+                        "chrNameLength.txt",
+                        "chrStart.txt",
+                        "exonGeTrInfo.tab",
+                        "exonInfo.tab",
+                        "geneInfo.tab",
+                        "genomeParameters.txt",
+                        "sjdbInfo.txt",
+                        "sjdbList.fromGTF.out.tab",
+                        "sjdbList.out.tab",
+                        "transcriptInfo.tab"
+                    ]
+                ]
+            ],
+            [
+                "gtf.circexplorer2.txt"
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "chrI_mini.fa.fai",
+                    "chrI\t800000\t6\t60\t61\n"
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-16T20:24:44.980435953",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    },
+    "ciriquant only builds bwa and hisat2": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "bwa",
+                    [
+                        "chrI_mini.amb",
+                        "chrI_mini.ann",
+                        "chrI_mini.bwt",
+                        "chrI_mini.pac",
+                        "chrI_mini.sa"
+                    ]
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "fasta"
+                    },
+                    "hisat2",
+                    [
+                        "chrI_mini.1.ht2",
+                        "chrI_mini.2.ht2",
+                        "chrI_mini.3.ht2",
+                        "chrI_mini.4.ht2",
+                        "chrI_mini.5.ht2",
+                        "chrI_mini.6.ht2",
+                        "chrI_mini.7.ht2",
+                        "chrI_mini.8.ht2"
+                    ]
+                ]
+            ]
+        ],
+        "timestamp": "2026-10-17T18:05:33.624807088",
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        }
+    }
+}

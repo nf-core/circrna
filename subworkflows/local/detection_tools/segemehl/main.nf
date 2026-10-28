@@ -1,0 +1,36 @@
+include { SEGEMEHL_INDEX as INDEX   } from '../../../../modules/nf-core/segemehl/index'
+include { SEGEMEHL_ALIGN as ALIGN   } from '../../../../modules/nf-core/segemehl/align'
+include { GAWK as EXTRACT           } from '../../../../modules/nf-core/gawk'
+include { GNU_SORT as SORT          } from '../../../../modules/nf-core/gnu/sort'
+include { BEDTOOLS_GROUPBY as GROUP } from '../../../../modules/nf-core/bedtools/groupby'
+include { GAWK as UNIFY             } from '../../../../modules/nf-core/gawk'
+
+workflow SEGEMEHL {
+    take:
+    reads
+    fasta
+    index
+
+    main:
+
+    ch_index = index ?: INDEX(fasta).index
+
+    // Reference metadata IDs need not match; broadcast one reference to all samples.
+    ch_reference = fasta
+        .combine(ch_index)
+        .map { fasta_meta, reference_fasta, _index_meta, reference_index -> [fasta_meta, reference_fasta, reference_index] }
+
+    ALIGN(reads, ch_reference.first())
+    EXTRACT(
+        ALIGN.out.single_bed.map { meta, bed -> [meta + [tool: "segemehl"], bed, "segemehl_extracted.bed"] },
+        [],
+        false,
+    )
+
+    SORT(EXTRACT.out.output.map { meta, bed -> [meta, bed, "segemehl_sorted.bed"] })
+    GROUP(SORT.out.sorted, 5)
+    UNIFY(GROUP.out.bed.map { meta, bed -> [meta, bed, "segemehl.unified.bed"] }, [], false)
+
+    emit:
+    bed = UNIFY.out.output
+}

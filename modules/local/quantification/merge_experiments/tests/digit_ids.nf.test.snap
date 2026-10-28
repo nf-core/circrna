@@ -1,0 +1,27 @@
+{
+    "with digit-leading sample ids": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "experiments"
+                    },
+                    "experiments.merged.rds"
+                ]
+            ],
+            [
+                {
+                    "MERGE_EXPERIMENTS": {
+                        "bioconductor-summarizedexperiment": "1.42.0",
+                        "bioconductor-rtracklayer": "1.72.0"
+                    }
+                }
+            ]
+        ],
+        "timestamp": "2026-10-20T15:03:03.208442576",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}

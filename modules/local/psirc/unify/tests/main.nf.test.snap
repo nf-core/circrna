@@ -1,0 +1,87 @@
+{
+    "isoform table - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,654d2300d819846ae69ddad5e84552f9"
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "cel_N2_1",
+                            "single_end": false
+                        },
+                        "cel_N2_1.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,654d2300d819846ae69ddad5e84552f9"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-20T15:30:20.083771087",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "isoform table": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.bed",
+                    "f241544aef8b8d4293ab68970ead8bfb"
+                ]
+            ],
+            {
+                "PSIRC_UNIFY": {
+                    "python": "3.14.7",
+                    "pandas": "3.0.6"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:29:56.464329595",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    },
+    "empty isoform table": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "cel_N2_1",
+                        "single_end": false
+                    },
+                    "cel_N2_1.bed",
+                    "d751713988987e9331980363e24189ce"
+                ]
+            ],
+            {
+                "PSIRC_UNIFY": {
+                    "python": "3.14.7",
+                    "pandas": "3.0.6"
+                }
+            }
+        ],
+        "timestamp": "2026-10-20T15:30:08.239004988",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
+    }
+}
